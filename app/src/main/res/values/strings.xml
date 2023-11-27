@@ -1,0 +1,267 @@
+<resources>
+    <string name="app_name">Unit Converter</string>
+
+    <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
+    <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
+    <string name="url_other_apps">"https://play.google.com/store/apps/developer?id=Smart+Up"</string>
+    <string name="url_smartup_website">https://smartupapps.in</string>
+    <string name="url_privacy_policy">https://smartupapps.in/privacy_policy.html</string>
+    <string name="description">Unit Converter is wonderful app for converting Unit and Metrics. UNIT CONVERTER is best UnitConverter app.</string>
+    <string name="keywords">Unit Converter app is a UNIT CONVERTER and is very good Unit Converter</string>
+    <string name="company">SMARTUP</string>
+
+    <string name="note_share_body">Hi,\n\nI am using this excellent Unit Converter App.\nIt\'s accurate, customizable yet light-weight. Must try it.\n\n</string>
+
+    <string name="share">Share</string>
+    <string name="url_exchangeratesapi">exchangeratesapi.io</string>
+
+    <string name="unit_converter">Units</string>
+    <string name="currency_converter">Currency</string>
+
+    <!-- Numbers -->
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="zero">0</string>
+    <string name="minus">−</string>
+    <string name="double_zero">00</string>
+    <string name="dot">.</string>
+    <string name="equal">=</string>
+
+    <!-- Conversions -->
+    <string name="area">Area</string>
+    <string name="cooking">Cooking</string>
+    <string name="storage">Storage</string>
+    <string name="energy">Energy</string>
+    <string name="fuel_consumption">Fuel</string>
+    <string name="length">Length</string>
+    <string name="mass">Weight</string>
+    <string name="power">Power</string>
+    <string name="pressure">Pressure</string>
+    <string name="speed">Speed</string>
+    <string name="temperature">Temperature</string>
+    <string name="time">Time</string>
+    <string name="torque">Torque</string>
+    <string name="volume">Volume</string>
+
+    <!-- Area -->
+    <string name="sq_kilometre">Sq Kilometre</string>
+    <string name="sq_metre">Sq Metre</string>
+    <string name="sq_centimetre">Sq Centimetre</string>
+    <string name="hectare">Hectare</string>
+    <string name="sq_mile">Sq Mile</string>
+    <string name="sq_yard">Sq Yard</string>
+    <string name="sq_foot">Sq Foot</string>
+    <string name="sq_inch">Sq Inch</string>
+    <string name="acre">Acre</string>
+
+    <!-- Digital Storage -->
+    <string name="bit">Bit</string>
+    <string name="Byte">Byte</string>
+    <string name="kilobit">Kilobit</string>
+    <string name="kilobyte">Kilobyte</string>
+    <string name="megabit">Megabit</string>
+    <string name="megabyte">Megabyte</string>
+    <string name="gigabit">Gigabit</string>
+    <string name="gigabyte">Gigabyte</string>
+    <string name="terabit">Terabit</string>
+    <string name="terabyte">Terabyte</string>
+
+    <!-- Energy -->
+    <string name="joule">Joule</string>
+    <string name="kilojoule">Kilojoule</string>
+    <string name="calorie">Calorie</string>
+    <string name="kilocalorie">Kilocalorie</string>
+    <string name="btu">BTU</string>
+    <string name="ft_lbF">ft-lbf</string>
+    <string name="in_lbF">in-lbf</string>
+    <string name="kilowatt_hour">Kilowatt-Hour</string>
+
+    <!-- Fuel Consumption -->
+    <string name="mpg_us">Miles/gallon (US)</string>
+    <string name="mpg_uk">Miles/gallon (UK)</string>
+    <string name="l_100k">Litres/100km</string>
+    <string name="km_l">Kilometres/litre</string>
+    <string name="miles_l">Miles/litre</string>
+
+    <!-- Distance -->
+    <string name="kilometre">Kilometre</string>
+    <string name="mile">Miles</string>
+    <string name="metre">Metre</string>
+    <string name="centimetre">Centimetre (cm)</string>
+    <string name="millimetre">Millimetre (mm)</string>
+    <string name="micrometre">Micrometre</string>
+    <string name="nanometre">Nanometre</string>
+    <string name="yard">Yard</string>
+    <string name="feet">Feet</string>
+    <string name="inch">Inch</string>
+    <string name="nautical_mile">Nautical Mile</string>
+    <string name="furlong">Furlong</string>
+    <string name="light_year">Light Year</string>
+
+    <!-- Mass/Weight -->
+    <string name="kilogram">Kilogram</string>
+    <string name="pound">Pound</string>
+    <string name="gram">Gram</string>
+    <string name="milligram">Milligram</string>
+    <string name="ounce">Ounce</string>
+    <string name="grain">Grain</string>
+    <string name="stone">Stone</string>
+    <string name="metric_ton">Ton (metric)</string>
+    <string name="short_ton">Ton (US/short)</string>
+    <string name="long_ton">Ton (UK/long)</string>
+
+    <!-- Power -->
+    <string name="watt">Watt</string>
+    <string name="kilowatt">Kilowatt</string>
+    <string name="megawatt">Megawatt</string>
+    <string name="hp">HP (metric)</string>
+    <string name="hp_uk">HP (mechanical)</string>
+    <string name="ft_lbf_s">ft-lbf/second</string>
+    <string name="calorie_s">Calorie/second</string>
+    <string name="btu_s">BTU/second</string>
+    <string name="kva">kV-A</string>
+
+    <!-- Pressure -->
+    <string name="megapascal">Megapascal</string>
+    <string name="kilopascal">Kilopascal</string>
+    <string name="pascal">Pascal</string>
+    <string name="bar">Bar</string>
+    <string name="psi">PSI</string>
+    <string name="psf">PSF</string>
+    <string name="atmosphere">Atmosphere</string>
+    <string name="technical_atmosphere">Technical Atm</string>
+    <string name="mmhg">mm Hg</string>
+    <string name="torr">Torr</string>
+
+    <!-- Speed -->
+    <string name="km_h">Kilometre/hour</string>
+    <string name="mph">Mile/hour</string>
+    <string name="m_s">Metre/second</string>
+    <string name="fps">Foot/second</string>
+    <string name="knot">Knot</string>
+
+    <!-- Temperature -->
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="rankine">Rankine</string>
+    <string name="delisle">Delisle</string>
+    <string name="newton">Newton</string>
+    <string name="reaumur">Réaumur</string>
+    <string name="romer">Rømer</string>
+    <string name="gas_mark">Gas Mark</string>
+
+    <!-- Time -->
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+    <string name="week">Week</string>
+    <string name="day">Day</string>
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
+    <string name="second">Second</string>
+    <string name="millisecond">Millisecond</string>
+    <string name="nanosecond">Nanosecond</string>
+
+    <!-- Torque -->
+    <string name="n_m">N-m</string>
+
+    <!-- Volume -->
+    <string name="teaspoon">Teaspoon</string>
+    <string name="tablespoon">Tablespoon</string>
+    <string name="cup">Cup</string>
+    <string name="fluid_ounce">Fluid Ounce (US)</string>
+    <string name="quart">Quart (US)</string>
+    <string name="pint">Pint (US)</string>
+    <string name="gallon">Gallon (US)</string>
+    <string name="barrel">Barrel (US)</string>
+    <string name="fluid_ounce_uk">Fluid Ounce (UK)</string>
+    <string name="quart_uk">Quart (UK)</string>
+    <string name="pint_uk">Pint (UK)</string>
+    <string name="gallon_uk">Gallon (UK)</string>
+    <string name="barrel_uk">Barrel (UK)</string>
+    <string name="millilitre">Millilitre</string>
+    <string name="litre">Litre</string>
+    <string name="cubic_cm">Cubic cm</string>
+    <string name="cubic_m">Cubic Metre</string>
+    <string name="cubic_inch">Cubic Inch</string>
+    <string name="cubic_foot">Cubic Foot</string>
+    <string name="cubic_yard">Cubic Yard</string>
+
+    <string name="menu_other_apps">Other Apps</string>
+
+    <string name="toast_copied_positive">Result copied to clipboard</string>
+    <string name="toast_copied_negative">Nothing to copy to clipboard</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_info">Information</string>
+
+    <!-- Preferences -->
+    <string name="prefs_title_formatting">Customization</string>
+    <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>
+    <string name="prefs_title_number_decimals">Number of Decimals</string>
+    <string name="prefs_summary_group_separator">Set the group separator to be shown in result</string>
+    <string name="prefs_title_group_separator">Group Separator</string>
+    <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
+    <string name="prefs_title_decimal_separator">Decimal Separator</string>
+    <string name="prefs_title_light_theme">Use Light Theme</string>
+
+    <string name="pref_rate_title">Rate us on Google Play</string>
+    <string name="pref_rate_summary">You seem to be liking our app. Why not rate us 5 stars?</string>
+
+    <string name="pref_share_title">Spread a word</string>
+    <string name="pref_share_summary">Please help us by sharing this app with your friends, family and WhatsApp groups.</string>
+
+    <string name="pref_website_title">Find us on Web</string>
+    <string name="pref_website_summary">Visit our website to know more about us.</string>
+    <string name="pref_privacy_title">Privacy Policy</string>
+    <string name="pref_privacy_summary">Because your privacy is important to us.</string>
+    <string name="pref_version_title">Version</string>
+
+    <string name="group_separator_none">None</string>
+
+    <string-array name="number_decimals" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+    <string-array name="group_separators" translatable="false">
+        <item>@string/group_separator_none</item>
+        <item>,</item>
+        <item>" "</item>
+        <item>.</item>
+    </string-array>
+
+    <string-array name="decimal_separators" translatable="false">
+        <item>.</item>
+        <item>,</item>
+    </string-array>
+
+    <string name="default_number_decimals">4</string>
+    <string name="default_group_separator">None</string>
+    <string name="default_decimal_separator">.</string>
+    <string name="str_from">From</string>
+    <string name="str_to">To</string>
+
+    <string name="toast_copied_clipboard">Result copied to clipboard</string>
+    <string name="toast_no_results_to_copy">No results to copy</string>
+    <string name="toast_result_copied">Result copied</string>
+    <string name="toast_unable_to_copy">Unable to copy to clipboard</string>
+
+</resources>

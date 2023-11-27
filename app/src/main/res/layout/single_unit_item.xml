@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView"
+    android:background="@color/calculator_accent_color"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:singleLine="true"
+    android:gravity="center_horizontal"
+    android:textAlignment="center"
+    android:textColor="@color/display_result_text_color"
+    android:textSize="14dp" />

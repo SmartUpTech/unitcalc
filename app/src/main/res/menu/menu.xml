@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_other_apps"
+        android:orderInCategory="110"
+        android:title="@string/menu_other_apps"
+        app:showAsAction="never"/>
+
+    <!--<item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="120"
+        android:title="@string/menu_settings"
+        app:showAsAction="never"/>-->
+</menu>

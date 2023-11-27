@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="300dp"
+    android:orientation="vertical"
+    android:background="@color/calculator_accent_color"
+    app:behavior_peekHeight="500dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/layout_coordinator_child"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:textAlignment="center"
+            android:textSize="@dimen/h2"
+            android:text="Select Currency"
+            android:textColor="@color/display_result_text_color"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCurrencies"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

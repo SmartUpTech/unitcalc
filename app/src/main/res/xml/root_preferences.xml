@@ -1,0 +1,97 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:iconSpaceReserved="false" app:title="@string/prefs_title_formatting">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_theme"
+            app:iconSpaceReserved="false"
+            app:title="Dark mode" />
+
+        <ListPreference
+            android:defaultValue="@string/default_number_decimals"
+            android:entries="@array/number_decimals"
+            android:entryValues="@array/number_decimals"
+            android:key="number_decimals"
+            android:summary="@string/prefs_summary_number_decimals"
+            android:title="@string/prefs_title_number_decimals"
+            app:iconSpaceReserved="false"/>
+
+        <ListPreference
+            android:defaultValue="@string/default_group_separator"
+            android:entries="@array/group_separators"
+            android:entryValues="@array/group_separators"
+            android:key="group_separator"
+            android:summary="@string/prefs_summary_group_separator"
+            android:title="@string/prefs_title_group_separator"
+            app:iconSpaceReserved="false"/>
+
+        <ListPreference
+            android:defaultValue="@string/default_decimal_separator"
+            android:entries="@array/decimal_separators"
+            android:entryValues="@array/decimal_separators"
+            android:key="decimal_separator"
+            android:summary="@string/prefs_summary_decimal_separator"
+            android:title="@string/prefs_title_decimal_separator"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="light_theme"
+            android:title="@string/prefs_title_light_theme"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:iconSpaceReserved="false" app:title="@string/title_activity_feedback">
+
+        <Preference
+            android:key="rate"
+            android:summary="@string/pref_rate_summary"
+            android:title="@string/pref_rate_title"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_app_link" />
+        </Preference>
+
+        <Preference
+            android:key="share"
+            android:summary="@string/pref_share_summary"
+            android:title="@string/pref_share_title"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/title_activity_info" app:iconSpaceReserved="false">
+        <Preference
+            android:key="website"
+            android:summary="@string/pref_website_summary"
+            android:title="@string/pref_website_title"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_smartup_website" />
+        </Preference>
+
+        <Preference
+            android:key="privacy_policy"
+            android:summary="@string/pref_privacy_summary"
+            android:title="@string/pref_privacy_title"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_privacy_policy" />
+        </Preference>
+
+        <Preference
+            android:key="version"
+            android:title="@string/pref_version_title"
+            app:iconSpaceReserved="false">
+        </Preference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
