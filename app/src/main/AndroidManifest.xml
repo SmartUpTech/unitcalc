@@ -18,7 +18,12 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/am_app_id"/>
+
         <activity
+            android:exported="true"
             android:name="net.smartlogic.unitconverter.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
@@ -30,6 +35,7 @@
         </activity>
 
         <activity
+            android:exported="false"
             android:name="net.smartlogic.unitconverter.activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName="net.smartlogic.unitconverter.activity.MainActivity">

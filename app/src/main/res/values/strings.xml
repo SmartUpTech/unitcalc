@@ -264,4 +264,19 @@
     <string name="toast_result_copied">Result copied</string>
     <string name="toast_unable_to_copy">Unable to copy to clipboard</string>
 
+    <!--Admob Campaign Id    -->
+    <string name="am_app_id">ca-app-pub-9684723354540179~1910659108</string>
+
+    <!-- AdMob Real Ads -->
+    <string name="am_banner_ad_unit">XX</string>
+    <string name="am_interstitial_ad_unit">XX</string>
+    <string name="am_rewarded_ad_unit">XX</string>
+    <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
+
+    <!-- AdMob Test Ads -->
+    <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/6300978111</string>-->
+    <!--    <string name="am_interstitial_ad_unit">ca-app-pub-3940256099942544/1033173712</string>-->
+    <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
+    <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/3419835294</string>-->
+
 </resources>
