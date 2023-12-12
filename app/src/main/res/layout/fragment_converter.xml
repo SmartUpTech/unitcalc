@@ -16,7 +16,7 @@
         <net.smartlogic.unitconverter.helper.HorizontalListView
             android:id="@+id/horizontal_list"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp" />
 
@@ -261,7 +261,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_button_equal"
                         android:src="@drawable/ic_reverse"
-                        android:tint="@color/alwaysDarkText" />
+                        app:tint="@color/unit_text_color" />
 
                     <ImageButton
                         android:id="@+id/backspace"
@@ -270,7 +270,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_numeric_background_color"
                         android:src="@drawable/backspace"
-                        android:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color" />
 
                     <ImageButton
                         android:id="@+id/copy"
@@ -279,7 +279,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_numeric_background_color"
                         android:src="@drawable/ic_copy"
-                        android:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color" />
 
                     <Button
                         android:id="@+id/minus"

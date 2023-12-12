@@ -15,7 +15,7 @@
     <string name="share">Share</string>
     <string name="url_exchangeratesapi">exchangeratesapi.io</string>
 
-    <string name="unit_converter">Units</string>
+    <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
 
     <!-- Numbers -->
@@ -263,6 +263,8 @@
     <string name="toast_no_results_to_copy">No results to copy</string>
     <string name="toast_result_copied">Result copied</string>
     <string name="toast_unable_to_copy">Unable to copy to clipboard</string>
+
+    <string name="strContentDescription">Unit Convertor Image</string>
 
     <!--Admob Campaign Id    -->
     <string name="am_app_id">ca-app-pub-9684723354540179~1910659108</string>

@@ -51,8 +51,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 

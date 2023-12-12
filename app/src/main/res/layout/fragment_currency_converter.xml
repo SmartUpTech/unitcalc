@@ -17,7 +17,7 @@
         <TextView
             android:id="@+id/txtRate"
             android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_height="80dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:paddingTop="10dp"
@@ -163,6 +163,7 @@
                     </RelativeLayout>
 
                     <ImageView
+                        android:contentDescription="@string/strContentDescription"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -281,7 +282,7 @@
                     android:src="@drawable/share"
                     android:stateListAnimator="@null"
                     android:text=""
-                    android:tint="@color/colorNewGrey" />
+                    app:tint="@color/colorNewGrey" />
 
                <!-- <ImageButton
                     android:id="@+id/copy"
@@ -294,7 +295,7 @@
                     android:src="@drawable/copy"
                     android:stateListAnimator="@null"
                     android:text=""
-                    android:tint="@color/colorNewGrey" />-->
+                    app:tint="@color/colorNewGrey" />-->
 
                 <ImageButton
                     android:id="@+id/refresh"
@@ -307,7 +308,7 @@
                     android:src="@drawable/ic_unit_converter"
                     android:stateListAnimator="@null"
                     android:text=""
-                    android:tint="@color/colorNewGrey" />
+                    app:tint="@color/colorNewGrey" />
 
             </LinearLayout>
 
@@ -431,7 +432,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_button_equal"
                         android:src="@drawable/ic_reverse"
-                        android:tint="@color/alwaysDarkText" />
+                        app:tint="@color/unit_text_color" />
 
                     <ImageButton
                         android:id="@+id/backspace"
@@ -440,7 +441,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_numeric_background_color"
                         android:src="@drawable/backspace"
-                        android:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color" />
 
                     <ImageButton
                         android:id="@+id/copy"
@@ -449,7 +450,7 @@
                         android:layout_weight="1"
                         android:background="@color/pad_numeric_background_color"
                         android:src="@drawable/ic_copy"
-                        android:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color" />
 
                     <Button
                         android:id="@+id/ac"
@@ -458,12 +459,6 @@
                         android:layout_weight="1"
                         android:background="@color/pad_numeric_background_color"
                         android:textSize="@dimen/buttonTextSize" />
-
-
-
-
-
-
 
                 </LinearLayout>
 

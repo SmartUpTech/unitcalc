@@ -16,10 +16,10 @@ import net.smartlogic.unitconverter.utils.Conversions;
 
 public class ConversionAdapter extends ArrayAdapter<Integer> {
 
-    private LayoutInflater mInflater;
-    private Integer[] val;
-    private Context context;
-    private Conversions conversions;
+    private final LayoutInflater mInflater;
+    private final Integer[] val;
+    private final Context context;
+    private final Conversions conversions;
 
 
     public ConversionAdapter(@NonNull Context context, Integer[] values) {

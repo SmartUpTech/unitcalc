@@ -4,7 +4,7 @@
     <color name="colorPrimary">#2d3e50</color>
     <color name="colorSecondary">#2d3e50</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
-    <color name="colorNewGrey">#4c4c4c</color>
+    <color name="colorNewGrey">#6f6f6f</color>
 
     <color name="alwaysDarkText">#0c0c0c</color>
 
@@ -16,9 +16,9 @@
     <!-- Background color for the numeric pad. -->
     <color name="pad_numeric_background_color">#FFFFFF</color>
 
-    <color name="pad_button_equal">#FFFFFF</color>
+    <color name="pad_button_equal">#2d3e50</color>
 
-    <color name="colorHighlighter">#0bc3d2</color>
+    <color name="colorHighlighter">#2d3e50</color>
 
 
 </resources>

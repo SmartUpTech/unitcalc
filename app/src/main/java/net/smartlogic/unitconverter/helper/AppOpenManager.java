@@ -199,20 +199,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, LifecycleObse
         if (BuildConfig.DEBUG && DEBUG_FLAG)
             Log.d(TAG, "App Open OnLifecycleEvent onStart");
 
-        CountDownTimer countDownTimer =
-                new CountDownTimer((long)2.3 * 1000, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        if (BuildConfig.DEBUG && DEBUG_FLAG)
-                            Log.d("SHRIKI", "App Open OnLifecycleEvent CountDownTimer onFinish");
-                        showAdIfAvailable();
-                    }
-                };
-        countDownTimer.start();
+        showAdIfAvailable();
     }
 
 }

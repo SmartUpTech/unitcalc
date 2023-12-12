@@ -57,23 +57,22 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
 
             Fragment selectedFragment;
-            switch (item.getItemId()) {
-                case R.id.currency_converter:
-                    AppConst.CURRENT_TAG = AppConst.TAG_CURRENCY;
-                    selectedFragment = CurrencyConverterFragment.newInstance();
-                    changeFragment(selectedFragment);
-                    break;
-                case R.id.settings:
-                    Intent settingsActivity = new Intent(context, SettingsActivity.class);
-                    startActivity(settingsActivity);
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    return false;
-                case R.id.unit_converter:
-                default:
-                    AppConst.CURRENT_TAG = AppConst.TAG_UNIT;
-                    selectedFragment = ConverterFragment.newInstance();
-                    changeFragment(selectedFragment);
-                    break;
+
+
+            int itemId = item.getItemId();
+            if (itemId == R.id.currency_converter) {
+                AppConst.CURRENT_TAG = AppConst.TAG_CURRENCY;
+                selectedFragment = CurrencyConverterFragment.newInstance();
+                changeFragment(selectedFragment);
+            } else if (itemId == R.id.settings) {
+                Intent settingsActivity = new Intent(context, SettingsActivity.class);
+                startActivity(settingsActivity);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return false;
+            } else {
+                AppConst.CURRENT_TAG = AppConst.TAG_UNIT;
+                selectedFragment = ConverterFragment.newInstance();
+                changeFragment(selectedFragment);
             }
             return true;
         });
