@@ -1,9 +1,8 @@
 package net.smartlogic.unitconverter.fragment;
 
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -34,12 +33,12 @@ import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
-import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 
@@ -64,8 +63,6 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     ImageButton reverse, copy, backspace;
 
     TextWatcher inputTextWatcher;
-
-    private OnFragmentInteractionListener mListener;
 
     public ConverterFragment() {
         // Required empty public constructor
@@ -144,19 +141,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         inputValue.requestFocus();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            inputValue.setShowSoftInputOnFocus(false);
-        } else {
-            try {
-                final Method method = EditText.class.getMethod(
-                        "setShowSoftInputOnFocus"
-                        , boolean.class);
-                method.setAccessible(true);
-                method.invoke(inputValue, false);
-            } catch (Exception e) {
-                // ignore
-            }
-        }
+        inputValue.setShowSoftInputOnFocus(false);
 
     }
 
@@ -170,19 +155,15 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     public boolean onLongClick(View view) {
 
         try {
-            switch (view.getId()) {
-                case R.id.output:
-                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(getString(R.string.app_name), ((EditText) view).getText().toString());
-                    clipboard.setPrimaryClip(clip);
-                    showToast(R.string.toast_copied_positive);
-                    break;
-                case R.id.backspace:
-                    inputValue.setText("");
-                    convertAndDisplay("");
-                    break;
-                default:
-                    break;
+            int id = view.getId();
+            if (id == R.id.output) {
+                ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText(getString(R.string.app_name), ((EditText) view).getText().toString());
+                clipboard.setPrimaryClip(clip);
+                showToast(R.string.toast_copied_positive);
+            } else if (id == R.id.backspace) {
+                inputValue.setText("");
+                convertAndDisplay("");
             }
         }
         catch (Exception ignored) { }
@@ -192,87 +173,69 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     public void onClick(View view) {
 
         try {
-            switch (view.getId()) {
+            int id = view.getId();
+            if (id == R.id.reverse) {
+                int fromPos = fromUnit.getSelectedItemPosition();
+                int toPos = toUnit.getSelectedItemPosition();
+                fromUnit.setSelection(toPos);
+                toUnit.setSelection(fromPos);
+            } else if (id == R.id.backspace) {
+                String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);
+                inputValue.setText(substr);
+                inputValue.setSelection(inputValue.getText().length());
+            } else if (id == R.id.dot) {
+                if (inputValue.getText().toString().isEmpty())
+                    inputValue.setText("0.");
+                else if (inputValue.getText().toString().equals("-"))
+                    inputValue.append("0.");
+                else
+                    inputValue.append(".");
+                inputValue.setSelection(inputValue.getText().length());
+            } else if (id == R.id.minus) {
+                inputValue.append("-");
+                inputValue.setSelection(inputValue.getText().length());
+            } else if (id == R.id.zero) {
+                String currentInput1 = inputValue.getText().toString();
+                if (!currentInput1.equals("0")) {
+                    inputValue.append("0");
+                }
+            } else if (id == R.id.double_zero) {
+                String currentInput = inputValue.getText().toString();
 
-                case R.id.reverse:
-                    int fromPos = fromUnit.getSelectedItemPosition();
-                    int toPos = toUnit.getSelectedItemPosition();
-                    fromUnit.setSelection(toPos);
-                    toUnit.setSelection(fromPos);
+                if (currentInput.equals("0")) {
+                    //Do nothing if already 0 is added and user is trying to add more 0s.
+                } else if (currentInput.length() == 0) {
+                    inputValue.append("0");
+                } else {
+                    inputValue.append("00");
+                }
+                inputValue.setSelection(inputValue.getText().length());
+            } else if (id == R.id.copy) {
+                if (!inputValue.getText().toString().isEmpty()) {
 
-                    break;
-                case R.id.backspace:
-                    String substr = inputValue.getText().toString().substring(0,inputValue.getText().toString().length() -1);
-                    inputValue.setText(substr);
-                    inputValue.setSelection(inputValue.getText().length());
-                    break;
-                case R.id.dot:
-                    if (inputValue.getText().toString().isEmpty())
-                        inputValue.setText("0.");
-                    else if (inputValue.getText().toString().equals("-"))
-                        inputValue.append("0.");
-                    else
-                        inputValue.append(".");
-                    inputValue.setSelection(inputValue.getText().length());
-                    break;
-                case R.id.minus:
-                    inputValue.append("-");
-                    inputValue.setSelection(inputValue.getText().length());
-                    break;
-               /* case R.id.ac:
-                    inputValue.setText("");
-                    convertAndDisplay("");
-                    break;*/
-                case R.id.zero:
-                    String currentInput1 = inputValue.getText().toString();
-                    if (!currentInput1.equals("0")) {
-                        inputValue.append("0");
-                    }
-                    break;
-                case R.id.double_zero:
-                    String currentInput = inputValue.getText().toString();
+                    ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
-                    if (currentInput.equals("0")) {
-                        //Do nothing if already 0 is added and user is trying to add more 0s.
-                    }
-                    else if (currentInput.length() == 0) {
-                        inputValue.append("0");
-                    }
-                    else {
-                        inputValue.append("00");
-                    }
-                    inputValue.setSelection(inputValue.getText().length());
-                    break;
-                case R.id.copy:
-                    if (!inputValue.getText().toString().isEmpty()) {
+                    String result = inputValue.getText().toString() + " " +
+                            context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()) + " = " +
+                            outputValue.getText().toString() + " " +
+                            context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource());
+                    ClipData clip = ClipData.newPlainText(getString(R.string.app_name), result);
+                    clipboard.setPrimaryClip(clip);
+                    showToast(R.string.toast_copied_positive);
+                } else {
+                    showToast(R.string.toast_copied_negative);
+                }
+            } else {
+                Button button = (Button) view;
+                String data = button.getText().toString();
 
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                String currentInput2 = inputValue.getText().toString();
 
-                        String result = inputValue.getText().toString() + " " +
-                                context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()) + " = " +
-                                outputValue.getText().toString() + " " +
-                                context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource());
-                        ClipData clip = ClipData.newPlainText(getString(R.string.app_name), result);
-                        clipboard.setPrimaryClip(clip);
-                        showToast(R.string.toast_copied_positive);
-                    }
-                    else {
-                        showToast(R.string.toast_copied_negative);
-                    }
-
-                    break;
-                default:
-                    Button button = (Button) view;
-                    String data = button.getText().toString();
-
-                    String currentInput2 = inputValue.getText().toString();
-
-                    if (currentInput2.equals("0")) {
-                        inputValue.setText(data);
-                    }
-                    else
-                        inputValue.append(data);
-                    inputValue.setSelection(inputValue.getText().length());
+                if (currentInput2.equals("0")) {
+                    inputValue.setText(data);
+                } else
+                    inputValue.append(data);
+                inputValue.setSelection(inputValue.getText().length());
             }
         }
         catch(Exception e) {
@@ -308,27 +271,6 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
         return formatter;
     }
 
-    private DecimalFormat getDecimalFormat1() {
-        DecimalFormat formatter = new DecimalFormat();
-
-        //Set maximum number of decimal places
-        formatter.setMaximumFractionDigits(4);
-
-        //Set group and decimal separators
-        DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
-        symbols.setDecimalSeparator('.');
-
-        String groupSeparator = ",";
-        boolean isSeparatorUsed = !groupSeparator.equals("None");
-        formatter.setGroupingUsed(isSeparatorUsed);
-        if (isSeparatorUsed) {
-            symbols.setGroupingSeparator(groupSeparator.charAt(0));
-        }
-
-        formatter.setDecimalFormatSymbols(symbols);
-        return formatter;
-    }
-
     public String applyFormatting(double res) {
         String s;
         try {
@@ -352,7 +294,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         Integer[] mCustomData = {0,1,2,3,4,5,6,7,8,9,10,11,12,13};
 
-        final ConversionAdapter adapter = new ConversionAdapter(this.getActivity(), mCustomData);
+        final ConversionAdapter adapter = new ConversionAdapter(requireActivity(), mCustomData);
 
         horizontalListView.setAdapter(adapter);
         horizontalListView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -416,7 +358,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + context.getString(from.getLabelResource()) + " to " + context.getString(to.getLabelResource()));
 
-        double result = 0;
+        double result;
 
         if (selectedConversion.getId() == Conversion.TEMPERATURE) {
             result = conversions.convertTemperatureValue(NumberUtils.parseDouble(in),from, to);
@@ -465,7 +407,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
         fromUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.display_result_text_color));
+                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastFromConversion(position);
             }
@@ -479,7 +421,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
         toUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.display_result_text_color));
+                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastToConversion(position);
             }
@@ -492,12 +434,6 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         fromUnit.setSelection(mPrefs.getLastFromConversion());
         toUnit.setSelection(mPrefs.getLastToConversion());
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -514,11 +450,6 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
