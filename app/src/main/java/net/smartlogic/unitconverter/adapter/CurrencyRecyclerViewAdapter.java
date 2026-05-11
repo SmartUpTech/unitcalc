@@ -20,11 +20,11 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private ArrayList<Currency> currencies;
-    private Context context;
-    private String type;
+    private final ArrayList<Currency> currencies;
+    private final Context context;
+    private final String type;
 
-    private ItemClickListener itemClickListener;
+    private final ItemClickListener itemClickListener;
 
     public CurrencyRecyclerViewAdapter(Context context, ArrayList<Currency> currencies, String type, ItemClickListener itemClickListener) {
         this.currencies = currencies;
@@ -45,7 +45,13 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder
 
         if (holder instanceof MyViewHolder) {
             Currency currency = currencies.get(position);
-            ((MyViewHolder) holder).txtCurrency.setText(currency.getCurrencyName());
+            String name = currency.getCurrencyName();
+            String symbol = currency.getCurrencySymbol();
+            if (symbol != null && !symbol.isEmpty()) {
+                ((MyViewHolder) holder).txtCurrency.setText(String.format("%s (%s)", name, symbol));
+            } else {
+                ((MyViewHolder) holder).txtCurrency.setText(name);
+            }
             ((MyViewHolder) holder).txtCurrencyISO.setText(currency.getCurrencyISOCode());
             if (currency.getFlagImageResource() != 123 & currency.getFlagImageResource() != 0) {
                 //Log.d("SHRIKI","Here :" + currency.getCountry() + " " + currency.getFlagImageResource());

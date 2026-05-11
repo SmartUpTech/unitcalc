@@ -15,6 +15,7 @@ import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.ConverterFragment;
 import net.smartlogic.unitconverter.fragment.CurrencyConverterFragment;
+import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.ThemeHelper;
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     private BottomNavigationView bottomNavigationView;
     private Context context;
+    private int actionCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, true);
         Preferences.getInstance(this).getPreferences().registerOnSharedPreferenceChangeListener(this);
 
+        AdMobManager.getInstance(this).loadInterstitialAd();
+
         setUpBottomNavigation();
     }
 
@@ -58,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
             Fragment selectedFragment;
 
+            actionCount++;
+            if (actionCount % 3 == 0) {
+                AdMobManager.getInstance(this).showInterstitialAd(this);
+                AdMobManager.getInstance(this).loadInterstitialAd();
+            }
 
             int itemId = item.getItemId();
             if (itemId == R.id.currency_converter) {

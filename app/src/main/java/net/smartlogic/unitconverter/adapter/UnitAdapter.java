@@ -18,9 +18,9 @@ import java.util.List;
 
 public class UnitAdapter extends ArrayAdapter<Unit> {
 
-    private LayoutInflater mInflater;
-    private List<Unit> units;
-    private Context context;
+    private final LayoutInflater mInflater;
+    private final List<Unit> units;
+    private final Context context;
 
     public UnitAdapter(@NonNull Context context, @NonNull List<Unit> units) {
         super(context, R.layout.single_unit_item, units);
@@ -51,20 +51,33 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         //String s = context.getString(units.get(position).getLabelResource());
         //Log.d("SHRIKI", "unit: " + s);
 
-        holder.textView.setText(context.getString(units.get(position).getLabelResource()));
+        Unit unit = units.get(position);
+        String label = context.getString(unit.getLabelResource());
+        String symbol = unit.getSymbol();
+
+        if (symbol != null && !symbol.isEmpty()) {
+            holder.textView.setText(String.format("%s (%s)", label, symbol));
+        } else {
+            holder.textView.setText(label);
+        }
 
         return convertView;
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        TextView v = (TextView) super.getView(position, convertView, parent);
+        View v = super.getDropDownView(position, convertView, parent);
+        TextView tv = v.findViewById(R.id.textView);
 
-        if (v == null) {
-            v = new TextView(context);
+        Unit unit = units.get(position);
+        String label = context.getString(unit.getLabelResource());
+        String symbol = unit.getSymbol();
+
+        if (symbol != null && !symbol.isEmpty()) {
+            tv.setText(String.format("%s (%s)", label, symbol));
+        } else {
+            tv.setText(label);
         }
-        //v.setTextColor(Color.BLACK);
-        v.setText(context.getString(units.get(position).getLabelResource()));
         return v;
     }
 

@@ -21,13 +21,11 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import static androidx.lifecycle.Lifecycle.Event.ON_START;
-
-public class AppOpenManager implements ActivityLifecycleCallbacks, LifecycleObserver {
+public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "SHRIKI";
     private static final boolean DEBUG_FLAG = false;
     private static boolean isShowingAd = false;
@@ -194,10 +192,10 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, LifecycleObse
 
     }
     /** LifecycleObserver methods */
-    @OnLifecycleEvent(ON_START)
-    public void onStart() {
+    @Override
+    public void onStart(@NonNull LifecycleOwner owner) {
         if (BuildConfig.DEBUG && DEBUG_FLAG)
-            Log.d(TAG, "App Open OnLifecycleEvent onStart");
+            Log.d(TAG, "App Open onStart");
 
         showAdIfAvailable();
     }

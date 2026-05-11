@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
+import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.HorizontalListView;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
@@ -49,6 +50,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     Button  subtract;
     Button dot, double_zero;
     EditText inputValue, outputValue;
+    TextView inputSymbol, outputSymbol;
     HorizontalListView horizontalListView;
     private Context context;
     private Spinner fromUnit, toUnit;
@@ -111,6 +113,9 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
+
+        inputSymbol = view.findViewById(R.id.inputSymbol);
+        outputSymbol = view.findViewById(R.id.outputSymbol);
 
         horizontalListView = view.findViewById(R.id.horizontal_list);
         fromUnit = view.findViewById(R.id.fromUnit);
@@ -342,6 +347,8 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         inputValue.addTextChangedListener(inputTextWatcher);
 
+        AdMobManager.getInstance(requireActivity()).loadBannerAd(view.findViewById(R.id.adView));
+
         return view;
     }
 
@@ -359,6 +366,14 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
         //Log.d("SHRIKI","Convert value: " + in + " from " + context.getString(from.getLabelResource()) + " to " + context.getString(to.getLabelResource()));
 
         double result;
+
+        String fromSym = from.getSymbol();
+        if (fromSym == null || fromSym.isEmpty()) fromSym = String.valueOf(from.getId());
+        inputSymbol.setText(fromSym);
+
+        String toSym = to.getSymbol();
+        if (toSym == null || toSym.isEmpty()) toSym = String.valueOf(to.getId());
+        outputSymbol.setText(toSym);
 
         if (selectedConversion.getId() == Conversion.TEMPERATURE) {
             result = conversions.convertTemperatureValue(NumberUtils.parseDouble(in),from, to);

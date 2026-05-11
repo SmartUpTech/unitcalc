@@ -11,6 +11,7 @@ public class Unit {
     public static final int SQ_FOOT = 6;
     public static final int SQ_INCH = 7;
     public static final int ACRE = 8;
+    public static final int SQ_DECIMETRE = 10;
 
     public static final int AUD = 1300;
     public static final int BGN = 1301;
@@ -56,6 +57,10 @@ public class Unit {
     public static final int GIGABYTE = 107;
     public static final int TERABIT = 108;
     public static final int TERABYTE = 109;
+    public static final int PETABIT = 110;
+    public static final int PETABYTE = 111;
+    public static final int EXABIT = 112;
+    public static final int EXABYTE = 113;
 
     public static final int JOULE = 200;
     public static final int KILOJOULE = 201;
@@ -66,6 +71,9 @@ public class Unit {
     public static final int IN_LBF = 205;
     public static final int KILOWATT_HOUR = 206;
     public static final int ELECTRON_VOLT = 207;
+    public static final int WATT_HOUR = 209;
+    public static final int MEGAJOULE = 210;
+    public static final int MEGAWATT_HOUR = 211;
 
     public static final int MPG_US = 300;
     public static final int MPG_UK = 301;
@@ -86,6 +94,9 @@ public class Unit {
     public static final int NAUTICAL_MILE = 410;
     public static final int FURLONG = 411;
     public static final int LIGHT_YEAR = 412;
+    public static final int DECIMETRE = 413;
+    public static final int ANGSTROM = 414;
+    public static final int PICOMETRE = 415;
 
     public static final int KILOGRAM = 500;
     public static final int POUND = 501;
@@ -97,6 +108,8 @@ public class Unit {
     public static final int METRIC_TON = 507;
     public static final int SHORT_TON = 508;
     public static final int LONG_TON = 509;
+    public static final int MICROGRAM = 510;
+    public static final int CARAT = 511;
 
     public static final int WATT = 600;
     public static final int KILOWATT = 601;
@@ -118,12 +131,15 @@ public class Unit {
     public static final int TECHNICAL_ATMOSPHERE = 709;
     public static final int MMHG = 707;
     public static final int TORR = 708;
+    public static final int HECTOPASCAL = 710;
 
     public static final int KM_HR = 800;
     public static final int MPH = 801;
     public static final int M_S = 802;
     public static final int FPS = 803;
     public static final int KNOT = 804;
+    public static final int M_MIN = 805;
+    public static final int KM_S = 806;
 
     public static final int CELSIUS = 900;
     public static final int FAHRENHEIT = 901;
@@ -144,6 +160,8 @@ public class Unit {
     public static final int SECOND = 1006;
     public static final int MILLISECOND = 1007;
     public static final int NANOSECOND = 1008;
+    public static final int MICROSECOND = 1009;
+    public static final int PICOSECOND = 1010;
 
     public static final int N_M = 1100;
 
@@ -167,28 +185,14 @@ public class Unit {
     public static final int CUBIC_INCH = 1217;
     public static final int CUBIC_FOOT = 1218;
     public static final int CUBIC_YARD = 1219;
+    public static final int CUBIC_MM = 1220;
+    public static final int CUBIC_KM = 1221;
 
-/*    @IntDef({SQ_KILOMETRES, SQ_METRES, SQ_CENTIMETRES, HECTARE, SQ_MILE, SQ_YARD, SQ_FOOT, SQ_INCH, ACRE,
-            AUD, BGN, BRL, CDN, CHF, CNY, CZK, DKK, EUR, GBP, HKD, HRK, HUF, IDR, ILS, INR, ISK, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RON, RUB, SEK, SGD, THB, LIRA, USD, ZAR,
-            BIT, BYTE, KILOBIT, KILOBYTE, MEGABIT, MEGABYTE, GIGABIT, GIGABYTE, TERABIT, TERABYTE,
-            JOULE, KILOJOULE, CALORIE, KILOCALORIE, BTU, FT_LBF, IN_LBF, KILOWATT_HOUR, ELECTRON_VOLT,
-            MPG_US, MPG_UK, L_100K, KM_L, MILES_L,
-            KILOMETRE, MILE, METRE, CENTIMETRE, MILLIMETRE, MICROMETRE, NANOMETRE, YARD, FEET, INCH, NAUTICAL_MILE, FURLONG, LIGHT_YEAR,
-            KILOGRAM, POUND, GRAM, MILLIGRAM, OUNCE, GRAIN, STONE, METRIC_TON, SHORT_TON, LONG_TON,
-            WATT, KILOWATT, MEGAWATT, HP, HP_UK, FT_LBF_S, CALORIE_S, BTU_S, KVA,
-            MEGAPASCAL, KILOPASCAL, PASCAL, BAR, PSI, PSF, ATMOSPHERE, TECHNICAL_ATMOSPHERE, MMHG, TORR,
-            KM_HR, MPH, M_S, FPS, KNOT,
-            CELSIUS, FAHRENHEIT, KELVIN, RANKINE, DELISLE, NEWTON, REAUMUR, ROMER, GAS_MARK,
-            YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND, NANOSECOND,
-            N_M,
-            TEASPOON, TABLESPOON, CUP, FLUID_OUNCE, QUART, PINT, GALLON, BARREL, FLUID_OUNCE_UK, QUART_UK, PINT_UK,
-            GALLON_UK, BARREL_UK, MILLILITRE, LITRE, CUBIC_CM, CUBIC_M, CUBIC_INCH, CUBIC_FOOT, CUBIC_YARD})
-    public @interface id {}*/
-
-    private int id;
-    private int labelResource;
-    private double conversionToBase;
-    private double conversionFromBase;
+    private final int id;
+    private final int labelResource;
+    private final double conversionToBase;
+    private final double conversionFromBase;
+    private final String symbol;
 
     /**
      * Create a unit object
@@ -197,12 +201,14 @@ public class Unit {
      * @param labelResource      string resource id of the label
      * @param conversionToBase   the value to convert to the base unit of the conversion
      * @param conversionFromBase the value to convert from the base unit of the conversion
+     * @param symbol             unit symbol (e.g., km, kg, $)
      */
-    public Unit(int id, int labelResource, double conversionToBase, double conversionFromBase) {
+    public Unit(int id, int labelResource, double conversionToBase, double conversionFromBase, String symbol) {
         this.id = id;
         this.labelResource = labelResource;
         this.conversionToBase = conversionToBase;
         this.conversionFromBase = conversionFromBase;
+        this.symbol = symbol;
     }
 
     public int getId() {
@@ -219,5 +225,9 @@ public class Unit {
 
     public int getLabelResource() {
         return labelResource;
+    }
+
+    public String getSymbol() {
+        return symbol;
     }
 }

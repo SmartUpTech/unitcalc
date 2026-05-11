@@ -31,6 +31,7 @@ import android.widget.Toast;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
+import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
@@ -62,6 +63,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private static final String exchangeUrl4Key1 = "";
 
     private EditText inputValue, outputValue;
+    private TextView inputSymbol, outputSymbol;
     private Context context;
     private HashMap<String, Float> currencyRates;
     private Preferences prefs;
@@ -282,7 +284,15 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             format.setMaximumFractionDigits(2);
             format.setGroupingUsed(false);
             //format.setRoundingMode(RoundingMode.CEILING);
-            outputValue.setText(format.format(out));
+            String formattedOut = format.format(out);
+
+            Currency toCurr = currencies.get(prefs.getToCurrencyIndex());
+            String symbol = toCurr.getCurrencySymbol();
+            if (symbol != null && !symbol.isEmpty()) {
+                outputValue.setText(String.format("%s %s", formattedOut, symbol));
+            } else {
+                outputValue.setText(String.format("%s %s", formattedOut, outCurrency));
+            }
         }
     }
 
@@ -312,6 +322,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
+
+        inputSymbol = view.findViewById(R.id.inputSymbol);
+        outputSymbol = view.findViewById(R.id.outputSymbol);
 
         RelativeLayout rlFromUnit = view.findViewById(R.id.fromUnit);
         LinearLayout rlToUnit = view.findViewById(R.id.toUnit);
@@ -421,6 +434,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         inputValue.addTextChangedListener(inputTextWatcher);
 
+        AdMobManager.getInstance(requireActivity()).loadBannerAd(view.findViewById(R.id.adView));
 
         final ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) llMain.getLayoutParams();
         mlp.setMargins(0, 0, 0, 0);
@@ -500,16 +514,22 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     public void onChooseCurrency(Currency c, String type) {
         //Log.d("SHRIKI","Clicked currency in frag -> " + c.getCountry() + " Type: " + type);
         hideBottomSheet();
+        String name = c.getCurrencyName();
+        String symbol = c.getCurrencySymbol();
+        String displayName = (symbol != null && !symbol.isEmpty()) ? String.format("%s (%s)", name, symbol) : name;
+
         if (type.equals("FROM")) {
             fromFlag.setImageResource(c.getFlagImageResource());
-            fromCurrency.setText(c.getCurrencyName());
+            fromCurrency.setText(displayName);
             fromCurrencyISO.setText(c.getCurrencyISOCode());
             prefs.setFromCurrencyIndex(currencies.indexOf(c));
+            inputSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
         } else if (type.equals("TO")) {
             toFlag.setImageResource(c.getFlagImageResource());
-            toCurrency.setText(c.getCurrencyName());
+            toCurrency.setText(displayName);
             toCurrencyISO.setText(c.getCurrencyISOCode());
             prefs.setToCurrencyIndex(currencies.indexOf(c));
+            outputSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
         }
         convertAndDisplay(inputValue.getText().toString());
         displayRates();

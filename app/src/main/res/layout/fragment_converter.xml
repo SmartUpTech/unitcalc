@@ -21,9 +21,11 @@
             android:layout_marginTop="5dp" />
 
         <LinearLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/horizontal_list"
+            android:layout_above="@+id/adView"
             android:orientation="vertical"
             android:weightSum="9">
 
@@ -58,7 +60,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_margin="2dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.8"
                         android:cursorVisible="true"
                         android:gravity="center_vertical|end"
                         android:maxLength="12"
@@ -68,6 +70,16 @@
                         android:textIsSelectable="true"
                         android:textSize="@dimen/h2"
                         android:importantForAutofill="no" />
+
+                    <TextView
+                        android:id="@+id/inputSymbol"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:gravity="center_vertical|start"
+                        android:padding="2dp"
+                        android:textColor="@color/display_result_text_color"
+                        android:textSize="@dimen/h3" />
 
                     <Spinner
                         android:id="@+id/fromUnit"
@@ -115,7 +127,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_margin="2dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.8"
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:gravity="center_vertical|end"
@@ -128,6 +140,16 @@
                         android:textSize="@dimen/h2"
                         android:backgroundTint="@color/colorNewGrey"
                         android:importantForAutofill="no" />
+
+                    <TextView
+                        android:id="@+id/outputSymbol"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.2"
+                        android:gravity="center_vertical|start"
+                        android:padding="2dp"
+                        android:textColor="@color/display_result_text_color"
+                        android:textSize="@dimen/h3" />
 
                     <Spinner
                         android:id="@+id/toUnit"
@@ -343,6 +365,15 @@
                 app:tint="@color/colorNewGrey" />
 
         </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:adSize="BANNER"
+            app:adUnitId="@string/am_banner_ad_unit" />
 
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class BottomSheetCurrencyDialogFragment extends BottomSheetDialogFragment {
 
-    private ArrayList<Currency> curr;
-    private String type;
+    private final ArrayList<Currency> curr;
+    private final String type;
 
     OnChooseCurrencyListener listener;
 

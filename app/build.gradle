@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdk 34
+    compileSdk 36
     defaultConfig {
         applicationId "net.smartlogic.unitconverter"
         minSdkVersion 26
-        targetSdk 34
+        targetSdk 36
         versionCode 8
         versionName "1.7"
     }
@@ -43,17 +43,16 @@ dependencies {
     //testImplementation 'junit:junit:4.12'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.13.0'
 
     // AdMob Dependency
-    implementation 'com.google.android.gms:play-services-ads:23.0.0'
+    implementation 'com.google.android.gms:play-services-ads:25.2.0'
 
     //For App Open Ads
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-runtime:2.6.2"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.10.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.10.0"
 }

@@ -23,8 +23,8 @@ public class Preferences {
     public static final String PREFS_CURR_TO_INDEX = "to_currency_index";
 
     private static Preferences mInstance;
-    private SharedPreferences mPrefs;
-    private Context mContext;
+    private final SharedPreferences mPrefs;
+    private final Context mContext;
 
     public static Preferences getInstance(Context context) {
         if (mInstance == null) {
