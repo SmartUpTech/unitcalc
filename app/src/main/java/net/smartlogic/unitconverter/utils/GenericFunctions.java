@@ -1,7 +1,5 @@
 package net.smartlogic.unitconverter.utils;
 
-import android.content.Context;
-import android.util.TypedValue;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -14,9 +12,5 @@ public class GenericFunctions {
         Snackbar sb = Snackbar.make(v, message, Snackbar.LENGTH_LONG);
         sb.getView().setBackgroundResource(R.color.colorNewGrey);
         sb.show();
-    }
-
-    public static int dpToPx(Context context, int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }

@@ -21,12 +21,17 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
-import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.HorizontalListView;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
@@ -38,12 +43,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-
-public class ConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
+public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
     Button one, two, three;
     Button four, five, six, seven, eight, nine, zero;
@@ -66,12 +67,12 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
     TextWatcher inputTextWatcher;
 
-    public ConverterFragment() {
+    public UnitConverterFragment() {
         // Required empty public constructor
     }
 
-    public static ConverterFragment newInstance() {
-        ConverterFragment fragment = new ConverterFragment();
+    public static UnitConverterFragment newInstance() {
+        UnitConverterFragment fragment = new UnitConverterFragment();
         Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, param1);
         //args.putString(ARG_PARAM2, param2);
@@ -209,7 +210,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
                 if (currentInput.equals("0")) {
                     //Do nothing if already 0 is added and user is trying to add more 0s.
-                } else if (currentInput.length() == 0) {
+                } else if (currentInput.isEmpty()) {
                     inputValue.append("0");
                 } else {
                     inputValue.append("00");
@@ -288,10 +289,11 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_converter, container, false);
+        View view = inflater.inflate(R.layout.fragment_unit_converter, container, false);
+
         conversions = Conversions.getInstance();
         selectedConversion = new Conversion();
 
@@ -346,8 +348,6 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
-
-        AdMobManager.getInstance(requireActivity()).loadBannerAd(view.findViewById(R.id.adView));
 
         return view;
     }
@@ -452,7 +452,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         /*if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;

@@ -5,7 +5,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -28,10 +27,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
-import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
@@ -47,9 +49,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import java.util.concurrent.Executors;
 
 public class CurrencyConverterFragment extends Fragment implements OnClickListener, OnLongClickListener, OnChooseCurrencyListener {
 
@@ -327,7 +327,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         outputSymbol = view.findViewById(R.id.outputSymbol);
 
         RelativeLayout rlFromUnit = view.findViewById(R.id.fromUnit);
-        LinearLayout rlToUnit = view.findViewById(R.id.toUnit);
+        RelativeLayout rlToUnit = view.findViewById(R.id.toUnit);
 
         llMain = view.findViewById(R.id.ll_main);
 
@@ -380,7 +380,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_currency_converter, container, false);
         this.context = this.getActivity();
@@ -390,11 +390,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         prefs = Preferences.getInstance(context);
         utils = new Utils();
-
-        try {
-            getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorHeader));
-        } catch (Exception ignored) {
-        }
 
 /*        Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -434,8 +429,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         inputValue.addTextChangedListener(inputTextWatcher);
 
-        AdMobManager.getInstance(requireActivity()).loadBannerAd(view.findViewById(R.id.adView));
-
         final ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) llMain.getLayoutParams();
         mlp.setMargins(0, 0, 0, 0);
         llMain.setLayoutParams(mlp);
@@ -456,30 +449,19 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     public void refreshCurrencyRates(boolean forceRefresh) {
 
         if (utils.isNetworkAvailable(context)) {
-
-            AsyncTask asyncFetchCurrency = new AsyncTask() {
-
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    startAnimationImageView(refresh);
+            startAnimationImageView(refresh);
+            Executors.newSingleThreadExecutor().execute(() -> {
+                fetchCurrencyData(forceRefresh);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        if (isAdded()) {
+                            lastRefreshTime.setText(AppConst.simpleDateFormat.format(prefs.getCurrencyLastUpdateDate()));
+                            refresh.setAnimation(null);
+                            displayRates();
+                        }
+                    });
                 }
-
-                @Override
-                protected Void doInBackground(Object[] objects) {
-                    fetchCurrencyData(forceRefresh);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Object o) {
-                    super.onPostExecute(o);
-                    lastRefreshTime.setText(AppConst.simpleDateFormat.format(prefs.getCurrencyLastUpdateDate()));
-                    refresh.setAnimation(null);
-                    displayRates();
-                }
-            };
-            asyncFetchCurrency.execute();
+            });
         } else {
             if (forceRefresh)
                 Toast.makeText(context, "No Internet connectivity.", Toast.LENGTH_SHORT).show();

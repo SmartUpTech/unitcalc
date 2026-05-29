@@ -3,6 +3,7 @@
 
     <color name="colorPrimary">#fde4b0</color>
     <color name="colorSecondary">#2b2b2b</color>
+    <color name="colorHeader">#2b2b2b</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
     <color name="colorNewGrey">#f3f3f3</color>  <!-- Changed for night mode -->
 

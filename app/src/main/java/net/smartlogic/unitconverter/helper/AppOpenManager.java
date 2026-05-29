@@ -3,21 +3,7 @@ package net.smartlogic.unitconverter.helper;
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
-
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.appopen.AppOpenAd;
-
-
-import net.smartlogic.unitconverter.BuildConfig;
-import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.app.UnitConverter;
-
-import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,14 +11,24 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.appopen.AppOpenAd;
+
+import net.smartlogic.unitconverter.BuildConfig;
+import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.app.UnitConverter;
+
+import java.util.Date;
+
 public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "SHRIKI";
     private static final boolean DEBUG_FLAG = false;
     private static boolean isShowingAd = false;
     private final UnitConverter myApplication;
-    private final Preferences prefs;
     private AppOpenAd appOpenAd = null;
-    private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private long loadTime = 0;
     private Activity currentActivity;
 
@@ -50,13 +46,8 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
     public AppOpenManager(UnitConverter myApplication) {
         this.myApplication = myApplication;
         this.myApplication.registerActivityLifecycleCallbacks(this);
-        prefs = Preferences.getInstance(myApplication);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         fetchAd();
-    }
-
-    public boolean isShowingAppOpenAd() {
-        return isShowingAd;
     }
 
     public void fetchAd() {
@@ -65,21 +56,20 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
         if (isAdAvailable()) {
             return;
         }
-        loadCallback =
-                new AppOpenAd.AppOpenAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(AppOpenAd ad) {
-                        if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob AppOpen onAdLoaded");
-                        appOpenAd = ad;
-                        loadTime = (new Date()).getTime();
-                    }
+        AppOpenAd.AppOpenAdLoadCallback loadCallback = new AppOpenAd.AppOpenAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull AppOpenAd ad) {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob AppOpen onAdLoaded");
+                appOpenAd = ad;
+                loadTime = (new Date()).getTime();
+            }
 
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                        if (BuildConfig.DEBUG && DEBUG_FLAG)
-                            Log.d(TAG, "AdMob AppOpen onAdFailedToLoad. Error: " + loadAdError.toString());
-                    }
-                };
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                if (BuildConfig.DEBUG && DEBUG_FLAG)
+                    Log.d(TAG, "AdMob AppOpen onAdFailedToLoad. Error: " + loadAdError);
+            }
+        };
         AdRequest request = getAdRequest();
 
             AppOpenAd.load(
@@ -106,16 +96,16 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
                         @Override
                         public void onAdDismissedFullScreenContent() {
                             if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "Admob AppOpen onAdDismissedFullScreenContent");
+                                Log.d(TAG, "AdMob AppOpen onAdDismissedFullScreenContent");
                             appOpenAd = null;
                             isShowingAd = false;
                             fetchAd();
                         }
 
                         @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                             if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "Admob AppOpen onAdFailedToShowFullScreenContent. Error: " + adError.getMessage());
+                                Log.d(TAG, "AdMob AppOpen onAdFailedToShowFullScreenContent. Error: " + adError.getMessage());
                             appOpenAd = null;
                             isShowingAd = false;
                             fetchAd();
@@ -124,7 +114,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
                         @Override
                         public void onAdShowedFullScreenContent() {
                             if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "Admob AppOpen onAdShowedFullScreenContent");
+                                Log.d(TAG, "AdMob AppOpen onAdShowedFullScreenContent");
                             isShowingAd = true;
                         }
                     };
@@ -133,7 +123,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
 
         } else {
             if (BuildConfig.DEBUG && DEBUG_FLAG)
-                Log.d(TAG, "Admob AppOpen cannot show ad. isAdAvailable(): " + isAdAvailable());
+                Log.d(TAG, "AdMob AppOpen cannot show ad. isAdAvailable(): " + isAdAvailable());
             fetchAd();
         }
     }
@@ -142,10 +132,6 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
         long dateDifference = (new Date()).getTime() - this.loadTime;
         long numMilliSecondsPerHour = 3600000;
         return (dateDifference < (numMilliSecondsPerHour * numHours));
-    }
-
-    public interface OnShowAdCompleteListener {
-        void onShowAdComplete();
     }
 
     /**

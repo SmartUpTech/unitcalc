@@ -5,8 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.CurrencyRecyclerViewAdapter;
@@ -14,11 +18,6 @@ import net.smartlogic.unitconverter.adapter.CurrencyRecyclerViewAdapter.ItemClic
 import net.smartlogic.unitconverter.model.Currency;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BottomSheetCurrencyDialogFragment extends BottomSheetDialogFragment {
 

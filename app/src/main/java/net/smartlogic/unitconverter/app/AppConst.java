@@ -12,6 +12,7 @@ public class AppConst {
 
     public static final String TAG_UNIT     = "converter";
     public static final String TAG_CURRENCY = "currency_converter";
+    public static final String TAG_CALC     = "calculator";
     public static String CURRENT_TAG        = TAG_UNIT;
 
 

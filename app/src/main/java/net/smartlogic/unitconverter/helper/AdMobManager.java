@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -20,9 +22,6 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.utils.Utils;
-
-import androidx.annotation.NonNull;
 
 public class AdMobManager {
 
@@ -31,9 +30,7 @@ public class AdMobManager {
     private static final boolean DEBUG_FLAG = false;
     private static long DELAY_BEFORE_LOAD = 1200;
     private static AdMobManager mInstance;
-    private final Preferences prefs;
     private final Context context;
-    private final Utils utils;
     private InterstitialAd mInterstitialAd;
     private RewardedAd mRewardedAd;
 
@@ -43,9 +40,6 @@ public class AdMobManager {
         MobileAds.initialize(context, AdMobManager::onInitializationComplete);
 
         this.context = context;
-        prefs = Preferences.getInstance(context);
-        utils = new Utils(context);
-        //evaluateAdFreeStatus();
     }
 
     public static synchronized AdMobManager getInstance(Context context) {

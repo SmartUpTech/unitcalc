@@ -62,26 +62,6 @@ public final class Conversion {
         return units;
     }
 
-    public Unit getUnitById(int id) {
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).getId() == id) {
-                return units.get(i);
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid unit id supplied");
-    }
-
-    public Unit getUnitByLabelResource(int id) {
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).getLabelResource() == id) {
-                return units.get(i);
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid unit id supplied");
-    }
-
     public int getImageResource() {
         return imageResource;
     }

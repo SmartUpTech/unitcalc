@@ -3,9 +3,9 @@
 
     <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
     <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
-    <string name="url_other_apps">"https://play.google.com/store/apps/developer?id=Smart+Up"</string>
-    <string name="url_smartup_website">https://smartupapps.in</string>
-    <string name="url_privacy_policy">https://smartupapps.in/privacy_policy.html</string>
+    <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
+    <string name="url_smartup_website">https://smartuptech.github.io</string>
+    <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
     <string name="description">Unit Converter is wonderful app for converting Unit and Metrics. UNIT CONVERTER is best UnitConverter app.</string>
     <string name="keywords">Unit Converter app is a UNIT CONVERTER and is very good Unit Converter</string>
     <string name="company">SMARTUP</string>
@@ -17,6 +17,17 @@
 
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
+    <string name="calculator">Calculator</string>
+    <string name="plus">+</string>
+    <string name="multiply">×</string>
+    <string name="divide">÷</string>
+    <string name="clear">AC</string>
+    <string name="history">History</string>
+    <string name="no_history">No history yet</string>
+    <string name="scientific_mode">Scientific Mode</string>
+    <string name="standard_mode">Standard Mode</string>
+    <string name="history_cleared">History cleared</string>
+    <string name="invalid_expression">Invalid Expression</string>
 
     <!-- Numbers -->
     <string name="one">1</string>
@@ -103,8 +114,8 @@
     <string name="kilometre">Kilometre</string>
     <string name="mile">Miles</string>
     <string name="metre">Metre</string>
-    <string name="centimetre">Centimetre (cm)</string>
-    <string name="millimetre">Millimetre (mm)</string>
+    <string name="centimetre">Centimetre</string>
+    <string name="millimetre">Millimetre</string>
     <string name="micrometre">Micrometre</string>
     <string name="nanometre">Nanometre</string>
     <string name="yard">Yard</string>
@@ -113,7 +124,7 @@
     <string name="nautical_mile">Nautical Mile</string>
     <string name="furlong">Furlong</string>
     <string name="light_year">Light Year</string>
-    <string name="decimetre">Decimetre (dm)</string>
+    <string name="decimetre">Decimetre</string>
     <string name="angstrom">Angstrom</string>
     <string name="picometre">Picometre</string>
 
@@ -295,6 +306,8 @@
     <string name="am_interstitial_ad_unit">ca-app-pub-3940256099942544/1033173712</string>
     <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>
     <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- AdMob Test Ads -->
     <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/6300978111</string>-->

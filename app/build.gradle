@@ -7,8 +7,8 @@ android {
         applicationId "net.smartlogic.unitconverter"
         minSdkVersion 26
         targetSdk 36
-        versionCode 8
-        versionName "1.7"
+        versionCode 9
+        versionName "1.8"
     }
 
     namespace "net.smartlogic.unitconverter"
@@ -55,4 +55,5 @@ dependencies {
     //For App Open Ads
     implementation "androidx.lifecycle:lifecycle-runtime:2.10.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.10.0"
+    implementation "androidx.lifecycle:lifecycle-process:2.10.0"
 }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".fragment.ConverterFragment">
+        tools:context=".fragment.UnitConverterFragment">
 
         <net.smartlogic.unitconverter.helper.HorizontalListView
             android:id="@+id/horizontal_list"
@@ -25,7 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/horizontal_list"
-            android:layout_above="@+id/adView"
             android:orientation="vertical"
             android:weightSum="9">
 
@@ -176,102 +175,45 @@
                 <TableLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3">
+                    android:layout_weight="3"
+                    android:stretchColumns="*">
 
                     <TableRow
                         android:layout_height="0dp"
                         android:layout_weight="1">
-
-                        <Button
-                            android:id="@+id/seven"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/seven" />
-
-                        <Button
-                            android:id="@+id/eight"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/eight" />
-
-                        <Button
-                            android:id="@+id/nine"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/nine" />
-
-
-                    </TableRow>
-
-                    <!--third row-->
-                    <TableRow
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-
-                        <Button
-                            android:id="@+id/four"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/four" />
-
-                        <Button
-                            android:id="@+id/five"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/five" />
-
-                        <Button
-                            android:id="@+id/six"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/six" />
-
+                        <Button android:id="@+id/seven" style="@style/ButtonStyle.Number" android:text="@string/seven" />
+                        <Button android:id="@+id/eight" style="@style/ButtonStyle.Number" android:text="@string/eight" />
+                        <Button android:id="@+id/nine" style="@style/ButtonStyle.Number" android:text="@string/nine" />
                     </TableRow>
 
                     <TableRow
                         android:layout_height="0dp"
                         android:layout_weight="1">
-
-                        <Button
-                            android:id="@+id/one"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/one" />
-
-                        <Button
-                            android:id="@+id/two"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/two" />
-
-                        <Button
-                            android:id="@+id/three"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/three" />
-
-
+                        <Button android:id="@+id/four" style="@style/ButtonStyle.Number" android:text="@string/four" />
+                        <Button android:id="@+id/five" style="@style/ButtonStyle.Number" android:text="@string/five" />
+                        <Button android:id="@+id/six" style="@style/ButtonStyle.Number" android:text="@string/six" />
                     </TableRow>
 
-                    <!--fifth row-->
                     <TableRow
                         android:layout_height="0dp"
                         android:layout_weight="1">
+                        <Button android:id="@+id/one" style="@style/ButtonStyle.Number" android:text="@string/one" />
+                        <Button android:id="@+id/two" style="@style/ButtonStyle.Number" android:text="@string/two" />
+                        <Button android:id="@+id/three" style="@style/ButtonStyle.Number" android:text="@string/three" />
+                    </TableRow>
 
-                        <Button
-                            android:id="@+id/zero"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/zero" />
-
-                        <Button
-                            android:id="@+id/double_zero"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/double_zero" />
-
-                        <Button
-                            android:id="@+id/dot"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/dot" />
-
-
+                    <TableRow
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <Button android:id="@+id/zero" style="@style/ButtonStyle.Number" android:text="@string/zero" />
+                        <Button android:id="@+id/double_zero" style="@style/ButtonStyle.Number" android:text="@string/double_zero" />
+                        <Button android:id="@+id/dot" style="@style/ButtonStyle.Number" android:text="@string/dot" />
                     </TableRow>
                 </TableLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:weightSum="4">
@@ -281,99 +223,44 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/pad_button_equal"
+                        android:background="@drawable/pad_button_background"
                         android:src="@drawable/ic_reverse"
-                        app:tint="@color/unit_text_color" />
+                        app:tint="@color/display_result_text_color"
+                        android:contentDescription="Reverse" />
 
                     <ImageButton
                         android:id="@+id/backspace"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/pad_numeric_background_color"
+                        android:background="@drawable/pad_button_background"
                         android:src="@drawable/backspace"
-                        app:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color"
+                        android:contentDescription="Backspace" />
 
                     <ImageButton
                         android:id="@+id/copy"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/pad_numeric_background_color"
+                        android:background="@drawable/pad_button_background"
                         android:src="@drawable/ic_copy"
-                        app:tint="@color/display_result_text_color" />
+                        app:tint="@color/display_result_text_color"
+                        android:contentDescription="Copy" />
 
                     <Button
                         android:id="@+id/minus"
+                        style="@style/ButtonStyle.Number"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/pad_numeric_background_color"
-                        style="@style/ButtonStyle.Number"
-                        android:text="@string/minus" />
+                        android:text="@string/minus"
+                        android:textColor="@color/colorHighlighter" />
                 </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <TextView
-                android:text="@string/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:text="@string/keywords"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:visibility="gone"
-            android:background="@color/pad_numeric_background_color"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:weightSum="10">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="26dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="6"
-                android:contentDescription="@string/company"
-                android:scaleType="fitEnd"
-                android:src="@drawable/image_smart"
-                app:tint="@color/colorNewGrey" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="26dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="4"
-                android:contentDescription="@string/company"
-                android:scaleType="fitStart"
-                android:src="@drawable/image_up"
-                app:tint="@color/colorNewGrey" />
-
-        </LinearLayout>
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            app:adSize="BANNER"
-            app:adUnitId="@string/am_banner_ad_unit" />
 
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

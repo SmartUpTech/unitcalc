@@ -4,8 +4,9 @@
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorSecondary</item>
+        <item name="colorPrimaryDark">@color/colorHeader</item>
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorHeader</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
     </style>
 
@@ -45,7 +46,19 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
+    <style name="RoundedCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 
 </resources>

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     tools:context=".activity.MainActivity">
 
     <FrameLayout
@@ -13,7 +14,7 @@
         android:layout_above="@+id/navigation"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        app:labelVisibilityMode="selected"
+        app:labelVisibilityMode="labeled"
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="56dp"

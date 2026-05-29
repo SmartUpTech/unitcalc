@@ -4,19 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import com.google.android.material.imageview.ShapeableImageView;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.model.Currency;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -66,7 +66,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder
 
     public static class MyViewHolder extends ViewHolder {
         TextView txtCurrency, txtCurrencyISO;
-        ImageView imgFlag;
+        ShapeableImageView imgFlag;
         RelativeLayout rlSingleItem;
         public MyViewHolder(final Context context, @NonNull View itemView, final String type) {
             super(itemView);
