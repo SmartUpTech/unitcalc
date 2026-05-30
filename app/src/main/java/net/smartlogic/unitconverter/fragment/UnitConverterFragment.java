@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +36,7 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
+import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
@@ -344,10 +344,14 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
+                GenericFunctions.adjustTextSize(inputValue, 21);
             }
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
+
+        GenericFunctions.adjustTextSize(inputValue, 21);
+        GenericFunctions.adjustTextSize(outputValue, 21);
 
         return view;
     }
@@ -387,19 +391,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         String finalStr = applyFormatting(result);
 
-        if (finalStr.length() >= 16 ) {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
-        }
-        else if (finalStr.length() >= 12 ) {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f);
-        }
-        else {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 21f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 21f);
-        }
         outputValue.setText(finalStr);
+        GenericFunctions.adjustTextSize(outputValue, 21);
     }
 
     public void initialDropDown(Conversion s) {

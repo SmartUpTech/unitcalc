@@ -4,7 +4,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.utils.GenericFunctions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -124,6 +127,28 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         });
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHistory.setAdapter(historyAdapter);
+
+        tvExpression.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                GenericFunctions.adjustTextSize(tvExpression, 21);
+            }
+        });
+
+        tvResult.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                GenericFunctions.adjustTextSize(tvResult, 32);
+            }
+        });
     }
 
     @Override

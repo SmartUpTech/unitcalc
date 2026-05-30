@@ -15,7 +15,7 @@
     <color name="unit_text_color">#0c0c0c</color>
 
     <!-- Background color for the numeric pad. -->
-    <color name="pad_numeric_background_color">#0c0c0c</color> <!-- Changed for night mode -->
+    <color name="pad_numeric_background_color">#000000</color> <!-- Changed for night mode -->
 
     <color name="pad_button_equal">#fde4b0</color>
 

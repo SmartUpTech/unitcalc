@@ -301,13 +301,12 @@
     <!--Admob Campaign Id    -->
     <string name="am_app_id">ca-app-pub-9684723354540179~1910659108</string>
 
-    <!-- AdMob Real Ads (Replace XX with your actual IDs) -->
-    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="am_interstitial_ad_unit">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>
+    <!-- AdMob Real Ads -->
+    <string name="am_banner_ad_unit">XX</string>
+    <string name="am_interstitial_ad_unit">XX</string>
+    <string name="am_rewarded_ad_unit">XX</string>
     <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
     <!-- AdMob Test Ads -->
     <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/6300978111</string>-->
