@@ -8,8 +8,8 @@ public final class TemperatureUnit extends Unit {
      * @param id            unit id
      * @param labelResource resource of string label
      */
-    public TemperatureUnit(int id, int labelResource) {
+    public TemperatureUnit(int id, int labelResource, String symbol) {
         // Don't require conversion info, handled in code
-        super(id, labelResource, 0.0, 0.0);
+        super(id, labelResource, 0.0, 0.0, symbol);
     }
 }

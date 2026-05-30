@@ -4,27 +4,27 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import com.google.android.material.imageview.ShapeableImageView;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.model.Currency;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-
 public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private ArrayList<Currency> currencies;
-    private Context context;
-    private String type;
+    private final ArrayList<Currency> currencies;
+    private final Context context;
+    private final String type;
 
-    private ItemClickListener itemClickListener;
+    private final ItemClickListener itemClickListener;
 
     public CurrencyRecyclerViewAdapter(Context context, ArrayList<Currency> currencies, String type, ItemClickListener itemClickListener) {
         this.currencies = currencies;
@@ -45,7 +45,13 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder
 
         if (holder instanceof MyViewHolder) {
             Currency currency = currencies.get(position);
-            ((MyViewHolder) holder).txtCurrency.setText(currency.getCurrencyName());
+            String name = currency.getCurrencyName();
+            String symbol = currency.getCurrencySymbol();
+            if (symbol != null && !symbol.isEmpty()) {
+                ((MyViewHolder) holder).txtCurrency.setText(String.format("%s (%s)", name, symbol));
+            } else {
+                ((MyViewHolder) holder).txtCurrency.setText(name);
+            }
             ((MyViewHolder) holder).txtCurrencyISO.setText(currency.getCurrencyISOCode());
             if (currency.getFlagImageResource() != 123 & currency.getFlagImageResource() != 0) {
                 //Log.d("SHRIKI","Here :" + currency.getCountry() + " " + currency.getFlagImageResource());
@@ -60,7 +66,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder
 
     public static class MyViewHolder extends ViewHolder {
         TextView txtCurrency, txtCurrencyISO;
-        ImageView imgFlag;
+        ShapeableImageView imgFlag;
         RelativeLayout rlSingleItem;
         public MyViewHolder(final Context context, @NonNull View itemView, final String type) {
             super(itemView);

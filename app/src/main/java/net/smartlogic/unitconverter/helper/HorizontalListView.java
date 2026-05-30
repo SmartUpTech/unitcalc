@@ -1,8 +1,5 @@
 package net.smartlogic.unitconverter.helper;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
@@ -14,6 +11,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
 
@@ -27,7 +27,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private int mDisplayOffset = 0;
     protected Scroller mScroller;
     private GestureDetector mGesture;
-    private Queue<View> mRemovedViewQueue = new LinkedList<View>();
+    private final Queue<View> mRemovedViewQueue = new LinkedList<View>();
     private OnItemSelectedListener mOnItemSelected;
     private OnItemClickListener mOnItemClicked;
     private OnItemLongClickListener mOnItemLongClicked;
@@ -66,7 +66,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mOnItemLongClicked = listener;
     }
 
-    private DataSetObserver mDataObserver = new DataSetObserver() {
+    private final DataSetObserver mDataObserver = new DataSetObserver() {
 
         @Override
         public void onChanged() {
@@ -291,7 +291,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return true;
     }
 
-    private OnGestureListener mOnGesture = new GestureDetector.SimpleOnGestureListener() {
+    private final OnGestureListener mOnGesture = new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {

@@ -3,6 +3,7 @@
 
     <color name="colorPrimary">#fde4b0</color>
     <color name="colorSecondary">#2b2b2b</color>
+    <color name="colorHeader">#2b2b2b</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
     <color name="colorNewGrey">#f3f3f3</color>  <!-- Changed for night mode -->
 
@@ -14,7 +15,7 @@
     <color name="unit_text_color">#0c0c0c</color>
 
     <!-- Background color for the numeric pad. -->
-    <color name="pad_numeric_background_color">#0c0c0c</color> <!-- Changed for night mode -->
+    <color name="pad_numeric_background_color">#000000</color> <!-- Changed for night mode -->
 
     <color name="pad_button_equal">#fde4b0</color>
 

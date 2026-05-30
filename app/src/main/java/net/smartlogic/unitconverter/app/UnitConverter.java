@@ -4,8 +4,8 @@ import android.app.Application;
 
 import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.AppOpenManager;
-import net.smartlogic.unitconverter.helper.ThemeHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.ThemeHelper;
 
 public class UnitConverter extends Application {
 

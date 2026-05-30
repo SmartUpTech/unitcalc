@@ -1,32 +1,16 @@
 package net.smartlogic.unitconverter.utils;
 
-
-import java.text.DecimalFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class NumberUtils {
 
-        //private static DecimalFormat df = new DecimalFormat("##,##,##,###");
+    public static Float parseFloat(String str) {
+        if (!StringUtils.isNotBlank(str)) return 0f;
+        String clean = str.replaceAll("[^0-9.\\-]", "");
+        return clean.isEmpty() || clean.equals("-") ? 0f : Float.parseFloat(clean);
+    }
 
-        public static Integer parseInt(String str) {
-            return StringUtils.isNotBlank(str) ? Integer.parseInt(str.replace(",","")) : 0;
-        }
-
-        public static Float parseFloat(String str) {
-            return StringUtils.isNotBlank(str) ? Float.parseFloat(str.replace(",","")) : 0;
-        }
-
-        public static Double parseDouble(String str) {
-            return StringUtils.isNotBlank(str) & !str.equals("-") ? Double.parseDouble(str.replace(",","").replace("%","")) : 0;
-        }
-
-        public static Long parseLong(String str) {
-            return StringUtils.isNotBlank(str) ? Long.parseLong(str.replace(",","")) : 0;
-        }
-
-
-
-
-
+    public static Double parseDouble(String str) {
+        if (!StringUtils.isNotBlank(str) || str.equals("-")) return 0.0;
+        String clean = str.replaceAll("[^0-9.\\-]", "");
+        return clean.isEmpty() || clean.equals("-") ? 0.0 : Double.parseDouble(clean);
+    }
 }

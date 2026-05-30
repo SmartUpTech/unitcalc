@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +20,12 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
@@ -31,24 +36,22 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
+import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-
-public class ConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
+public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
     Button one, two, three;
     Button four, five, six, seven, eight, nine, zero;
     Button  subtract;
     Button dot, double_zero;
     EditText inputValue, outputValue;
+    TextView inputSymbol, outputSymbol;
     HorizontalListView horizontalListView;
     private Context context;
     private Spinner fromUnit, toUnit;
@@ -64,12 +67,12 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
     TextWatcher inputTextWatcher;
 
-    public ConverterFragment() {
+    public UnitConverterFragment() {
         // Required empty public constructor
     }
 
-    public static ConverterFragment newInstance() {
-        ConverterFragment fragment = new ConverterFragment();
+    public static UnitConverterFragment newInstance() {
+        UnitConverterFragment fragment = new UnitConverterFragment();
         Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, param1);
         //args.putString(ARG_PARAM2, param2);
@@ -111,6 +114,9 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
+
+        inputSymbol = view.findViewById(R.id.inputSymbol);
+        outputSymbol = view.findViewById(R.id.outputSymbol);
 
         horizontalListView = view.findViewById(R.id.horizontal_list);
         fromUnit = view.findViewById(R.id.fromUnit);
@@ -204,7 +210,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
                 if (currentInput.equals("0")) {
                     //Do nothing if already 0 is added and user is trying to add more 0s.
-                } else if (currentInput.length() == 0) {
+                } else if (currentInput.isEmpty()) {
                     inputValue.append("0");
                 } else {
                     inputValue.append("00");
@@ -283,10 +289,11 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_converter, container, false);
+        View view = inflater.inflate(R.layout.fragment_unit_converter, container, false);
+
         conversions = Conversions.getInstance();
         selectedConversion = new Conversion();
 
@@ -337,10 +344,14 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
+                GenericFunctions.adjustTextSize(inputValue, 21);
             }
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
+
+        GenericFunctions.adjustTextSize(inputValue, 21);
+        GenericFunctions.adjustTextSize(outputValue, 21);
 
         return view;
     }
@@ -360,6 +371,14 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         double result;
 
+        String fromSym = from.getSymbol();
+        if (fromSym == null || fromSym.isEmpty()) fromSym = String.valueOf(from.getId());
+        inputSymbol.setText(fromSym);
+
+        String toSym = to.getSymbol();
+        if (toSym == null || toSym.isEmpty()) toSym = String.valueOf(to.getId());
+        outputSymbol.setText(toSym);
+
         if (selectedConversion.getId() == Conversion.TEMPERATURE) {
             result = conversions.convertTemperatureValue(NumberUtils.parseDouble(in),from, to);
             result = in.isEmpty() ? 0 : result;
@@ -372,19 +391,8 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
 
         String finalStr = applyFormatting(result);
 
-        if (finalStr.length() >= 16 ) {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
-        }
-        else if (finalStr.length() >= 12 ) {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f);
-        }
-        else {
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 21f);
-            outputValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 21f);
-        }
         outputValue.setText(finalStr);
+        GenericFunctions.adjustTextSize(outputValue, 21);
     }
 
     public void initialDropDown(Conversion s) {
@@ -437,7 +445,7 @@ public class ConverterFragment extends Fragment implements OnClickListener, OnLo
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         /*if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;

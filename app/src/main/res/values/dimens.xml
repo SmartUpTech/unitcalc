@@ -1,16 +1,14 @@
 <resources>
 
-    <dimen name="h1">32dp</dimen>
-    <dimen name="h2">21dp</dimen>
-    <dimen name="h3">15dp</dimen>
-    <dimen name="h3_5">13dp</dimen>
-    <dimen name="h4">10dp</dimen>
-    <dimen name="h5">8dp</dimen>
+    <dimen name="h1">32sp</dimen>
+    <dimen name="h2">21sp</dimen>
+    <dimen name="h3">15sp</dimen>
+    <dimen name="h3_5">13sp</dimen>
+    <dimen name="h4">10sp</dimen>
+    <dimen name="h5">8sp</dimen>
 
     <dimen name="spinnerHeight">54dp</dimen>
 
-
-
-    <dimen name="buttonTextSize">22dip</dimen>
+    <dimen name="buttonTextSize">22dp</dimen>
 
 </resources>

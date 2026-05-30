@@ -3,9 +3,9 @@ package net.smartlogic.unitconverter.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import net.smartlogic.unitconverter.R;
-
 import androidx.preference.PreferenceManager;
+
+import net.smartlogic.unitconverter.R;
 
 public class Preferences {
 
@@ -23,8 +23,8 @@ public class Preferences {
     public static final String PREFS_CURR_TO_INDEX = "to_currency_index";
 
     private static Preferences mInstance;
-    private SharedPreferences mPrefs;
-    private Context mContext;
+    private final SharedPreferences mPrefs;
+    private final Context mContext;
 
     public static Preferences getInstance(Context context) {
         if (mInstance == null) {
@@ -44,17 +44,12 @@ public class Preferences {
     }
 
     public boolean isLightTheme() {
-        return mPrefs.getBoolean(PREFS_THEME, false);
+        return !mPrefs.getBoolean(PREFS_THEME, false);
     }
 
     public String getPrefsTheme() {
-        try {
-            if (mPrefs.getBoolean(PREFS_THEME, false)) {
-                return ThemeHelper.DARK_MODE;
-            }
-        }
-        catch (Exception ignored) {
-            return ThemeHelper.LIGHT_MODE;
+        if (mPrefs.getBoolean(PREFS_THEME, false)) {
+            return ThemeHelper.DARK_MODE;
         }
         return ThemeHelper.LIGHT_MODE;
     }
@@ -84,7 +79,11 @@ public class Preferences {
     }
 
     public int getNumberDecimals() {
-        return Integer.parseInt(mPrefs.getString(PREFS_NUMBER_OF_DECIMALS, mContext.getString(R.string.default_number_decimals)));
+        try {
+            return Integer.parseInt(mPrefs.getString(PREFS_NUMBER_OF_DECIMALS, mContext.getString(R.string.default_number_decimals)));
+        } catch (NumberFormatException e) {
+            return Integer.parseInt(mContext.getString(R.string.default_number_decimals));
+        }
     }
 
     public String getDecimalSeparator() {
@@ -95,7 +94,7 @@ public class Preferences {
         return mPrefs.getString(PREFS_GROUP_SEPARATOR, mContext.getString(R.string.default_group_separator));
     }
 
-    public void setCurrencyLastUpdateDate(long  timeInMilli) {
+    public void setCurrencyLastUpdateDate(long timeInMilli) {
         mPrefs.edit().putLong(PREFS_CURR_LAST_UPDT, timeInMilli).apply();
     }
 
@@ -108,7 +107,7 @@ public class Preferences {
     }
 
     public String getCurrencyResponse() {
-        return  mPrefs.getString(PREFS_CURR_DATA,"");
+        return mPrefs.getString(PREFS_CURR_DATA, "");
     }
 
     public void setFromCurrencyIndex(int index) {

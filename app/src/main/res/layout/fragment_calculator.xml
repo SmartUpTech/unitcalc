@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl"
+    android:background="@color/calculator_accent_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.CalculatorFragment">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <!-- Display Area -->
+            <RelativeLayout
+                android:id="@+id/display_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3.5"
+                android:padding="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_history"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_history"
+                    app:tint="@color/colorNewGrey"
+                    android:contentDescription="History" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical"
+                    android:gravity="bottom">
+
+                    <TextView
+                        android:id="@+id/expression"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textColor="@color/colorNewGrey"
+                        android:textSize="@dimen/h2"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <TextView
+                        android:id="@+id/result"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textColor="@color/display_result_text_color"
+                        android:textSize="@dimen/h1"
+                        android:maxLines="1"
+                        android:ellipsize="start"
+                        android:text="0" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Function Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/clear"
+                    style="@style/ButtonStyle.Number"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/clear"
+                    android:textColor="@android:color/holo_red_dark" />
+
+                <ImageButton
+                    android:id="@+id/backspace"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/pad_button_background"
+                    android:src="@drawable/backspace"
+                    app:tint="@color/display_result_text_color"
+                    android:contentDescription="Backspace" />
+
+                <ImageButton
+                    android:id="@+id/copy"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/pad_button_background"
+                    android:src="@drawable/ic_copy"
+                    app:tint="@color/display_result_text_color"
+                    android:contentDescription="Copy" />
+
+            </LinearLayout>
+
+            <!-- Advanced Row -->
+            <LinearLayout
+                android:id="@+id/advanced_row"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:weightSum="4">
+                <Button android:id="@+id/parenthesis_open" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="(" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/parenthesis_close" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text=")" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/power" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="^" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/sqrt" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="√" android:textColor="@color/colorHighlighter" />
+            </LinearLayout>
+
+            <!-- Number Pad -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4.5"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TableLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:stretchColumns="*">
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/seven" style="@style/ButtonStyle.Number" android:text="7" /><Button android:id="@+id/eight" style="@style/ButtonStyle.Number" android:text="8" /><Button android:id="@+id/nine" style="@style/ButtonStyle.Number" android:text="9" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/four" style="@style/ButtonStyle.Number" android:text="4" /><Button android:id="@+id/five" style="@style/ButtonStyle.Number" android:text="5" /><Button android:id="@+id/six" style="@style/ButtonStyle.Number" android:text="6" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/one" style="@style/ButtonStyle.Number" android:text="1" /><Button android:id="@+id/two" style="@style/ButtonStyle.Number" android:text="2" /><Button android:id="@+id/three" style="@style/ButtonStyle.Number" android:text="3" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/zero" style="@style/ButtonStyle.Number" android:text="0" /><Button android:id="@+id/dot" style="@style/ButtonStyle.Number" android:text="." /><Button android:id="@+id/percent" style="@style/ButtonStyle.Number" android:text="%" /></TableRow>
+                </TableLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="5">
+                    <Button android:id="@+id/divide" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="÷" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/multiply" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="×" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/minus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="-" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/plus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="+" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/equal" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="=" android:background="@color/pad_button_equal" android:textColor="@color/unit_text_color" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- History Overlay -->
+        <LinearLayout
+            android:id="@+id/history_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/calculator_accent_color"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_close_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_forward"
+                    android:rotation="180"
+                    app:tint="@color/colorNewGrey"
+                    android:contentDescription="Close History" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/history"
+                    android:textColor="@color/colorNewGrey"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btn_clear_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_delete"
+                    app:tint="@color/colorNewGrey"
+                    android:contentDescription="Clear History" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_history"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="16dp" />
+
+            <TextView
+                android:id="@+id/tv_empty_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/no_history"
+                android:textColor="@color/colorNewGrey"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
