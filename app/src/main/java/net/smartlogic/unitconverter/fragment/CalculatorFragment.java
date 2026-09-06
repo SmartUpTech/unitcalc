@@ -32,6 +32,7 @@ import net.smartlogic.unitconverter.graphy.integration.GraphyBridge;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
@@ -51,25 +52,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private LinearLayout historyLayout;
     private RecyclerView rvHistory;
     private HistoryAdapter historyAdapter;
-    private final List<HistoryItem> historyList = new ArrayList<>();
+    private final List<CalculationHistoryItem> historyList = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge();
     private GraphyOutput latestGraphyOutput;
-
-    public static class HistoryItem {
-        public String expression;
-        public String result;
-
-        public HistoryItem(String expression, String result) {
-            this.expression = expression;
-            this.result = result;
-        }
-    }
-
-    public CalculatorFragment() {
-        // Required empty public constructor
-    }
 
     public static CalculatorFragment newInstance() {
         return new CalculatorFragment();
@@ -426,14 +413,14 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-        private final List<HistoryItem> items;
+        private final List<CalculationHistoryItem> items;
         private final OnItemClickListener listener;
 
         interface OnItemClickListener {
-            void onItemClick(HistoryItem item);
+            void onItemClick(CalculationHistoryItem item);
         }
 
-        HistoryAdapter(List<HistoryItem> items, OnItemClickListener listener) {
+        HistoryAdapter(List<CalculationHistoryItem> items, OnItemClickListener listener) {
             this.items = items;
             this.listener = listener;
         }
@@ -447,7 +434,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            HistoryItem item = items.get(position);
+            CalculationHistoryItem item = items.get(position);
             holder.tvExpression.setText(item.expression);
             holder.tvResult.setText(item.result);
             holder.itemView.setOnClickListener(v -> listener.onItemClick(item));

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import net.smartlogic.unitconverter.fragment.CalculatorFragment.HistoryItem;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +49,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<HistoryItem> getAllHistory() {
-        List<HistoryItem> historyList = new ArrayList<>();
+    public List<CalculationHistoryItem> getAllHistory() {
+        List<CalculationHistoryItem> historyList = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + COLUMN_ID + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int expressionIndex = cursor.getColumnIndex(COLUMN_EXPRESSION);
                 int resultIndex = cursor.getColumnIndex(COLUMN_RESULT);
                 if (expressionIndex != -1 && resultIndex != -1) {
-                    HistoryItem item = new HistoryItem(
+                    CalculationHistoryItem item = new CalculationHistoryItem(
                             cursor.getString(expressionIndex),
                             cursor.getString(resultIndex)
                     );
