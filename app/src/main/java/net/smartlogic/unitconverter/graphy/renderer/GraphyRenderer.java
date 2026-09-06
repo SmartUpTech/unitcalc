@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.graphy.theme.GraphyTheme;
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 
 /**
  * Contract for Graphy renderers. Implementations ship in later milestones.
@@ -18,5 +18,5 @@ public interface GraphyRenderer {
     @NonNull
     View render(@NonNull Context context,
                 @NonNull GraphyOutput output,
-                @NonNull GraphyTheme theme);
+                @NonNull GraphyViewTheme theme);
 }

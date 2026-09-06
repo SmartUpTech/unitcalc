@@ -14,7 +14,7 @@ import net.smartlogic.unitconverter.graphy.model.GraphyConnection;
 import net.smartlogic.unitconverter.graphy.model.GraphyNode;
 import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.graphy.theme.GraphyTheme;
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class FlowchartGraphView extends View {
     private static final float OPERATION_PADDING_DP = 6f;
 
     private GraphyOutput output;
-    private GraphyTheme theme;
+    private GraphyViewTheme theme;
 
     private final Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -61,7 +61,7 @@ public class FlowchartGraphView extends View {
         connectorPaint.setStyle(Paint.Style.STROKE);
     }
 
-    public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyTheme theme) {
+    public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
         this.output = output;
         this.theme = theme;
         layoutNodes();

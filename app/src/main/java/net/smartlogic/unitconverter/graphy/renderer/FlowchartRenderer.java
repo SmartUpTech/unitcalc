@@ -7,7 +7,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.graphy.theme.GraphyTheme;
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 
 /**
  * Default Graphy renderer that draws expression graphs as left-to-right flowcharts.
@@ -23,7 +23,7 @@ public final class FlowchartRenderer implements GraphyRenderer {
     @Override
     public View render(@NonNull Context context,
                        @NonNull GraphyOutput output,
-                       @NonNull GraphyTheme theme) {
+                       @NonNull GraphyViewTheme theme) {
         FlowchartGraphView graphView = new FlowchartGraphView(context);
         graphView.setGraph(output, theme);
 
