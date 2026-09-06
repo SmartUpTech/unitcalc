@@ -88,6 +88,41 @@ public class ExpressionGraphBuilderTest {
         assertEquals("42", output.getNodes().get(0).getDisplayValue());
     }
 
+    @Test
+    public void build_sqrtExpression() {
+        EvaluationResult evaluation = ExpressionEvaluator.evaluate("sqrt(16)");
+        CalculationSnapshot snapshot = CalculationSnapshot.create(
+                CalculationSnapshot.BASIC_CALCULATOR_ID,
+                "sqrt(16)",
+                "sqrt(16)",
+                "4",
+                evaluation
+        );
+
+        GraphyOutput output = builder.build(snapshot, evaluation.getTrace());
+
+        assertEquals("4", output.getResult());
+        assertTrue(hasNodeType(output, GraphyNodeType.OPERATION));
+        assertTrue(hasNodeType(output, GraphyNodeType.RESULT));
+    }
+
+    @Test
+    public void build_parenthesesExpression() {
+        EvaluationResult evaluation = ExpressionEvaluator.evaluate("(2+3)*4");
+        CalculationSnapshot snapshot = CalculationSnapshot.create(
+                CalculationSnapshot.BASIC_CALCULATOR_ID,
+                "(2+3)*4",
+                "(2+3)*4",
+                "20",
+                evaluation
+        );
+
+        GraphyOutput output = builder.build(snapshot, evaluation.getTrace());
+
+        assertEquals("20", output.getResult());
+        assertTrue(output.getConnections().size() >= 3);
+    }
+
     private static boolean hasNodeType(GraphyOutput output, GraphyNodeType type) {
         for (GraphyNode node : output.getNodes()) {
             if (node.getType() == type) {
