@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/calculator_accent_color">
+    android:background="@color/screen_background">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/converter_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorHeader"
-        app:tabIndicatorColor="@color/graphy_primary"
-        app:tabSelectedTextColor="@color/unit_text_color"
-        app:tabTextColor="@color/colorNewGrey"
+        android:background="@color/app_bar"
+        app:tabIndicatorColor="@color/nav_selected"
+        app:tabSelectedTextColor="@color/on_app_bar"
+        app:tabTextColor="@color/screen_expression_text"
         app:tabMode="fixed"
         app:tabGravity="fill" />
 

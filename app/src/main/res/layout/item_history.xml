@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:textColor="@color/colorNewGrey"
+        android:textColor="@color/screen_expression_text"
         android:textSize="14sp" />
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:textColor="@color/display_result_text_color"
+        android:textColor="@color/screen_result_text"
         android:textSize="20sp"
         android:textStyle="bold" />
 

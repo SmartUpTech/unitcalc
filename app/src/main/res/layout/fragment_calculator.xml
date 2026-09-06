@@ -3,40 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl"
-    android:background="@color/calculator_accent_color"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/screen_background">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".fragment.CalculatorFragment">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="10">
+            android:layout_height="match_parent">
 
-            <!-- Display Area -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/keypad_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.44" />
+
+            <!-- Display + Graphy overlay. Keypad height never changes. -->
             <RelativeLayout
                 android:id="@+id/display_layout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="3.5"
-                android:padding="16dp">
+                android:background="@color/screen_background"
+                android:padding="16dp"
+                app:layout_constraintBottom_toTopOf="@id/keypad_guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageButton
                     android:id="@+id/btn_history"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="History"
                     android:src="@drawable/ic_history"
-                    app:tint="@color/colorNewGrey"
-                    android:contentDescription="History" />
+                    app:tint="@color/screen_expression_text" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_graphy"
@@ -47,149 +56,270 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="4dp"
                     android:text="@string/graphy"
+                    android:textColor="@color/graphy_on_primary"
                     android:visibility="gone"
                     app:chipBackgroundColor="@color/graphy_primary"
-                    app:chipStrokeWidth="0dp"
-                    android:textColor="@color/graphy_on_primary" />
+                    app:chipStrokeWidth="0dp" />
+
+                <androidx.compose.ui.platform.ComposeView
+                    android:id="@+id/graphy_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/display_values"
+                    android:layout_below="@id/btn_history"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone" />
 
                 <LinearLayout
+                    android:id="@+id/display_values"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:orientation="vertical"
-                    android:gravity="bottom">
+                    android:gravity="bottom"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/expression"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
                         android:gravity="end"
-                        android:textColor="@color/colorNewGrey"
-                        android:textSize="@dimen/h2"
                         android:maxLines="2"
-                        android:ellipsize="end" />
+                        android:textColor="@color/screen_expression_text"
+                        android:textSize="@dimen/h2" />
 
                     <TextView
                         android:id="@+id/result"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:textColor="@color/display_result_text_color"
-                        android:textSize="@dimen/h1"
-                        android:maxLines="1"
                         android:ellipsize="start"
-                        android:text="0" />
+                        android:gravity="end"
+                        android:maxLines="1"
+                        android:text="0"
+                        android:textColor="@color/screen_result_text"
+                        android:textSize="@dimen/h1" />
                 </LinearLayout>
             </RelativeLayout>
 
-            <!-- Graphy explanation panel (Jetpack Compose + Material 3) -->
-            <androidx.compose.ui.platform.ComposeView
-                android:id="@+id/graphy_panel"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2.5"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginBottom="4dp"
-                android:visibility="gone" />
-
-            <!-- Function Bar -->
+            <!-- Pinned keypad: Graphy visibility cannot change this region. -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/keypad"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/clear"
-                    style="@style/ButtonStyle.Number"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/clear"
-                    android:textColor="@android:color/holo_red_dark" />
-
-                <ImageButton
-                    android:id="@+id/backspace"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/pad_button_background"
-                    android:src="@drawable/backspace"
-                    app:tint="@color/display_result_text_color"
-                    android:contentDescription="Backspace" />
-
-                <ImageButton
-                    android:id="@+id/copy"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/pad_button_background"
-                    android:src="@drawable/ic_copy"
-                    app:tint="@color/display_result_text_color"
-                    android:contentDescription="Copy" />
-
-            </LinearLayout>
-
-            <!-- Advanced Row -->
-            <LinearLayout
-                android:id="@+id/advanced_row"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
-                android:weightSum="4">
-                <Button android:id="@+id/parenthesis_open" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="(" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/parenthesis_close" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text=")" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/power" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="^" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/sqrt" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="√" android:textColor="@color/colorHighlighter" />
-            </LinearLayout>
-
-            <!-- Number Pad -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4.5"
-                android:orientation="horizontal"
-                android:weightSum="4">
-
-                <TableLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:stretchColumns="*">
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/seven" style="@style/ButtonStyle.Number" android:text="7" /><Button android:id="@+id/eight" style="@style/ButtonStyle.Number" android:text="8" /><Button android:id="@+id/nine" style="@style/ButtonStyle.Number" android:text="9" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/four" style="@style/ButtonStyle.Number" android:text="4" /><Button android:id="@+id/five" style="@style/ButtonStyle.Number" android:text="5" /><Button android:id="@+id/six" style="@style/ButtonStyle.Number" android:text="6" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/one" style="@style/ButtonStyle.Number" android:text="1" /><Button android:id="@+id/two" style="@style/ButtonStyle.Number" android:text="2" /><Button android:id="@+id/three" style="@style/ButtonStyle.Number" android:text="3" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/zero" style="@style/ButtonStyle.Number" android:text="0" /><Button android:id="@+id/dot" style="@style/ButtonStyle.Number" android:text="." /><Button android:id="@+id/percent" style="@style/ButtonStyle.Number" android:text="%" /></TableRow>
-                </TableLayout>
+                android:background="@color/keypad_background"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/keypad_guideline">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="5">
-                    <Button android:id="@+id/divide" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="÷" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/multiply" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="×" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/minus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="-" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/plus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="+" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/equal" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="=" android:background="@color/pad_button_equal" android:textColor="@color/unit_text_color" />
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/clear"
+                        style="@style/ButtonStyle.Action"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/clear" />
+
+                    <ImageButton
+                        android:id="@+id/backspace"
+                        style="@style/ImageButtonStyle.Action"
+                        android:contentDescription="Backspace"
+                        android:src="@drawable/backspace"
+                        app:tint="@color/key_action_text" />
+
+                    <ImageButton
+                        android:id="@+id/copy"
+                        style="@style/ImageButtonStyle.Action"
+                        android:contentDescription="Copy"
+                        android:src="@drawable/ic_copy"
+                        app:tint="@color/key_action_text" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/advanced_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp"
+                    android:weightSum="4">
+
+                    <Button
+                        android:id="@+id/parenthesis_open"
+                        style="@style/ButtonStyle.Operator"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="(" />
+
+                    <Button
+                        android:id="@+id/parenthesis_close"
+                        style="@style/ButtonStyle.Operator"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text=")" />
+
+                    <Button
+                        android:id="@+id/power"
+                        style="@style/ButtonStyle.Operator"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="^" />
+
+                    <Button
+                        android:id="@+id/sqrt"
+                        style="@style/ButtonStyle.Operator"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="√" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4.5"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp"
+                    android:weightSum="4">
+
+                    <TableLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:stretchColumns="*">
+
+                        <TableRow android:layout_weight="1">
+                            <Button
+                                android:id="@+id/seven"
+                                style="@style/ButtonStyle.Number"
+                                android:text="7" />
+                            <Button
+                                android:id="@+id/eight"
+                                style="@style/ButtonStyle.Number"
+                                android:text="8" />
+                            <Button
+                                android:id="@+id/nine"
+                                style="@style/ButtonStyle.Number"
+                                android:text="9" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="1">
+                            <Button
+                                android:id="@+id/four"
+                                style="@style/ButtonStyle.Number"
+                                android:text="4" />
+                            <Button
+                                android:id="@+id/five"
+                                style="@style/ButtonStyle.Number"
+                                android:text="5" />
+                            <Button
+                                android:id="@+id/six"
+                                style="@style/ButtonStyle.Number"
+                                android:text="6" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="1">
+                            <Button
+                                android:id="@+id/one"
+                                style="@style/ButtonStyle.Number"
+                                android:text="1" />
+                            <Button
+                                android:id="@+id/two"
+                                style="@style/ButtonStyle.Number"
+                                android:text="2" />
+                            <Button
+                                android:id="@+id/three"
+                                style="@style/ButtonStyle.Number"
+                                android:text="3" />
+                        </TableRow>
+
+                        <TableRow android:layout_weight="1">
+                            <Button
+                                android:id="@+id/zero"
+                                style="@style/ButtonStyle.Number"
+                                android:text="0" />
+                            <Button
+                                android:id="@+id/dot"
+                                style="@style/ButtonStyle.Number"
+                                android:text="." />
+                            <Button
+                                android:id="@+id/percent"
+                                style="@style/ButtonStyle.Number"
+                                android:text="%" />
+                        </TableRow>
+                    </TableLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:weightSum="5">
+
+                        <Button
+                            android:id="@+id/divide"
+                            style="@style/ButtonStyle.Operator"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="÷" />
+
+                        <Button
+                            android:id="@+id/multiply"
+                            style="@style/ButtonStyle.Operator"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="×" />
+
+                        <Button
+                            android:id="@+id/minus"
+                            style="@style/ButtonStyle.Operator"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="-" />
+
+                        <Button
+                            android:id="@+id/plus"
+                            style="@style/ButtonStyle.Operator"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="+" />
+
+                        <Button
+                            android:id="@+id/equal"
+                            style="@style/ButtonStyle.Equals"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="=" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- History Overlay -->
         <LinearLayout
             android:id="@+id/history_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/calculator_accent_color"
-            android:orientation="vertical"
-            android:visibility="gone"
+            android:background="@color/screen_background"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -203,17 +333,17 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_forward"
+                    android:contentDescription="Close History"
                     android:rotation="180"
-                    app:tint="@color/colorNewGrey"
-                    android:contentDescription="Close History" />
+                    android:src="@drawable/ic_arrow_forward"
+                    app:tint="@color/screen_expression_text" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="@string/history"
-                    android:textColor="@color/colorNewGrey"
+                    android:textColor="@color/screen_expression_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -224,9 +354,9 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Clear History"
                     android:src="@drawable/ic_delete"
-                    app:tint="@color/colorNewGrey"
-                    android:contentDescription="Clear History" />
+                    app:tint="@color/screen_expression_text" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -242,11 +372,9 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/no_history"
-                android:textColor="@color/colorNewGrey"
+                android:textColor="@color/screen_expression_text"
                 android:visibility="gone" />
         </LinearLayout>
-
-
 
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

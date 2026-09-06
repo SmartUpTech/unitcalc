@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/calculator_accent_color">
+    android:background="@color/screen_background">
 
     <TextView
         android:id="@+id/tv_empty_favorites"

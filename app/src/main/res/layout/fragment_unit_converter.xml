@@ -5,7 +5,7 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/calculator_accent_color">
+    android:background="@color/screen_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
                     android:text="@string/str_from"
-                    android:textColor="@color/display_result_text_color" />
+                    android:textColor="@color/screen_result_text" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                         android:maxLength="12"
                         android:padding="5dp"
                         android:textAlignment="textEnd"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textIsSelectable="true"
                         android:textSize="@dimen/h2" />
 
@@ -74,7 +74,7 @@
                         android:layout_weight="0.2"
                         android:gravity="center_vertical|start"
                         android:padding="2dp"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textSize="@dimen/h3" />
 
                     <Spinner
@@ -103,7 +103,7 @@
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
                     android:text="@string/str_to"
-                    android:textColor="@color/display_result_text_color" />
+                    android:textColor="@color/screen_result_text" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                         android:inputType="textMultiLine"
                         android:padding="5dp"
                         android:textAlignment="textEnd"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textIsSelectable="true"
                         android:textSize="@dimen/h2" />
 
@@ -136,7 +136,7 @@
                         android:layout_weight="0.2"
                         android:gravity="center_vertical|start"
                         android:padding="2dp"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textSize="@dimen/h3" />
 
                     <Spinner
@@ -156,8 +156,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
+                android:background="@color/keypad_background"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
+                android:padding="8dp"
                 android:weightSum="4">
 
                 <TableLayout
@@ -244,42 +246,41 @@
 
                     <ImageButton
                         android:id="@+id/reverse"
+                        style="@style/ImageButtonStyle.Action"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
                         android:contentDescription="Reverse"
                         android:src="@drawable/ic_reverse"
-                        app:tint="@color/display_result_text_color" />
+                        app:tint="@color/key_action_text" />
 
                     <ImageButton
                         android:id="@+id/backspace"
+                        style="@style/ImageButtonStyle.Action"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
                         android:contentDescription="Backspace"
                         android:src="@drawable/backspace"
-                        app:tint="@color/display_result_text_color" />
+                        app:tint="@color/key_action_text" />
 
                     <ImageButton
                         android:id="@+id/copy"
+                        style="@style/ImageButtonStyle.Action"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
                         android:contentDescription="Copy"
                         android:src="@drawable/ic_copy"
-                        app:tint="@color/display_result_text_color" />
+                        app:tint="@color/key_action_text" />
 
                     <Button
                         android:id="@+id/minus"
-                        style="@style/ButtonStyle.Number"
+                        style="@style/ButtonStyle.Operator"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:text="@string/minus"
-                        android:textColor="@color/colorHighlighter" />
+                        android:text="@string/minus" />
                 </LinearLayout>
 
             </LinearLayout>

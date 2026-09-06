@@ -5,7 +5,7 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/calculator_accent_color"
+    android:background="@color/screen_background"
     tools:context=".fragment.CurrencyConverterFragment">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:padding="8dp"
-        android:textColor="@color/display_result_text_color" />
+        android:textColor="@color/screen_result_text" />
 
     <LinearLayout
         android:id="@+id/ll_main"
@@ -45,7 +45,7 @@
                 android:inputType="textMultiLine"
                 android:maxLength="12"
                 android:text="@string/zero"
-                android:textColor="@color/display_result_text_color"
+                android:textColor="@color/screen_result_text"
                 android:textSize="@dimen/h1"
                 tools:ignore="LabelFor" />
 
@@ -56,7 +56,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/display_result_text_color"
+                android:textColor="@color/screen_result_text"
                 android:textSize="@dimen/h2" />
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/equal"
-                android:textColor="@color/display_result_text_color"
+                android:textColor="@color/screen_result_text"
                 android:textSize="@dimen/h1" />
 
             <EditText
@@ -80,7 +80,7 @@
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
                 android:text="@string/zero"
-                android:textColor="@color/display_result_text_color"
+                android:textColor="@color/screen_result_text"
                 android:textSize="@dimen/h1" />
 
             <TextView
@@ -90,7 +90,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/display_result_text_color"
+                android:textColor="@color/screen_result_text"
                 android:textSize="@dimen/h2" />
         </LinearLayout>
 
@@ -133,14 +133,14 @@
                         android:id="@+id/fromCurrency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textSize="@dimen/h3" />
 
                     <TextView
                         android:id="@+id/fromCurrencyISO"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorNewGrey"
+                        android:textColor="@color/screen_expression_text"
                         android:textSize="@dimen/h4" />
                 </LinearLayout>
             </RelativeLayout>
@@ -150,7 +150,7 @@
                 android:layout_height="match_parent"
                 android:padding="8dp"
                 android:src="@drawable/ic_arrow_forward"
-                app:tint="@color/display_result_text_color" />
+                app:tint="@color/screen_result_text" />
 
             <RelativeLayout
                 android:id="@+id/toUnit"
@@ -182,14 +182,14 @@
                         android:id="@+id/toCurrency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/display_result_text_color"
+                        android:textColor="@color/screen_result_text"
                         android:textSize="@dimen/h3" />
 
                     <TextView
                         android:id="@+id/toCurrencyISO"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorNewGrey"
+                        android:textColor="@color/screen_expression_text"
                         android:textSize="@dimen/h4" />
                 </LinearLayout>
             </RelativeLayout>
@@ -206,7 +206,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:textColor="@color/colorNewGrey"
+                android:textColor="@color/screen_expression_text"
                 android:textSize="@dimen/h5" />
         </RelativeLayout>
 
@@ -222,21 +222,23 @@
                 style="@style/ActionButtons"
                 android:contentDescription="Share"
                 android:src="@drawable/share"
-                app:tint="@color/colorNewGrey" />
+                app:tint="@color/screen_expression_text" />
 
             <ImageButton
                 android:id="@+id/refresh"
                 style="@style/ActionButtons"
                 android:contentDescription="Refresh"
                 android:src="@drawable/ic_unit_converter"
-                app:tint="@color/colorNewGrey" />
+                app:tint="@color/screen_expression_text" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5"
+            android:background="@color/keypad_background"
             android:orientation="horizontal"
+            android:padding="8dp"
             android:weightSum="4">
 
             <TableLayout
@@ -315,42 +317,41 @@
 
                 <ImageButton
                     android:id="@+id/reverse"
+                    style="@style/ImageButtonStyle.Action"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="@drawable/pad_button_background"
                     android:contentDescription="Reverse"
                     android:src="@drawable/ic_reverse"
-                    app:tint="@color/display_result_text_color" />
+                    app:tint="@color/key_action_text" />
 
                 <ImageButton
                     android:id="@+id/backspace"
+                    style="@style/ImageButtonStyle.Action"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="@drawable/pad_button_background"
                     android:contentDescription="Backspace"
                     android:src="@drawable/backspace"
-                    app:tint="@color/display_result_text_color" />
+                    app:tint="@color/key_action_text" />
 
                 <ImageButton
                     android:id="@+id/copy"
+                    style="@style/ImageButtonStyle.Action"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="@drawable/pad_button_background"
                     android:contentDescription="Copy"
                     android:src="@drawable/ic_copy"
-                    app:tint="@color/display_result_text_color" />
+                    app:tint="@color/key_action_text" />
 
                 <Button
                     android:id="@+id/ac"
-                    style="@style/ButtonStyle.Number"
+                    style="@style/ButtonStyle.Action"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="AC"
-                    android:textColor="@android:color/holo_red_dark" />
+                    android:text="AC" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

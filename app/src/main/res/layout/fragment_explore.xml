@@ -4,7 +4,7 @@
     android:id="@+id/explore_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/calculator_accent_color">
+    android:background="@color/screen_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nav_explore"
-            android:textColor="@color/display_result_text_color"
+            android:textColor="@color/screen_result_text"
             android:textSize="24sp"
             android:textStyle="bold" />
 
