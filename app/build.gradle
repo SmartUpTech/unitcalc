@@ -1,4 +1,6 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
 
@@ -13,10 +15,8 @@ android {
 
     namespace "net.smartlogic.unitconverter"
 
-    android {
-        buildFeatures {
-            buildConfig = true
-        }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -40,8 +40,6 @@ android {
 }
 
 dependencies {
-    //testImplementation 'junit:junit:4.12'
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -49,10 +47,10 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.13.0'
 
-    // AdMob Dependency
-    implementation 'com.google.android.gms:play-services-ads:25.2.0'
+    // GMA Next-Gen AdMob SDK
+    implementation 'com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.4.0'
 
-    //For App Open Ads
+    // For App Open Ads lifecycle support
     implementation "androidx.lifecycle:lifecycle-runtime:2.10.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.10.0"
     implementation "androidx.lifecycle:lifecycle-process:2.10.0"

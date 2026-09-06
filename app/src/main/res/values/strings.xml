@@ -308,10 +308,10 @@
     <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
 
 
-    <!-- AdMob Test Ads -->
-    <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/6300978111</string>-->
+    <!-- AdMob Test Ads (Next-Gen SDK test unit IDs) -->
+    <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/9214589741</string>-->
     <!--    <string name="am_interstitial_ad_unit">ca-app-pub-3940256099942544/1033173712</string>-->
     <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
-    <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/3419835294</string>-->
+    <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/9257395921</string>-->
 
 </resources>

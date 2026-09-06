@@ -5,41 +5,63 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.MobileAds;
+import com.google.android.libraries.ads.mobile.sdk.banner.AdSize;
+import com.google.android.libraries.ads.mobile.sdk.banner.AdView;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAd;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
+import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration;
+import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig;
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd;
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdPreloader;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAd;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdPreloader;
 
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdMobManager {
 
-    private static final int AD_FREE_HOURS = 24;
     private static final String TAG = "SHRIKI";
     private static final boolean DEBUG_FLAG = false;
     private static long DELAY_BEFORE_LOAD = 1200;
     private static AdMobManager mInstance;
     private final Context context;
-    private InterstitialAd mInterstitialAd;
-    private RewardedAd mRewardedAd;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final List<Runnable> readyCallbacks = new ArrayList<>();
+    private volatile boolean initialized = false;
 
     private AdMobManager(Context context) {
         if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside AdMobManager");
 
-        MobileAds.initialize(context, AdMobManager::onInitializationComplete);
+        this.context = context.getApplicationContext();
+        String appId = this.context.getString(R.string.am_app_id);
 
-        this.context = context;
+        new Thread(() -> MobileAds.initialize(
+                this.context,
+                new InitializationConfig.Builder(appId).build(),
+                initializationStatus -> {
+                    initialized = true;
+                    startPreloading();
+                    mainHandler.post(this::notifyReadyCallbacks);
+                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                        Log.d(TAG, "AdMob onInitializationComplete with status " + initializationStatus);
+                    }
+                }
+        )).start();
     }
 
     public static synchronized AdMobManager getInstance(Context context) {
@@ -53,186 +75,221 @@ public class AdMobManager {
         return mInstance;
     }
 
-    private static void onInitializationComplete(InitializationStatus initializationStatus) {
-        if (BuildConfig.DEBUG && DEBUG_FLAG)
-            Log.d(TAG, "AdMob onInitializationComplete with status " + initializationStatus);
+    public boolean isInitialized() {
+        return initialized;
     }
 
-//    public void evaluateAdFreeStatus() {
-//        long time_watched_ad = prefs.getAdFreeStartTime();
-//        Calendar cal_now = Calendar.getInstance(Locale.ENGLISH);
-//        long hours_since_last_watch = Math.round((float) (cal_now.getTimeInMillis() - time_watched_ad) / (1000 * 60 * 60));
-//
-//        if (BuildConfig.DEBUG && DEBUG_FLAG)
-//            Log.d(TAG, "Hours since last ad was watched: " + hours_since_last_watch);
-//        if (BuildConfig.DEBUG && DEBUG_FLAG)
-//            Log.d(TAG, "Evaluating Ad Free Users Status: " + (AD_FREE_HOURS > hours_since_last_watch));
-//
-//        prefs.setAdFreeUser(AD_FREE_HOURS > hours_since_last_watch);
-//    }
+    public void onSdkReady(Runnable runnable) {
+        if (initialized) {
+            runnable.run();
+        } else {
+            readyCallbacks.add(runnable);
+        }
+    }
 
-    public void loadBannerAd(final AdView mAdView) {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        if (mAdView.getAdListener() == null) {
-            mAdView.setAdListener(new AdListener() {
+    private void notifyReadyCallbacks() {
+        for (Runnable callback : readyCallbacks) {
+            callback.run();
+        }
+        readyCallbacks.clear();
+    }
 
-                @Override
-                public void onAdLoaded() {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdLoaded");
-                    super.onAdLoaded();
-                    mAdView.setVisibility(View.VISIBLE);
-                }
+    private void startPreloading() {
+        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
+        if (isValidAdUnitId(interstitialUnitId)) {
+            AdRequest interstitialRequest = new AdRequest.Builder(interstitialUnitId).build();
+            InterstitialAdPreloader.start(
+                    interstitialUnitId,
+                    new PreloadConfiguration(interstitialRequest));
+        }
 
-                @Override
-                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG)
-                        Log.d(TAG, "AdMob Banner onAdFailedToLoad. Error: " + loadAdError.toString());
-                    super.onAdFailedToLoad(loadAdError);
-                }
+        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
+        if (isValidAdUnitId(rewardedUnitId)) {
+            AdRequest rewardedRequest = new AdRequest.Builder(rewardedUnitId).build();
+            RewardedAdPreloader.start(
+                    rewardedUnitId,
+                    new PreloadConfiguration(rewardedRequest));
+        }
+    }
 
-                @Override
-                public void onAdClosed() {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdClosed");
-                    super.onAdClosed();
-                }
+    static boolean isValidAdUnitId(String unitId) {
+        return unitId != null && unitId.startsWith("ca-app-pub-");
+    }
 
-                @Override
-                public void onAdOpened() {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdOpened");
-                    super.onAdOpened();
-                }
+    public void loadBannerAd(final AdView adView, Activity activity) {
+        if (!initialized) {
+            onSdkReady(() -> loadBannerAd(adView, activity));
+            return;
+        }
 
-                @Override
-                public void onAdClicked() {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdClicked");
-                    super.onAdClicked();
-                }
-
-                @Override
-                public void onAdImpression() {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdImpression");
-                    super.onAdImpression();
-                }
-            });
+        String bannerUnitId = context.getString(R.string.am_banner_ad_unit);
+        if (!isValidAdUnitId(bannerUnitId)) {
+            return;
         }
 
         Runnable loadAd = () -> {
-//            if (prefs.isProUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_pro));
-//            } else if (prefs.isAdFreeUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_ad_free));
-//            } else
-            mAdView.loadAd(adRequest);
+            AdSize adSize = AdSize.getLargeAnchoredAdaptiveBannerAdSize(activity, 360);
+            BannerAdRequest adRequest = new BannerAdRequest.Builder(bannerUnitId, adSize).build();
+            adView.loadAd(
+                    adRequest,
+                    new AdLoadCallback<BannerAd>() {
+                        @Override
+                        public void onAdLoaded(@NonNull BannerAd bannerAd) {
+                            if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdLoaded");
+                            bannerAd.setAdEventCallback(new BannerAdEventCallback() {
+                                @Override
+                                public void onAdImpression() {
+                                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                                        Log.d(TAG, "AdMob Banner onAdImpression");
+                                    }
+                                }
+
+                                @Override
+                                public void onAdClicked() {
+                                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdClicked");
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                            if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                                Log.d(TAG, "AdMob Banner onAdFailedToLoad. Error: " + loadAdError);
+                            }
+                        }
+                    });
         };
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
+        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
     }
 
     public void loadInterstitialAd() {
+        if (!initialized) {
+            onSdkReady(this::loadInterstitialAd);
+            return;
+        }
+
+        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
+        if (!isValidAdUnitId(interstitialUnitId)) {
+            return;
+        }
 
         Runnable loadAd = () -> {
             if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside loadInterstitialAd");
-
-//            if (prefs.isProUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_pro));
-//            } else if (prefs.isAdFreeUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_ad_free));
-//            } else {
-            AdRequest adRequest = new AdRequest.Builder().build();
-            InterstitialAd.load(context, context.getString(R.string.am_interstitial_ad_unit), adRequest,
-                    new InterstitialAdLoadCallback() {
-                        @Override
-                        public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                            mInterstitialAd = interstitialAd;
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob Interstitial onAdLoaded");
-                        }
-
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob Interstitial onAdFailedToLoad. Error: " + loadAdError.getMessage());
-                            mInterstitialAd = null;
-                        }
-                    });
-
-            //}
+            if (!InterstitialAdPreloader.isAdAvailable(interstitialUnitId)) {
+                AdRequest adRequest = new AdRequest.Builder(interstitialUnitId).build();
+                InterstitialAdPreloader.start(
+                        interstitialUnitId,
+                        new PreloadConfiguration(adRequest));
+            }
         };
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
+        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
     }
 
     public void showInterstitialAd(Activity activity) {
-//        if (prefs.isProUser()) {
-//            if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                Log.d(TAG, context.getString(R.string.info_user_pro));
-//        } else if (prefs.isAdFreeUser()) {
-//            if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                Log.d(TAG, context.getString(R.string.info_user_ad_free));
-//        } else
-        if (mInterstitialAd != null)
-            mInterstitialAd.show(activity);
+        if (!initialized) {
+            return;
+        }
+
+        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
+        if (!isValidAdUnitId(interstitialUnitId)) {
+            return;
+        }
+
+        InterstitialAd interstitialAd = InterstitialAdPreloader.pollAd(interstitialUnitId);
+        if (interstitialAd == null) {
+            return;
+        }
+
+        interstitialAd.setAdEventCallback(new InterstitialAdEventCallback() {
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Interstitial onAdDismissedFullScreenContent");
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError fullScreenContentError) {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                    Log.d(TAG, "AdMob Interstitial onAdFailedToShow. Error: "
+                            + fullScreenContentError.getMessage());
+                }
+            }
+
+            @Override
+            public void onAdShowedFullScreenContent() {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Interstitial onAdShowedFullScreenContent");
+            }
+        });
+        interstitialAd.show(activity);
     }
 
     public void loadRewardedAd() {
+        if (!initialized) {
+            onSdkReady(this::loadRewardedAd);
+            return;
+        }
+
+        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
+        if (!isValidAdUnitId(rewardedUnitId)) {
+            return;
+        }
 
         Runnable loadAd = () -> {
             if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside loadRewardedAd");
-
-//            if (prefs.isProUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_pro));
-//            } else if (prefs.isAdFreeUser()) {
-//                if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                    Log.d(TAG, context.getString(R.string.info_user_ad_free));
-//            } else {
-            AdRequest adRequest = new AdRequest.Builder().build();
-            RewardedAd.load(context, context.getString(R.string.am_rewarded_ad_unit),
-                    adRequest, new RewardedAdLoadCallback() {
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob Rewarded Ad onAdFailedToLoad. Error: " + loadAdError.getMessage());
-                            mRewardedAd = null;
-                        }
-
-                        @Override
-                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                            mRewardedAd = rewardedAd;
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob Rewarded Ad onAdLoaded");
-                        }
-                    });
-            //}
+            if (!RewardedAdPreloader.isAdAvailable(rewardedUnitId)) {
+                AdRequest adRequest = new AdRequest.Builder(rewardedUnitId).build();
+                RewardedAdPreloader.start(
+                        rewardedUnitId,
+                        new PreloadConfiguration(adRequest));
+            }
         };
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
+        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
     }
 
     public boolean hasRewardedAd() {
-        return mRewardedAd != null;
+        if (!initialized) {
+            return false;
+        }
+
+        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
+        return isValidAdUnitId(rewardedUnitId)
+                && RewardedAdPreloader.isAdAvailable(rewardedUnitId);
     }
 
     public void showRewardedAd(Activity activity) {
-//        if (prefs.isProUser()) {
-//            if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                Log.d(TAG, context.getString(R.string.info_user_pro));
-//        } else if (prefs.isAdFreeUser()) {
-//            if (BuildConfig.DEBUG && DEBUG_FLAG)
-//                Log.d(TAG, context.getString(R.string.info_user_ad_free));
-//        } else
-        if (mRewardedAd != null)
-            mRewardedAd.show(activity, rewardItem -> {
-                if (BuildConfig.DEBUG && DEBUG_FLAG)
-                    Log.d(TAG, "AdMob Rewarded Ad onUserEarnedReward");
-                //prefs.setAdFreeStartTime(Calendar.getInstance(Locale.ENGLISH).getTimeInMillis());
-                //prefs.setAdFreeUser(true);
-            });
+        if (!initialized) {
+            return;
+        }
+
+        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
+        if (!isValidAdUnitId(rewardedUnitId)) {
+            return;
+        }
+
+        RewardedAd rewardedAd = RewardedAdPreloader.pollAd(rewardedUnitId);
+        if (rewardedAd == null) {
+            return;
+        }
+
+        rewardedAd.setAdEventCallback(new RewardedAdEventCallback() {
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Rewarded onAdDismissedFullScreenContent");
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError fullScreenContentError) {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                    Log.d(TAG, "AdMob Rewarded onAdFailedToShow. Error: "
+                            + fullScreenContentError.getMessage());
+                }
+            }
+        });
+        rewardedAd.show(
+                activity,
+                rewardItem -> {
+                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                        Log.d(TAG, "AdMob Rewarded Ad onUserEarnedReward");
+                    }
+                });
     }
-
-
 }
