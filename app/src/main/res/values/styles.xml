@@ -1,6 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/app_bar</item>
         <item name="colorPrimaryDark">@color/app_bar</item>
@@ -8,7 +7,20 @@
         <item name="android:statusBarColor">@color/app_bar</item>
         <item name="android:navigationBarColor">@color/nav_background</item>
         <item name="android:windowBackground">@color/screen_background</item>
+        <item name="actionBarStyle">@style/GraphyActionBar</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
+    </style>
+
+    <style name="GraphyActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
+        <item name="background">@color/app_bar</item>
+        <item name="titleTextStyle">@style/GraphyActionBarTitle</item>
+    </style>
+
+    <style name="GraphyActionBarTitle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/on_app_bar</item>
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
     </style>
 
     <style name="MyActionBarWidgetTheme" parent="@android:style/Theme.Holo">
@@ -23,50 +35,63 @@
         <item name="popupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
     </style>
 
+    <style name="WorkspaceTabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@color/screen_background</item>
+        <item name="tabIndicatorColor">@color/workspace_tab_selected</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabSelectedTextColor">@color/workspace_tab_selected</item>
+        <item name="tabTextColor">@color/screen_expression_text</item>
+        <item name="tabRippleColor">@color/pad_button_ripple_color</item>
+        <item name="tabUnboundedRipple">true</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabTextAppearance">@style/WorkspaceTabText</item>
+    </style>
+
+    <style name="WorkspaceTabText" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">2dp</item>
+        <item name="android:layout_margin">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
+        <item name="android:minHeight">48dp</item>
         <item name="android:padding">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="elevation">0dp</item>
-        <item name="cornerRadius">10dp</item>
+        <item name="cornerRadius">0dp</item>
         <item name="rippleColor">@color/pad_button_ripple_color</item>
-        <item name="android:textColor">@color/key_number_text</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/oswald</item>
         <item name="android:textSize">@dimen/buttonTextSize</item>
+        <item name="android:textColor">@color/key_number_text</item>
     </style>
 
     <style name="ButtonStyle.Number">
-        <item name="backgroundTint">@color/key_number_bg</item>
-        <item name="android:background">@drawable/key_number_background</item>
         <item name="android:textColor">@color/key_number_text</item>
     </style>
 
     <style name="ButtonStyle.Operator">
-        <item name="backgroundTint">@color/key_operator_bg</item>
-        <item name="android:background">@drawable/key_operator_background</item>
         <item name="android:textColor">@color/key_operator_text</item>
     </style>
 
     <style name="ButtonStyle.Action">
-        <item name="backgroundTint">@color/key_action_bg</item>
-        <item name="android:background">@drawable/key_action_background</item>
         <item name="android:textColor">@color/key_action_text</item>
-        <item name="iconTint">@color/key_action_text</item>
     </style>
 
     <style name="ButtonStyle.Equals">
-        <item name="backgroundTint">@color/key_equals_bg</item>
-        <item name="android:background">@drawable/key_equals_background</item>
         <item name="android:textColor">@color/key_equals_text</item>
     </style>
 
@@ -74,8 +99,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">2dp</item>
-        <item name="android:background">@drawable/key_action_background</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:padding">8dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="tint">@color/key_action_text</item>
@@ -93,13 +117,21 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
+    <style name="ResultDisplay">
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:textColor">@color/screen_result_text</item>
+        <item name="android:textSize">@dimen/resultDisplaySize</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">-0.04</item>
+    </style>
+
     <style name="RoundedCorners">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">6dp</item>
+        <item name="cornerSize">4dp</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/graphy_surface</item>
+        <item name="windowSplashScreenBackground">@color/screen_background</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>

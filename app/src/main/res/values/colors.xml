@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App chrome: light -->
-    <color name="screen_background">#FFFFFF</color>
-    <color name="screen_expression_text">#64748B</color>
-    <color name="screen_result_text">#0F172A</color>
-    <color name="keypad_background">#F1F5F9</color>
-    <color name="key_number_bg">#FFFFFF</color>
-    <color name="key_number_text">#0F172A</color>
-    <color name="key_operator_bg">#EEF2FF</color>
-    <color name="key_operator_text">#4F46E5</color>
-    <color name="key_action_bg">#FFFFFF</color>
-    <color name="key_action_text">#EF4444</color>
-    <color name="key_equals_bg">#4F46E5</color>
-    <color name="key_equals_text">#FFFFFF</color>
-    <color name="app_bar">#2d3e50</color>
-    <color name="on_app_bar">#FFFFFF</color>
-    <color name="nav_background">@color/screen_background</color>
-    <color name="nav_selected">#4F46E5</color>
-    <color name="nav_unselected">@color/screen_result_text</color>
+    <color name="screen_background">#F3EDE3</color>
+    <color name="screen_expression_text">#6B6358</color>
+    <color name="screen_result_text">#1A1612</color>
+    <color name="keypad_background">#F3EDE3</color>
+    <color name="key_number_bg">#00000000</color>
+    <color name="key_number_text">#1A1612</color>
+    <color name="key_operator_bg">#00000000</color>
+    <color name="key_operator_text">#C23A2B</color>
+    <color name="key_action_bg">#00000000</color>
+    <color name="key_action_text">#1A1612</color>
+    <color name="key_equals_bg">#00000000</color>
+    <color name="key_equals_text">#C23A2B</color>
+    <color name="app_bar">#F3EDE3</color>
+    <color name="on_app_bar">#1A1612</color>
+    <color name="nav_background">#EDE6DA</color>
+    <color name="nav_selected">#C23A2B</color>
+    <color name="nav_unselected">#6B6358</color>
+    <color name="workspace_tab_selected">#C23A2B</color>
     <color name="pad_button_ripple_color">#33000000</color>
+    <color name="history_section_text">#8A8174</color>
 
-    <!-- Legacy aliases (map to chrome tokens) -->
     <color name="colorHeader">@color/app_bar</color>
-    <color name="colorPrimary">@color/app_bar</color>
+    <color name="colorPrimary">@color/nav_selected</color>
     <color name="colorSecondary">@color/app_bar</color>
     <color name="colorNewGrey">@color/screen_expression_text</color>
     <color name="alwaysDarkText">#0c0c0c</color>

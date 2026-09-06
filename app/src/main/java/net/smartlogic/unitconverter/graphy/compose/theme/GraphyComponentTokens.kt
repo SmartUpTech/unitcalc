@@ -17,9 +17,9 @@ data class GraphyComponentTokens(
 val GraphyComponentTokensDefault = GraphyComponentTokens(
     nodeMinWidth = 72.dp,
     nodeMinHeight = 40.dp,
-    nodeCornerRadius = 12.dp,
-    operationMarkerSize = 32.dp,
-    connectorStroke = 2.dp,
+    nodeCornerRadius = 6.dp,
+    operationMarkerSize = 28.dp,
+    connectorStroke = 1.5.dp,
 )
 
 val LocalGraphyComponentTokens = staticCompositionLocalOf { GraphyComponentTokensDefault }

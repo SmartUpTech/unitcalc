@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -30,7 +30,6 @@ import net.smartlogic.unitconverter.fragment.CalculatorFragment;
 import net.smartlogic.unitconverter.fragment.ConverterFragment;
 import net.smartlogic.unitconverter.fragment.ExploreFragment;
 import net.smartlogic.unitconverter.fragment.FavoritesFragment;
-import net.smartlogic.unitconverter.fragment.HistoryFragment;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.ThemeHelper;
 
@@ -53,12 +52,15 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         Preferences pref = Preferences.getInstance(this);
 
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorHeader));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_bar));
         WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        wic.setAppearanceLightStatusBars(false);
+        boolean night = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        wic.setAppearanceLightStatusBars(!night);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null && pref.getPrefsTheme().equals(ThemeHelper.DARK_MODE)) {
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.app_name);
             actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.action_bar_background));
         }
         context = this;
@@ -78,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         registerRestoredFragment(R.id.converter, AppConst.TAG_CONVERTER);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
-        registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
     }
 
     private void registerRestoredFragment(int menuId, String tag) {
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (itemId == R.id.favorites) {
             return FavoritesFragment.newInstance();
         }
-        return HistoryFragment.newInstance();
+        return CalculatorFragment.newInstance();
     }
 
     private void updateCurrentTag(int itemId) {
@@ -152,8 +153,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             AppConst.CURRENT_TAG = AppConst.TAG_EXPLORE;
         } else if (itemId == R.id.favorites) {
             AppConst.CURRENT_TAG = AppConst.TAG_FAVORITES;
-        } else if (itemId == R.id.history) {
-            AppConst.CURRENT_TAG = AppConst.TAG_HISTORY;
         }
     }
 
@@ -169,9 +168,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         if (AppConst.TAG_FAVORITES.equals(tag)) {
             return R.id.favorites;
-        }
-        if (AppConst.TAG_HISTORY.equals(tag)) {
-            return R.id.history;
         }
         return R.id.calculator;
     }
@@ -190,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (itemId == R.id.favorites) {
             return AppConst.TAG_FAVORITES;
         }
-        return AppConst.TAG_HISTORY;
+        return AppConst.TAG_CALC;
     }
 
     @Override
