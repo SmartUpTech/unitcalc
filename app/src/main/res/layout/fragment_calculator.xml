@@ -38,6 +38,20 @@
                     app:tint="@color/colorNewGrey"
                     android:contentDescription="History" />
 
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_graphy"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/graphy"
+                    android:visibility="gone"
+                    app:chipBackgroundColor="@color/graphy_primary"
+                    app:chipStrokeWidth="0dp"
+                    android:textColor="@color/graphy_on_primary" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,6 +81,48 @@
                         android:text="0" />
                 </LinearLayout>
             </RelativeLayout>
+
+            <!-- Graphy explanation panel -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/graphy_panel"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.5"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/graphy_surface"
+                app:cardCornerRadius="@dimen/graphy_node_corner_radius"
+                app:cardElevation="@dimen/graphy_elevation_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/graphy_spacing_sm">
+
+                    <TextView
+                        android:id="@+id/graphy_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/graphy_secondary"
+                        android:textAppearance="@style/GraphyText.Explanation" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+
+                        <FrameLayout
+                            android:id="@+id/graphy_flowchart_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/graphy_spacing_xs" />
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Function Bar -->
             <LinearLayout

@@ -93,16 +93,16 @@ In **Settings** you can:
 
 ---
 
-## What is Graphy? *(coming soon)*
+## What is Graphy?
 
-**Graphy** is the visual side of the app. Instead of only showing a final number, Graphy will show a simple picture of the steps — like a flowchart — so you can understand *why* the answer is what it is.
+**Graphy** is the visual side of the app. Instead of only showing a final number, Graphy shows a simple flowchart of the steps so you can understand *why* the answer is what it is.
 
-**Example (planned experience)**
+**Example**
 
 > You calculate `2 + 3 × 4` and get `14`.  
-> Graphy would show: first `3 × 4 = 12`, then `2 + 12 = 14`.
+> Tap **Graphy** on the calculator screen to see: first `3 × 4 = 12`, then `2 + 12 = 14`.
 
-The app already prepares this behind the scenes; the on-screen Graphy panel will appear in a future update.
+After you press **=**, a **Graphy** chip appears in the top-right of the calculator display. Tap it to open the step-by-step flowchart; tap again to hide it.
 
 ---
 

@@ -74,6 +74,26 @@ public final class GraphyTheme {
         return color(R.color.graphy_surface_elevated);
     }
 
+    @ColorInt
+    public int getDerivedNodeColor() {
+        return color(R.color.graphy_surface_elevated);
+    }
+
+    @ColorInt
+    public int getOnInputColor() {
+        return color(R.color.graphy_on_input);
+    }
+
+    @ColorInt
+    public int getOnOperationColor() {
+        return color(R.color.graphy_on_operation);
+    }
+
+    @ColorInt
+    public int getOnResultColor() {
+        return color(R.color.graphy_on_result);
+    }
+
     public float getNodeCornerRadius() {
         return dimen(R.dimen.graphy_node_corner_radius);
     }
