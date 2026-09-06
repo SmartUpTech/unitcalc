@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
 
     compileSdk {
@@ -14,7 +20,7 @@ android {
         targetSdk {
             version = release(36)
         }
-        versionCode 10
+        versionCode 11
         versionName "1.9"
     }
 
@@ -24,12 +30,26 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        release {
+            if (keystoreProperties.containsKey('storeFile')) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         debug {
             shrinkResources false
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
         release {
+            signingConfig signingConfigs.release
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
