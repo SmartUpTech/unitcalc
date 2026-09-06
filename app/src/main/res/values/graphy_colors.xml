@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="graphy_primary">#4F46E5</color>
+    <color name="graphy_input">#EEF2FF</color>
+    <color name="graphy_operation">#F59E0B</color>
+    <color name="graphy_result">#10B981</color>
+    <color name="graphy_warning">#EF4444</color>
+    <color name="graphy_time">#6366F1</color>
+    <color name="graphy_secondary">#64748B</color>
+
+    <color name="graphy_connector">#CBD5E1</color>
+    <color name="graphy_connector_highlight">#4F46E5</color>
+
+    <color name="graphy_surface">#FFFFFF</color>
+    <color name="graphy_surface_elevated">#F8FAFC</color>
+
+    <color name="graphy_on_primary">#FFFFFF</color>
+    <color name="graphy_on_input">#1E293B</color>
+    <color name="graphy_on_operation">#FFFFFF</color>
+    <color name="graphy_on_result">#FFFFFF</color>
+</resources>

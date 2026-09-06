@@ -27,8 +27,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.graphy.integration.CalculationSnapshot;
+import net.smartlogic.unitconverter.graphy.integration.GraphyBridge;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.utils.EvaluationResult;
+import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 
 import java.text.DecimalFormat;
@@ -49,6 +54,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private final List<HistoryItem> historyList = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
+    private final GraphyBridge graphyBridge = new GraphyBridge();
+    private GraphyOutput latestGraphyOutput;
 
     public static class HistoryItem {
         public String expression;
@@ -360,15 +367,25 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            double res = eval(sanitized);
-            if (Double.isNaN(res) || Double.isInfinite(res)) {
+            EvaluationResult evaluationResult = ExpressionEvaluator.evaluate(sanitized);
+            if (!evaluationResult.isValid()) {
                 if (isFinal) showToast(getString(R.string.invalid_expression));
                 return;
             }
 
+            double res = evaluationResult.getValue();
             String formatted = formatResult(res);
             tvResult.setText(formatted);
-            
+
+            CalculationSnapshot snapshot = CalculationSnapshot.create(
+                    CalculationSnapshot.BASIC_CALCULATOR_ID,
+                    expression,
+                    sanitized,
+                    formatted,
+                    evaluationResult
+            );
+            latestGraphyOutput = graphyBridge.build(snapshot);
+
             if (isFinal) {
                 dbHelper.addHistory(expression, formatted);
                 expression = formatted.replace(",", "");
@@ -404,89 +421,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    // Advanced Parser with implicit multiplication support
-    public double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) return Double.NaN;
-                return x;
-            }
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if (eat('+')) x += parseTerm();
-                    else if (eat('-')) x -= parseTerm();
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if (eat('*')) x *= parseFactor();
-                    else if (eat('/')) {
-                        double divisor = parseFactor();
-                        if (divisor == 0) return Double.NaN;
-                        x /= divisor;
-                    } else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return +parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) {
-                    x = parseExpression();
-                    if (!eat(')')) return Double.NaN;
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    try {
-                        x = Double.parseDouble(str.substring(startPos, this.pos));
-                    } catch (NumberFormatException e) {
-                        return Double.NaN;
-                    }
-                } else if (ch >= 'a' && ch <= 'z') {
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    if (eat('(')) {
-                        x = parseExpression();
-                        if (!eat(')')) return Double.NaN;
-                    } else {
-                        x = parseFactor();
-                    }
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else return Double.NaN;
-                } else {
-                    return Double.NaN;
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor());
-                if (eat('%')) x = x / 100.0;
-
-                return x;
-            }
-        }.parse();
+    GraphyOutput getLatestGraphyOutput() {
+        return latestGraphyOutput;
     }
 
     private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
