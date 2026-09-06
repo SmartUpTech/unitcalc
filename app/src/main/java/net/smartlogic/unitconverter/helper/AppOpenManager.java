@@ -11,33 +11,33 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd;
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdEventCallback;
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdPreloader;
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
+import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration;
 
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.UnitConverter;
-
-import java.util.Date;
 
 public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "SHRIKI";
     private static final boolean DEBUG_FLAG = false;
     private static boolean isShowingAd = false;
     private final UnitConverter myApplication;
-    private AppOpenAd appOpenAd = null;
-    private long loadTime = 0;
     private Activity currentActivity;
+    private boolean isFirstLaunch = true;
+    private boolean preloadStarted = false;
 
     private static AppOpenManager mInstance;
 
     public static AppOpenManager getInstance(UnitConverter myApplication) {
         if (mInstance == null) {
-            if (BuildConfig.DEBUG && DEBUG_FLAG)
+            if (BuildConfig.DEBUG && DEBUG_FLAG) {
                 Log.d(TAG, "AppOpenManager instance is null. Initializing");
+            }
             mInstance = new AppOpenManager(myApplication);
         }
         return mInstance;
@@ -47,98 +47,95 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
         this.myApplication = myApplication;
         this.myApplication.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        fetchAd();
+        AdMobManager.getInstance(myApplication).onSdkReady(this::startPreload);
     }
 
-    public void fetchAd() {
-        // Have unused ad, no need to fetch another.
-        if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d("SHRIKI","AppOpen Fetch Ad called");
-        if (isAdAvailable()) {
+    private void startPreload() {
+        if (preloadStarted) {
             return;
         }
-        AppOpenAd.AppOpenAdLoadCallback loadCallback = new AppOpenAd.AppOpenAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull AppOpenAd ad) {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob AppOpen onAdLoaded");
-                appOpenAd = ad;
-                loadTime = (new Date()).getTime();
-            }
 
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                if (BuildConfig.DEBUG && DEBUG_FLAG)
-                    Log.d(TAG, "AdMob AppOpen onAdFailedToLoad. Error: " + loadAdError);
-            }
-        };
-        AdRequest request = getAdRequest();
+        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
+        if (!AdMobManager.isValidAdUnitId(adUnitId)) {
+            return;
+        }
 
-            AppOpenAd.load(
-                    myApplication,
-                    myApplication.getString(R.string.am_app_open_ad_unit),
-                    request,
-                    loadCallback);
+        preloadStarted = true;
+        AdRequest adRequest = new AdRequest.Builder(adUnitId).build();
+        PreloadConfiguration preloadConfig = new PreloadConfiguration(adRequest);
+        AppOpenAdPreloader.start(adUnitId, preloadConfig);
+
+        if (BuildConfig.DEBUG && DEBUG_FLAG) {
+            Log.d(TAG, "AppOpen preloading started");
+        }
     }
 
     public boolean isAdAvailable() {
-        return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(2);
+        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
+        return AdMobManager.isValidAdUnitId(adUnitId)
+                && AppOpenAdPreloader.isAdAvailable(adUnitId);
     }
 
     public void showAdIfAvailable() {
-        if (BuildConfig.DEBUG && DEBUG_FLAG)
-            Log.d(TAG,"AdMob AppOpen showAdIfAvailable in AppOpenManager");
-
-        if (!isShowingAd && isAdAvailable()) {
-            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                Log.d(TAG, "Will show ad.");
-
-            FullScreenContentCallback fullScreenContentCallback =
-                    new FullScreenContentCallback() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob AppOpen onAdDismissedFullScreenContent");
-                            appOpenAd = null;
-                            isShowingAd = false;
-                            fetchAd();
-                        }
-
-                        @Override
-                        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob AppOpen onAdFailedToShowFullScreenContent. Error: " + adError.getMessage());
-                            appOpenAd = null;
-                            isShowingAd = false;
-                            fetchAd();
-                        }
-
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                                Log.d(TAG, "AdMob AppOpen onAdShowedFullScreenContent");
-                            isShowingAd = true;
-                        }
-                    };
-            appOpenAd.setFullScreenContentCallback(fullScreenContentCallback);
-            appOpenAd.show(currentActivity);
-
-        } else {
-            if (BuildConfig.DEBUG && DEBUG_FLAG)
-                Log.d(TAG, "AdMob AppOpen cannot show ad. isAdAvailable(): " + isAdAvailable());
-            fetchAd();
+        if (BuildConfig.DEBUG && DEBUG_FLAG) {
+            Log.d(TAG, "AdMob AppOpen showAdIfAvailable in AppOpenManager");
         }
-    }
 
-    private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
-        long dateDifference = (new Date()).getTime() - this.loadTime;
-        long numMilliSecondsPerHour = 3600000;
-        return (dateDifference < (numMilliSecondsPerHour * numHours));
-    }
+        if (isShowingAd || currentActivity == null) {
+            return;
+        }
 
-    /**
-     * Creates and returns ad request.
-     */
-    private AdRequest getAdRequest() {
-        return new AdRequest.Builder().build();
+        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
+        if (!AdMobManager.isValidAdUnitId(adUnitId)) {
+            return;
+        }
+
+        if (!AppOpenAdPreloader.isAdAvailable(adUnitId)) {
+            if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                Log.d(TAG, "AdMob AppOpen cannot show ad. isAdAvailable(): false");
+            }
+            return;
+        }
+
+        AppOpenAd appOpenAd = AppOpenAdPreloader.pollAd(adUnitId);
+        if (appOpenAd == null) {
+            if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                Log.d(TAG, "AdMob AppOpen pollAd returned null");
+            }
+            return;
+        }
+
+        if (BuildConfig.DEBUG && DEBUG_FLAG) {
+            Log.d(TAG, "Will show ad.");
+        }
+
+        appOpenAd.setAdEventCallback(new AppOpenAdEventCallback() {
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                    Log.d(TAG, "AdMob AppOpen onAdDismissedFullScreenContent");
+                }
+                isShowingAd = false;
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError fullScreenContentError) {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                    Log.d(TAG, "AdMob AppOpen onAdFailedToShowFullScreenContent. Error: "
+                            + fullScreenContentError.getMessage());
+                }
+                isShowingAd = false;
+            }
+
+            @Override
+            public void onAdShowedFullScreenContent() {
+                if (BuildConfig.DEBUG && DEBUG_FLAG) {
+                    Log.d(TAG, "AdMob AppOpen onAdShowedFullScreenContent");
+                }
+                isShowingAd = true;
+            }
+        });
+        appOpenAd.show(currentActivity);
     }
 
     @Override
@@ -148,42 +145,41 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
         currentActivity = activity;
-
     }
 
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
         currentActivity = activity;
-
     }
 
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
-
     }
 
     @Override
     public void onActivityStopped(@NonNull Activity activity) {
-
     }
 
     @Override
     public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) {
-
     }
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
         currentActivity = null;
-
     }
-    /** LifecycleObserver methods */
+
     @Override
     public void onStart(@NonNull LifecycleOwner owner) {
-        if (BuildConfig.DEBUG && DEBUG_FLAG)
+        if (BuildConfig.DEBUG && DEBUG_FLAG) {
             Log.d(TAG, "App Open onStart");
+        }
+
+        if (isFirstLaunch) {
+            isFirstLaunch = false;
+            return;
+        }
 
         showAdIfAvailable();
     }
-
 }
