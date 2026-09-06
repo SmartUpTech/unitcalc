@@ -3,24 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingVertical="12dp"
+    android:paddingVertical="10dp"
     android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_history_expression"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/oswald"
         android:gravity="end"
         android:textColor="@color/screen_expression_text"
-        android:textSize="14sp" />
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/tv_history_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/oswald"
         android:gravity="end"
+        android:includeFontPadding="false"
         android:textColor="@color/screen_result_text"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/historyResultSize" />
 
 </LinearLayout>

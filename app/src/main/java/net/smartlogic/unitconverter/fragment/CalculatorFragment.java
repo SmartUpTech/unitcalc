@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -23,8 +22,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.graphy.compose.GraphyPanelController;
@@ -36,6 +35,7 @@ import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
+import net.smartlogic.unitconverter.helper.HistoryDateLabels;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
@@ -54,10 +54,14 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private CoordinatorLayout mCoordinatorLayout;
     private boolean isResultDisplayed = false;
     
-    private LinearLayout historyLayout;
+    private View historyPane;
+    private View calculatePane;
+    private View graphyPane;
+    private TextView graphyEmpty;
+    private TextView graphyContext;
     private RecyclerView rvHistory;
     private HistoryAdapter historyAdapter;
-    private final List<CalculationHistoryItem> historyList = new ArrayList<>();
+    private final List<Object> historyRows = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge();
@@ -65,7 +69,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private GraphyViewTheme graphyTheme;
     private GraphyOutput latestGraphyOutput;
 
-    private Chip chipGraphy;
+    private TabLayout workspaceTabs;
     private View graphyPanel;
     private GraphyPanelController graphyPanelController;
     private boolean graphyVisible = false;
@@ -96,7 +100,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         onBackPressedCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                toggleHistory(false);
+                selectWorkspaceTab(0);
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), onBackPressedCallback);
@@ -106,9 +110,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         tvExpression = view.findViewById(R.id.expression);
         tvResult = view.findViewById(R.id.result);
         mCoordinatorLayout = view.findViewById(R.id.cl);
-        historyLayout = view.findViewById(R.id.history_layout);
+        calculatePane = view.findViewById(R.id.calculate_pane);
+        graphyPane = view.findViewById(R.id.graphy_pane);
+        historyPane = view.findViewById(R.id.history_pane);
+        graphyEmpty = view.findViewById(R.id.graphy_empty);
+        graphyContext = view.findViewById(R.id.graphy_context);
         rvHistory = view.findViewById(R.id.rv_history);
-        chipGraphy = view.findViewById(R.id.chip_graphy);
+        workspaceTabs = view.findViewById(R.id.workspace_tabs);
         graphyPanel = view.findViewById(R.id.graphy_panel);
         graphyTheme = new GraphyViewTheme(requireContext());
         graphyPanelController = new GraphyPanelController(
@@ -117,11 +125,21 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 graphyTheme
         );
 
-        chipGraphy.setOnClickListener(v -> {
-            if (graphyVisible) {
-                hideGraphy();
-            } else if (latestGraphyOutput != null) {
-                showGraphy(latestGraphyOutput);
+        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.tab_calculate));
+        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.graphy));
+        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.nav_history));
+        workspaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                applyWorkspaceTab(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
             }
         });
 
@@ -130,9 +148,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine,
                 R.id.dot, R.id.plus, R.id.minus, R.id.multiply, R.id.divide,
                 R.id.equal, R.id.clear, R.id.backspace, R.id.copy,
-                R.id.parenthesis_open, R.id.parenthesis_close, R.id.power, 
-                R.id.sqrt, R.id.percent, R.id.btn_history,
-                R.id.btn_close_history, R.id.btn_clear_history
+                R.id.parenthesis_open, R.id.parenthesis_close, R.id.power,
+                R.id.sqrt, R.id.percent
         };
 
         for (int id : ids) {
@@ -140,12 +157,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             if (v != null) v.setOnClickListener(this);
         }
 
-        historyAdapter = new HistoryAdapter(historyList, item -> {
+        historyAdapter = new HistoryAdapter(historyRows, item -> {
             expression = item.result.replace(",", "");
             tvExpression.setText("");
             tvResult.setText(item.result);
             isResultDisplayed = true;
-            toggleHistory(false);
+            selectWorkspaceTab(0);
         });
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHistory.setAdapter(historyAdapter);
@@ -158,17 +175,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             @Override
             public void afterTextChanged(Editable s) {
                 GenericFunctions.adjustTextSize(tvExpression, 21);
-            }
-        });
-
-        tvResult.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                GenericFunctions.adjustTextSize(tvResult, 32);
             }
         });
     }
@@ -184,19 +190,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             isResultDisplayed = false;
             latestGraphyOutput = null;
             hideGraphy();
-            updateGraphyChipVisibility();
         } else if (id == R.id.backspace) {
             handleBackspace();
         } else if (id == R.id.copy) {
             copyToClipboard();
         } else if (id == R.id.equal) {
             calculateResult(true);
-        } else if (id == R.id.btn_history) {
-            toggleHistory(true);
-        } else if (id == R.id.btn_close_history) {
-            toggleHistory(false);
-        } else if (id == R.id.btn_clear_history) {
-            clearHistory();
         } else if (id == R.id.dot) {
             handleDotInput();
         } else {
@@ -336,30 +335,55 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         return c == '+' || c == '-' || c == '×' || c == '÷';
     }
 
-    private void toggleHistory(boolean show) {
-        historyLayout.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (onBackPressedCallback != null) {
-            onBackPressedCallback.setEnabled(show);
-        }
-        
-        if (show) {
-            historyList.clear();
-            historyList.addAll(dbHelper.getAllHistory());
-            if (getView() != null) {
-                getView().findViewById(R.id.tv_empty_history).setVisibility(historyList.isEmpty() ? View.VISIBLE : View.GONE);
-            }
-            historyAdapter.notifyDataSetChanged();
+    private void selectWorkspaceTab(int index) {
+        TabLayout.Tab tab = workspaceTabs.getTabAt(index);
+        if (tab != null) {
+            tab.select();
         }
     }
 
-    private void clearHistory() {
-        dbHelper.clearHistory();
-        historyList.clear();
-        historyAdapter.notifyDataSetChanged();
-        if (getView() != null) {
-            getView().findViewById(R.id.tv_empty_history).setVisibility(View.VISIBLE);
+    private void applyWorkspaceTab(int position) {
+        calculatePane.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+        graphyPane.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+        historyPane.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+        if (onBackPressedCallback != null) {
+            onBackPressedCallback.setEnabled(position != 0);
         }
-        showToast(getString(R.string.history_cleared));
+        if (position == 1) {
+            if (latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
+                showGraphy(latestGraphyOutput);
+            } else {
+                hideGraphy();
+                graphyEmpty.setVisibility(View.VISIBLE);
+                graphyPanel.setVisibility(View.GONE);
+                graphyContext.setText("");
+            }
+        }
+        if (position == 2) {
+            loadHistory();
+        }
+    }
+
+    private void loadHistory() {
+        List<CalculationHistoryItem> items = dbHelper.getAllHistory();
+        historyRows.clear();
+        String lastSection = null;
+        for (CalculationHistoryItem item : items) {
+            String section = HistoryDateLabels.sectionLabel(requireContext(), item.createdAt);
+            if (!section.equals(lastSection)) {
+                historyRows.add(section);
+                lastSection = section;
+            }
+            historyRows.add(item);
+        }
+        if (getView() != null) {
+            getView().findViewById(R.id.tv_empty_history).setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+        historyAdapter.notifyDataSetChanged();
+    }
+
+    private void toggleHistory(boolean show) {
+        selectWorkspaceTab(show ? 2 : 0);
     }
 
     private void calculateResult(boolean isFinal) {
@@ -403,7 +427,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                     evaluationResult
             );
             latestGraphyOutput = graphyBridge.build(snapshot);
-            updateGraphyChipVisibility();
             if (graphyVisible && latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
                 renderGraphy(latestGraphyOutput);
             }
@@ -453,17 +476,22 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             return;
         }
         graphyVisible = true;
+        graphyEmpty.setVisibility(View.GONE);
         graphyPanel.setVisibility(View.VISIBLE);
-        chipGraphy.setText(R.string.hide_graphy);
+        String expr = tvExpression.getText().toString();
+        String result = tvResult.getText().toString();
+        if (expr.isEmpty()) {
+            graphyContext.setText(result);
+        } else {
+            graphyContext.setText(expr + "  =  " + result);
+        }
         renderGraphy(output);
     }
 
     @Override
     public void hideGraphy() {
         graphyVisible = false;
-        graphyPanel.setVisibility(View.GONE);
         graphyPanelController.update("", null);
-        chipGraphy.setText(R.string.graphy);
     }
 
     @Override
@@ -479,49 +507,69 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         graphyPanelController.update(explanation, output);
     }
 
-    private void updateGraphyChipVisibility() {
-        boolean hasGraph = latestGraphyOutput != null
-                && graphyRenderer.supports(latestGraphyOutput);
-        chipGraphy.setVisibility(hasGraph ? View.VISIBLE : View.GONE);
-        if (!hasGraph && graphyVisible) {
-            hideGraphy();
-        }
-    }
+    private static class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int TYPE_HEADER = 0;
+        private static final int TYPE_ITEM = 1;
 
-    private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-        private final List<CalculationHistoryItem> items;
+        private final List<Object> rows;
         private final OnItemClickListener listener;
 
         interface OnItemClickListener {
             void onItemClick(CalculationHistoryItem item);
         }
 
-        HistoryAdapter(List<CalculationHistoryItem> items, OnItemClickListener listener) {
-            this.items = items;
+        HistoryAdapter(List<Object> rows, OnItemClickListener listener) {
+            this.rows = rows;
             this.listener = listener;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return rows.get(position) instanceof String ? TYPE_HEADER : TYPE_ITEM;
         }
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, parent, false);
-            return new ViewHolder(v);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            if (viewType == TYPE_HEADER) {
+                return new HeaderHolder(inflater.inflate(R.layout.item_history_header, parent, false));
+            }
+            return new ItemHolder(inflater.inflate(R.layout.item_history, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            CalculationHistoryItem item = items.get(position);
-            holder.tvExpression.setText(item.expression);
-            holder.tvResult.setText(item.result);
-            holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof HeaderHolder) {
+                ((HeaderHolder) holder).title.setText((String) rows.get(position));
+            } else {
+                CalculationHistoryItem item = (CalculationHistoryItem) rows.get(position);
+                ItemHolder itemHolder = (ItemHolder) holder;
+                itemHolder.tvExpression.setText(item.expression);
+                itemHolder.tvResult.setText(item.result);
+                itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
+            }
         }
 
         @Override
-        public int getItemCount() { return items.size(); }
+        public int getItemCount() {
+            return rows.size();
+        }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvExpression, tvResult;
-            ViewHolder(View v) {
+        static class HeaderHolder extends RecyclerView.ViewHolder {
+            final TextView title;
+
+            HeaderHolder(View v) {
+                super(v);
+                title = v.findViewById(R.id.tv_history_section);
+            }
+        }
+
+        static class ItemHolder extends RecyclerView.ViewHolder {
+            final TextView tvExpression;
+            final TextView tvResult;
+
+            ItemHolder(View v) {
                 super(v);
                 tvExpression = v.findViewById(R.id.tv_history_expression);
                 tvResult = v.findViewById(R.id.tv_history_result);

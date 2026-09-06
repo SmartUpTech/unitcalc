@@ -9,8 +9,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:fontFamily="@font/oswald"
         android:text="@string/no_favorites"
-        android:textColor="@color/colorNewGrey"
+        android:textColor="@color/screen_expression_text"
         android:textSize="16sp" />
 
 </FrameLayout>

@@ -51,6 +51,33 @@ public class ConverterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tabLayout = view.findViewById(R.id.converter_tabs);
+        TabLayout workspaceTabs = view.findViewById(R.id.workspace_tabs);
+        View convertPane = view.findViewById(R.id.convert_pane);
+        View graphyPane = view.findViewById(R.id.graphy_pane);
+        View historyPane = view.findViewById(R.id.history_pane);
+
+        if (workspaceTabs.getTabCount() == 0) {
+            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.tab_convert));
+            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.graphy));
+            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.nav_history));
+        }
+        workspaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                convertPane.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+                graphyPane.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                historyPane.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
         if (tabLayout.getTabCount() == 0) {
             tabLayout.addTab(tabLayout.newTab().setText(R.string.unit_converter));

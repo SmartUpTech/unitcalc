@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Unit Converter</string>
+    <string name="app_name">Graphy Calculator</string>
 
     <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
     <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
@@ -18,12 +18,18 @@
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
     <string name="calculator">Calculator</string>
-    <string name="nav_calculator">Calculator</string>
+    <string name="nav_calculator">Calculate</string>
+    <string name="tab_calculate">Calculate</string>
+    <string name="tab_convert">Convert</string>
+    <string name="graphy_empty">Calculate first, then open Graphy to see how the answer was produced.</string>
+    <string name="history_today">Today</string>
+    <string name="history_yesterday">Yesterday</string>
+    <string name="no_conversion_history">No conversion history yet</string>
     <string name="nav_converter">Converter</string>
     <string name="nav_explore">Explore</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_history">History</string>
-    <string name="explore_placeholder">Browse calculators and tools. Search and catalog features are coming soon.</string>
+    <string name="explore_search_hint">Search calculators</string>
     <string name="no_favorites">No favorites yet</string>
     <string name="clear_history">Clear history</string>
     <string name="plus">+</string>

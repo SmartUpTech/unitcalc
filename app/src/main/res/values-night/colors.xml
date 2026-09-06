@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App chrome: dark -->
-    <color name="screen_background">#0F172A</color>
-    <color name="screen_expression_text">#94A3B8</color>
-    <color name="screen_result_text">#F8FAFC</color>
-    <color name="keypad_background">#1E293B</color>
-    <color name="key_number_bg">#334155</color>
-    <color name="key_number_text">#F8FAFC</color>
-    <color name="key_operator_bg">#312E81</color>
-    <color name="key_operator_text">#A5B4FC</color>
-    <color name="key_action_bg">#334155</color>
-    <color name="key_action_text">#F87171</color>
-    <color name="key_equals_bg">#818CF8</color>
-    <color name="key_equals_text">#0F172A</color>
-    <color name="app_bar">#0F172A</color>
-    <color name="on_app_bar">#F8FAFC</color>
-    <color name="nav_background">@color/keypad_background</color>
-    <color name="nav_selected">#818CF8</color>
-    <color name="nav_unselected">@color/screen_result_text</color>
+    <color name="screen_background">#1A1C1F</color>
+    <color name="screen_expression_text">#9A9590</color>
+    <color name="screen_result_text">#E8E4DE</color>
+    <color name="keypad_background">#1A1C1F</color>
+    <color name="key_number_bg">#00000000</color>
+    <color name="key_number_text">#E8E4DE</color>
+    <color name="key_operator_bg">#00000000</color>
+    <color name="key_operator_text">#E08A3C</color>
+    <color name="key_action_bg">#00000000</color>
+    <color name="key_action_text">#E8E4DE</color>
+    <color name="key_equals_bg">#00000000</color>
+    <color name="key_equals_text">#E06A4A</color>
+    <color name="app_bar">#1A1C1F</color>
+    <color name="on_app_bar">#E8E4DE</color>
+    <color name="nav_background">#141518</color>
+    <color name="nav_selected">#E08A3C</color>
+    <color name="nav_unselected">#8A8680</color>
+    <color name="workspace_tab_selected">#E08A3C</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
-
-    <!-- Legacy aliases (map to chrome tokens) -->
-    <color name="colorHeader">@color/app_bar</color>
-    <color name="colorPrimary">@color/app_bar</color>
-    <color name="colorSecondary">@color/keypad_background</color>
-    <color name="colorNewGrey">@color/screen_expression_text</color>
+    <color name="history_section_text">#8A8680</color>
     <color name="alwaysDarkText">#0c0c0c</color>
+
+    <color name="colorHeader">@color/app_bar</color>
+    <color name="colorPrimary">@color/nav_selected</color>
+    <color name="colorSecondary">@color/app_bar</color>
+    <color name="colorNewGrey">@color/screen_expression_text</color>
     <color name="calculator_accent_color">@color/screen_background</color>
     <color name="display_result_text_color">@color/screen_result_text</color>
     <color name="unit_text_color">@color/on_app_bar</color>
