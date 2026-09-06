@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorHeader</item>
@@ -15,11 +15,11 @@
         <item name="android:textColorHint">@color/pad_numeric_background_color</item>
     </style>
 
-    <style name="AppBaseTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppBaseTheme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorSecondary</item>
-        <item name="colorAccent">@color/colorPrimary</item> <!-- #519BE5 -->
-        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="popupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
     </style>
 
     <style name="ButtonStyle">
