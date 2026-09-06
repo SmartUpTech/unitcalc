@@ -11,11 +11,11 @@ import net.smartlogic.unitconverter.R;
 /**
  * Typed accessor for Graphy design tokens.
  */
-public final class GraphyTheme {
+public final class GraphyViewTheme {
 
     private final Context context;
 
-    public GraphyTheme(@NonNull Context context) {
+    public GraphyViewTheme(@NonNull Context context) {
         this.context = context.getApplicationContext();
     }
 

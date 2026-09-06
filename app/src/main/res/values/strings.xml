@@ -42,6 +42,8 @@
     <string name="show_graphy">Show Graphy</string>
     <string name="hide_graphy">Hide Graphy</string>
     <string name="graphy_explanation_label">How this answer was calculated</string>
+    <string name="graphy_panel_content_description">Graphy calculation explanation panel</string>
+    <string name="graphy_flowchart_content_description">Calculation flowchart diagram</string>
 
     <!-- Numbers -->
     <string name="one">1</string>

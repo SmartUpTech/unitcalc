@@ -11,13 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,13 +27,14 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.graphy.compose.GraphyPanelController;
 import net.smartlogic.unitconverter.graphy.integration.CalculationSnapshot;
 import net.smartlogic.unitconverter.graphy.integration.GraphyBridge;
 import net.smartlogic.unitconverter.graphy.integration.GraphyPanelHost;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
-import net.smartlogic.unitconverter.graphy.theme.GraphyTheme;
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
@@ -61,13 +62,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge();
     private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
-    private GraphyTheme graphyTheme;
+    private GraphyViewTheme graphyTheme;
     private GraphyOutput latestGraphyOutput;
 
     private Chip chipGraphy;
     private View graphyPanel;
-    private TextView tvGraphyExplanation;
-    private FrameLayout graphyFlowchartContainer;
+    private GraphyPanelController graphyPanelController;
     private boolean graphyVisible = false;
 
     public static CalculatorFragment newInstance() {
@@ -110,9 +110,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         rvHistory = view.findViewById(R.id.rv_history);
         chipGraphy = view.findViewById(R.id.chip_graphy);
         graphyPanel = view.findViewById(R.id.graphy_panel);
-        tvGraphyExplanation = view.findViewById(R.id.graphy_explanation);
-        graphyFlowchartContainer = view.findViewById(R.id.graphy_flowchart_container);
-        graphyTheme = new GraphyTheme(requireContext());
+        graphyTheme = new GraphyViewTheme(requireContext());
+        graphyPanelController = new GraphyPanelController(
+                (ComposeView) graphyPanel,
+                this,
+                graphyTheme
+        );
 
         chipGraphy.setOnClickListener(v -> {
             if (graphyVisible) {
@@ -459,7 +462,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void hideGraphy() {
         graphyVisible = false;
         graphyPanel.setVisibility(View.GONE);
-        graphyFlowchartContainer.removeAllViews();
+        graphyPanelController.update("", null);
         chipGraphy.setText(R.string.graphy);
     }
 
@@ -470,15 +473,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void renderGraphy(@NonNull GraphyOutput output) {
         String explanation = output.getExplanationTemplate();
-        if (explanation == null || explanation.isEmpty()) {
-            tvGraphyExplanation.setText(R.string.graphy_explanation_label);
-        } else {
-            tvGraphyExplanation.setText(explanation);
+        if (explanation == null) {
+            explanation = "";
         }
-
-        graphyFlowchartContainer.removeAllViews();
-        View flowchartView = graphyRenderer.render(requireContext(), output, graphyTheme);
-        graphyFlowchartContainer.addView(flowchartView);
+        graphyPanelController.update(explanation, output);
     }
 
     private void updateGraphyChipVisibility() {
