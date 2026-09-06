@@ -18,6 +18,14 @@
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
     <string name="calculator">Calculator</string>
+    <string name="nav_calculator">Calculator</string>
+    <string name="nav_converter">Converter</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_history">History</string>
+    <string name="explore_placeholder">Browse calculators and tools. Search and catalog features are coming soon.</string>
+    <string name="no_favorites">No favorites yet</string>
+    <string name="clear_history">Clear history</string>
     <string name="plus">+</string>
     <string name="multiply">×</string>
     <string name="divide">÷</string>
@@ -28,6 +36,12 @@
     <string name="standard_mode">Standard Mode</string>
     <string name="history_cleared">History cleared</string>
     <string name="invalid_expression">Invalid Expression</string>
+
+    <!-- Graphy -->
+    <string name="graphy">Graphy</string>
+    <string name="show_graphy">Show Graphy</string>
+    <string name="hide_graphy">Hide Graphy</string>
+    <string name="graphy_explanation_label">How this answer was calculated</string>
 
     <!-- Numbers -->
     <string name="one">1</string>

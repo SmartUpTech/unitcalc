@@ -1,5 +1,7 @@
 package net.smartlogic.unitconverter.app;
 
+import net.smartlogic.unitconverter.fragment.ConverterFragment;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -10,11 +12,21 @@ import java.util.Locale;
 
 public class AppConst {
 
-    public static final String TAG_UNIT     = "converter";
-    public static final String TAG_CURRENCY = "currency_converter";
-    public static final String TAG_CALC     = "calculator";
-    public static String CURRENT_TAG        = TAG_UNIT;
+    public static final String TAG_CALC = "calculator";
+    public static final String TAG_CONVERTER = "converter";
+    public static final String TAG_EXPLORE = "explore";
+    public static final String TAG_FAVORITES = "favorites";
+    public static final String TAG_HISTORY = "history";
 
+    /** @deprecated Use {@link #TAG_CONVERTER} with {@link #CONVERTER_TAB}. */
+    @Deprecated
+    public static final String TAG_UNIT = TAG_CONVERTER;
+    /** @deprecated Use {@link #TAG_CONVERTER} with {@link #CONVERTER_TAB}. */
+    @Deprecated
+    public static final String TAG_CURRENCY = TAG_CONVERTER;
+
+    public static String CURRENT_TAG = TAG_CALC;
+    public static int CONVERTER_TAB = ConverterFragment.TAB_UNIT;
 
     public static DecimalFormat df0 = new DecimalFormat("####.##########");
     public static DecimalFormat df1 = new DecimalFormat("##,##,##,###.##########");

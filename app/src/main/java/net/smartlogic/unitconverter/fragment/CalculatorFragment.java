@@ -11,31 +11,41 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.graphy.integration.CalculationSnapshot;
+import net.smartlogic.unitconverter.graphy.integration.GraphyBridge;
+import net.smartlogic.unitconverter.graphy.integration.GraphyPanelHost;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
+import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
+import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
+import net.smartlogic.unitconverter.graphy.theme.GraphyTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
+import net.smartlogic.unitconverter.utils.EvaluationResult;
+import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculatorFragment extends Fragment implements View.OnClickListener {
+public class CalculatorFragment extends Fragment implements View.OnClickListener, GraphyPanelHost {
 
     private TextView tvExpression, tvResult;
     private String expression = "";
@@ -46,23 +56,19 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private LinearLayout historyLayout;
     private RecyclerView rvHistory;
     private HistoryAdapter historyAdapter;
-    private final List<HistoryItem> historyList = new ArrayList<>();
+    private final List<CalculationHistoryItem> historyList = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
+    private final GraphyBridge graphyBridge = new GraphyBridge();
+    private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
+    private GraphyTheme graphyTheme;
+    private GraphyOutput latestGraphyOutput;
 
-    public static class HistoryItem {
-        public String expression;
-        public String result;
-
-        public HistoryItem(String expression, String result) {
-            this.expression = expression;
-            this.result = result;
-        }
-    }
-
-    public CalculatorFragment() {
-        // Required empty public constructor
-    }
+    private Chip chipGraphy;
+    private View graphyPanel;
+    private TextView tvGraphyExplanation;
+    private FrameLayout graphyFlowchartContainer;
+    private boolean graphyVisible = false;
 
     public static CalculatorFragment newInstance() {
         return new CalculatorFragment();
@@ -102,6 +108,19 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         mCoordinatorLayout = view.findViewById(R.id.cl);
         historyLayout = view.findViewById(R.id.history_layout);
         rvHistory = view.findViewById(R.id.rv_history);
+        chipGraphy = view.findViewById(R.id.chip_graphy);
+        graphyPanel = view.findViewById(R.id.graphy_panel);
+        tvGraphyExplanation = view.findViewById(R.id.graphy_explanation);
+        graphyFlowchartContainer = view.findViewById(R.id.graphy_flowchart_container);
+        graphyTheme = new GraphyTheme(requireContext());
+
+        chipGraphy.setOnClickListener(v -> {
+            if (graphyVisible) {
+                hideGraphy();
+            } else if (latestGraphyOutput != null) {
+                showGraphy(latestGraphyOutput);
+            }
+        });
 
         int[] ids = {
                 R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
@@ -160,6 +179,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             tvExpression.setText("");
             tvResult.setText("0");
             isResultDisplayed = false;
+            latestGraphyOutput = null;
+            hideGraphy();
+            updateGraphyChipVisibility();
         } else if (id == R.id.backspace) {
             handleBackspace();
         } else if (id == R.id.copy) {
@@ -360,15 +382,29 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            double res = eval(sanitized);
-            if (Double.isNaN(res) || Double.isInfinite(res)) {
+            EvaluationResult evaluationResult = ExpressionEvaluator.evaluate(sanitized);
+            if (!evaluationResult.isValid()) {
                 if (isFinal) showToast(getString(R.string.invalid_expression));
                 return;
             }
 
+            double res = evaluationResult.getValue();
             String formatted = formatResult(res);
             tvResult.setText(formatted);
-            
+
+            CalculationSnapshot snapshot = CalculationSnapshot.create(
+                    CalculationSnapshot.BASIC_CALCULATOR_ID,
+                    expression,
+                    sanitized,
+                    formatted,
+                    evaluationResult
+            );
+            latestGraphyOutput = graphyBridge.build(snapshot);
+            updateGraphyChipVisibility();
+            if (graphyVisible && latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
+                renderGraphy(latestGraphyOutput);
+            }
+
             if (isFinal) {
                 dbHelper.addHistory(expression, formatted);
                 expression = formatted.replace(",", "");
@@ -404,100 +440,65 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    // Advanced Parser with implicit multiplication support
-    public double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
+    GraphyOutput getLatestGraphyOutput() {
+        return latestGraphyOutput;
+    }
 
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
+    @Override
+    public void showGraphy(@NonNull GraphyOutput output) {
+        if (!graphyRenderer.supports(output)) {
+            return;
+        }
+        graphyVisible = true;
+        graphyPanel.setVisibility(View.VISIBLE);
+        chipGraphy.setText(R.string.hide_graphy);
+        renderGraphy(output);
+    }
 
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
+    @Override
+    public void hideGraphy() {
+        graphyVisible = false;
+        graphyPanel.setVisibility(View.GONE);
+        graphyFlowchartContainer.removeAllViews();
+        chipGraphy.setText(R.string.graphy);
+    }
 
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) return Double.NaN;
-                return x;
-            }
+    @Override
+    public boolean isGraphyVisible() {
+        return graphyVisible;
+    }
 
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if (eat('+')) x += parseTerm();
-                    else if (eat('-')) x -= parseTerm();
-                    else return x;
-                }
-            }
+    private void renderGraphy(@NonNull GraphyOutput output) {
+        String explanation = output.getExplanationTemplate();
+        if (explanation == null || explanation.isEmpty()) {
+            tvGraphyExplanation.setText(R.string.graphy_explanation_label);
+        } else {
+            tvGraphyExplanation.setText(explanation);
+        }
 
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if (eat('*')) x *= parseFactor();
-                    else if (eat('/')) {
-                        double divisor = parseFactor();
-                        if (divisor == 0) return Double.NaN;
-                        x /= divisor;
-                    } else return x;
-                }
-            }
+        graphyFlowchartContainer.removeAllViews();
+        View flowchartView = graphyRenderer.render(requireContext(), output, graphyTheme);
+        graphyFlowchartContainer.addView(flowchartView);
+    }
 
-            double parseFactor() {
-                if (eat('+')) return +parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) {
-                    x = parseExpression();
-                    if (!eat(')')) return Double.NaN;
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    try {
-                        x = Double.parseDouble(str.substring(startPos, this.pos));
-                    } catch (NumberFormatException e) {
-                        return Double.NaN;
-                    }
-                } else if (ch >= 'a' && ch <= 'z') {
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    if (eat('(')) {
-                        x = parseExpression();
-                        if (!eat(')')) return Double.NaN;
-                    } else {
-                        x = parseFactor();
-                    }
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else return Double.NaN;
-                } else {
-                    return Double.NaN;
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor());
-                if (eat('%')) x = x / 100.0;
-
-                return x;
-            }
-        }.parse();
+    private void updateGraphyChipVisibility() {
+        boolean hasGraph = latestGraphyOutput != null
+                && graphyRenderer.supports(latestGraphyOutput);
+        chipGraphy.setVisibility(hasGraph ? View.VISIBLE : View.GONE);
+        if (!hasGraph && graphyVisible) {
+            hideGraphy();
+        }
     }
 
     private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-        private final List<HistoryItem> items;
+        private final List<CalculationHistoryItem> items;
         private final OnItemClickListener listener;
 
         interface OnItemClickListener {
-            void onItemClick(HistoryItem item);
+            void onItemClick(CalculationHistoryItem item);
         }
 
-        HistoryAdapter(List<HistoryItem> items, OnItemClickListener listener) {
+        HistoryAdapter(List<CalculationHistoryItem> items, OnItemClickListener listener) {
             this.items = items;
             this.listener = listener;
         }
@@ -511,7 +512,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            HistoryItem item = items.get(position);
+            CalculationHistoryItem item = items.get(position);
             holder.tvExpression.setText(item.expression);
             holder.tvResult.setText(item.result);
             holder.itemView.setOnClickListener(v -> listener.onItemClick(item));

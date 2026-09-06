@@ -4,20 +4,26 @@
     <item
         android:id="@+id/calculator"
         android:icon="@drawable/ic_calculator"
-        android:title="@string/calculator" />
+        android:title="@string/nav_calculator" />
 
     <item
-        android:id="@+id/unit_converter"
+        android:id="@+id/converter"
         android:icon="@drawable/ic_converter"
-        android:title="@string/unit_converter" />
+        android:title="@string/nav_converter" />
 
     <item
-        android:id="@+id/currency_converter"
-        android:icon="@drawable/ic_currency_converter"
-        android:title="@string/currency_converter" />
+        android:id="@+id/explore"
+        android:icon="@drawable/ic_explore"
+        android:title="@string/nav_explore" />
 
     <item
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/title_activity_settings" />
+        android:id="@+id/favorites"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/nav_favorites" />
+
+    <item
+        android:id="@+id/history"
+        android:icon="@drawable/ic_history"
+        android:title="@string/nav_history" />
+
 </menu>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="graphy_node_min_width">72dp</dimen>
+    <dimen name="graphy_node_min_height">40dp</dimen>
+    <dimen name="graphy_node_corner_radius">12dp</dimen>
+    <dimen name="graphy_operation_marker_size">32dp</dimen>
+    <dimen name="graphy_connector_stroke">2dp</dimen>
+    <dimen name="graphy_spacing_xs">4dp</dimen>
+    <dimen name="graphy_spacing_sm">8dp</dimen>
+    <dimen name="graphy_spacing_md">16dp</dimen>
+    <dimen name="graphy_spacing_lg">24dp</dimen>
+    <dimen name="graphy_elevation_card">4dp</dimen>
+</resources>
