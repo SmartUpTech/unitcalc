@@ -21,6 +21,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -37,6 +38,8 @@ import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.HistoryDateLabels;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
+import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
@@ -55,8 +58,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private boolean isResultDisplayed = false;
     
     private View historyPane;
-    private View calculatePane;
-    private View graphyPane;
     private TextView graphyEmpty;
     private TextView graphyContext;
     private RecyclerView rvHistory;
@@ -70,10 +71,27 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private GraphyOutput latestGraphyOutput;
 
     private TabLayout workspaceTabs;
-    private View graphyPanel;
+    private ViewPager2 workspacePager;
+    private WorkspaceTabController workspaceTabController;
+    private ComposeView graphyPanel;
     private GraphyPanelController graphyPanelController;
     private boolean graphyVisible = false;
     private int lastWorkspaceTab = 0;
+    private boolean calculatePageBound;
+    private boolean graphyPageBound;
+    private boolean historyPageBound;
+
+    private static final int[] WORKSPACE_LAYOUTS = {
+            R.layout.pane_calculator_calculate,
+            R.layout.pane_calculator_graphy,
+            R.layout.pane_calculator_history
+    };
+
+    private static final int[] WORKSPACE_TAB_TITLES = {
+            R.string.tab_calculate,
+            R.string.graphy,
+            R.string.nav_history
+    };
 
     public static CalculatorFragment newInstance() {
         return new CalculatorFragment();
@@ -107,48 +125,65 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), onBackPressedCallback);
     }
 
+    @Override
+    public void onDestroyView() {
+        if (workspaceTabController != null) {
+            workspaceTabController.detach();
+            workspaceTabController = null;
+        }
+        super.onDestroyView();
+    }
+
     private void initViews(View view) {
-        tvExpression = view.findViewById(R.id.expression);
-        tvResult = view.findViewById(R.id.result);
         mCoordinatorLayout = view.findViewById(R.id.cl);
-        calculatePane = view.findViewById(R.id.calculate_pane);
-        graphyPane = view.findViewById(R.id.graphy_pane);
-        historyPane = view.findViewById(R.id.history_pane);
-        graphyEmpty = view.findViewById(R.id.graphy_empty);
-        graphyContext = view.findViewById(R.id.graphy_context);
-        rvHistory = view.findViewById(R.id.rv_history);
         workspaceTabs = view.findViewById(R.id.workspace_tabs);
-        graphyPanel = view.findViewById(R.id.graphy_panel);
+        workspacePager = view.findViewById(R.id.workspace_pager);
         graphyTheme = new GraphyViewTheme(requireContext());
-        graphyPanelController = new GraphyPanelController(
-                (ComposeView) graphyPanel,
-                this,
-                graphyTheme
+
+        WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
+                WORKSPACE_LAYOUTS,
+                this::bindWorkspacePage
         );
+        workspacePager.setAdapter(pagerAdapter);
 
-        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.tab_calculate));
-        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.graphy));
-        workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.nav_history));
-        workspaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 1 && !hasGraphyContent()) {
-                    selectWorkspaceTab(lastWorkspaceTab);
-                    return;
+        workspaceTabController = new WorkspaceTabController(
+                workspacePager,
+                workspaceTabs,
+                WORKSPACE_TAB_TITLES,
+                new WorkspaceTabController.Callback() {
+                    @Override
+                    public void onTabSelected(int position) {
+                        lastWorkspaceTab = position;
+                        applyWorkspaceTab(position);
+                    }
+
+                    @Override
+                    public boolean isTabEnabled(int position) {
+                        return position != 1 || hasGraphyContent();
+                    }
                 }
-                lastWorkspaceTab = tab.getPosition();
-                applyWorkspaceTab(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
+        );
         updateGraphyTabState();
+    }
+
+    private void bindWorkspacePage(int position, @NonNull View pageView) {
+        if (position == 0) {
+            bindCalculatePage(pageView);
+        } else if (position == 1) {
+            bindGraphyPage(pageView);
+        } else if (position == 2) {
+            bindHistoryPage(pageView);
+        }
+    }
+
+    private void bindCalculatePage(@NonNull View pageView) {
+        if (calculatePageBound) {
+            return;
+        }
+        calculatePageBound = true;
+
+        tvExpression = pageView.findViewById(R.id.expression);
+        tvResult = pageView.findViewById(R.id.result);
 
         int[] ids = {
                 R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
@@ -160,10 +195,46 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         };
 
         for (int id : ids) {
-            View v = view.findViewById(id);
-            if (v != null) v.setOnClickListener(this);
+            View v = pageView.findViewById(id);
+            if (v != null) {
+                v.setOnClickListener(this);
+            }
         }
 
+        tvExpression.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                GenericFunctions.adjustTextSize(tvExpression, 21);
+            }
+        });
+    }
+
+    private void bindGraphyPage(@NonNull View pageView) {
+        if (graphyPageBound) {
+            return;
+        }
+        graphyPageBound = true;
+
+        graphyEmpty = pageView.findViewById(R.id.graphy_empty);
+        graphyContext = pageView.findViewById(R.id.graphy_context);
+        graphyPanel = pageView.findViewById(R.id.graphy_panel);
+        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+    }
+
+    private void bindHistoryPage(@NonNull View pageView) {
+        if (historyPageBound) {
+            return;
+        }
+        historyPageBound = true;
+
+        historyPane = pageView.findViewById(R.id.history_pane);
+        rvHistory = pageView.findViewById(R.id.rv_history);
         historyAdapter = new HistoryAdapter(historyRows, item -> {
             expression = item.result.replace(",", "");
             tvExpression.setText("");
@@ -173,17 +244,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         });
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHistory.setAdapter(historyAdapter);
-
-        tvExpression.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                GenericFunctions.adjustTextSize(tvExpression, 21);
-            }
-        });
     }
 
     @Override
@@ -359,16 +419,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void selectWorkspaceTab(int index) {
-        TabLayout.Tab tab = workspaceTabs.getTabAt(index);
-        if (tab != null) {
-            tab.select();
+        if (workspaceTabController != null) {
+            workspaceTabController.selectTab(index);
         }
     }
 
     private void applyWorkspaceTab(int position) {
-        calculatePane.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
-        graphyPane.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
-        historyPane.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
         if (onBackPressedCallback != null) {
             onBackPressedCallback.setEnabled(position != 0);
         }
@@ -377,9 +433,15 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 showGraphy(latestGraphyOutput);
             } else {
                 hideGraphy();
-                graphyEmpty.setVisibility(View.VISIBLE);
-                graphyPanel.setVisibility(View.GONE);
-                graphyContext.setText("");
+                if (graphyEmpty != null) {
+                    graphyEmpty.setVisibility(View.VISIBLE);
+                }
+                if (graphyPanel != null) {
+                    graphyPanel.setVisibility(View.GONE);
+                }
+                if (graphyContext != null) {
+                    graphyContext.setText("");
+                }
             }
         }
         if (position == 2) {
@@ -500,16 +562,24 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             return;
         }
         graphyVisible = true;
-        graphyEmpty.setVisibility(View.GONE);
-        graphyPanel.setVisibility(View.VISIBLE);
-        graphyContext.setVisibility(View.GONE);
+        if (graphyEmpty != null) {
+            graphyEmpty.setVisibility(View.GONE);
+        }
+        if (graphyPanel != null) {
+            graphyPanel.setVisibility(View.VISIBLE);
+        }
+        if (graphyContext != null) {
+            graphyContext.setVisibility(View.GONE);
+        }
         renderGraphy(output);
     }
 
     @Override
     public void hideGraphy() {
         graphyVisible = false;
-        graphyPanelController.update("", null);
+        if (graphyPanelController != null) {
+            graphyPanelController.update("", null);
+        }
     }
 
     @Override
@@ -518,6 +588,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void renderGraphy(@NonNull GraphyOutput output) {
+        if (graphyPanelController == null) {
+            return;
+        }
         String expression = output.getExpression();
         if (expression == null) {
             expression = "";

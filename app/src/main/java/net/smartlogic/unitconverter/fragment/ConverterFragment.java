@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
@@ -22,6 +23,8 @@ import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
+import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
+import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 
 /**
  * Hosts unit and currency converters behind a single Converter tab.
@@ -34,6 +37,18 @@ public class ConverterFragment extends Fragment {
     private static final String TAG_UNIT = "converter_unit";
     private static final String TAG_CURRENCY = "converter_currency";
 
+    private static final int[] WORKSPACE_LAYOUTS = {
+            R.layout.pane_converter_convert,
+            R.layout.pane_converter_graphy,
+            R.layout.pane_converter_history
+    };
+
+    private static final int[] WORKSPACE_TAB_TITLES = {
+            R.string.tab_convert,
+            R.string.graphy,
+            R.string.nav_history
+    };
+
     private MaterialButtonToggleGroup modeToggle;
     private UnitConverterFragment unitFragment;
     private CurrencyConverterFragment currencyFragment;
@@ -41,9 +56,8 @@ public class ConverterFragment extends Fragment {
     private boolean childFragmentsInitialized;
 
     private TabLayout workspaceTabs;
-    private View convertPane;
-    private View graphyPane;
-    private View historyPane;
+    private ViewPager2 workspacePager;
+    private WorkspaceTabController workspaceTabController;
     private TextView graphyContext;
     private TextView graphyEmpty;
     private ComposeView graphyPanel;
@@ -52,6 +66,8 @@ public class ConverterFragment extends Fragment {
     private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
     private GraphyOutput latestGraphyOutput;
     private int lastWorkspaceTab;
+    private boolean convertPageBound;
+    private boolean graphyPageBound;
 
     public ConverterFragment() {
     }
@@ -71,43 +87,60 @@ public class ConverterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        modeToggle = view.findViewById(R.id.converter_mode_toggle);
         workspaceTabs = view.findViewById(R.id.workspace_tabs);
-        convertPane = view.findViewById(R.id.convert_pane);
-        graphyPane = view.findViewById(R.id.graphy_pane);
-        historyPane = view.findViewById(R.id.history_pane);
-        graphyContext = view.findViewById(R.id.graphy_context);
-        graphyEmpty = view.findViewById(R.id.graphy_empty);
-        graphyPanel = view.findViewById(R.id.graphy_panel);
+        workspacePager = view.findViewById(R.id.workspace_pager);
         graphyTheme = new GraphyViewTheme(requireContext());
-        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
 
-        if (workspaceTabs.getTabCount() == 0) {
-            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.tab_convert));
-            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.graphy));
-            workspaceTabs.addTab(workspaceTabs.newTab().setText(R.string.nav_history));
-        }
-        workspaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 1 && !hasGraphyContent()) {
-                    selectWorkspaceTab(lastWorkspaceTab);
-                    return;
+        WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
+                WORKSPACE_LAYOUTS,
+                this::bindWorkspacePage
+        );
+        workspacePager.setAdapter(pagerAdapter);
+
+        workspaceTabController = new WorkspaceTabController(
+                workspacePager,
+                workspaceTabs,
+                WORKSPACE_TAB_TITLES,
+                new WorkspaceTabController.Callback() {
+                    @Override
+                    public void onTabSelected(int position) {
+                        lastWorkspaceTab = position;
+                        applyWorkspaceTab(position);
+                    }
+
+                    @Override
+                    public boolean isTabEnabled(int position) {
+                        return position != 1 || hasGraphyContent();
+                    }
                 }
-                lastWorkspaceTab = tab.getPosition();
-                applyWorkspaceTab(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
+        );
         updateGraphyTabState();
+    }
 
+    @Override
+    public void onDestroyView() {
+        if (workspaceTabController != null) {
+            workspaceTabController.detach();
+            workspaceTabController = null;
+        }
+        super.onDestroyView();
+    }
+
+    private void bindWorkspacePage(int position, @NonNull View pageView) {
+        if (position == 0) {
+            bindConvertPage(pageView);
+        } else if (position == 1) {
+            bindGraphyPage(pageView);
+        }
+    }
+
+    private void bindConvertPage(@NonNull View pageView) {
+        if (convertPageBound) {
+            return;
+        }
+        convertPageBound = true;
+
+        modeToggle = pageView.findViewById(R.id.converter_mode_toggle);
         modeToggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (!isChecked) {
                 return;
@@ -129,10 +162,24 @@ public class ConverterFragment extends Fragment {
         showConverterTab(selectedTab);
     }
 
+    private void bindGraphyPage(@NonNull View pageView) {
+        if (graphyPageBound) {
+            return;
+        }
+        graphyPageBound = true;
+
+        graphyContext = pageView.findViewById(R.id.graphy_context);
+        graphyEmpty = pageView.findViewById(R.id.graphy_empty);
+        graphyPanel = pageView.findViewById(R.id.graphy_panel);
+        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+    }
+
     public void updateConversionGraphy(@NonNull GraphyOutput output, @NonNull String contextLine) {
         latestGraphyOutput = output;
         updateGraphyTabState();
-        if (graphyPane.getVisibility() == View.VISIBLE && hasGraphyContent()) {
+        if (workspaceTabController != null
+                && workspaceTabController.getCurrentTab() == 1
+                && hasGraphyContent()) {
             showGraphy(output, contextLine);
         }
     }
@@ -140,8 +187,12 @@ public class ConverterFragment extends Fragment {
     public void clearConversionGraphy() {
         latestGraphyOutput = null;
         updateGraphyTabState();
-        graphyPanelController.update("", null);
-        graphyContext.setText("");
+        if (graphyPanelController != null) {
+            graphyPanelController.update("", null);
+        }
+        if (graphyContext != null) {
+            graphyContext.setText("");
+        }
     }
 
     private boolean hasGraphyContent() {
@@ -149,6 +200,9 @@ public class ConverterFragment extends Fragment {
     }
 
     private void updateGraphyTabState() {
+        if (workspaceTabs == null) {
+            return;
+        }
         TabLayout.Tab graphyTab = workspaceTabs.getTabAt(1);
         if (graphyTab == null) {
             return;
@@ -160,32 +214,42 @@ public class ConverterFragment extends Fragment {
     }
 
     private void selectWorkspaceTab(int index) {
-        TabLayout.Tab tab = workspaceTabs.getTabAt(index);
-        if (tab != null) {
-            tab.select();
+        if (workspaceTabController != null) {
+            workspaceTabController.selectTab(index);
         }
     }
 
     private void applyWorkspaceTab(int position) {
-        convertPane.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
-        graphyPane.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
-        historyPane.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
-
         if (position == 1) {
             if (hasGraphyContent()) {
                 showGraphy(latestGraphyOutput, latestGraphyOutput.getExpression());
             } else {
-                graphyEmpty.setVisibility(View.VISIBLE);
-                graphyPanel.setVisibility(View.GONE);
-                graphyContext.setText("");
+                if (graphyEmpty != null) {
+                    graphyEmpty.setVisibility(View.VISIBLE);
+                }
+                if (graphyPanel != null) {
+                    graphyPanel.setVisibility(View.GONE);
+                }
+                if (graphyContext != null) {
+                    graphyContext.setText("");
+                }
             }
         }
     }
 
     private void showGraphy(@NonNull GraphyOutput output, @NonNull String contextLine) {
-        graphyEmpty.setVisibility(View.GONE);
-        graphyPanel.setVisibility(View.VISIBLE);
-        graphyContext.setVisibility(View.GONE);
+        if (graphyPanelController == null) {
+            return;
+        }
+        if (graphyEmpty != null) {
+            graphyEmpty.setVisibility(View.GONE);
+        }
+        if (graphyPanel != null) {
+            graphyPanel.setVisibility(View.VISIBLE);
+        }
+        if (graphyContext != null) {
+            graphyContext.setVisibility(View.GONE);
+        }
         graphyPanelController.update(contextLine, output);
     }
 
