@@ -121,7 +121,7 @@
         <item name="android:layout_margin">4dp</item>
     </style>
 
-    <style name="ImageButtonStyle.Swap">
+    <style name="ImageButtonStyle.Swap" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
@@ -133,7 +133,7 @@
         <item name="android:layout_margin">4dp</item>
     </style>
 
-    <style name="ImageButtonStyle.Backspace">
+    <style name="ImageButtonStyle.Backspace" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>

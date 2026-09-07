@@ -39,6 +39,7 @@ import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
+import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
