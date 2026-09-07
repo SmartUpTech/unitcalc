@@ -73,6 +73,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private View graphyPanel;
     private GraphyPanelController graphyPanelController;
     private boolean graphyVisible = false;
+    private int lastWorkspaceTab = 0;
 
     public static CalculatorFragment newInstance() {
         return new CalculatorFragment();
@@ -131,6 +132,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         workspaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 1 && !hasGraphyContent()) {
+                    selectWorkspaceTab(lastWorkspaceTab);
+                    return;
+                }
+                lastWorkspaceTab = tab.getPosition();
                 applyWorkspaceTab(tab.getPosition());
             }
 
@@ -142,6 +148,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+        updateGraphyTabState();
 
         int[] ids = {
                 R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
@@ -190,6 +197,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             isResultDisplayed = false;
             latestGraphyOutput = null;
             hideGraphy();
+            updateGraphyTabState();
         } else if (id == R.id.backspace) {
             handleBackspace();
         } else if (id == R.id.copy) {
@@ -335,6 +343,21 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         return c == '+' || c == '-' || c == '×' || c == '÷';
     }
 
+    private boolean hasGraphyContent() {
+        return latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput);
+    }
+
+    private void updateGraphyTabState() {
+        TabLayout.Tab graphyTab = workspaceTabs.getTabAt(1);
+        if (graphyTab == null) {
+            return;
+        }
+        boolean enabled = hasGraphyContent();
+        View tabView = graphyTab.view;
+        tabView.setEnabled(enabled);
+        tabView.setAlpha(enabled ? 1f : 0.4f);
+    }
+
     private void selectWorkspaceTab(int index) {
         TabLayout.Tab tab = workspaceTabs.getTabAt(index);
         if (tab != null) {
@@ -427,6 +450,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                     evaluationResult
             );
             latestGraphyOutput = graphyBridge.build(snapshot);
+            updateGraphyTabState();
             if (graphyVisible && latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
                 renderGraphy(latestGraphyOutput);
             }

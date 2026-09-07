@@ -23,7 +23,7 @@
             android:id="@+id/converter_tabs"
             style="@style/WorkspaceTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             app:tabIndicatorHeight="1dp"
             app:tabTextAppearance="@style/WorkspaceTabText" />
 

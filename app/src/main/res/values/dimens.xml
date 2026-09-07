@@ -11,6 +11,6 @@
 
     <dimen name="spinnerHeight">54dp</dimen>
 
-    <dimen name="buttonTextSize">22dp</dimen>
+    <dimen name="buttonTextSize">22sp</dimen>
 
 </resources>
