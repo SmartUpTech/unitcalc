@@ -6,16 +6,16 @@
     <color name="graphy_result">#00000000</color>
     <color name="graphy_warning">#C23A2B</color>
     <color name="graphy_time">#8A8174</color>
-    <color name="graphy_secondary">#6B6358</color>
+    <color name="graphy_secondary">#6B7280</color>
 
-    <color name="graphy_connector">#C4B8A8</color>
+    <color name="graphy_connector">#D1D5DB</color>
     <color name="graphy_connector_highlight">#C23A2B</color>
 
-    <color name="graphy_surface">#F3EDE3</color>
-    <color name="graphy_surface_elevated">#F3EDE3</color>
+    <color name="graphy_surface">#FDFBF7</color>
+    <color name="graphy_surface_elevated">#FDFBF7</color>
 
-    <color name="graphy_on_primary">#F3EDE3</color>
-    <color name="graphy_on_input">#1A1612</color>
+    <color name="graphy_on_primary">#FFFFFF</color>
+    <color name="graphy_on_input">#000000</color>
     <color name="graphy_on_operation">#C23A2B</color>
-    <color name="graphy_on_result">#1A1612</color>
+    <color name="graphy_on_result">#000000</color>
 </resources>

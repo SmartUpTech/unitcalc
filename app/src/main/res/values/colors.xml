@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="screen_background">#F3EDE3</color>
-    <color name="screen_expression_text">#6B6358</color>
-    <color name="screen_result_text">#1A1612</color>
-    <color name="keypad_background">#F3EDE3</color>
+    <!-- Option 1: Soft Accent (Light) -->
+    <color name="screen_background">#FDFBF7</color>
+    <color name="surface_elevated">#FDFBF7</color>
+    <color name="screen_expression_text">#6B7280</color>
+    <color name="screen_result_text">#000000</color>
+    <color name="keypad_background">#FDFBF7</color>
     <color name="key_number_bg">#00000000</color>
-    <color name="key_number_text">#1A1612</color>
+    <color name="key_number_text">#000000</color>
     <color name="key_operator_bg">#00000000</color>
     <color name="key_operator_text">#C23A2B</color>
     <color name="key_action_bg">#00000000</color>
-    <color name="key_action_text">#1A1612</color>
-    <color name="key_equals_bg">#00000000</color>
-    <color name="key_equals_text">#C23A2B</color>
-    <color name="app_bar">#F3EDE3</color>
-    <color name="on_app_bar">#1A1612</color>
-    <color name="nav_background">#F3EDE3</color>
+    <color name="key_action_text">#000000</color>
+    <color name="key_backspace_bg">#1A1612</color>
+    <color name="key_backspace_icon">#FFFFFF</color>
+    <color name="key_equals_bg">#C23A2B</color>
+    <color name="key_equals_text">#FFFFFF</color>
+    <color name="app_bar">#FDFBF7</color>
+    <color name="on_app_bar">#000000</color>
+    <color name="nav_background">#FDFBF7</color>
     <color name="nav_selected">#C23A2B</color>
-    <color name="nav_unselected">#6B6358</color>
+    <color name="nav_unselected">#6B7280</color>
     <color name="workspace_tab_selected">#C23A2B</color>
+    <color name="accent">#C23A2B</color>
+    <color name="on_accent">#FFFFFF</color>
     <color name="pad_button_ripple_color">#33000000</color>
     <color name="history_section_text">#8A8174</color>
 
