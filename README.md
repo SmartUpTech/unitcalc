@@ -11,7 +11,7 @@ It is being upgraded into **Graphy Calculator**: the same fast tools you already
 | Tab | What it is for |
 |-----|----------------|
 | **Calculator** | Everyday maths — add, subtract, multiply, divide, percentages, powers, square roots, and more |
-| **Converter** | Change values between units (length, weight, temperature, etc.) and between world currencies |
+| **Convert** | Change values between units (length, weight, temperature, etc.) and between world currencies |
 | **Explore** | A home for more calculators and tools *(coming soon)* |
 | **Favorites** | Save the calculators you use most *(coming soon)* |
 | **History** | See your past calculator results in one list |
@@ -42,9 +42,9 @@ Open the **Calculator** tab and type like you would on a normal phone calculator
 
 ---
 
-## Converter — examples
+## Convert — examples
 
-Open the **Converter** tab. You will see two choices at the top:
+Open the **Convert** tab. You will see two choices at the top:
 
 ### Unit
 
