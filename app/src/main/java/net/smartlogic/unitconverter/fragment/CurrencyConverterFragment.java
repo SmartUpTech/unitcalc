@@ -38,7 +38,8 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
-import net.smartlogic.unitconverter.utils.Utils;
+import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -283,7 +284,45 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             String formattedOut = format.format(out);
             outputValue.setText(formattedOut);
             adjustTextSize(outputValue);
+            updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate);
+        } else if (getParentFragment() instanceof ConverterFragment) {
+            ((ConverterFragment) getParentFragment()).clearConversionGraphy();
         }
+    }
+
+    private void updateParentGraphy(String inStr,
+                                    String inCurrency,
+                                    String outCurrency,
+                                    String formattedOut,
+                                    float rate) {
+        Fragment parent = getParentFragment();
+        if (!(parent instanceof ConverterFragment)) {
+            return;
+        }
+        ConverterFragment converter = (ConverterFragment) parent;
+        if (inStr.isEmpty() || inStr.equals("0")) {
+            converter.clearConversionGraphy();
+            return;
+        }
+
+        String operationLabel = "× " + formatRate(rate);
+        String inputDisplay = inStr + " " + inCurrency;
+        String resultDisplay = formattedOut + " " + outCurrency;
+        String explanation = inputDisplay + " " + operationLabel + " = " + resultDisplay;
+        GraphyOutput output = ConversionGraphBuilder.build(
+                ConversionGraphBuilder.CURRENCY_CONVERTER_ID,
+                inputDisplay,
+                operationLabel,
+                resultDisplay,
+                explanation
+        );
+        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+    }
+
+    @NonNull
+    private String formatRate(float rate) {
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#.########");
+        return df.format(rate);
     }
 
     private void initUILayout(View view) {

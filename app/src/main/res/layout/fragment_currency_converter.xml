@@ -236,7 +236,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5"
-            android:background="@color/keypad_background"
             android:orientation="horizontal"
             android:padding="8dp"
             android:weightSum="4">

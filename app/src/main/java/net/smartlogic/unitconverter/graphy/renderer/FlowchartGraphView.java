@@ -25,11 +25,12 @@ import java.util.Set;
 
 /**
  * Canvas-based flowchart renderer for Graphy output graphs.
+ * Layers flow top-to-bottom so calculations read naturally downward.
  */
 public class FlowchartGraphView extends View {
 
-    private static final float HORIZONTAL_GAP_DP = 32f;
-    private static final float VERTICAL_GAP_DP = 16f;
+    private static final float HORIZONTAL_GAP_DP = 24f;
+    private static final float VERTICAL_GAP_DP = 28f;
     private static final float PADDING_DP = 12f;
     private static final float OPERATION_PADDING_DP = 6f;
 
@@ -121,60 +122,60 @@ public class FlowchartGraphView extends View {
         configureTextPaint();
 
         for (GraphyNode node : output.getNodes()) {
+            float textWidth = textPaint.measureText(
+                    node.getType() == GraphyNodeType.OPERATION ? node.getLabel() : node.getDisplayValue());
+            float width = Math.max(minWidth, textWidth + padding * 2);
+            float height = Math.max(minHeight, textPaint.getTextSize() + padding * 1.5f);
             if (node.getType() == GraphyNodeType.OPERATION) {
-                nodeWidths.put(node.getId(), operationSize);
-                nodeHeights.put(node.getId(), operationSize);
-            } else {
-                float textWidth = textPaint.measureText(node.getDisplayValue());
-                float width = Math.max(minWidth, textWidth + padding * 2);
-                float height = Math.max(minHeight, textPaint.getTextSize() + padding * 1.5f);
-                nodeWidths.put(node.getId(), width);
-                nodeHeights.put(node.getId(), height);
+                width = Math.max(operationSize, width);
+                height = Math.max(operationSize, height);
             }
+            nodeWidths.put(node.getId(), width);
+            nodeHeights.put(node.getId(), height);
         }
 
         int maxLayer = 0;
-        float maxLayerHeight = 0f;
+        float maxLayerWidth = 0f;
         for (Map.Entry<Integer, List<String>> entry : layerNodes.entrySet()) {
             maxLayer = Math.max(maxLayer, entry.getKey());
-            float layerHeight = 0f;
+            float layerWidth = 0f;
             List<String> ids = entry.getValue();
             for (int i = 0; i < ids.size(); i++) {
-                layerHeight += nodeHeights.get(ids.get(i));
+                layerWidth += nodeWidths.get(ids.get(i));
                 if (i < ids.size() - 1) {
-                    layerHeight += verticalGap;
+                    layerWidth += horizontalGap;
                 }
             }
-            maxLayerHeight = Math.max(maxLayerHeight, layerHeight);
+            maxLayerWidth = Math.max(maxLayerWidth, layerWidth);
         }
 
-        float x = padding;
+        float y = padding;
         for (int layer = 0; layer <= maxLayer; layer++) {
             List<String> ids = layerNodes.get(layer);
             if (ids == null) {
                 continue;
             }
 
-            float layerHeight = 0f;
+            float layerWidth = 0f;
+            float maxHeightInLayer = 0f;
             for (int i = 0; i < ids.size(); i++) {
-                layerHeight += nodeHeights.get(ids.get(i));
+                layerWidth += nodeWidths.get(ids.get(i));
+                maxHeightInLayer = Math.max(maxHeightInLayer, nodeHeights.get(ids.get(i)));
                 if (i < ids.size() - 1) {
-                    layerHeight += verticalGap;
+                    layerWidth += horizontalGap;
                 }
             }
 
-            float y = padding + (maxLayerHeight - layerHeight) / 2f;
-            float maxWidthInLayer = 0f;
+            float x = padding + (maxLayerWidth - layerWidth) / 2f;
 
             for (String nodeId : ids) {
                 float width = nodeWidths.get(nodeId);
                 float height = nodeHeights.get(nodeId);
                 nodeBounds.put(nodeId, new RectF(x, y, x + width, y + height));
-                maxWidthInLayer = Math.max(maxWidthInLayer, width);
-                y += height + verticalGap;
+                x += width + horizontalGap;
             }
 
-            x += maxWidthInLayer + horizontalGap;
+            y += maxHeightInLayer + verticalGap;
         }
 
         float maxRight = padding;
@@ -264,15 +265,15 @@ public class FlowchartGraphView extends View {
                 continue;
             }
 
-            float startX = from.right;
-            float startY = from.centerY();
-            float endX = to.left;
-            float endY = to.centerY();
-            float midX = (startX + endX) / 2f;
+            float startX = from.centerX();
+            float startY = from.bottom;
+            float endX = to.centerX();
+            float endY = to.top;
+            float midY = (startY + endY) / 2f;
 
-            canvas.drawLine(startX, startY, midX, startY, connectorPaint);
-            canvas.drawLine(midX, startY, midX, endY, connectorPaint);
-            canvas.drawLine(midX, endY, endX, endY, connectorPaint);
+            canvas.drawLine(startX, startY, startX, midY, connectorPaint);
+            canvas.drawLine(startX, midY, endX, midY, connectorPaint);
+            canvas.drawLine(endX, midY, endX, endY, connectorPaint);
         }
     }
 
@@ -324,9 +325,10 @@ public class FlowchartGraphView extends View {
                                    @NonNull GraphyNode node,
                                    @NonNull RectF bounds) {
         fillPaint.setColor(theme.getOperationNodeColor());
-        strokePaint.setColor(theme.getConnectorColor());
-        canvas.drawOval(bounds, fillPaint);
-        canvas.drawOval(bounds, strokePaint);
+        strokePaint.setColor(theme.getOnOperationColor());
+        float radius = theme.getNodeCornerRadius();
+        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
+        canvas.drawRoundRect(bounds, radius, radius, strokePaint);
 
         textPaint.setColor(theme.getOnOperationColor());
         textPaint.setTextAlign(Paint.Align.CENTER);

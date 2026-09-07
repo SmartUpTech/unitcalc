@@ -5,7 +5,7 @@
         <item name="colorPrimaryDark">@color/app_bar</item>
         <item name="colorAccent">@color/nav_selected</item>
         <item name="android:statusBarColor">@color/app_bar</item>
-        <item name="android:navigationBarColor">@color/nav_background</item>
+        <item name="android:navigationBarColor">@color/screen_background</item>
         <item name="android:windowBackground">@color/screen_background</item>
         <item name="actionBarStyle">@style/GraphyActionBar</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
@@ -16,11 +16,12 @@
         <item name="titleTextStyle">@style/GraphyActionBarTitle</item>
     </style>
 
-    <style name="GraphyActionBarTitle" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="GraphyActionBarTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/on_app_bar</item>
         <item name="android:fontFamily">@font/oswald</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.02</item>
     </style>
 
     <style name="MyActionBarWidgetTheme" parent="@android:style/Theme.Holo">
@@ -50,9 +51,30 @@
 
     <style name="WorkspaceTabText" parent="TextAppearance.MaterialComponents.Button">
         <item name="android:fontFamily">@font/oswald</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ConverterModeToggle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/converter_mode_text_color</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="strokeColor">@color/converter_mode_stroke_color</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/pad_button_ripple_color</item>
+    </style>
+
+    <style name="ConverterModeToggleGroup" parent="Widget.MaterialComponents.MaterialButtonToggleGroup">
+        <item name="singleSelection">true</item>
+        <item name="selectionRequired">true</item>
     </style>
 
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">

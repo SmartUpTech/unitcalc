@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/screen_background">
+    android:background="@color/screen_background"
+    android:orientation="vertical">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/workspace_tabs"
@@ -12,48 +12,90 @@
         android:layout_width="match_parent"
         android:layout_height="48dp" />
 
-    <LinearLayout
-        android:id="@+id/convert_pane"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/converter_tabs"
-            style="@style/WorkspaceTabLayout"
+        <LinearLayout
+            android:id="@+id/convert_pane"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            app:tabIndicatorHeight="1dp"
-            app:tabTextAppearance="@style/WorkspaceTabText" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/converter_container"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/converter_mode_toggle"
+                style="@style/ConverterModeToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unit_mode"
+                    style="@style/ConverterModeToggle"
+                    android:text="@string/unit_converter" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_currency_mode"
+                    style="@style/ConverterModeToggle"
+                    android:text="@string/currency_converter" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/converter_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/graphy_pane"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone">
 
-    <TextView
-        android:id="@+id/graphy_pane"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="32dp"
-        android:text="@string/graphy_empty"
-        android:textColor="@color/screen_expression_text"
-        android:visibility="gone" />
+            <TextView
+                android:id="@+id/graphy_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/oswald"
+                android:textColor="@color/screen_expression_text"
+                android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/history_pane"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="32dp"
-        android:text="@string/no_conversion_history"
-        android:textColor="@color/screen_expression_text"
-        android:visibility="gone" />
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/graphy_panel"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/graphy_empty"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="24dp"
+                android:text="@string/graphy_converter_empty"
+                android:textColor="@color/screen_expression_text"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/history_pane"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/no_conversion_history"
+            android:textColor="@color/screen_expression_text"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </LinearLayout>
