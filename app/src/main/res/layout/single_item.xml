@@ -7,34 +7,42 @@
     android:focusable="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingHorizontal="8dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="0dp">
+    android:paddingHorizontal="10dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="4dp">
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:contentDescription="@string/strContentDescription"
-        app:tint="@color/category_tab_icon_tint" />
+    <FrameLayout
+        android:id="@+id/icon_container"
+        android:layout_width="@dimen/converter_category_icon_size"
+        android:layout_height="@dimen/converter_category_icon_size"
+        android:background="@drawable/bg_category_icon_default">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/strContentDescription"
+            app:tint="@color/category_tab_icon_tint" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:fontFamily="@font/oswald"
         android:gravity="center"
-        android:maxWidth="72dp"
+        android:maxWidth="80dp"
         android:textAlignment="center"
         android:textColor="@color/category_tab_text_color"
-        android:textSize="11sp" />
+        android:textSize="12sp" />
 
     <View
         android:id="@+id/indicator"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="6dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="8dp"
         android:background="@color/accent"
         android:visibility="invisible" />
 

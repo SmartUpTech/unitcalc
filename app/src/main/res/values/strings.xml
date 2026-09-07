@@ -323,6 +323,7 @@
     <string name="default_decimal_separator">.</string>
     <string name="str_from">From</string>
     <string name="str_to">To</string>
+    <string name="str_swap_units">Swap units</string>
 
     <string name="toast_copied_clipboard">Result copied to clipboard</string>
     <string name="toast_no_results_to_copy">No results to copy</string>

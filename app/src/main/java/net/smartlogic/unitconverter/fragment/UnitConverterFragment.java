@@ -347,14 +347,14 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
-                GenericFunctions.adjustTextSize(inputValue, 21);
+                GenericFunctions.adjustTextSize(inputValue, 36);
             }
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
 
-        GenericFunctions.adjustTextSize(inputValue, 21);
-        GenericFunctions.adjustTextSize(outputValue, 21);
+        GenericFunctions.adjustTextSize(inputValue, 36);
+        GenericFunctions.adjustTextSize(outputValue, 36);
 
         return view;
     }
@@ -395,7 +395,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         String finalStr = applyFormatting(result);
 
         outputValue.setText(finalStr);
-        GenericFunctions.adjustTextSize(outputValue, 21);
+        GenericFunctions.adjustTextSize(outputValue, 36);
         updateParentGraphy(in, from, to, fromSym, toSym, finalStr);
     }
 

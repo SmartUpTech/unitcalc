@@ -26,6 +26,11 @@
     <color name="on_accent">#121620</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
     <color name="history_section_text">#9CA3AF</color>
+
+    <color name="category_icon_bg_selected">#2A2520</color>
+    <color name="converter_card_background">@color/surface_elevated</color>
+    <color name="converter_card_stroke">#2D3340</color>
+    <color name="converter_divider">#2D3340</color>
     <color name="alwaysDarkText">#0c0c0c</color>
 
     <color name="colorHeader">@color/app_bar</color>
