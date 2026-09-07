@@ -38,9 +38,9 @@
 
     <style name="WorkspaceTabLayout" parent="Widget.MaterialComponents.TabLayout">
         <item name="android:background">@color/screen_background</item>
-        <item name="tabIndicatorColor">@color/workspace_tab_selected</item>
+        <item name="tabIndicatorColor">@color/accent</item>
         <item name="tabIndicatorHeight">2dp</item>
-        <item name="tabSelectedTextColor">@color/workspace_tab_selected</item>
+        <item name="tabSelectedTextColor">@color/accent</item>
         <item name="tabTextColor">@color/screen_expression_text</item>
         <item name="tabRippleColor">@color/pad_button_ripple_color</item>
         <item name="tabUnboundedRipple">true</item>
@@ -115,6 +115,34 @@
 
     <style name="ButtonStyle.Equals">
         <item name="android:textColor">@color/key_equals_text</item>
+        <item name="android:background">@drawable/bg_key_equals</item>
+        <item name="backgroundTint">@null</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="ImageButtonStyle.Swap">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_swap_key</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="tint">@color/accent</item>
+        <item name="android:tint" tools:ignore="NewApi">@color/accent</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="ImageButtonStyle.Backspace">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_backspace_key</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="tint">@color/key_backspace_icon</item>
+        <item name="android:tint" tools:ignore="NewApi">@color/key_backspace_icon</item>
+        <item name="android:layout_margin">4dp</item>
     </style>
 
     <style name="ImageButtonStyle.Action" parent="Widget.AppCompat.ImageButton">

@@ -316,23 +316,21 @@
 
                 <ImageButton
                     android:id="@+id/reverse"
-                    style="@style/ImageButtonStyle.Action"
+                    style="@style/ImageButtonStyle.Swap"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:contentDescription="Reverse"
-                    android:src="@drawable/ic_reverse"
-                    app:tint="@color/key_action_text" />
+                    android:src="@drawable/ic_reverse" />
 
                 <ImageButton
                     android:id="@+id/backspace"
-                    style="@style/ImageButtonStyle.Action"
+                    style="@style/ImageButtonStyle.Backspace"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:contentDescription="Backspace"
-                    android:src="@drawable/backspace"
-                    app:tint="@color/key_action_text" />
+                    android:src="@drawable/backspace" />
 
                 <ImageButton
                     android:id="@+id/copy"

@@ -85,10 +85,9 @@
 
                         <ImageButton
                             android:id="@+id/backspace"
-                            style="@style/ImageButtonStyle.Action"
+                            style="@style/ImageButtonStyle.Backspace"
                             android:contentDescription="Backspace"
-                            android:src="@drawable/backspace"
-                            app:tint="@color/key_action_text" />
+                            android:src="@drawable/backspace" />
 
                         <ImageButton
                             android:id="@+id/copy"

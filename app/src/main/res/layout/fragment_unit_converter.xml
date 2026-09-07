@@ -16,8 +16,9 @@
         <net.smartlogic.unitconverter.helper.HorizontalListView
             android:id="@+id/horizontal_list"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="5dp" />
+            android:layout_height="88dp"
+            android:layout_marginTop="4dp"
+            android:paddingHorizontal="8dp" />
 
         <LinearLayout
             android:id="@+id/main_content"
@@ -31,30 +32,31 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_weight="2"
-                android:orientation="vertical">
+                android:background="@drawable/bg_converter_field"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
                     android:text="@string/str_from"
-                    android:textColor="@color/screen_result_text" />
+                    android:textColor="@color/screen_expression_text"
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/spinnerHeight"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="10dp">
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/input"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_margin="2dp"
                         android:layout_weight="0.8"
                         android:background="@null"
                         android:gravity="center_vertical|end"
@@ -93,30 +95,32 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="2"
-                android:orientation="vertical">
+                android:background="@drawable/bg_converter_field"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
                     android:text="@string/str_to"
-                    android:textColor="@color/screen_result_text" />
+                    android:textColor="@color/screen_expression_text"
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/spinnerHeight"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="10dp">
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/output"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_margin="2dp"
                         android:layout_weight="0.8"
                         android:background="@null"
                         android:focusable="false"
@@ -245,23 +249,21 @@
 
                     <ImageButton
                         android:id="@+id/reverse"
-                        style="@style/ImageButtonStyle.Action"
+                        style="@style/ImageButtonStyle.Swap"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:contentDescription="Reverse"
-                        android:src="@drawable/ic_reverse"
-                        app:tint="@color/key_action_text" />
+                        android:src="@drawable/ic_reverse" />
 
                     <ImageButton
                         android:id="@+id/backspace"
-                        style="@style/ImageButtonStyle.Action"
+                        style="@style/ImageButtonStyle.Backspace"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:contentDescription="Backspace"
-                        android:src="@drawable/backspace"
-                        app:tint="@color/key_action_text" />
+                        android:src="@drawable/backspace" />
 
                     <ImageButton
                         android:id="@+id/copy"
