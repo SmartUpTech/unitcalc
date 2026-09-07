@@ -173,8 +173,7 @@ public class ConverterFragment extends Fragment {
 
         if (position == 1) {
             if (hasGraphyContent()) {
-                String context = latestGraphyOutput.getExpression() + " = " + latestGraphyOutput.getResult();
-                showGraphy(latestGraphyOutput, context);
+                showGraphy(latestGraphyOutput, latestGraphyOutput.getExpression());
             } else {
                 graphyEmpty.setVisibility(View.VISIBLE);
                 graphyPanel.setVisibility(View.GONE);

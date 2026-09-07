@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
+import net.smartlogic.unitconverter.helper.HistoryDateLabels;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 
 import java.util.ArrayList;
@@ -105,6 +106,7 @@ public class HistoryFragment extends Fragment {
             CalculationHistoryItem item = items.get(position);
             holder.tvExpression.setText(item.expression);
             holder.tvResult.setText(item.result);
+            holder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt));
         }
 
         @Override
@@ -115,11 +117,13 @@ public class HistoryFragment extends Fragment {
         static class ViewHolder extends RecyclerView.ViewHolder {
             final TextView tvExpression;
             final TextView tvResult;
+            final TextView tvTime;
 
             ViewHolder(View view) {
                 super(view);
                 tvExpression = view.findViewById(R.id.tv_history_expression);
                 tvResult = view.findViewById(R.id.tv_history_result);
+                tvTime = view.findViewById(R.id.tv_history_time);
             }
         }
     }

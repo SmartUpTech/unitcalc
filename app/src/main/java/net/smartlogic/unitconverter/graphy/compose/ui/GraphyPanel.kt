@@ -1,5 +1,6 @@
 package net.smartlogic.unitconverter.graphy.compose.ui
 
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Column
@@ -10,11 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
@@ -38,11 +41,13 @@ fun GraphyPanel(
             .fillMaxSize()
             .semantics { contentDescription = panelDescription }
             .padding(spacing.sm),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = explanation.ifEmpty { stringResource(R.string.graphy_explanation_label) },
             style = textStyles.explanation,
             color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .semantics { contentDescription = explanation },
@@ -76,7 +81,7 @@ private fun GraphyFlowchartHost(
         factory = {
             FrameLayout(context).apply {
                 layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
             }
@@ -90,6 +95,7 @@ private fun GraphyFlowchartHost(
                 FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER_HORIZONTAL,
                 ),
             )
         },

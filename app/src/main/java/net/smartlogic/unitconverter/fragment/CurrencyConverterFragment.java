@@ -316,7 +316,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                 resultDisplay,
                 explanation
         );
-        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     @NonNull

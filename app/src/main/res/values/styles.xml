@@ -8,12 +8,17 @@
         <item name="android:navigationBarColor">@color/screen_background</item>
         <item name="android:windowBackground">@color/screen_background</item>
         <item name="actionBarStyle">@style/GraphyActionBar</item>
+        <item name="actionBarElevation">0dp</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
     </style>
 
     <style name="GraphyActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
         <item name="background">@color/app_bar</item>
         <item name="titleTextStyle">@style/GraphyActionBarTitle</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="displayOptions">showCustom</item>
     </style>
 
     <style name="GraphyActionBarTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
@@ -96,7 +101,9 @@
         <item name="cornerRadius">0dp</item>
         <item name="rippleColor">@color/pad_button_ripple_color</item>
         <item name="backgroundTint">@android:color/transparent</item>
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
         <item name="android:textSize">@dimen/buttonTextSize</item>
         <item name="android:textColor">@color/key_number_text</item>
     </style>

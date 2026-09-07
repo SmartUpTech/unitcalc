@@ -429,7 +429,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 resultDisplay,
                 explanation
         );
-        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     @NonNull

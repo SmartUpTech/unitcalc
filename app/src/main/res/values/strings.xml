@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Graphy Calculator</string>
+    <string name="app_bar_brand">GRAPHY</string>
+    <string name="app_bar_product">CALCULATOR</string>
 
     <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
     <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
