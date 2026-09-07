@@ -23,6 +23,7 @@ import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
+import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 
@@ -160,6 +161,7 @@ public class ConverterFragment extends Fragment {
             modeToggle.check(R.id.btn_unit_mode);
         }
         showConverterTab(selectedTab);
+        applyPendingUnitCategory();
     }
 
     private void bindGraphyPage(@NonNull View pageView) {
@@ -172,6 +174,43 @@ public class ConverterFragment extends Fragment {
         graphyEmpty = pageView.findViewById(R.id.graphy_empty);
         graphyPanel = pageView.findViewById(R.id.graphy_panel);
         graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+    }
+
+    private int pendingUnitCategory = -1;
+
+    public void openUnitCategory(int categoryId) {
+        pendingUnitCategory = categoryId;
+        if (modeToggle != null) {
+            modeToggle.check(R.id.btn_unit_mode);
+            showConverterTab(TAB_UNIT);
+            applyPendingUnitCategory();
+        }
+    }
+
+    public void openCurrencyMode() {
+        if (modeToggle != null) {
+            modeToggle.check(R.id.btn_currency_mode);
+            showConverterTab(TAB_CURRENCY);
+        }
+    }
+
+    @NonNull
+    public String getActiveCatalogId() {
+        if (activeChild == currencyFragment) {
+            return net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY;
+        }
+        if (unitFragment != null) {
+            return net.smartlogic.unitconverter.model.CalculatorCatalog.unitId(unitFragment.getSelectedCategoryId());
+        }
+        return net.smartlogic.unitconverter.model.CalculatorCatalog.unitId(
+                Preferences.getInstance(requireContext()).getLastConversion());
+    }
+
+    private void applyPendingUnitCategory() {
+        if (pendingUnitCategory >= 0 && unitFragment != null) {
+            unitFragment.selectCategory(pendingUnitCategory);
+            pendingUnitCategory = -1;
+        }
     }
 
     public void updateConversionGraphy(@NonNull GraphyOutput output, @NonNull String contextLine) {

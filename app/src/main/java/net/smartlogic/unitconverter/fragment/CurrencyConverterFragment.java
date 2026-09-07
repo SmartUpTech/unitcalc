@@ -175,7 +175,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         try {
             if (view.getId() == R.id.output) {
                 ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText(getString(R.string.app_name), ((EditText) view).getText().toString());
+                ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), ((EditText) view).getText().toString());
                 clipboard.setPrimaryClip(clip);
                 GenericFunctions.showToast(view, R.string.toast_copied_clipboard);
             }
@@ -186,7 +186,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     private void copyToClipboard(String toClipBoard) {
         ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText(getString(R.string.app_name), toClipBoard);
+        ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), toClipBoard);
         clipboard.setPrimaryClip(clip);
     }
 
@@ -249,7 +249,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
+            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.brand_name));
             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
         } else if (id == R.id.refresh) {//Log.d("SHRIKI","Refreshing currency rates");

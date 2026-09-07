@@ -167,7 +167,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             int id = view.getId();
             if (id == R.id.output) {
                 ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText(getString(R.string.app_name), ((EditText) view).getText().toString());
+                ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), ((EditText) view).getText().toString());
                 clipboard.setPrimaryClip(clip);
                 showToast(R.string.toast_copied_positive);
             } else if (id == R.id.backspace) {
@@ -228,7 +228,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                             context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()) + " = " +
                             outputValue.getText().toString() + " " +
                             context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource());
-                    ClipData clip = ClipData.newPlainText(getString(R.string.app_name), result);
+                    ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), result);
                     clipboard.setPrimaryClip(clip);
                     showToast(R.string.toast_copied_positive);
                 } else {
@@ -537,6 +537,36 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         fromUnit.setSelection(mPrefs.getLastFromConversion());
         toUnit.setSelection(mPrefs.getLastToConversion());
+    }
+
+    public int getSelectedCategoryId() {
+        if (selectedConversion != null) {
+            return selectedConversion.getId();
+        }
+        return mPrefs != null ? mPrefs.getLastConversion() : Conversion.LENGTH;
+    }
+
+    public void selectCategory(int categoryId) {
+        if (horizontalListView == null || conversions == null) {
+            return;
+        }
+        if (categoryId == Conversion.TEMPERATURE) {
+            inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        } else {
+            inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        }
+        inputValue.setText("");
+        convertAndDisplay("");
+        mPrefs.setLastConversion(categoryId);
+        mPrefs.setLastFromConversion(0);
+        mPrefs.setLastToConversion(1);
+        initialDropDown(conversions.getById(categoryId));
+        convertAndDisplay(inputValue.getText().toString());
+        if (horizontalListView.getAdapter() instanceof ConversionAdapter) {
+            ConversionAdapter adapter = (ConversionAdapter) horizontalListView.getAdapter();
+            adapter.setSelectedItem(categoryId);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override

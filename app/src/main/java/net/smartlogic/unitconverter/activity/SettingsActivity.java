@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
             userButton.setOnPreferenceClickListener(preference -> {
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.brand_name));
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;

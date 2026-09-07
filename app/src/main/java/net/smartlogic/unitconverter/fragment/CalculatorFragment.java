@@ -233,13 +233,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         historyPageBound = true;
 
         rvHistory = pageView.findViewById(R.id.rv_history);
-        historyAdapter = new HistoryAdapter(historyRows, item -> {
-            expression = item.result.replace(",", "");
-            tvExpression.setText("");
-            tvResult.setText(item.result);
-            isResultDisplayed = true;
-            selectWorkspaceTab(0);
-        });
+        historyAdapter = new HistoryAdapter(historyRows, this::restoreFromHistory);
         rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         rvHistory.setAdapter(historyAdapter);
     }
@@ -271,6 +265,20 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             }
             handleInput(input);
         }
+    }
+
+    public void openHistoryTab() {
+        selectWorkspaceTab(2);
+    }
+
+    private void restoreFromHistory(@NonNull CalculationHistoryItem item) {
+        expression = item.expression;
+        tvExpression.setText(item.expression);
+        tvResult.setText(item.result);
+        isResultDisplayed = false;
+        calculateResult(false);
+        updateGraphyTabState();
+        selectWorkspaceTab(0);
     }
 
     private void handleBackspace() {
@@ -541,7 +549,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             return;
         }
         ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Calculator Result", textToCopy);
+        ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), textToCopy);
         clipboard.setPrimaryClip(clip);
         showToast(getString(R.string.toast_result_copied));
     }
