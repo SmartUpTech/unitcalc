@@ -6,6 +6,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         openjdk-21-jdk \
         wget \
+        curl \
         unzip \
         git \
         ca-certificates \
