@@ -132,7 +132,7 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="ImageButtonStyle.Swap">
+    <style name="ImageButtonStyle.Swap" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
