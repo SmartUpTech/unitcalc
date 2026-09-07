@@ -57,7 +57,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private CoordinatorLayout mCoordinatorLayout;
     private boolean isResultDisplayed = false;
     
-    private View historyPane;
     private TextView graphyEmpty;
     private TextView graphyContext;
     private RecyclerView rvHistory;
@@ -233,7 +232,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
         historyPageBound = true;
 
-        historyPane = pageView.findViewById(R.id.history_pane);
         rvHistory = pageView.findViewById(R.id.rv_history);
         historyAdapter = new HistoryAdapter(historyRows, item -> {
             expression = item.result.replace(",", "");

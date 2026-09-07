@@ -3,10 +3,8 @@
     android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:ellipsize="end"
     android:fontFamily="@font/oswald_regular"
-    android:gravity="end|center_vertical"
-    android:maxLines="1"
-    android:paddingVertical="4dp"
-    android:textColor="@color/screen_expression_text"
-    android:textSize="@dimen/converter_unit_text_size" />
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp"
+    android:textColor="@color/screen_result_text"
+    android:textSize="15sp" />

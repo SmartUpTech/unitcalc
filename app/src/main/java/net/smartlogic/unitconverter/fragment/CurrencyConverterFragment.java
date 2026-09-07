@@ -105,7 +105,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     }
 
     public void adjustTextSize(EditText editText) {
-        GenericFunctions.adjustTextSize(editText, 32);
+        GenericFunctions.adjustTextSize(editText, 36);
     }
 
     public int getDrawableResourceId(String name) {

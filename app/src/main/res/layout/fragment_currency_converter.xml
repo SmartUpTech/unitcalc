@@ -12,10 +12,13 @@
         android:id="@+id/txtRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/oswald_regular"
         android:padding="8dp"
-        android:textColor="@color/screen_result_text" />
+        android:textColor="@color/screen_expression_text"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:id="@+id/ll_main"
@@ -28,172 +31,252 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1.5"
-            android:orientation="horizontal"
-            android:paddingHorizontal="10dp">
+            android:layout_marginHorizontal="@dimen/converter_card_margin"
+            android:layout_weight="4"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/input"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:background="@null"
-                android:gravity="center_vertical|end"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                android:maxLength="12"
-                android:text="@string/zero"
-                android:textColor="@color/screen_result_text"
-                android:textSize="@dimen/h1"
-                tools:ignore="LabelFor" />
-
-            <TextView
-                android:id="@+id/inputSymbol"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical|start"
-                android:textColor="@color/screen_result_text"
-                android:textSize="@dimen/h2" />
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/converter_card_padding"
+                android:paddingTop="@dimen/converter_card_padding"
+                android:paddingBottom="8dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/oswald_regular"
+                    android:text="@string/str_from"
+                    android:textColor="@color/screen_expression_text"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/input"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:fontFamily="@font/oswald"
+                        android:gravity="center_vertical|start"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine"
+                        android:maxLength="12"
+                        android:paddingEnd="8dp"
+                        android:text="@string/zero"
+                        android:textColor="@color/screen_result_text"
+                        android:textSize="@dimen/converter_value_text_size"
+                        android:textStyle="bold"
+                        tools:ignore="LabelFor" />
+
+                    <RelativeLayout
+                        android:id="@+id/fromUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:minWidth="120dp"
+                        android:paddingVertical="4dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/fromFlag"
+                            android:layout_width="40dp"
+                            android:layout_height="28dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/us"
+                            app:shapeAppearanceOverlay="@style/RoundedCorners" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_toStartOf="@id/fromChevron"
+                            android:layout_toEndOf="@id/fromFlag"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/fromCurrency"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/oswald"
+                                android:maxLines="1"
+                                android:textColor="@color/screen_result_text"
+                                android:textSize="@dimen/converter_unit_text_size" />
+
+                            <TextView
+                                android:id="@+id/fromCurrencyISO"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/oswald_regular"
+                                android:textColor="@color/screen_expression_text"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/fromChevron"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_down" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/converter_card_padding"
+                    android:background="@color/colorNewGrey" />
+
+                <ImageButton
+                    android:id="@+id/reverse"
+                    style="@style/ImageButtonStyle.Swap"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/str_swap_units"
+                    android:src="@drawable/ic_reverse"
+                    app:tint="@color/accent" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/equal"
-                android:textColor="@color/screen_result_text"
-                android:textSize="@dimen/h1" />
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/converter_card_padding"
+                android:paddingTop="8dp"
+                android:paddingBottom="@dimen/converter_card_padding">
 
-            <EditText
-                android:id="@+id/output"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:background="@null"
-                android:focusable="false"
-                android:gravity="center_vertical|end"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                android:text="@string/zero"
-                android:textColor="@color/screen_result_text"
-                android:textSize="@dimen/h1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/oswald_regular"
+                    android:text="@string/str_to"
+                    android:textColor="@color/screen_expression_text"
+                    android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/outputSymbol"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical|start"
-                android:textColor="@color/screen_result_text"
-                android:textSize="@dimen/h2" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/output"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:focusable="false"
+                        android:fontFamily="@font/oswald"
+                        android:gravity="center_vertical|start"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine"
+                        android:paddingEnd="8dp"
+                        android:text="@string/zero"
+                        android:textColor="@color/screen_result_text"
+                        android:textSize="@dimen/converter_value_text_size"
+                        android:textStyle="bold" />
+
+                    <RelativeLayout
+                        android:id="@+id/toUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:minWidth="120dp"
+                        android:paddingVertical="4dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/toFlag"
+                            android:layout_width="40dp"
+                            android:layout_height="28dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/in"
+                            app:shapeAppearanceOverlay="@style/RoundedCorners" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="8dp"
+                            android:layout_toStartOf="@id/toChevron"
+                            android:layout_toEndOf="@id/toFlag"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/toCurrency"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/oswald"
+                                android:maxLines="1"
+                                android:textColor="@color/screen_result_text"
+                                android:textSize="@dimen/converter_unit_text_size" />
+
+                            <TextView
+                                android:id="@+id/toCurrencyISO"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/oswald_regular"
+                                android:textColor="@color/screen_expression_text"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/toChevron"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_down" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/inputSymbol"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1.5"
-            android:orientation="horizontal"
-            android:paddingHorizontal="10dp">
+            android:visibility="gone" />
 
-            <RelativeLayout
-                android:id="@+id/fromUnit"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/fromFlag"
-                    android:layout_width="50dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/us"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/fromFlag"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp">
-
-                    <TextView
-                        android:id="@+id/fromCurrency"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/screen_result_text"
-                        android:textSize="@dimen/h3" />
-
-                    <TextView
-                        android:id="@+id/fromCurrencyISO"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/screen_expression_text"
-                        android:textSize="@dimen/h4" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="match_parent"
-                android:padding="8dp"
-                android:src="@drawable/ic_arrow_forward"
-                app:tint="@color/screen_result_text" />
-
-            <RelativeLayout
-                android:id="@+id/toUnit"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/toFlag"
-                    android:layout_width="50dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/in"
-                    app:shapeAppearanceOverlay="@style/RoundedCorners" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/toFlag"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp">
-
-                    <TextView
-                        android:id="@+id/toCurrency"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/screen_result_text"
-                        android:textSize="@dimen/h3" />
-
-                    <TextView
-                        android:id="@+id/toCurrencyISO"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/screen_expression_text"
-                        android:textSize="@dimen/h4" />
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/outputSymbol"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -206,6 +289,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/oswald_regular"
                 android:textColor="@color/screen_expression_text"
                 android:textSize="@dimen/h5" />
         </RelativeLayout>
@@ -235,7 +320,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_weight="4.5"
             android:orientation="horizontal"
             android:padding="8dp"
             android:weightSum="4">
@@ -314,14 +399,10 @@
                 android:orientation="vertical"
                 android:weightSum="4">
 
-                <ImageButton
-                    android:id="@+id/reverse"
-                    style="@style/ImageButtonStyle.Swap"
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:contentDescription="Reverse"
-                    android:src="@drawable/ic_reverse" />
+                    android:layout_weight="1" />
 
                 <ImageButton
                     android:id="@+id/backspace"
