@@ -502,13 +502,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         graphyVisible = true;
         graphyEmpty.setVisibility(View.GONE);
         graphyPanel.setVisibility(View.VISIBLE);
-        String expr = tvExpression.getText().toString();
-        String result = tvResult.getText().toString();
-        if (expr.isEmpty()) {
-            graphyContext.setText(result);
-        } else {
-            graphyContext.setText(expr + "  =  " + result);
-        }
+        graphyContext.setVisibility(View.GONE);
         renderGraphy(output);
     }
 
@@ -524,11 +518,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void renderGraphy(@NonNull GraphyOutput output) {
-        String explanation = output.getExplanationTemplate();
-        if (explanation == null) {
-            explanation = "";
+        String expression = output.getExpression();
+        if (expression == null) {
+            expression = "";
         }
-        graphyPanelController.update(explanation, output);
+        graphyPanelController.update(expression, output);
     }
 
     private static class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

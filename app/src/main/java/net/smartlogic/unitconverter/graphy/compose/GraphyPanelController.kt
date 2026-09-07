@@ -22,7 +22,7 @@ class GraphyPanelController(
     private val fragment: Fragment,
     private val viewTheme: GraphyViewTheme,
 ) {
-    private var explanation by mutableStateOf("")
+    private var expression by mutableStateOf("")
     private var output by mutableStateOf<GraphyOutput?>(null)
 
     init {
@@ -33,7 +33,7 @@ class GraphyPanelController(
             val darkTheme = GraphyThemeDefaults.isDarkTheme(composeView.context)
             GraphyTheme(darkTheme = darkTheme) {
                 GraphyPanel(
-                    explanation = explanation,
+                    expression = expression,
                     output = output,
                     viewTheme = viewTheme,
                     modifier = Modifier.fillMaxSize(),
@@ -42,8 +42,8 @@ class GraphyPanelController(
         }
     }
 
-    fun update(explanation: String, output: GraphyOutput?) {
-        this.explanation = explanation
+    fun update(expression: String, output: GraphyOutput?) {
+        this.expression = expression
         this.output = output
     }
 }

@@ -20,38 +20,68 @@ public final class GraphyViewTheme {
     }
 
     @ColorInt
-    public int getPrimaryColor() {
-        return color(R.color.graphy_primary);
+    public int getBackgroundColor() {
+        return color(R.color.graphy_background);
     }
 
     @ColorInt
-    public int getInputNodeColor() {
+    public int getPrimaryTextColor() {
+        return color(R.color.graphy_primary_text);
+    }
+
+    @ColorInt
+    public int getInputColor() {
         return color(R.color.graphy_input);
     }
 
     @ColorInt
-    public int getOperationNodeColor() {
+    public int getConstantColor() {
+        return color(R.color.graphy_constant);
+    }
+
+    @ColorInt
+    public int getOperationColor() {
         return color(R.color.graphy_operation);
     }
 
     @ColorInt
+    public int getDerivedColor() {
+        return color(R.color.graphy_derived);
+    }
+
+    @ColorInt
+    public int getResultFillColor() {
+        return color(R.color.graphy_result_fill);
+    }
+
+    @ColorInt
+    public int getResultOnColor() {
+        return color(R.color.graphy_result_on);
+    }
+
+    @ColorInt
+    public int getInputNodeColor() {
+        return color(R.color.graphy_input_fill);
+    }
+
+    @ColorInt
+    public int getOperationNodeColor() {
+        return color(R.color.graphy_operation_fill);
+    }
+
+    @ColorInt
+    public int getOperationStrokeColor() {
+        return color(R.color.graphy_operation_stroke);
+    }
+
+    @ColorInt
     public int getResultNodeColor() {
-        return color(R.color.graphy_result);
+        return color(R.color.graphy_result_fill);
     }
 
     @ColorInt
-    public int getWarningColor() {
-        return color(R.color.graphy_warning);
-    }
-
-    @ColorInt
-    public int getTimeColor() {
-        return color(R.color.graphy_time);
-    }
-
-    @ColorInt
-    public int getSecondaryColor() {
-        return color(R.color.graphy_secondary);
+    public int getDerivedNodeColor() {
+        return color(R.color.graphy_derived);
     }
 
     @ColorInt
@@ -75,11 +105,6 @@ public final class GraphyViewTheme {
     }
 
     @ColorInt
-    public int getDerivedNodeColor() {
-        return color(R.color.graphy_surface_elevated);
-    }
-
-    @ColorInt
     public int getOnInputColor() {
         return color(R.color.graphy_on_input);
     }
@@ -92,6 +117,26 @@ public final class GraphyViewTheme {
     @ColorInt
     public int getOnResultColor() {
         return color(R.color.graphy_on_result);
+    }
+
+    @ColorInt
+    public int getPrimaryColor() {
+        return color(R.color.graphy_primary);
+    }
+
+    @ColorInt
+    public int getWarningColor() {
+        return color(R.color.graphy_warning);
+    }
+
+    @ColorInt
+    public int getTimeColor() {
+        return color(R.color.graphy_time);
+    }
+
+    @ColorInt
+    public int getSecondaryColor() {
+        return color(R.color.graphy_secondary);
     }
 
     public float getNodeCornerRadius() {
@@ -112,6 +157,30 @@ public final class GraphyViewTheme {
 
     public float getNodeMinHeight() {
         return dimen(R.dimen.graphy_node_min_height);
+    }
+
+    public float getValueTextSize() {
+        return dimen(R.dimen.graphy_value_text_size);
+    }
+
+    public float getOperationTextSize() {
+        return dimen(R.dimen.graphy_operation_text_size);
+    }
+
+    public float getResultTextSize() {
+        return dimen(R.dimen.graphy_result_text_size);
+    }
+
+    public float getVerticalGap() {
+        return dimen(R.dimen.graphy_vertical_gap);
+    }
+
+    public float getHorizontalGap() {
+        return dimen(R.dimen.graphy_horizontal_gap);
+    }
+
+    public float getBranchGap() {
+        return dimen(R.dimen.graphy_branch_gap);
     }
 
     @StyleRes

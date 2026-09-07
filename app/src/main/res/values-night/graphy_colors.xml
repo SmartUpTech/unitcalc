@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="graphy_primary">#F5C842</color>
-    <color name="graphy_input">#00000000</color>
-    <color name="graphy_operation">#00000000</color>
-    <color name="graphy_result">#00000000</color>
-    <color name="graphy_warning">#F5C842</color>
+    <color name="graphy_background">#101418</color>
+    <color name="graphy_primary_text">#F3F4F6</color>
+
+    <color name="graphy_input">#F4C542</color>
+    <color name="graphy_constant">#9B7EDE</color>
+    <color name="graphy_operation">#F59E0B</color>
+    <color name="graphy_derived">#60A5FA</color>
+    <color name="graphy_result_fill">#22C55E</color>
+    <color name="graphy_result_on">#FFFFFF</color>
+
+    <color name="graphy_input_fill">#00000000</color>
+    <color name="graphy_operation_fill">#00000000</color>
+    <color name="graphy_operation_stroke">#F59E0B</color>
+
+    <color name="graphy_connector">#4B5563</color>
+    <color name="graphy_connector_highlight">#9CA3AF</color>
+
+    <color name="graphy_surface">#101418</color>
+    <color name="graphy_surface_elevated">#101418</color>
+
+    <color name="graphy_primary">#F3F4F6</color>
+    <color name="graphy_warning">#F59E0B</color>
     <color name="graphy_time">#9CA3AF</color>
     <color name="graphy_secondary">#9CA3AF</color>
-
-    <color name="graphy_connector">#3A3F4B</color>
-    <color name="graphy_connector_highlight">#F5C842</color>
-
-    <color name="graphy_surface">#121620</color>
-    <color name="graphy_surface_elevated">#1C2129</color>
-
-    <color name="graphy_on_primary">#121620</color>
-    <color name="graphy_on_input">#FFFFFF</color>
-    <color name="graphy_on_operation">#F5C842</color>
-    <color name="graphy_on_result">#FFFFFF</color>
+    <color name="graphy_on_primary">#101418</color>
+    <color name="graphy_on_input">#F4C542</color>
+    <color name="graphy_on_operation">#F59E0B</color>
+    <color name="graphy_on_result">#22C55E</color>
 </resources>

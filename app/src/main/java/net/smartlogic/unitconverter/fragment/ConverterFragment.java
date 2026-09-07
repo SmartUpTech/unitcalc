@@ -185,12 +185,8 @@ public class ConverterFragment extends Fragment {
     private void showGraphy(@NonNull GraphyOutput output, @NonNull String contextLine) {
         graphyEmpty.setVisibility(View.GONE);
         graphyPanel.setVisibility(View.VISIBLE);
-        graphyContext.setText(contextLine);
-        String explanation = output.getExplanationTemplate();
-        if (explanation == null) {
-            explanation = "";
-        }
-        graphyPanelController.update(explanation, output);
+        graphyContext.setVisibility(View.GONE);
+        graphyPanelController.update(contextLine, output);
     }
 
     private void ensureChildFragments() {
