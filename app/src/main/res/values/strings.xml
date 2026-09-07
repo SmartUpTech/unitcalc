@@ -54,6 +54,13 @@
     <string name="graphy_explanation_label">How this answer was calculated</string>
     <string name="graphy_panel_content_description">Graphy calculation explanation panel</string>
     <string name="graphy_flowchart_content_description">Calculation flowchart diagram</string>
+    <string name="graphy_info_content_description">Graphy color legend</string>
+    <string name="graphy_legend_title">Graphy Legend</string>
+    <string name="graphy_legend_input">User-entered values</string>
+    <string name="graphy_legend_constant">Fixed values / conversion factors</string>
+    <string name="graphy_legend_operator">Mathematical operation</string>
+    <string name="graphy_legend_result">Intermediate calculated result</string>
+    <string name="graphy_legend_final">Final calculated answer</string>
 
     <!-- Numbers -->
     <string name="one">1</string>

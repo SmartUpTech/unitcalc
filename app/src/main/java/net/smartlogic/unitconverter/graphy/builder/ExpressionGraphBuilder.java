@@ -13,9 +13,11 @@ import net.smartlogic.unitconverter.utils.EvalTrace;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Converts expression evaluation traces into Graphy nodes and connections.
+ * Converts expression evaluation traces into connected Graphy graphs.
+ * Each subexpression value exists once; arrows carry results to later operations.
  */
 public final class ExpressionGraphBuilder implements GraphBuilder {
 
@@ -74,7 +76,12 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
                 evalNode.getLabel(), semanticRoleForOperation(evalNode.getKind()));
 
         for (EvalNode child : evalNode.getChildren()) {
-            String childNodeId = walk(child, nodes, connections, false);
+            String childNodeId;
+            if (shouldCollapsePercent(evalNode, child)) {
+                childNodeId = addPercentOperandNode(nodes, child);
+            } else {
+                childNodeId = walk(child, nodes, connections, false);
+            }
             connections.add(new GraphyConnection(childNodeId, operationNodeId, evalNode.getLabel()));
         }
 
@@ -84,6 +91,21 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
                 formatValue(evalNode.getValue()), semanticRole);
         connections.add(new GraphyConnection(operationNodeId, valueNodeId, null));
         return valueNodeId;
+    }
+
+    private static boolean shouldCollapsePercent(@NonNull EvalNode parent, @NonNull EvalNode child) {
+        if (child.getKind() != EvalNode.Kind.PERCENT) {
+            return false;
+        }
+        EvalNode.Kind parentKind = parent.getKind();
+        return parentKind == EvalNode.Kind.MULTIPLY || parentKind == EvalNode.Kind.DIVIDE;
+    }
+
+    @NonNull
+    private String addPercentOperandNode(@NonNull List<GraphyNode> nodes, @NonNull EvalNode percentNode) {
+        EvalNode numberChild = percentNode.getChild(0);
+        String display = numberChild != null ? numberChild.getLabel() + "%" : percentNode.getLabel();
+        return addNode(nodes, GraphyNodeType.INPUT, display, display, "operand");
     }
 
     private String addNode(@NonNull List<GraphyNode> nodes,

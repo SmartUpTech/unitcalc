@@ -9,11 +9,14 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class GraphySemanticColors(
+    val background: Color,
+    val primaryText: Color,
     val input: Color,
+    val constant: Color,
     val operation: Color,
-    val result: Color,
-    val warning: Color,
-    val time: Color,
+    val derived: Color,
+    val resultFill: Color,
+    val resultOn: Color,
     val connector: Color,
     val connectorHighlight: Color,
     val surfaceElevated: Color,
@@ -23,101 +26,91 @@ data class GraphySemanticColors(
 )
 
 private object GraphyPalette {
-    val PrimaryLight = Color(0xFFC23A2B)
-    val InputLight = Color(0x00000000)
-    val OperationLight = Color(0x00000000)
-    val ResultLight = Color(0x00000000)
-    val WarningLight = Color(0xFFC23A2B)
-    val TimeLight = Color(0xFF8A8174)
-    val SecondaryLight = Color(0xFF6B6358)
-    val ConnectorLight = Color(0xFFC4B8A8)
-    val ConnectorHighlightLight = Color(0xFFC23A2B)
-    val SurfaceLight = Color(0xFFFCFBF7)
-    val SurfaceElevatedLight = Color(0xFFFCFBF7)
-    val OnPrimaryLight = Color(0xFFFFFFFF)
-    val OnInputLight = Color(0xFF000000)
-    val OnOperationLight = Color(0xFFC23A2B)
-    val OnResultLight = Color(0xFF000000)
-
-    val PrimaryDark = Color(0xFFF5C842)
-    val InputDark = Color(0x00000000)
-    val OperationDark = Color(0x00000000)
-    val ResultDark = Color(0x00000000)
-    val WarningDark = Color(0xFFF5C842)
-    val TimeDark = Color(0xFF9CA3AF)
+    val BackgroundLight = Color(0xFFFAF8F3)
+    val PrimaryTextLight = Color(0xFF1F2937)
+    val Input = Color(0xFFF4C542)
+    val Constant = Color(0xFF9B7EDE)
+    val Operation = Color(0xFFF59E0B)
+    val DerivedLight = Color(0xFF3B82F6)
+    val DerivedDark = Color(0xFF60A5FA)
+    val ResultFill = Color(0xFF22C55E)
+    val ResultOn = Color(0xFFFFFFFF)
+    val ConnectorLight = Color(0xFF9CA3AF)
+    val ConnectorDark = Color(0xFF4B5563)
+    val SecondaryLight = Color(0xFF6B7280)
     val SecondaryDark = Color(0xFF9CA3AF)
-    val ConnectorDark = Color(0xFF3A3F4B)
-    val ConnectorHighlightDark = Color(0xFFF5C842)
-    val SurfaceDark = Color(0xFF121620)
-    val SurfaceElevatedDark = Color(0xFF1C2129)
-    val OnPrimaryDark = Color(0xFF121620)
-    val OnInputDark = Color(0xFFFFFFFF)
-    val OnOperationDark = Color(0xFFF5C842)
-    val OnResultDark = Color(0xFFFFFFFF)
+    val SurfaceLight = Color(0xFFFAF8F3)
+    val SurfaceDark = Color(0xFF101418)
 }
 
 fun graphyLightColorScheme(): ColorScheme = lightColorScheme(
-    primary = GraphyPalette.PrimaryLight,
-    onPrimary = GraphyPalette.OnPrimaryLight,
+    primary = GraphyPalette.PrimaryTextLight,
+    onPrimary = GraphyPalette.ResultOn,
     secondary = GraphyPalette.SecondaryLight,
-    onSecondary = GraphyPalette.OnPrimaryLight,
-    tertiary = GraphyPalette.TimeLight,
-    onTertiary = GraphyPalette.OnPrimaryLight,
-    error = GraphyPalette.WarningLight,
-    onError = GraphyPalette.OnPrimaryLight,
-    background = GraphyPalette.SurfaceLight,
-    onBackground = GraphyPalette.OnInputLight,
+    onSecondary = GraphyPalette.ResultOn,
+    tertiary = GraphyPalette.Constant,
+    onTertiary = GraphyPalette.ResultOn,
+    error = GraphyPalette.Operation,
+    onError = GraphyPalette.ResultOn,
+    background = GraphyPalette.BackgroundLight,
+    onBackground = GraphyPalette.PrimaryTextLight,
     surface = GraphyPalette.SurfaceLight,
-    onSurface = GraphyPalette.OnInputLight,
-    surfaceContainerHigh = GraphyPalette.SurfaceElevatedLight,
+    onSurface = GraphyPalette.PrimaryTextLight,
+    surfaceContainerHigh = GraphyPalette.SurfaceLight,
     onSurfaceVariant = GraphyPalette.SecondaryLight,
     outline = GraphyPalette.ConnectorLight,
 )
 
 fun graphyDarkColorScheme(): ColorScheme = darkColorScheme(
-    primary = GraphyPalette.PrimaryDark,
-    onPrimary = GraphyPalette.OnPrimaryDark,
+    primary = Color(0xFFF3F4F6),
+    onPrimary = GraphyPalette.SurfaceDark,
     secondary = GraphyPalette.SecondaryDark,
-    onSecondary = GraphyPalette.OnPrimaryDark,
-    tertiary = GraphyPalette.TimeDark,
-    onTertiary = GraphyPalette.OnPrimaryDark,
-    error = GraphyPalette.WarningDark,
-    onError = GraphyPalette.OnPrimaryDark,
+    onSecondary = GraphyPalette.SurfaceDark,
+    tertiary = GraphyPalette.Constant,
+    onTertiary = GraphyPalette.ResultOn,
+    error = GraphyPalette.Operation,
+    onError = GraphyPalette.ResultOn,
     background = GraphyPalette.SurfaceDark,
-    onBackground = GraphyPalette.OnInputDark,
+    onBackground = Color(0xFFF3F4F6),
     surface = GraphyPalette.SurfaceDark,
-    onSurface = GraphyPalette.OnInputDark,
-    surfaceContainerHigh = GraphyPalette.SurfaceElevatedDark,
+    onSurface = Color(0xFFF3F4F6),
+    surfaceContainerHigh = GraphyPalette.SurfaceDark,
     onSurfaceVariant = GraphyPalette.SecondaryDark,
     outline = GraphyPalette.ConnectorDark,
 )
 
 fun graphyLightSemanticColors(): GraphySemanticColors = GraphySemanticColors(
-    input = GraphyPalette.InputLight,
-    operation = GraphyPalette.OperationLight,
-    result = GraphyPalette.ResultLight,
-    warning = GraphyPalette.WarningLight,
-    time = GraphyPalette.TimeLight,
+    background = GraphyPalette.BackgroundLight,
+    primaryText = GraphyPalette.PrimaryTextLight,
+    input = GraphyPalette.Input,
+    constant = GraphyPalette.Constant,
+    operation = GraphyPalette.Operation,
+    derived = GraphyPalette.DerivedLight,
+    resultFill = GraphyPalette.ResultFill,
+    resultOn = GraphyPalette.ResultOn,
     connector = GraphyPalette.ConnectorLight,
-    connectorHighlight = GraphyPalette.ConnectorHighlightLight,
-    surfaceElevated = GraphyPalette.SurfaceElevatedLight,
-    onInput = GraphyPalette.OnInputLight,
-    onOperation = GraphyPalette.OnOperationLight,
-    onResult = GraphyPalette.OnResultLight,
+    connectorHighlight = GraphyPalette.SecondaryLight,
+    surfaceElevated = GraphyPalette.SurfaceLight,
+    onInput = GraphyPalette.Input,
+    onOperation = GraphyPalette.Operation,
+    onResult = GraphyPalette.ResultFill,
 )
 
 fun graphyDarkSemanticColors(): GraphySemanticColors = GraphySemanticColors(
-    input = GraphyPalette.InputDark,
-    operation = GraphyPalette.OperationDark,
-    result = GraphyPalette.ResultDark,
-    warning = GraphyPalette.WarningDark,
-    time = GraphyPalette.TimeDark,
+    background = GraphyPalette.SurfaceDark,
+    primaryText = Color(0xFFF3F4F6),
+    input = GraphyPalette.Input,
+    constant = GraphyPalette.Constant,
+    operation = GraphyPalette.Operation,
+    derived = GraphyPalette.DerivedDark,
+    resultFill = GraphyPalette.ResultFill,
+    resultOn = GraphyPalette.ResultOn,
     connector = GraphyPalette.ConnectorDark,
-    connectorHighlight = GraphyPalette.ConnectorHighlightDark,
-    surfaceElevated = GraphyPalette.SurfaceElevatedDark,
-    onInput = GraphyPalette.OnInputDark,
-    onOperation = GraphyPalette.OnOperationDark,
-    onResult = GraphyPalette.OnResultDark,
+    connectorHighlight = GraphyPalette.SecondaryDark,
+    surfaceElevated = GraphyPalette.SurfaceDark,
+    onInput = GraphyPalette.Input,
+    onOperation = GraphyPalette.Operation,
+    onResult = GraphyPalette.ResultFill,
 )
 
 val LocalGraphySemanticColors = staticCompositionLocalOf { graphyLightSemanticColors() }

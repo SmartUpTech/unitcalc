@@ -3,6 +3,7 @@ package net.smartlogic.unitconverter.graphy.renderer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,21 +19,13 @@ import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Canvas-based flowchart renderer for Graphy output graphs.
- * Layers flow top-to-bottom so calculations read naturally downward.
+ * Canvas renderer for connected Graphy calculation graphs.
  */
 public class FlowchartGraphView extends View {
-
-    private static final float HORIZONTAL_GAP_DP = 24f;
-    private static final float VERTICAL_GAP_DP = 28f;
-    private static final float PADDING_DP = 12f;
-    private static final float OPERATION_PADDING_DP = 6f;
 
     private GraphyOutput output;
     private GraphyViewTheme theme;
@@ -43,6 +36,7 @@ public class FlowchartGraphView extends View {
     private final Paint connectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final Map<String, RectF> nodeBounds = new HashMap<>();
+    private final GraphLayoutEngine layoutEngine = new GraphLayoutEngine();
     private int contentWidth;
     private int contentHeight;
 
@@ -60,6 +54,7 @@ public class FlowchartGraphView extends View {
         strokePaint.setStyle(Paint.Style.STROKE);
         textPaint.setTextAlign(Paint.Align.CENTER);
         connectorPaint.setStyle(Paint.Style.STROKE);
+        connectorPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
@@ -84,6 +79,7 @@ public class FlowchartGraphView extends View {
             return;
         }
 
+        canvas.drawColor(theme.getBackgroundColor());
         drawConnectors(canvas);
         drawNodes(canvas);
     }
@@ -96,162 +92,13 @@ public class FlowchartGraphView extends View {
             return;
         }
 
-        float density = getResources().getDisplayMetrics().density;
-        float padding = PADDING_DP * density;
-        float horizontalGap = HORIZONTAL_GAP_DP * density;
-        float verticalGap = VERTICAL_GAP_DP * density;
-        float cornerRadius = theme.getNodeCornerRadius();
-        float minWidth = theme.getNodeMinWidth();
-        float minHeight = theme.getNodeMinHeight();
-        float operationSize = theme.getOperationMarkerSize();
-
-        Map<String, GraphyNode> nodeMap = new HashMap<>();
-        for (GraphyNode node : output.getNodes()) {
-            nodeMap.put(node.getId(), node);
+        GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme);
+        for (Map.Entry<String, GraphLayoutEngine.LayoutBox> entry : result.nodeBounds.entrySet()) {
+            GraphLayoutEngine.LayoutBox box = entry.getValue();
+            nodeBounds.put(entry.getKey(), new RectF(box.x, box.y, box.x + box.width, box.y + box.height));
         }
-
-        Map<String, Integer> layers = assignLayers(nodeMap, output.getConnections());
-        Map<Integer, List<String>> layerNodes = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : layers.entrySet()) {
-            int layer = entry.getValue();
-            layerNodes.computeIfAbsent(layer, key -> new ArrayList<>()).add(entry.getKey());
-        }
-
-        Map<String, Float> nodeWidths = new HashMap<>();
-        Map<String, Float> nodeHeights = new HashMap<>();
-        configureTextPaint();
-
-        for (GraphyNode node : output.getNodes()) {
-            float textWidth = textPaint.measureText(
-                    node.getType() == GraphyNodeType.OPERATION ? node.getLabel() : node.getDisplayValue());
-            float width = Math.max(minWidth, textWidth + padding * 2);
-            float height = Math.max(minHeight, textPaint.getTextSize() + padding * 1.5f);
-            if (node.getType() == GraphyNodeType.OPERATION) {
-                width = Math.max(operationSize, width);
-                height = Math.max(operationSize, height);
-            }
-            nodeWidths.put(node.getId(), width);
-            nodeHeights.put(node.getId(), height);
-        }
-
-        int maxLayer = 0;
-        float maxLayerWidth = 0f;
-        for (Map.Entry<Integer, List<String>> entry : layerNodes.entrySet()) {
-            maxLayer = Math.max(maxLayer, entry.getKey());
-            float layerWidth = 0f;
-            List<String> ids = entry.getValue();
-            for (int i = 0; i < ids.size(); i++) {
-                layerWidth += nodeWidths.get(ids.get(i));
-                if (i < ids.size() - 1) {
-                    layerWidth += horizontalGap;
-                }
-            }
-            maxLayerWidth = Math.max(maxLayerWidth, layerWidth);
-        }
-
-        float y = padding;
-        for (int layer = 0; layer <= maxLayer; layer++) {
-            List<String> ids = layerNodes.get(layer);
-            if (ids == null) {
-                continue;
-            }
-
-            float layerWidth = 0f;
-            float maxHeightInLayer = 0f;
-            for (int i = 0; i < ids.size(); i++) {
-                layerWidth += nodeWidths.get(ids.get(i));
-                maxHeightInLayer = Math.max(maxHeightInLayer, nodeHeights.get(ids.get(i)));
-                if (i < ids.size() - 1) {
-                    layerWidth += horizontalGap;
-                }
-            }
-
-            float x = padding + (maxLayerWidth - layerWidth) / 2f;
-
-            for (String nodeId : ids) {
-                float width = nodeWidths.get(nodeId);
-                float height = nodeHeights.get(nodeId);
-                nodeBounds.put(nodeId, new RectF(x, y, x + width, y + height));
-                x += width + horizontalGap;
-            }
-
-            y += maxHeightInLayer + verticalGap;
-        }
-
-        float maxRight = padding;
-        float maxBottom = padding;
-        for (RectF bounds : nodeBounds.values()) {
-            maxRight = Math.max(maxRight, bounds.right);
-            maxBottom = Math.max(maxBottom, bounds.bottom);
-        }
-
-        contentWidth = (int) Math.ceil(maxRight + padding);
-        contentHeight = (int) Math.ceil(maxBottom + padding);
-    }
-
-    @NonNull
-    private Map<String, Integer> assignLayers(@NonNull Map<String, GraphyNode> nodeMap,
-                                                @NonNull List<GraphyConnection> connections) {
-        Map<String, Integer> inDegree = new HashMap<>();
-        Map<String, List<String>> outgoing = new HashMap<>();
-
-        for (String id : nodeMap.keySet()) {
-            inDegree.put(id, 0);
-            outgoing.put(id, new ArrayList<>());
-        }
-
-        for (GraphyConnection connection : connections) {
-            if (!nodeMap.containsKey(connection.getFromNodeId())
-                    || !nodeMap.containsKey(connection.getToNodeId())) {
-                continue;
-            }
-            outgoing.get(connection.getFromNodeId()).add(connection.getToNodeId());
-            inDegree.put(connection.getToNodeId(), inDegree.get(connection.getToNodeId()) + 1);
-        }
-
-        Map<String, Integer> layers = new HashMap<>();
-        List<String> queue = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
-            if (entry.getValue() == 0) {
-                queue.add(entry.getKey());
-                layers.put(entry.getKey(), 0);
-            }
-        }
-
-        Set<String> visited = new HashSet<>();
-        while (!queue.isEmpty()) {
-            String current = queue.remove(0);
-            visited.add(current);
-            int currentLayer = layers.getOrDefault(current, 0);
-
-            for (String target : outgoing.get(current)) {
-                int nextLayer = currentLayer + 1;
-                layers.put(target, Math.max(layers.getOrDefault(target, 0), nextLayer));
-                inDegree.put(target, inDegree.get(target) - 1);
-                if (inDegree.get(target) == 0 && !visited.contains(target)) {
-                    queue.add(target);
-                }
-            }
-        }
-
-        for (String id : nodeMap.keySet()) {
-            if (!layers.containsKey(id)) {
-                layers.put(id, 0);
-            }
-        }
-
-        return layers;
-    }
-
-    private void configureTextPaint() {
-        if (theme == null) {
-            return;
-        }
-        textPaint.setTextSize(spToPx(14f));
-    }
-
-    private float spToPx(float sp) {
-        return sp * getResources().getDisplayMetrics().scaledDensity;
+        contentWidth = result.contentWidth;
+        contentHeight = result.contentHeight;
     }
 
     private void drawConnectors(@NonNull Canvas canvas) {
@@ -265,24 +112,87 @@ public class FlowchartGraphView extends View {
                 continue;
             }
 
-            float startX = from.centerX();
-            float startY = from.bottom;
-            float endX = to.centerX();
-            float endY = to.top;
-            float midY = (startY + endY) / 2f;
+            GraphyNode fromNode = findNode(connection.getFromNodeId());
+            GraphyNode toNode = findNode(connection.getToNodeId());
+            if (fromNode == null || toNode == null) {
+                continue;
+            }
 
-            canvas.drawLine(startX, startY, startX, midY, connectorPaint);
-            canvas.drawLine(startX, midY, endX, midY, connectorPaint);
-            canvas.drawLine(endX, midY, endX, endY, connectorPaint);
+            drawOrthogonalConnector(canvas, from, to, fromNode, toNode);
         }
     }
 
-    private void drawNodes(@NonNull Canvas canvas) {
-        strokePaint.setStrokeWidth(theme.getConnectorStrokeWidth());
+    private void drawOrthogonalConnector(@NonNull Canvas canvas,
+                                         @NonNull RectF from,
+                                         @NonNull RectF to,
+                                         @NonNull GraphyNode fromNode,
+                                         @NonNull GraphyNode toNode) {
+        float startX = from.centerX();
+        float startY = connectionStartY(from, fromNode);
+        float endX = to.centerX();
+        float endY = connectionEndY(to, toNode);
 
-        for (GraphyNode node : output.getNodes()) {
-            RectF bounds = nodeBounds.get(node.getId());
-            if (bounds == null) {
+        if (Math.abs(startX - endX) < 1f) {
+            drawArrowLine(canvas, startX, startY, endX, endY);
+            return;
+        }
+
+        float midY = (startY + endY) / 2f;
+        canvas.drawLine(startX, startY, startX, midY, connectorPaint);
+        canvas.drawLine(startX, midY, endX, midY, connectorPaint);
+        drawArrowLine(canvas, endX, midY, endX, endY);
+    }
+
+    private float connectionStartY(@NonNull RectF bounds, @NonNull GraphyNode node) {
+        if (node.getType() == GraphyNodeType.OPERATION) {
+            return bounds.bottom;
+        }
+        return bounds.bottom;
+    }
+
+    private float connectionEndY(@NonNull RectF bounds, @NonNull GraphyNode node) {
+        if (node.getType() == GraphyNodeType.OPERATION) {
+            return bounds.top;
+        }
+        return bounds.top;
+    }
+
+    private void drawArrowLine(@NonNull Canvas canvas, float x1, float y1, float x2, float y2) {
+        canvas.drawLine(x1, y1, x2, y2, connectorPaint);
+        if (y2 > y1 + 2f) {
+            drawArrowHead(canvas, x2, y2, 0f, 1f);
+        } else if (y2 < y1 - 2f) {
+            drawArrowHead(canvas, x2, y2, 0f, -1f);
+        } else if (x2 > x1 + 2f) {
+            drawArrowHead(canvas, x2, y2, 1f, 0f);
+        } else if (x2 < x1 - 2f) {
+            drawArrowHead(canvas, x2, y2, -1f, 0f);
+        }
+    }
+
+    private void drawArrowHead(@NonNull Canvas canvas, float tipX, float tipY, float dirX, float dirY) {
+        float size = theme.getConnectorStrokeWidth() * 3.5f;
+        float baseX = tipX - dirX * size * 1.8f;
+        float baseY = tipY - dirY * size * 1.8f;
+        float perpX = -dirY;
+        float perpY = dirX;
+        Path arrow = new Path();
+        arrow.moveTo(tipX, tipY);
+        arrow.lineTo(baseX + perpX * size, baseY + perpY * size);
+        arrow.lineTo(baseX - perpX * size, baseY - perpY * size);
+        arrow.close();
+        fillPaint.setColor(theme.getConnectorColor());
+        fillPaint.setStyle(Paint.Style.FILL);
+        canvas.drawPath(arrow, fillPaint);
+        fillPaint.setStyle(Paint.Style.FILL);
+    }
+
+    private void drawNodes(@NonNull Canvas canvas) {
+        List<String> drawOrder = buildDrawOrder();
+        for (String nodeId : drawOrder) {
+            GraphyNode node = findNode(nodeId);
+            RectF bounds = nodeBounds.get(nodeId);
+            if (node == null || bounds == null) {
                 continue;
             }
 
@@ -291,31 +201,53 @@ public class FlowchartGraphView extends View {
                     drawOperationNode(canvas, node, bounds);
                     break;
                 case RESULT:
-                    drawRoundedNode(canvas, node, bounds, theme.getResultNodeColor(), theme.getOnResultColor());
+                    drawFinalResultNode(canvas, node, bounds);
                     break;
                 case INPUT:
+                    drawValueNode(canvas, node, bounds, theme.getInputColor(), false);
+                    break;
                 case CONSTANT:
-                    drawRoundedNode(canvas, node, bounds, theme.getInputNodeColor(), theme.getOnInputColor());
+                    drawValueNode(canvas, node, bounds, theme.getConstantColor(), false);
+                    break;
+                case DERIVED:
+                    boolean primary = "primary".equals(node.getSemanticRole());
+                    drawValueNode(canvas, node, bounds, theme.getDerivedColor(), primary);
                     break;
                 default:
-                    drawRoundedNode(canvas, node, bounds, theme.getDerivedNodeColor(), theme.getOnInputColor());
+                    drawValueNode(canvas, node, bounds, theme.getPrimaryTextColor(), false);
                     break;
             }
         }
     }
 
-    private void drawRoundedNode(@NonNull Canvas canvas,
-                                 @NonNull GraphyNode node,
-                                 @NonNull RectF bounds,
-                                 int fillColor,
-                                 int textColor) {
-        float radius = theme.getNodeCornerRadius();
-        fillPaint.setColor(fillColor);
-        strokePaint.setColor(theme.getConnectorColor());
-        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
-        canvas.drawRoundRect(bounds, radius, radius, strokePaint);
+    @NonNull
+    private List<String> buildDrawOrder() {
+        List<String> order = new ArrayList<>();
+        for (GraphyNode node : output.getNodes()) {
+            if (node.getType() != GraphyNodeType.RESULT) {
+                order.add(node.getId());
+            }
+        }
+        for (GraphyNode node : output.getNodes()) {
+            if (node.getType() == GraphyNodeType.RESULT) {
+                order.add(node.getId());
+            }
+        }
+        return order;
+    }
 
+    private void drawValueNode(@NonNull Canvas canvas,
+                               @NonNull GraphyNode node,
+                               @NonNull RectF bounds,
+                               int textColor,
+                               boolean emphasized) {
         textPaint.setColor(textColor);
+        textPaint.setTextSize(theme.getValueTextSize());
+        if (emphasized) {
+            textPaint.setFakeBoldText(true);
+        } else {
+            textPaint.setFakeBoldText(false);
+        }
         textPaint.setTextAlign(Paint.Align.CENTER);
         float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
         canvas.drawText(node.getDisplayValue(), bounds.centerX(), textY, textPaint);
@@ -324,15 +256,50 @@ public class FlowchartGraphView extends View {
     private void drawOperationNode(@NonNull Canvas canvas,
                                    @NonNull GraphyNode node,
                                    @NonNull RectF bounds) {
-        fillPaint.setColor(theme.getOperationNodeColor());
-        strokePaint.setColor(theme.getOnOperationColor());
-        float radius = theme.getNodeCornerRadius();
-        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
-        canvas.drawRoundRect(bounds, radius, radius, strokePaint);
+        float cx = bounds.centerX();
+        float cy = bounds.centerY();
+        float radius = bounds.width() / 2f;
 
-        textPaint.setColor(theme.getOnOperationColor());
+        fillPaint.setColor(theme.getOperationNodeColor());
+        strokePaint.setColor(theme.getOperationStrokeColor());
+        strokePaint.setStrokeWidth(theme.getConnectorStrokeWidth());
+        canvas.drawCircle(cx, cy, radius, fillPaint);
+        canvas.drawCircle(cx, cy, radius, strokePaint);
+
+        textPaint.setColor(theme.getOperationColor());
+        textPaint.setTextSize(theme.getOperationTextSize());
+        textPaint.setFakeBoldText(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
+        String symbol = GraphLayoutEngine.formatOperator(node.getLabel());
+        float textY = cy - (textPaint.descent() + textPaint.ascent()) / 2f;
+        canvas.drawText(symbol, cx, textY, textPaint);
+    }
+
+    private void drawFinalResultNode(@NonNull Canvas canvas,
+                                     @NonNull GraphyNode node,
+                                     @NonNull RectF bounds) {
+        float radius = theme.getNodeCornerRadius();
+        fillPaint.setColor(theme.getResultFillColor());
+        strokePaint.setColor(theme.getResultFillColor());
+        strokePaint.setStrokeWidth(0f);
+        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
+
+        textPaint.setColor(theme.getResultOnColor());
+        textPaint.setTextSize(theme.getResultTextSize());
+        textPaint.setFakeBoldText(true);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        String text = "✓ " + node.getDisplayValue();
         float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
-        canvas.drawText(node.getLabel(), bounds.centerX(), textY, textPaint);
+        canvas.drawText(text, bounds.centerX(), textY, textPaint);
+    }
+
+    @Nullable
+    private GraphyNode findNode(@NonNull String id) {
+        for (GraphyNode node : output.getNodes()) {
+            if (node.getId().equals(id)) {
+                return node;
+            }
+        }
+        return null;
     }
 }

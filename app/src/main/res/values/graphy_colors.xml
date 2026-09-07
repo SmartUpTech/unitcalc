@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="graphy_primary">#C23A2B</color>
-    <color name="graphy_input">#00000000</color>
-    <color name="graphy_operation">#00000000</color>
-    <color name="graphy_result">#00000000</color>
-    <color name="graphy_warning">#C23A2B</color>
-    <color name="graphy_time">#8A8174</color>
+    <color name="graphy_background">#FAF8F3</color>
+    <color name="graphy_primary_text">#1F2937</color>
+
+    <color name="graphy_input">#F4C542</color>
+    <color name="graphy_constant">#9B7EDE</color>
+    <color name="graphy_operation">#F59E0B</color>
+    <color name="graphy_derived">#3B82F6</color>
+    <color name="graphy_result_fill">#22C55E</color>
+    <color name="graphy_result_on">#FFFFFF</color>
+
+    <color name="graphy_input_fill">#14F4C542</color>
+    <color name="graphy_operation_fill">#1AF59E0B</color>
+    <color name="graphy_operation_stroke">#F59E0B</color>
+
+    <color name="graphy_connector">#9CA3AF</color>
+    <color name="graphy_connector_highlight">#6B7280</color>
+
+    <color name="graphy_surface">#FAF8F3</color>
+    <color name="graphy_surface_elevated">#FAF8F3</color>
+
+    <!-- Legacy aliases kept for compatibility -->
+    <color name="graphy_primary">#1F2937</color>
+    <color name="graphy_warning">#F59E0B</color>
+    <color name="graphy_time">#6B7280</color>
     <color name="graphy_secondary">#6B7280</color>
-
-    <color name="graphy_connector">#D1D5DB</color>
-    <color name="graphy_connector_highlight">#C23A2B</color>
-
-    <color name="graphy_surface">#FCFBF7</color>
-    <color name="graphy_surface_elevated">#FCFBF7</color>
-
     <color name="graphy_on_primary">#FFFFFF</color>
-    <color name="graphy_on_input">#000000</color>
-    <color name="graphy_on_operation">#C23A2B</color>
-    <color name="graphy_on_result">#000000</color>
+    <color name="graphy_on_input">#F4C542</color>
+    <color name="graphy_on_operation">#F59E0B</color>
+    <color name="graphy_on_result">#22C55E</color>
 </resources>
