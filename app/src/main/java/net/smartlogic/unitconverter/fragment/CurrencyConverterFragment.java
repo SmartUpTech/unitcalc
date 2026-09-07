@@ -38,6 +38,7 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
+import net.smartlogic.unitconverter.utils.Utils;
 import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 

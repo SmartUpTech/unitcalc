@@ -8,7 +8,6 @@
         <item name="android:navigationBarColor">@color/screen_background</item>
         <item name="android:windowBackground">@color/screen_background</item>
         <item name="actionBarStyle">@style/GraphyActionBar</item>
-        <item name="actionBarElevation">0dp</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
     </style>
@@ -126,6 +125,11 @@
         <item name="backgroundTint">@null</item>
         <item name="cornerRadius">8dp</item>
         <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="ImageButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:elevation">0dp</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="ImageButtonStyle.Swap">
