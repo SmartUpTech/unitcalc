@@ -37,9 +37,9 @@ import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
+import net.smartlogic.unitconverter.utils.NumberUtils;
 import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -430,7 +430,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 resultDisplay,
                 explanation
         );
-        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     @NonNull

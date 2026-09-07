@@ -38,9 +38,9 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
+import net.smartlogic.unitconverter.utils.Utils;
 import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -317,7 +317,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                 resultDisplay,
                 explanation
         );
-        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     @NonNull

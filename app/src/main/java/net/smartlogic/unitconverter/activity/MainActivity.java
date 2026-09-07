@@ -61,7 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(R.string.app_name);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(R.layout.action_bar_brand);
+            actionBar.setElevation(0f);
             actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.action_bar_background));
         }
         context = this;

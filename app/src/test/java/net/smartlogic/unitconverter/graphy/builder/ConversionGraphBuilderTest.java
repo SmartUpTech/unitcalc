@@ -23,6 +23,8 @@ public class ConversionGraphBuilderTest {
                 "100 km × 0.621371 = 62.14 mi"
         );
 
+        assertEquals("100 km → 62.14 mi", output.getExpression());
+        assertEquals("62.14 mi", output.getResult());
         assertTrue(renderer.supports(output));
         assertEquals(3, output.getNodes().size());
         assertEquals(2, output.getConnections().size());

@@ -34,7 +34,7 @@
                     android:id="@+id/display_values"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
+                    android:gravity="center"
                     android:orientation="vertical"
                     android:paddingHorizontal="20dp"
                     android:paddingTop="12dp"
@@ -46,7 +46,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="@font/oswald"
-                        android:gravity="end"
+                        android:gravity="center"
                         android:maxLines="2"
                         android:textColor="@color/screen_expression_text"
                         android:textSize="@dimen/h2" />
@@ -59,7 +59,7 @@
                         android:autoSizeMaxTextSize="@dimen/resultDisplaySize"
                         android:autoSizeMinTextSize="28sp"
                         android:autoSizeTextType="uniform"
-                        android:gravity="end"
+                        android:gravity="center"
                         android:maxLines="1"
                         android:text="0" />
                 </LinearLayout>
@@ -188,6 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/oswald"
+                    android:gravity="center"
                     android:textColor="@color/screen_expression_text"
                     android:textSize="16sp" />
 

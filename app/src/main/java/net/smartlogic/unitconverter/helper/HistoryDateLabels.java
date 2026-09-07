@@ -4,8 +4,10 @@ import android.content.Context;
 
 import net.smartlogic.unitconverter.R;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public final class HistoryDateLabels {
@@ -29,6 +31,17 @@ public final class HistoryDateLabels {
             return context.getString(R.string.history_yesterday);
         }
         return formatDayMonth(then.getTimeInMillis());
+    }
+
+    public static String formatTime(long epochMillis) {
+        return formatTime(epochMillis, Locale.getDefault());
+    }
+
+    static String formatTime(long epochMillis, Locale locale) {
+        if (epochMillis <= 0L) {
+            return "";
+        }
+        return DateFormat.getTimeInstance(DateFormat.SHORT, locale).format(new Date(epochMillis));
     }
 
     static String formatDayMonth(long epochMillis) {

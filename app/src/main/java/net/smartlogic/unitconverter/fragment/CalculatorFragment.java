@@ -571,6 +571,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 ItemHolder itemHolder = (ItemHolder) holder;
                 itemHolder.tvExpression.setText(item.expression);
                 itemHolder.tvResult.setText(item.result);
+                itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt));
                 itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
             }
         }
@@ -592,11 +593,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         static class ItemHolder extends RecyclerView.ViewHolder {
             final TextView tvExpression;
             final TextView tvResult;
+            final TextView tvTime;
 
             ItemHolder(View v) {
                 super(v);
                 tvExpression = v.findViewById(R.id.tv_history_expression);
                 tvResult = v.findViewById(R.id.tv_history_result);
+                tvTime = v.findViewById(R.id.tv_history_time);
             }
         }
     }

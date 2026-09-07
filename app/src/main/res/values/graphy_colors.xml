@@ -11,8 +11,8 @@
     <color name="graphy_connector">#D1D5DB</color>
     <color name="graphy_connector_highlight">#C23A2B</color>
 
-    <color name="graphy_surface">#FDFBF7</color>
-    <color name="graphy_surface_elevated">#FDFBF7</color>
+    <color name="graphy_surface">#FCFBF7</color>
+    <color name="graphy_surface_elevated">#FCFBF7</color>
 
     <color name="graphy_on_primary">#FFFFFF</color>
     <color name="graphy_on_input">#000000</color>

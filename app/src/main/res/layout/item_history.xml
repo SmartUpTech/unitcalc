@@ -2,9 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:paddingVertical="10dp"
-    android:background="?attr/selectableItemBackground">
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/tv_history_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/oswald_regular"
+        android:gravity="end"
+        android:textColor="@color/history_section_text"
+        android:textSize="11sp" />
 
     <TextView
         android:id="@+id/tv_history_expression"

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Option 3: Dark Mode -->
-    <color name="screen_background">#12161D</color>
+    <color name="screen_background">#121620</color>
     <color name="surface_elevated">#1C2129</color>
     <color name="screen_expression_text">#9CA3AF</color>
     <color name="screen_result_text">#FFFFFF</color>
-    <color name="keypad_background">#12161D</color>
+    <color name="keypad_background">#121620</color>
     <color name="key_number_bg">#00000000</color>
     <color name="key_number_text">#FFFFFF</color>
     <color name="key_operator_bg">#00000000</color>
@@ -15,15 +15,15 @@
     <color name="key_backspace_bg">#1C2129</color>
     <color name="key_backspace_icon">#FFFFFF</color>
     <color name="key_equals_bg">#F5C842</color>
-    <color name="key_equals_text">#12161D</color>
-    <color name="app_bar">#12161D</color>
+    <color name="key_equals_text">#121620</color>
+    <color name="app_bar">#121620</color>
     <color name="on_app_bar">#FFFFFF</color>
-    <color name="nav_background">#12161D</color>
+    <color name="nav_background">#121620</color>
     <color name="nav_selected">#F5C842</color>
     <color name="nav_unselected">#9CA3AF</color>
     <color name="workspace_tab_selected">#F5C842</color>
     <color name="accent">#F5C842</color>
-    <color name="on_accent">#12161D</color>
+    <color name="on_accent">#121620</color>
     <color name="pad_button_ripple_color">#33FFFFFF</color>
     <color name="history_section_text">#9CA3AF</color>
     <color name="alwaysDarkText">#0c0c0c</color>

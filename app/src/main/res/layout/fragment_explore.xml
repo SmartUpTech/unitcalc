@@ -13,7 +13,6 @@
         android:fontFamily="@font/oswald"
         android:letterSpacing="0.06"
         android:text="@string/nav_explore"
-        android:textAllCaps="true"
         android:textColor="@color/screen_result_text"
         android:textSize="22sp" />
 
@@ -41,7 +40,6 @@
         android:gravity="center_vertical"
         android:paddingHorizontal="4dp"
         android:text="@string/tab_calculate"
-        android:textAllCaps="true"
         android:textColor="@color/screen_result_text"
         android:textSize="18sp" />
 
@@ -54,7 +52,6 @@
         android:gravity="center_vertical"
         android:paddingHorizontal="4dp"
         android:text="@string/tab_convert"
-        android:textAllCaps="true"
         android:textColor="@color/screen_result_text"
         android:textSize="18sp" />
 

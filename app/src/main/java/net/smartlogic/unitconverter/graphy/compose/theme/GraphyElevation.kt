@@ -13,8 +13,8 @@ data class GraphyElevation(
 )
 
 val GraphyElevationDefault = GraphyElevation(
-    card = 4.dp,
-    node = 2.dp,
+    card = 0.dp,
+    node = 0.dp,
     none = 0.dp,
 )
 
