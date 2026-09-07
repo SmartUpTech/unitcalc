@@ -5,16 +5,16 @@
     <dimen name="graphy_node_corner_radius">8dp</dimen>
     <dimen name="graphy_operation_marker_size">36dp</dimen>
     <dimen name="graphy_connector_stroke">1.5dp</dimen>
-    <dimen name="graphy_value_text_size">17sp</dimen>
-    <dimen name="graphy_operation_text_size">14sp</dimen>
-    <dimen name="graphy_result_text_size">20sp</dimen>
+    <dimen name="graphy_value_text_size">12sp</dimen>
+    <dimen name="graphy_operation_text_size">12sp</dimen>
+    <dimen name="graphy_result_text_size">12sp</dimen>
     <dimen name="graphy_spacing_xs">4dp</dimen>
     <dimen name="graphy_spacing_sm">8dp</dimen>
     <dimen name="graphy_spacing_md">16dp</dimen>
     <dimen name="graphy_spacing_lg">24dp</dimen>
     <dimen name="graphy_spacing_xl">32dp</dimen>
     <dimen name="graphy_vertical_gap">40dp</dimen>
-    <dimen name="graphy_horizontal_gap">32dp</dimen>
+    <dimen name="graphy_horizontal_gap">24dp</dimen>
     <dimen name="graphy_branch_gap">48dp</dimen>
     <dimen name="graphy_elevation_card">0dp</dimen>
 </resources>

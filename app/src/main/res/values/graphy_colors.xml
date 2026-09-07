@@ -6,11 +6,11 @@
     <color name="graphy_input">#F4C542</color>
     <color name="graphy_constant">#9B7EDE</color>
     <color name="graphy_operation">#F59E0B</color>
-    <color name="graphy_derived">#3B82F6</color>
-    <color name="graphy_result_fill">#22C55E</color>
+    <color name="graphy_derived">#60A5FA</color>
+    <color name="graphy_result_fill">#3B82F6</color>
     <color name="graphy_result_on">#FFFFFF</color>
 
-    <color name="graphy_input_fill">#14F4C542</color>
+    <color name="graphy_input_fill">#F4C542</color>
     <color name="graphy_operation_fill">#1AF59E0B</color>
     <color name="graphy_operation_stroke">#F59E0B</color>
 
@@ -26,7 +26,9 @@
     <color name="graphy_time">#6B7280</color>
     <color name="graphy_secondary">#6B7280</color>
     <color name="graphy_on_primary">#FFFFFF</color>
-    <color name="graphy_on_input">#F4C542</color>
-    <color name="graphy_on_operation">#F59E0B</color>
-    <color name="graphy_on_result">#22C55E</color>
+    <color name="graphy_on_input">#1F2937</color>
+    <color name="graphy_on_constant">#FFFFFF</color>
+    <color name="graphy_on_derived">#FFFFFF</color>
+    <color name="graphy_on_operation">#FFFFFF</color>
+    <color name="graphy_on_result">#FFFFFF</color>
 </resources>

@@ -39,6 +39,7 @@ public class FlowchartGraphView extends View {
     private final GraphLayoutEngine layoutEngine = new GraphLayoutEngine();
     private int contentWidth;
     private int contentHeight;
+    private int maxLayoutWidth = Integer.MAX_VALUE;
 
     public FlowchartGraphView(@NonNull Context context) {
         super(context);
@@ -55,6 +56,10 @@ public class FlowchartGraphView extends View {
         textPaint.setTextAlign(Paint.Align.CENTER);
         connectorPaint.setStyle(Paint.Style.STROKE);
         connectorPaint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
+    public void setMaxWidth(int maxWidth) {
+        this.maxLayoutWidth = maxWidth;
     }
 
     public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
@@ -92,7 +97,7 @@ public class FlowchartGraphView extends View {
             return;
         }
 
-        GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme);
+        GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme, maxLayoutWidth);
         for (Map.Entry<String, GraphLayoutEngine.LayoutBox> entry : result.nodeBounds.entrySet()) {
             GraphLayoutEngine.LayoutBox box = entry.getValue();
             nodeBounds.put(entry.getKey(), new RectF(box.x, box.y, box.x + box.width, box.y + box.height));
@@ -196,26 +201,10 @@ public class FlowchartGraphView extends View {
                 continue;
             }
 
-            switch (node.getType()) {
-                case OPERATION:
-                    drawOperationNode(canvas, node, bounds);
-                    break;
-                case RESULT:
-                    drawFinalResultNode(canvas, node, bounds);
-                    break;
-                case INPUT:
-                    drawValueNode(canvas, node, bounds, theme.getInputColor(), false);
-                    break;
-                case CONSTANT:
-                    drawValueNode(canvas, node, bounds, theme.getConstantColor(), false);
-                    break;
-                case DERIVED:
-                    boolean primary = "primary".equals(node.getSemanticRole());
-                    drawValueNode(canvas, node, bounds, theme.getDerivedColor(), primary);
-                    break;
-                default:
-                    drawValueNode(canvas, node, bounds, theme.getPrimaryTextColor(), false);
-                    break;
+            if (node.getType() == GraphyNodeType.OPERATION) {
+                drawOperationNode(canvas, node, bounds);
+            } else {
+                drawValueNode(canvas, node, bounds);
             }
         }
     }
@@ -238,17 +227,50 @@ public class FlowchartGraphView extends View {
 
     private void drawValueNode(@NonNull Canvas canvas,
                                @NonNull GraphyNode node,
-                               @NonNull RectF bounds,
-                               int textColor,
-                               boolean emphasized) {
-        textPaint.setColor(textColor);
-        textPaint.setTextSize(theme.getValueTextSize());
-        if (emphasized) {
-            textPaint.setFakeBoldText(true);
-        } else {
-            textPaint.setFakeBoldText(false);
+                               @NonNull RectF bounds) {
+        int fillColor;
+        int textColor;
+
+        switch (node.getType()) {
+            case INPUT:
+                fillColor = theme.getInputColor();
+                textColor = theme.getOnInputColor();
+                break;
+            case CONSTANT:
+                fillColor = theme.getConstantColor();
+                textColor = theme.getOnConstantColor();
+                break;
+            case DERIVED:
+                fillColor = theme.getDerivedColor();
+                textColor = theme.getOnDerivedColor();
+                break;
+            case RESULT:
+                fillColor = theme.getResultFillColor();
+                textColor = theme.getOnResultColor();
+                break;
+            default:
+                fillColor = theme.getSurfaceElevatedColor();
+                textColor = theme.getPrimaryTextColor();
+                break;
         }
+
+        float radius = theme.getNodeCornerRadius();
+
+        // Draw slight shadow
+        fillPaint.setColor(0x20000000);
+        RectF shadowBounds = new RectF(bounds.left + 2, bounds.top + 2, bounds.right + 2, bounds.bottom + 2);
+        canvas.drawRoundRect(shadowBounds, radius, radius, fillPaint);
+
+        // Draw block
+        fillPaint.setColor(fillColor);
+        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
+
+        // Draw text
+        textPaint.setColor(textColor);
+        textPaint.setTextSize(node.getType() == GraphyNodeType.RESULT ? theme.getResultTextSize() : theme.getValueTextSize());
+        textPaint.setFakeBoldText(node.getType() == GraphyNodeType.RESULT || "primary".equals(node.getSemanticRole()));
         textPaint.setTextAlign(Paint.Align.CENTER);
+        
         float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
         canvas.drawText(node.getDisplayValue(), bounds.centerX(), textY, textPaint);
     }
@@ -275,23 +297,6 @@ public class FlowchartGraphView extends View {
         canvas.drawText(symbol, cx, textY, textPaint);
     }
 
-    private void drawFinalResultNode(@NonNull Canvas canvas,
-                                     @NonNull GraphyNode node,
-                                     @NonNull RectF bounds) {
-        float radius = theme.getNodeCornerRadius();
-        fillPaint.setColor(theme.getResultFillColor());
-        strokePaint.setColor(theme.getResultFillColor());
-        strokePaint.setStrokeWidth(0f);
-        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
-
-        textPaint.setColor(theme.getResultOnColor());
-        textPaint.setTextSize(theme.getResultTextSize());
-        textPaint.setFakeBoldText(true);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        String text = "✓ " + node.getDisplayValue();
-        float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
-        canvas.drawText(text, bounds.centerX(), textY, textPaint);
-    }
 
     @Nullable
     private GraphyNode findNode(@NonNull String id) {

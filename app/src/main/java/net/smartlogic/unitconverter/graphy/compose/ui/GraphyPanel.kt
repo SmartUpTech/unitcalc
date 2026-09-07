@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,25 +64,38 @@ fun GraphyPanel(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = spacing.md, vertical = spacing.sm),
+                .padding(horizontal = spacing.sm, vertical = spacing.sm),
         ) {
-            GraphyHeader(
-                expression = expression,
-                onInfoClick = { showLegend = true },
-            )
-
             if (output != null) {
-                GraphyFlowchartHost(
-                    output = output,
-                    viewTheme = viewTheme,
+                GraphyResultSection(
+                    result = output.result,
+                    modifier = Modifier.padding(top = spacing.sm, bottom = spacing.md)
+                )
+
+                BoxWithConstraints(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .padding(top = spacing.md)
-                        .verticalScroll(rememberScrollState()),
-                )
+                        .padding(top = spacing.sm)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    val maxWidthPx = constraints.maxWidth
+                    GraphyFlowchartHost(
+                        output = output,
+                        viewTheme = viewTheme,
+                        maxWidth = maxWidthPx,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
+
+        GraphyHeader(
+            onInfoClick = { showLegend = true },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(spacing.sm)
+        )
     }
 
     if (showLegend) {
@@ -90,44 +105,54 @@ fun GraphyPanel(
 
 @Composable
 private fun GraphyHeader(
-    expression: String,
     onInfoClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val spacing = GraphyThemeTokens.spacing
     val infoDescription = stringResource(R.string.graphy_info_content_description)
+    val spacing = GraphyThemeTokens.spacing
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Box(
+        modifier = modifier
+            .clickable(onClick = onInfoClick)
+            .padding(spacing.xs)
+            .semantics { contentDescription = infoDescription },
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(R.string.graphy),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            if (expression.isNotEmpty()) {
-                Text(
-                    text = expression,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = spacing.xs),
-                )
-            }
-        }
         Text(
             text = "ⓘ",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .clickable(onClick = onInfoClick)
-                .padding(start = spacing.sm)
-                .semantics { contentDescription = infoDescription },
         )
+    }
+}
+
+@Composable
+private fun GraphyResultSection(
+    result: String,
+    modifier: Modifier = Modifier,
+) {
+    val spacing = GraphyThemeTokens.spacing
+    val semanticColors = GraphyThemeTokens.semanticColors
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .shadow(elevation = 2.dp, shape = MaterialTheme.shapes.medium)
+                .background(
+                    color = semanticColors.resultFill,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(horizontal = spacing.lg, vertical = spacing.sm)
+        ) {
+            Text(
+                text = result,
+                style = MaterialTheme.typography.headlineMedium,
+                color = semanticColors.resultOn,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
@@ -186,6 +211,7 @@ private fun LegendRow(
 private fun GraphyFlowchartHost(
     output: GraphyOutput,
     viewTheme: GraphyViewTheme,
+    maxWidth: Int,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -204,6 +230,7 @@ private fun GraphyFlowchartHost(
         update = { container ->
             container.removeAllViews()
             val graphView = FlowchartGraphView(context)
+            graphView.setMaxWidth(maxWidth)
             graphView.setGraph(output, viewTheme)
             container.addView(
                 graphView,

@@ -39,11 +39,13 @@ final class GraphLayoutEngine {
     private float minNodeHeight;
     private float valueTextSize;
     private float resultTextSize;
+    private float currentMaxWidth;
 
     @NonNull
-    LayoutResult layout(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
+    LayoutResult layout(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme, int maxWidthPx) {
         reset();
         configureMetrics(theme);
+        this.currentMaxWidth = maxWidthPx > 0 ? maxWidthPx : 1000f; // Default if not provided
 
         for (GraphyNode node : output.getNodes()) {
             nodeMap.put(node.getId(), node);
@@ -122,13 +124,13 @@ final class GraphLayoutEngine {
                 nodeWidths.put(node.getId(), operationSize);
                 nodeHeights.put(node.getId(), operationSize);
             } else if (node.getType() == GraphyNodeType.RESULT) {
-                float width = Math.max(minNodeWidth, measured + padding * 4f);
-                float height = Math.max(minNodeHeight * 1.4f, textSize + padding * 2.5f);
+                float width = Math.max(minNodeWidth, measured + padding * 3f);
+                float height = Math.max(minNodeHeight * 1.5f, textSize + padding * 2f);
                 nodeWidths.put(node.getId(), width);
                 nodeHeights.put(node.getId(), height);
             } else {
-                float width = Math.max(minNodeWidth, measured + padding);
-                float height = Math.max(minNodeHeight, textSize + padding * 0.5f);
+                float width = Math.max(minNodeWidth * 1.1f, measured + padding * 2f);
+                float height = Math.max(minNodeHeight * 1.1f, textSize + padding * 1.5f);
                 nodeWidths.put(node.getId(), width);
                 nodeHeights.put(node.getId(), height);
             }
@@ -191,6 +193,23 @@ final class GraphLayoutEngine {
     private LayoutBox layoutOperationCluster(@NonNull String operationId,
                                            @NonNull String resultId,
                                            @NonNull List<LayoutBox> operandBoxes) {
+        // Binary operation: identify dominance for Accumulator layout
+        if (operandBoxes.size() == 2) {
+            LayoutBox box1 = operandBoxes.get(0);
+            LayoutBox box2 = operandBoxes.get(1);
+            int comp1 = box1.complexity();
+            int comp2 = box2.complexity();
+
+            // A branch is "Dominant" if it's significantly more complex (a tree vs a leaf or small branch)
+            // or if both are clusters, we pick the larger one as the main line.
+            if (comp1 >= comp2 && comp1 > 1) {
+                return layoutAccumulator(operationId, resultId, box1, box2, true);
+            } else if (comp2 > comp1 && comp2 > 1) {
+                return layoutAccumulator(operationId, resultId, box2, box1, false);
+            }
+        }
+
+        // Standard horizontal layout or wrapped if too wide
         float operandsWidth = 0f;
         float maxOperandHeight = 0f;
         for (int i = 0; i < operandBoxes.size(); i++) {
@@ -202,31 +221,188 @@ final class GraphLayoutEngine {
             }
         }
 
+        if (operandsWidth + padding * 2f > currentMaxWidth && operandBoxes.size() > 1) {
+            return layoutWrappedOperationCluster(operationId, resultId, operandBoxes);
+        }
+
         float clusterWidth = Math.max(operandsWidth, operationSize);
         clusterWidth = Math.max(clusterWidth, nodeWidths.get(resultId));
         float resultHeight = nodeHeights.get(resultId);
-        float clusterHeight = maxOperandHeight + verticalGap * 0.6f + operationSize
-                + verticalGap * 0.5f + resultHeight;
+        float clusterHeight = maxOperandHeight + verticalGap * 0.8f + operationSize
+                + verticalGap * 0.7f + resultHeight;
 
         Map<String, LayoutBox> bounds = new HashMap<>();
         float operandY = 0f;
         float operandStartX = (clusterWidth - operandsWidth) / 2f;
         float x = operandStartX;
         for (LayoutBox operand : operandBoxes) {
-            mergeBounds(bounds, operand.nodeBounds, x, operandY);
+            float yOffset = (maxOperandHeight - operand.height) / 2f;
+            mergeBounds(bounds, operand.nodeBounds, x, operandY + yOffset);
             x += operand.width + horizontalGap;
         }
 
         float opX = (clusterWidth - operationSize) / 2f;
-        float opY = maxOperandHeight + verticalGap * 0.6f;
+        float opY = maxOperandHeight + verticalGap * 0.8f;
         putNode(bounds, operationId, opX, opY, operationSize, operationSize);
 
         float resultWidth = nodeWidths.get(resultId);
         float resultX = (clusterWidth - resultWidth) / 2f;
-        float resultY = opY + operationSize + verticalGap * 0.5f;
+        float resultY = opY + operationSize + verticalGap * 0.7f;
         putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
 
-        return new LayoutBox(bounds, clusterWidth, clusterHeight);
+        return new LayoutBox(bounds, clusterWidth, clusterHeight, resultId);
+    }
+
+    /**
+     * Accumulator layout: pairs a literal or smaller branch horizontally with the result of a main cluster.
+     * This achieves the "side-calculated and merged to main line" style.
+     */
+    @NonNull
+    private LayoutBox layoutAccumulator(@NonNull String operationId,
+                                      @NonNull String resultId,
+                                      @NonNull LayoutBox cluster,
+                                      @NonNull LayoutBox sideBranch,
+                                      boolean clusterOnLeft) {
+        LayoutBox clusterRootBounds = cluster.nodeBounds.get(cluster.rootNodeId);
+        if (clusterRootBounds == null) {
+            return layoutWrappedOperationCluster(operationId, resultId, clusterOnLeft
+                    ? java.util.Arrays.asList(cluster, sideBranch)
+                    : java.util.Arrays.asList(sideBranch, cluster));
+        }
+
+        // Increase horizontal spacing significantly to avoid connector overlap with operations
+        float horizontalSpacing = horizontalGap * 2.5f;
+        float totalWidth = cluster.width + horizontalSpacing + sideBranch.width;
+
+        // If it fits horizontally, align side-branch with cluster's root
+        if (totalWidth + padding * 2f <= currentMaxWidth) {
+            Map<String, LayoutBox> bounds = new HashMap<>();
+            float clusterX = clusterOnLeft ? 0f : sideBranch.width + horizontalSpacing;
+            float sideX = clusterOnLeft ? cluster.width + horizontalSpacing : 0f;
+
+            mergeBounds(bounds, cluster.nodeBounds, clusterX, 0f);
+
+            // Fetch root bounds in new coordinate system to align side branch
+            LayoutBox rootInCluster = bounds.get(cluster.rootNodeId);
+            
+            // If side branch is a cluster, align its root with the main line's root vertically
+            float sideY;
+            if (!sideBranch.nodeBounds.isEmpty()) {
+                LayoutBox rootInSide = sideBranch.nodeBounds.get(sideBranch.rootNodeId);
+                float internalSideRootY = rootInSide != null ? rootInSide.y : 0f;
+                sideY = rootInCluster.y - internalSideRootY;
+            } else {
+                sideY = rootInCluster.y + (rootInCluster.height - sideBranch.height) / 2f;
+            }
+            
+            // Ensure side branch doesn't start above the cluster
+            if (sideY < 0) {
+                mergeBounds(bounds, sideBranch.nodeBounds, sideX, 0f);
+                // Re-offset cluster down
+                offsetBounds(bounds, 0f, -sideY);
+                rootInCluster = bounds.get(cluster.rootNodeId);
+            } else {
+                mergeBounds(bounds, sideBranch.nodeBounds, sideX, sideY);
+            }
+
+            float opY = Math.max(rootInCluster.y + rootInCluster.height, 
+                                 sideY + sideBranch.height) + verticalGap * 0.8f;
+            
+            float clusterRootCenterX = rootInCluster.x + rootInCluster.width / 2f;
+            float sideCenterX = sideX + sideBranch.width / 2f;
+            float opX = (clusterRootCenterX + sideCenterX) / 2f - operationSize / 2f;
+            putNode(bounds, operationId, opX, opY, operationSize, operationSize);
+
+            float resultWidth = nodeWidths.get(resultId);
+            float resultHeight = nodeHeights.get(resultId);
+            float resultX = opX + operationSize / 2f - resultWidth / 2f;
+            float resultY = opY + operationSize + verticalGap * 0.7f;
+            putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
+
+            // Re-calculate full bounds
+            float minX = 0f;
+            float maxX = 0f;
+            float minY = 0f;
+            float maxY = 0f;
+            for (LayoutBox b : bounds.values()) {
+                minX = Math.min(minX, b.x);
+                maxX = Math.max(maxX, b.x + b.width);
+                minY = Math.min(minY, b.y);
+                maxY = Math.max(maxY, b.y + b.height);
+            }
+            
+            // Normalize to (0,0)
+            if (minX < 0 || minY < 0) {
+                offsetBounds(bounds, -minX, -minY);
+                maxX -= minX;
+                maxY -= minY;
+            }
+
+            return new LayoutBox(bounds, maxX, maxY, resultId);
+        }
+
+        // Fallback to wrapped (vertical-ish)
+        return layoutWrappedOperationCluster(operationId, resultId, clusterOnLeft
+                ? java.util.Arrays.asList(cluster, sideBranch)
+                : java.util.Arrays.asList(sideBranch, cluster));
+    }
+
+    @NonNull
+    private LayoutBox layoutWrappedOperationCluster(@NonNull String operationId,
+                                                  @NonNull String resultId,
+                                                  @NonNull List<LayoutBox> operandBoxes) {
+        List<List<LayoutBox>> rows = new ArrayList<>();
+        List<LayoutBox> currentRow = new ArrayList<>();
+        float currentRowWidth = 0f;
+        float maxRowWidth = 0f;
+
+        for (LayoutBox box : operandBoxes) {
+            if (!currentRow.isEmpty() && currentRowWidth + horizontalGap + box.width > currentMaxWidth - padding * 2f) {
+                rows.add(currentRow);
+                maxRowWidth = Math.max(maxRowWidth, currentRowWidth);
+                currentRow = new ArrayList<>();
+                currentRowWidth = 0f;
+            }
+            if (!currentRow.isEmpty()) currentRowWidth += horizontalGap;
+            currentRow.add(box);
+            currentRowWidth += box.width;
+        }
+        if (!currentRow.isEmpty()) {
+            rows.add(currentRow);
+            maxRowWidth = Math.max(maxRowWidth, currentRowWidth);
+        }
+
+        float clusterWidth = Math.max(maxRowWidth, operationSize);
+        clusterWidth = Math.max(clusterWidth, nodeWidths.get(resultId));
+
+        Map<String, LayoutBox> bounds = new HashMap<>();
+        float currentY = 0f;
+        for (List<LayoutBox> row : rows) {
+            float rowWidth = 0f;
+            float rowMaxHeight = 0f;
+            for (LayoutBox box : row) {
+                rowWidth += box.width;
+                rowMaxHeight = Math.max(rowMaxHeight, box.height);
+            }
+            rowWidth += (row.size() - 1) * horizontalGap;
+            float x = (clusterWidth - rowWidth) / 2f;
+            for (LayoutBox box : row) {
+                mergeBounds(bounds, box.nodeBounds, x, currentY + (rowMaxHeight - box.height) / 2f);
+                x += box.width + horizontalGap;
+            }
+            currentY += rowMaxHeight + verticalGap * 0.5f;
+        }
+
+        float opX = (clusterWidth - operationSize) / 2f;
+        float opY = currentY;
+        putNode(bounds, operationId, opX, opY, operationSize, operationSize);
+
+        float resultWidth = nodeWidths.get(resultId);
+        float resultHeight = nodeHeights.get(resultId);
+        float resultY = opY + operationSize + verticalGap * 0.5f;
+        putNode(bounds, resultId, (clusterWidth - resultWidth) / 2f, resultY, resultWidth, resultHeight);
+
+        return new LayoutBox(bounds, clusterWidth, resultY + resultHeight, resultId);
     }
 
     @NonNull
@@ -235,7 +411,7 @@ final class GraphLayoutEngine {
         float width = nodeWidths.get(nodeId);
         float height = nodeHeights.get(nodeId);
         putNode(bounds, nodeId, 0f, 0f, width, height);
-        return new LayoutBox(bounds, width, height);
+        return new LayoutBox(bounds, width, height, nodeId);
     }
 
     @NonNull
@@ -255,6 +431,9 @@ final class GraphLayoutEngine {
         if (primaryMeta instanceof String) {
             primaryResultId = (String) primaryMeta;
         }
+        
+        // Use primary result as root if available
+        String rootId = primaryResultId != null ? primaryResultId : inputId;
 
         List<String> branchConstantIds = new ArrayList<>();
         for (GraphyConnection connection : output.getConnections()) {
@@ -320,7 +499,7 @@ final class GraphLayoutEngine {
             y = relatedY + maxRelatedHeight;
         }
 
-        return new LayoutBox(bounds, contentWidth, y);
+        return new LayoutBox(bounds, contentWidth, y, rootId);
     }
 
     @Nullable
@@ -375,6 +554,8 @@ final class GraphLayoutEngine {
             y += opH + verticalGap * 0.35f;
         }
 
+        String rootId = resultId != null ? resultId : (operationId != null ? operationId : constantId);
+
         if (resultId != null) {
             float rw = nodeWidths.get(resultId);
             float rh = nodeHeights.get(resultId);
@@ -382,7 +563,7 @@ final class GraphLayoutEngine {
             y += rh;
         }
 
-        return new LayoutBox(bounds, width, y);
+        return new LayoutBox(bounds, width, y, rootId);
     }
 
     @Nullable
@@ -445,7 +626,7 @@ final class GraphLayoutEngine {
                                 float y,
                                 float width,
                                 float height) {
-        bounds.put(nodeId, new LayoutBox(x, y, width, height));
+        bounds.put(nodeId, new LayoutBox(x, y, width, height, nodeId));
     }
 
     private static void mergeBounds(@NonNull Map<String, LayoutBox> target,
@@ -487,42 +668,54 @@ final class GraphLayoutEngine {
         final float height;
         final float x;
         final float y;
+        final String rootNodeId;
 
-        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float width, float height) {
-            this(nodeBounds, 0f, 0f, width, height);
+        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float width, float height, String rootNodeId) {
+            this(nodeBounds, 0f, 0f, width, height, rootNodeId);
         }
 
-        LayoutBox(float x, float y, float width, float height) {
+        LayoutBox(float x, float y, float width, float height, String rootNodeId) {
             this.nodeBounds = new HashMap<>();
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
+            this.rootNodeId = rootNodeId;
         }
 
-        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float x, float y, float width, float height) {
+        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float x, float y, float width, float height, String rootNodeId) {
             this.nodeBounds = nodeBounds;
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
+            this.rootNodeId = rootNodeId;
         }
 
         @NonNull
         LayoutBox offset(float dx, float dy) {
             if (nodeBounds.isEmpty()) {
-                return new LayoutBox(x + dx, y + dy, width, height);
+                return new LayoutBox(x + dx, y + dy, width, height, rootNodeId);
             }
             Map<String, LayoutBox> shifted = new HashMap<>();
             for (Map.Entry<String, LayoutBox> entry : nodeBounds.entrySet()) {
                 shifted.put(entry.getKey(), entry.getValue().offset(dx, dy));
             }
-            return new LayoutBox(shifted, x + dx, y + dy, width, height);
+            return new LayoutBox(shifted, x + dx, y + dy, width, height, rootNodeId);
+        }
+
+        int complexity() {
+            if (nodeBounds.isEmpty()) return 1;
+            int count = 0;
+            for (LayoutBox b : nodeBounds.values()) {
+                if (b.nodeBounds.isEmpty()) count++;
+            }
+            return count;
         }
 
         @NonNull
         static LayoutBox empty() {
-            return new LayoutBox(new HashMap<>(), 0f, 0f);
+            return new LayoutBox(new HashMap<>(), 0f, 0f, null);
         }
     }
 }

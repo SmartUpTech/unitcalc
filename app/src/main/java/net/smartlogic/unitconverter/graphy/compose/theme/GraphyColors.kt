@@ -21,6 +21,8 @@ data class GraphySemanticColors(
     val connectorHighlight: Color,
     val surfaceElevated: Color,
     val onInput: Color,
+    val onConstant: Color,
+    val onDerived: Color,
     val onOperation: Color,
     val onResult: Color,
 )
@@ -31,9 +33,9 @@ private object GraphyPalette {
     val Input = Color(0xFFF4C542)
     val Constant = Color(0xFF9B7EDE)
     val Operation = Color(0xFFF59E0B)
-    val DerivedLight = Color(0xFF3B82F6)
+    val DerivedLight = Color(0xFF60A5FA)
     val DerivedDark = Color(0xFF60A5FA)
-    val ResultFill = Color(0xFF22C55E)
+    val ResultFill = Color(0xFF3B82F6)
     val ResultOn = Color(0xFFFFFFFF)
     val ConnectorLight = Color(0xFF9CA3AF)
     val ConnectorDark = Color(0xFF4B5563)
@@ -91,9 +93,11 @@ fun graphyLightSemanticColors(): GraphySemanticColors = GraphySemanticColors(
     connector = GraphyPalette.ConnectorLight,
     connectorHighlight = GraphyPalette.SecondaryLight,
     surfaceElevated = GraphyPalette.SurfaceLight,
-    onInput = GraphyPalette.Input,
-    onOperation = GraphyPalette.Operation,
-    onResult = GraphyPalette.ResultFill,
+    onInput = Color(0xFF1F2937),
+    onConstant = Color(0xFFFFFFFF),
+    onDerived = Color(0xFFFFFFFF),
+    onOperation = Color(0xFFFFFFFF),
+    onResult = GraphyPalette.ResultOn,
 )
 
 fun graphyDarkSemanticColors(): GraphySemanticColors = GraphySemanticColors(
@@ -108,9 +112,11 @@ fun graphyDarkSemanticColors(): GraphySemanticColors = GraphySemanticColors(
     connector = GraphyPalette.ConnectorDark,
     connectorHighlight = GraphyPalette.SecondaryDark,
     surfaceElevated = GraphyPalette.SurfaceDark,
-    onInput = GraphyPalette.Input,
-    onOperation = GraphyPalette.Operation,
-    onResult = GraphyPalette.ResultFill,
+    onInput = Color(0xFF1F2937),
+    onConstant = Color(0xFFFFFFFF),
+    onDerived = Color(0xFFFFFFFF),
+    onOperation = Color(0xFFFFFFFF),
+    onResult = GraphyPalette.ResultOn,
 )
 
 val LocalGraphySemanticColors = staticCompositionLocalOf { graphyLightSemanticColors() }

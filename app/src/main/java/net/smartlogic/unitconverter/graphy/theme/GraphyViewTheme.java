@@ -110,6 +110,16 @@ public final class GraphyViewTheme {
     }
 
     @ColorInt
+    public int getOnConstantColor() {
+        return color(R.color.graphy_on_constant);
+    }
+
+    @ColorInt
+    public int getOnDerivedColor() {
+        return color(R.color.graphy_on_derived);
+    }
+
+    @ColorInt
     public int getOnOperationColor() {
         return color(R.color.graphy_on_operation);
     }
