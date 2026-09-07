@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -37,9 +38,11 @@ public class FlowchartGraphView extends View {
 
     private final Map<String, RectF> nodeBounds = new HashMap<>();
     private final GraphLayoutEngine layoutEngine = new GraphLayoutEngine();
+    private OrthogonalConnectorRouter connectorRouter;
     private int contentWidth;
     private int contentHeight;
     private int maxLayoutWidth = Integer.MAX_VALUE;
+    private float drawScale = 1f;
 
     public FlowchartGraphView(@NonNull Context context) {
         super(context);
@@ -55,7 +58,8 @@ public class FlowchartGraphView extends View {
         strokePaint.setStyle(Paint.Style.STROKE);
         textPaint.setTextAlign(Paint.Align.CENTER);
         connectorPaint.setStyle(Paint.Style.STROKE);
-        connectorPaint.setStrokeCap(Paint.Cap.ROUND);
+        connectorPaint.setStrokeCap(Paint.Cap.SQUARE);
+        connectorPaint.setStrokeJoin(Paint.Join.MITER);
     }
 
     public void setMaxWidth(int maxWidth) {
@@ -72,8 +76,22 @@ public class FlowchartGraphView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = resolveSize(contentWidth, widthMeasureSpec);
-        int height = resolveSize(contentHeight, heightMeasureSpec);
+        int specWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        drawScale = 1f;
+        int width = Math.max(contentWidth, 0);
+        int height = Math.max(contentHeight, 0);
+
+        if (contentWidth > 0 && widthMode != MeasureSpec.UNSPECIFIED && specWidth > 0
+                && specWidth < contentWidth) {
+            drawScale = specWidth / (float) contentWidth;
+            width = specWidth;
+            height = (int) Math.ceil(contentHeight * drawScale);
+        } else if (widthMode == MeasureSpec.EXACTLY) {
+            width = specWidth;
+        }
+
+        height = resolveSize(height, heightMeasureSpec);
         setMeasuredDimension(width, height);
     }
 
@@ -85,8 +103,15 @@ public class FlowchartGraphView extends View {
         }
 
         canvas.drawColor(theme.getBackgroundColor());
+        canvas.save();
+        if (drawScale != 1f) {
+            canvas.scale(drawScale, drawScale);
+        } else if (contentWidth > 0 && getWidth() > contentWidth) {
+            canvas.translate((getWidth() - contentWidth) / 2f, 0f);
+        }
         drawConnectors(canvas);
         drawNodes(canvas);
+        canvas.restore();
     }
 
     private void layoutNodes() {
@@ -94,6 +119,7 @@ public class FlowchartGraphView extends View {
         if (output == null || theme == null || output.isEmpty()) {
             contentWidth = 0;
             contentHeight = 0;
+            connectorRouter = null;
             return;
         }
 
@@ -104,6 +130,14 @@ public class FlowchartGraphView extends View {
         }
         contentWidth = result.contentWidth;
         contentHeight = result.contentHeight;
+        connectorRouter = new OrthogonalConnectorRouter(
+                output.getNodes(),
+                output.getConnections(),
+                nodeBounds,
+                theme.getHorizontalGap(),
+                theme.getVerticalGap(),
+                contentWidth
+        );
     }
 
     private void drawConnectors(@NonNull Canvas canvas) {
@@ -111,74 +145,70 @@ public class FlowchartGraphView extends View {
         connectorPaint.setStrokeWidth(theme.getConnectorStrokeWidth());
 
         for (GraphyConnection connection : output.getConnections()) {
-            RectF from = nodeBounds.get(connection.getFromNodeId());
-            RectF to = nodeBounds.get(connection.getToNodeId());
-            if (from == null || to == null) {
+            if (!nodeBounds.containsKey(connection.getFromNodeId())
+                    || !nodeBounds.containsKey(connection.getToNodeId())) {
                 continue;
             }
-
-            GraphyNode fromNode = findNode(connection.getFromNodeId());
-            GraphyNode toNode = findNode(connection.getToNodeId());
-            if (fromNode == null || toNode == null) {
-                continue;
-            }
-
-            drawOrthogonalConnector(canvas, from, to, fromNode, toNode);
+            drawOrthogonalConnector(canvas, connection.getFromNodeId(), connection.getToNodeId());
         }
     }
 
     private void drawOrthogonalConnector(@NonNull Canvas canvas,
-                                         @NonNull RectF from,
-                                         @NonNull RectF to,
-                                         @NonNull GraphyNode fromNode,
-                                         @NonNull GraphyNode toNode) {
-        float startX = from.centerX();
-        float startY = connectionStartY(from, fromNode);
-        float endX = to.centerX();
-        float endY = connectionEndY(to, toNode);
-
-        if (Math.abs(startX - endX) < 1f) {
-            drawArrowLine(canvas, startX, startY, endX, endY);
+                                         @NonNull String fromId,
+                                         @NonNull String toId) {
+        if (connectorRouter == null) {
+            return;
+        }
+        List<PointF> points = connectorRouter.route(fromId, toId);
+        if (points.size() < 2) {
             return;
         }
 
-        float midY = (startY + endY) / 2f;
-        canvas.drawLine(startX, startY, startX, midY, connectorPaint);
-        canvas.drawLine(startX, midY, endX, midY, connectorPaint);
-        drawArrowLine(canvas, endX, midY, endX, endY);
-    }
+        float clearance = 8f;
+        float arrowSize = theme.getConnectorStrokeWidth() * 2.1f;
+        float arrowLength = arrowSize * 1.35f;
 
-    private float connectionStartY(@NonNull RectF bounds, @NonNull GraphyNode node) {
-        if (node.getType() == GraphyNodeType.OPERATION) {
-            return bounds.bottom;
+        List<PointF> drawn = new ArrayList<>(points.size());
+        for (PointF point : points) {
+            drawn.add(new PointF(point.x, point.y));
         }
-        return bounds.bottom;
-    }
 
-    private float connectionEndY(@NonNull RectF bounds, @NonNull GraphyNode node) {
-        if (node.getType() == GraphyNodeType.OPERATION) {
-            return bounds.top;
+        PointF tip = new PointF(
+                drawn.get(drawn.size() - 1).x,
+                drawn.get(drawn.size() - 1).y
+        );
+        PointF beforeTip = drawn.get(drawn.size() - 2);
+        float dx = tip.x - beforeTip.x;
+        float dy = tip.y - beforeTip.y;
+        float length = (float) Math.hypot(dx, dy);
+        if (length < 1f) {
+            return;
         }
-        return bounds.top;
-    }
+        float ux = dx / length;
+        float uy = dy / length;
+        float pullBack = Math.min(clearance + arrowLength, Math.max(0f, length - clearance));
+        PointF shaftEnd = drawn.get(drawn.size() - 1);
+        shaftEnd.x = tip.x - ux * pullBack;
+        shaftEnd.y = tip.y - uy * pullBack;
 
-    private void drawArrowLine(@NonNull Canvas canvas, float x1, float y1, float x2, float y2) {
-        canvas.drawLine(x1, y1, x2, y2, connectorPaint);
-        if (y2 > y1 + 2f) {
-            drawArrowHead(canvas, x2, y2, 0f, 1f);
-        } else if (y2 < y1 - 2f) {
-            drawArrowHead(canvas, x2, y2, 0f, -1f);
-        } else if (x2 > x1 + 2f) {
-            drawArrowHead(canvas, x2, y2, 1f, 0f);
-        } else if (x2 < x1 - 2f) {
-            drawArrowHead(canvas, x2, y2, -1f, 0f);
+        Path path = new Path();
+        path.moveTo(drawn.get(0).x, drawn.get(0).y);
+        for (int i = 1; i < drawn.size(); i++) {
+            path.lineTo(drawn.get(i).x, drawn.get(i).y);
         }
+        canvas.drawPath(path, connectorPaint);
+
+        drawArrowHead(canvas, tip.x, tip.y, ux, uy, arrowSize);
     }
 
-    private void drawArrowHead(@NonNull Canvas canvas, float tipX, float tipY, float dirX, float dirY) {
-        float size = theme.getConnectorStrokeWidth() * 3.5f;
-        float baseX = tipX - dirX * size * 1.8f;
-        float baseY = tipY - dirY * size * 1.8f;
+    private void drawArrowHead(@NonNull Canvas canvas,
+                               float tipX,
+                               float tipY,
+                               float dirX,
+                               float dirY,
+                               float size) {
+        float baseX = tipX - dirX * size * 1.35f;
+        float baseY = tipY - dirY * size * 1.35f;
         float perpX = -dirY;
         float perpY = dirX;
         Path arrow = new Path();

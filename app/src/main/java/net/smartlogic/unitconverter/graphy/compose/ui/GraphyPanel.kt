@@ -79,11 +79,10 @@ fun GraphyPanel(
                         .padding(top = spacing.sm)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    val maxWidthPx = constraints.maxWidth
                     GraphyFlowchartHost(
                         output = output,
                         viewTheme = viewTheme,
-                        maxWidth = maxWidthPx,
+                        maxWidth = constraints.maxWidth,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -235,7 +234,7 @@ private fun GraphyFlowchartHost(
             container.addView(
                 graphView,
                 FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     Gravity.CENTER_HORIZONTAL,
                 ),

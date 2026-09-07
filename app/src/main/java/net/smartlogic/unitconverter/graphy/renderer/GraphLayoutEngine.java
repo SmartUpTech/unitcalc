@@ -22,6 +22,12 @@ import java.util.Set;
  */
 final class GraphLayoutEngine {
 
+    enum PipelineSide {
+        ROOT,
+        LEFT,
+        RIGHT
+    }
+
     private final Map<String, GraphyNode> nodeMap = new HashMap<>();
     private final Map<String, List<String>> incoming = new HashMap<>();
     private final Map<String, List<String>> outgoing = new HashMap<>();
@@ -78,7 +84,7 @@ final class GraphLayoutEngine {
             if (rootValueId == null) {
                 return LayoutResult.empty();
             }
-            LayoutBox root = layoutValueSubgraph(rootValueId);
+            LayoutBox root = layoutValueSubgraph(rootValueId, PipelineSide.ROOT);
             nodeBounds.putAll(root.nodeBounds);
             contentWidth = root.width + padding * 2f;
             contentHeight = root.height + padding * 2f;
@@ -99,7 +105,7 @@ final class GraphLayoutEngine {
     }
 
     private void configureMetrics(@NonNull GraphyViewTheme theme) {
-        padding = theme.getNodeMinHeight() * 0.4f;
+        padding = theme.getNodeMinHeight() * 0.28f;
         horizontalGap = theme.getHorizontalGap();
         verticalGap = theme.getVerticalGap();
         branchGap = theme.getBranchGap();
@@ -124,13 +130,13 @@ final class GraphLayoutEngine {
                 nodeWidths.put(node.getId(), operationSize);
                 nodeHeights.put(node.getId(), operationSize);
             } else if (node.getType() == GraphyNodeType.RESULT) {
-                float width = Math.max(minNodeWidth, measured + padding * 3f);
-                float height = Math.max(minNodeHeight * 1.5f, textSize + padding * 2f);
+                float width = Math.max(minNodeWidth, measured + padding * 1.6f);
+                float height = Math.max(minNodeHeight, textSize + padding * 1.2f);
                 nodeWidths.put(node.getId(), width);
                 nodeHeights.put(node.getId(), height);
             } else {
-                float width = Math.max(minNodeWidth * 1.1f, measured + padding * 2f);
-                float height = Math.max(minNodeHeight * 1.1f, textSize + padding * 1.5f);
+                float width = Math.max(minNodeWidth, measured + padding * 1.4f);
+                float height = Math.max(minNodeHeight, textSize + padding);
                 nodeWidths.put(node.getId(), width);
                 nodeHeights.put(node.getId(), height);
             }
@@ -154,7 +160,7 @@ final class GraphLayoutEngine {
     }
 
     @NonNull
-    private LayoutBox layoutValueSubgraph(@NonNull String valueNodeId) {
+    private LayoutBox layoutValueSubgraph(@NonNull String valueNodeId, @NonNull PipelineSide side) {
         if (layoutCache.containsKey(valueNodeId)) {
             return layoutCache.get(valueNodeId);
         }
@@ -178,13 +184,8 @@ final class GraphLayoutEngine {
             return leaf;
         }
 
-        List<String> operandIds = incoming.get(operationId);
-        List<LayoutBox> operandBoxes = new ArrayList<>();
-        for (String operandId : operandIds) {
-            operandBoxes.add(layoutValueSubgraph(operandId));
-        }
-
-        LayoutBox cluster = layoutOperationCluster(operationId, valueNodeId, operandBoxes);
+        List<String> operandIds = incoming.getOrDefault(operationId, new ArrayList<>());
+        LayoutBox cluster = layoutOperationCluster(operationId, valueNodeId, operandIds, side);
         layoutCache.put(valueNodeId, cluster);
         return cluster;
     }
@@ -192,24 +193,71 @@ final class GraphLayoutEngine {
     @NonNull
     private LayoutBox layoutOperationCluster(@NonNull String operationId,
                                            @NonNull String resultId,
-                                           @NonNull List<LayoutBox> operandBoxes) {
-        // Binary operation: identify dominance for Accumulator layout
-        if (operandBoxes.size() == 2) {
-            LayoutBox box1 = operandBoxes.get(0);
-            LayoutBox box2 = operandBoxes.get(1);
-            int comp1 = box1.complexity();
-            int comp2 = box2.complexity();
+                                           @NonNull List<String> operandIds,
+                                           @NonNull PipelineSide side) {
+        if (operandIds.size() == 2) {
+            String leftId = operandIds.get(0);
+            String rightId = operandIds.get(1);
+            boolean leftCluster = isClusterOperand(leftId);
+            boolean rightCluster = isClusterOperand(rightId);
 
-            // A branch is "Dominant" if it's significantly more complex (a tree vs a leaf or small branch)
-            // or if both are clusters, we pick the larger one as the main line.
-            if (comp1 >= comp2 && comp1 > 1) {
-                return layoutAccumulator(operationId, resultId, box1, box2, true);
-            } else if (comp2 > comp1 && comp2 > 1) {
-                return layoutAccumulator(operationId, resultId, box2, box1, false);
+            if (leftCluster && rightCluster) {
+                PipelineSide childSide = side == PipelineSide.ROOT ? PipelineSide.LEFT : side;
+                LayoutBox top = layoutValueSubgraph(leftId, childSide);
+                LayoutBox bottom = layoutValueSubgraph(rightId, childSide);
+                return layoutVerticalPipeline(operationId, resultId, top, bottom, childSide);
+            }
+
+            if (leftCluster || rightCluster) {
+                LayoutBox cluster = layoutValueSubgraph(leftCluster ? leftId : rightId, side);
+                LayoutBox companion = layoutValueSubgraph(leftCluster ? rightId : leftId, side);
+                boolean companionOnLeft = !leftCluster;
+                return layoutAccumulator(operationId, resultId, cluster, companion, companionOnLeft);
             }
         }
 
-        // Standard horizontal layout or wrapped if too wide
+        List<LayoutBox> operandBoxes = new ArrayList<>();
+        for (String operandId : operandIds) {
+            operandBoxes.add(layoutValueSubgraph(operandId, side));
+        }
+        return layoutHorizontalCluster(operationId, resultId, operandBoxes);
+    }
+
+    private boolean isClusterOperand(@NonNull String valueNodeId) {
+        GraphyNode node = nodeMap.get(valueNodeId);
+        if (node == null) {
+            return false;
+        }
+        if (node.getType() == GraphyNodeType.INPUT
+                || node.getType() == GraphyNodeType.CONSTANT) {
+            return false;
+        }
+        String producer = findProducer(valueNodeId);
+        if (producer == null) {
+            return false;
+        }
+        List<String> operands = incoming.get(producer);
+        return operands != null && !operands.isEmpty();
+    }
+
+    private float runway() {
+        return horizontalGap;
+    }
+
+    /** Space from operand/result boxes down to the operator they feed. */
+    private float stemGap() {
+        return Math.max(verticalGap, operationSize);
+    }
+
+    /** Space from an operator down to its result box. */
+    private float resultGap() {
+        return Math.max(verticalGap * 0.7f, operationSize * 0.55f);
+    }
+
+    @NonNull
+    private LayoutBox layoutHorizontalCluster(@NonNull String operationId,
+                                              @NonNull String resultId,
+                                              @NonNull List<LayoutBox> operandBoxes) {
         float operandsWidth = 0f;
         float maxOperandHeight = 0f;
         for (int i = 0; i < operandBoxes.size(); i++) {
@@ -221,130 +269,139 @@ final class GraphLayoutEngine {
             }
         }
 
-        if (operandsWidth + padding * 2f > currentMaxWidth && operandBoxes.size() > 1) {
-            return layoutWrappedOperationCluster(operationId, resultId, operandBoxes);
-        }
-
         float clusterWidth = Math.max(operandsWidth, operationSize);
         clusterWidth = Math.max(clusterWidth, nodeWidths.get(resultId));
         float resultHeight = nodeHeights.get(resultId);
-        float clusterHeight = maxOperandHeight + verticalGap * 0.8f + operationSize
-                + verticalGap * 0.7f + resultHeight;
+        float clusterHeight = maxOperandHeight + stemGap() + operationSize
+                + resultGap() + resultHeight;
 
         Map<String, LayoutBox> bounds = new HashMap<>();
-        float operandY = 0f;
         float operandStartX = (clusterWidth - operandsWidth) / 2f;
         float x = operandStartX;
         for (LayoutBox operand : operandBoxes) {
             float yOffset = (maxOperandHeight - operand.height) / 2f;
-            mergeBounds(bounds, operand.nodeBounds, x, operandY + yOffset);
+            mergeBounds(bounds, operand.nodeBounds, x, yOffset);
             x += operand.width + horizontalGap;
         }
 
         float opX = (clusterWidth - operationSize) / 2f;
-        float opY = maxOperandHeight + verticalGap * 0.8f;
+        float opY = maxOperandHeight + stemGap();
         putNode(bounds, operationId, opX, opY, operationSize, operationSize);
 
         float resultWidth = nodeWidths.get(resultId);
         float resultX = (clusterWidth - resultWidth) / 2f;
-        float resultY = opY + operationSize + verticalGap * 0.7f;
+        float resultY = opY + operationSize + resultGap();
         putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
 
-        return new LayoutBox(bounds, clusterWidth, clusterHeight, resultId);
+        return packBounds(bounds, resultId, 0f, 0f);
+    }
+
+    @NonNull
+    private LayoutBox layoutParallelColumns(@NonNull String operationId,
+                                            @NonNull String resultId,
+                                            @NonNull LayoutBox left,
+                                            @NonNull LayoutBox right) {
+        float gutter = runway();
+        Map<String, LayoutBox> bounds = new HashMap<>();
+        mergeBounds(bounds, left.nodeBounds, 0f, 0f);
+        mergeBounds(bounds, right.nodeBounds, left.width + gutter, 0f);
+
+        float columnsHeight = Math.max(left.height, right.height);
+        float innerWidth = left.width + gutter + right.width;
+        float opY = columnsHeight + stemGap();
+        float opX = (innerWidth - operationSize) / 2f;
+        putNode(bounds, operationId, opX, opY, operationSize, operationSize);
+
+        float resultWidth = nodeWidths.get(resultId);
+        float resultHeight = nodeHeights.get(resultId);
+        float resultX = opX + operationSize / 2f - resultWidth / 2f;
+        float resultY = opY + operationSize + resultGap();
+        putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
+
+        return packBounds(bounds, resultId, gutter, gutter);
+    }
+
+    @NonNull
+    private LayoutBox layoutVerticalPipeline(@NonNull String operationId,
+                                             @NonNull String resultId,
+                                             @NonNull LayoutBox top,
+                                             @NonNull LayoutBox bottom,
+                                             @NonNull PipelineSide side) {
+        float gutter = runway();
+        float innerWidth = Math.max(top.width, bottom.width);
+        innerWidth = Math.max(innerWidth, operationSize);
+        innerWidth = Math.max(innerWidth, nodeWidths.get(resultId));
+
+        Map<String, LayoutBox> bounds = new HashMap<>();
+        mergeBounds(bounds, top.nodeBounds, (innerWidth - top.width) / 2f, 0f);
+        float bottomY = top.height + verticalGap;
+        mergeBounds(bounds, bottom.nodeBounds, (innerWidth - bottom.width) / 2f, bottomY);
+
+        float opY = bottomY + bottom.height + stemGap();
+        float opX = (innerWidth - operationSize) / 2f;
+        putNode(bounds, operationId, opX, opY, operationSize, operationSize);
+
+        float resultWidth = nodeWidths.get(resultId);
+        float resultHeight = nodeHeights.get(resultId);
+        float resultX = opX + operationSize / 2f - resultWidth / 2f;
+        float resultY = opY + operationSize + resultGap();
+        putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
+
+        boolean runwayOnLeft = side != PipelineSide.RIGHT;
+        return packBounds(bounds, resultId, runwayOnLeft ? gutter : 0f, runwayOnLeft ? 0f : gutter);
     }
 
     /**
-     * Accumulator layout: pairs a literal or smaller branch horizontally with the result of a main cluster.
-     * This achieves the "side-calculated and merged to main line" style.
+     * Timeline / BODMAS accumulator: the already-evaluated cluster is drawn first
+     * (above). The remaining operand joins at the cluster result row, then the
+     * operator consumes both. Example: 9×6=54, then 54×6.
      */
     @NonNull
     private LayoutBox layoutAccumulator(@NonNull String operationId,
                                       @NonNull String resultId,
                                       @NonNull LayoutBox cluster,
                                       @NonNull LayoutBox sideBranch,
-                                      boolean clusterOnLeft) {
-        LayoutBox clusterRootBounds = cluster.nodeBounds.get(cluster.rootNodeId);
-        if (clusterRootBounds == null) {
-            return layoutWrappedOperationCluster(operationId, resultId, clusterOnLeft
-                    ? java.util.Arrays.asList(cluster, sideBranch)
-                    : java.util.Arrays.asList(sideBranch, cluster));
+                                      boolean companionOnLeft) {
+        if (cluster.nodeBounds.get(cluster.rootNodeId) == null) {
+            return layoutHorizontalCluster(operationId, resultId, companionOnLeft
+                    ? java.util.Arrays.asList(sideBranch, cluster)
+                    : java.util.Arrays.asList(cluster, sideBranch));
         }
 
-        // Increase horizontal spacing significantly to avoid connector overlap with operations
-        float horizontalSpacing = horizontalGap * 2.5f;
-        float totalWidth = cluster.width + horizontalSpacing + sideBranch.width;
+        float spacing = horizontalGap;
+        float clusterX = companionOnLeft ? sideBranch.width + spacing : 0f;
+        float sideX = companionOnLeft ? 0f : cluster.width + spacing;
 
-        // If it fits horizontally, align side-branch with cluster's root
-        if (totalWidth + padding * 2f <= currentMaxWidth) {
-            Map<String, LayoutBox> bounds = new HashMap<>();
-            float clusterX = clusterOnLeft ? 0f : sideBranch.width + horizontalSpacing;
-            float sideX = clusterOnLeft ? cluster.width + horizontalSpacing : 0f;
+        Map<String, LayoutBox> bounds = new HashMap<>();
+        mergeBounds(bounds, cluster.nodeBounds, clusterX, 0f);
 
-            mergeBounds(bounds, cluster.nodeBounds, clusterX, 0f);
-
-            // Fetch root bounds in new coordinate system to align side branch
-            LayoutBox rootInCluster = bounds.get(cluster.rootNodeId);
-            
-            // If side branch is a cluster, align its root with the main line's root vertically
-            float sideY;
-            if (!sideBranch.nodeBounds.isEmpty()) {
-                LayoutBox rootInSide = sideBranch.nodeBounds.get(sideBranch.rootNodeId);
-                float internalSideRootY = rootInSide != null ? rootInSide.y : 0f;
-                sideY = rootInCluster.y - internalSideRootY;
-            } else {
-                sideY = rootInCluster.y + (rootInCluster.height - sideBranch.height) / 2f;
-            }
-            
-            // Ensure side branch doesn't start above the cluster
-            if (sideY < 0) {
-                mergeBounds(bounds, sideBranch.nodeBounds, sideX, 0f);
-                // Re-offset cluster down
-                offsetBounds(bounds, 0f, -sideY);
-                rootInCluster = bounds.get(cluster.rootNodeId);
-            } else {
-                mergeBounds(bounds, sideBranch.nodeBounds, sideX, sideY);
-            }
-
-            float opY = Math.max(rootInCluster.y + rootInCluster.height, 
-                                 sideY + sideBranch.height) + verticalGap * 0.8f;
-            
-            float clusterRootCenterX = rootInCluster.x + rootInCluster.width / 2f;
-            float sideCenterX = sideX + sideBranch.width / 2f;
-            float opX = (clusterRootCenterX + sideCenterX) / 2f - operationSize / 2f;
-            putNode(bounds, operationId, opX, opY, operationSize, operationSize);
-
-            float resultWidth = nodeWidths.get(resultId);
-            float resultHeight = nodeHeights.get(resultId);
-            float resultX = opX + operationSize / 2f - resultWidth / 2f;
-            float resultY = opY + operationSize + verticalGap * 0.7f;
-            putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
-
-            // Re-calculate full bounds
-            float minX = 0f;
-            float maxX = 0f;
-            float minY = 0f;
-            float maxY = 0f;
-            for (LayoutBox b : bounds.values()) {
-                minX = Math.min(minX, b.x);
-                maxX = Math.max(maxX, b.x + b.width);
-                minY = Math.min(minY, b.y);
-                maxY = Math.max(maxY, b.y + b.height);
-            }
-            
-            // Normalize to (0,0)
-            if (minX < 0 || minY < 0) {
-                offsetBounds(bounds, -minX, -minY);
-                maxX -= minX;
-                maxY -= minY;
-            }
-
-            return new LayoutBox(bounds, maxX, maxY, resultId);
+        LayoutBox clusterRoot = bounds.get(cluster.rootNodeId);
+        LayoutBox sideRoot = sideBranch.nodeBounds.get(sideBranch.rootNodeId);
+        float sideRootLocalY = sideRoot != null ? sideRoot.y : 0f;
+        float sideY = clusterRoot.y - sideRootLocalY;
+        if (sideY < 0f) {
+            offsetBounds(bounds, 0f, -sideY);
+            clusterRoot = bounds.get(cluster.rootNodeId);
+            sideY = 0f;
         }
+        mergeBounds(bounds, sideBranch.nodeBounds, sideX, sideY);
 
-        // Fallback to wrapped (vertical-ish)
-        return layoutWrappedOperationCluster(operationId, resultId, clusterOnLeft
-                ? java.util.Arrays.asList(cluster, sideBranch)
-                : java.util.Arrays.asList(sideBranch, cluster));
+        float clusterBottom = clusterRoot.y + clusterRoot.height;
+        float sideBottom = sideY + sideBranch.height;
+        float opY = Math.max(clusterBottom, sideBottom) + stemGap();
+
+        float clusterCenterX = clusterRoot.x + clusterRoot.width / 2f;
+        float sideCenterX = sideX + (sideRoot != null ? sideRoot.x + sideRoot.width / 2f : sideBranch.width / 2f);
+        float opX = (clusterCenterX + sideCenterX) / 2f - operationSize / 2f;
+        putNode(bounds, operationId, opX, opY, operationSize, operationSize);
+
+        float resultWidth = nodeWidths.get(resultId);
+        float resultHeight = nodeHeights.get(resultId);
+        float resultX = opX + operationSize / 2f - resultWidth / 2f;
+        float resultY = opY + operationSize + resultGap();
+        putNode(bounds, resultId, resultX, resultY, resultWidth, resultHeight);
+
+        return packBounds(bounds, resultId, 0f, 0f);
     }
 
     @NonNull
@@ -390,7 +447,7 @@ final class GraphLayoutEngine {
                 mergeBounds(bounds, box.nodeBounds, x, currentY + (rowMaxHeight - box.height) / 2f);
                 x += box.width + horizontalGap;
             }
-            currentY += rowMaxHeight + verticalGap * 0.5f;
+            currentY += rowMaxHeight + stemGap();
         }
 
         float opX = (clusterWidth - operationSize) / 2f;
@@ -399,7 +456,7 @@ final class GraphLayoutEngine {
 
         float resultWidth = nodeWidths.get(resultId);
         float resultHeight = nodeHeights.get(resultId);
-        float resultY = opY + operationSize + verticalGap * 0.5f;
+        float resultY = opY + operationSize + resultGap();
         putNode(bounds, resultId, (clusterWidth - resultWidth) / 2f, resultY, resultWidth, resultHeight);
 
         return new LayoutBox(bounds, clusterWidth, resultY + resultHeight, resultId);
@@ -545,13 +602,13 @@ final class GraphLayoutEngine {
         float cw = nodeWidths.get(constantId);
         float ch = nodeHeights.get(constantId);
         putNode(bounds, constantId, (width - cw) / 2f, y, cw, ch);
-        y += ch + verticalGap * 0.35f;
+        y += ch + stemGap();
 
         if (operationId != null) {
             float opW = nodeWidths.get(operationId);
             float opH = nodeHeights.get(operationId);
             putNode(bounds, operationId, (width - opW) / 2f, y, opW, opH);
-            y += opH + verticalGap * 0.35f;
+            y += opH + resultGap();
         }
 
         String rootId = resultId != null ? resultId : (operationId != null ? operationId : constantId);
@@ -643,6 +700,30 @@ final class GraphLayoutEngine {
         for (Map.Entry<String, LayoutBox> entry : bounds.entrySet()) {
             bounds.put(entry.getKey(), entry.getValue().offset(dx, dy));
         }
+    }
+
+    @NonNull
+    private static LayoutBox packBounds(@NonNull Map<String, LayoutBox> bounds,
+                                        @NonNull String rootNodeId,
+                                        float leftGutter,
+                                        float rightGutter) {
+        if (bounds.isEmpty()) {
+            return LayoutBox.empty();
+        }
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxX = Float.MIN_VALUE;
+        float maxY = Float.MIN_VALUE;
+        for (LayoutBox box : bounds.values()) {
+            minX = Math.min(minX, box.x);
+            minY = Math.min(minY, box.y);
+            maxX = Math.max(maxX, box.x + box.width);
+            maxY = Math.max(maxY, box.y + box.height);
+        }
+        offsetBounds(bounds, leftGutter - minX, -minY);
+        float width = leftGutter + (maxX - minX) + rightGutter;
+        float height = maxY - minY;
+        return new LayoutBox(bounds, width, height, rootNodeId);
     }
 
     static final class LayoutResult {
