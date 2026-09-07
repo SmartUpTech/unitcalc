@@ -2,15 +2,12 @@ package net.smartlogic.unitconverter.graphy.compose.ui
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,47 +30,34 @@ fun GraphyPanel(
     modifier: Modifier = Modifier,
 ) {
     val spacing = GraphyThemeTokens.spacing
-    val elevation = GraphyThemeTokens.elevation
-    val shapes = GraphyThemeTokens.shapes
     val textStyles = GraphyThemeTokens.textStyles
     val panelDescription = stringResource(R.string.graphy_panel_content_description)
 
-    Card(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .semantics { contentDescription = panelDescription },
-        shape = shapes.card,
-        elevation = CardDefaults.cardElevation(defaultElevation = elevation.card),
-        colors = CardDefaults.cardColors(
-            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-        ),
+            .semantics { contentDescription = panelDescription }
+            .padding(spacing.sm),
     ) {
-        Column(
+        Text(
+            text = explanation.ifEmpty { stringResource(R.string.graphy_explanation_label) },
+            style = textStyles.explanation,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(spacing.sm),
-        ) {
-            Text(
-                text = explanation.ifEmpty { stringResource(R.string.graphy_explanation_label) },
-                style = textStyles.explanation,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                .fillMaxWidth()
+                .semantics { contentDescription = explanation },
+        )
+
+        if (output != null) {
+            GraphyFlowchartHost(
+                output = output,
+                viewTheme = viewTheme,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics { contentDescription = explanation },
+                    .weight(1f)
+                    .padding(top = spacing.xs)
+                    .verticalScroll(rememberScrollState()),
             )
-
-            if (output != null) {
-                GraphyFlowchartHost(
-                    output = output,
-                    viewTheme = viewTheme,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(top = spacing.xs)
-                        .verticalScroll(rememberScrollState())
-                        .horizontalScroll(rememberScrollState()),
-                )
-            }
         }
     }
 }

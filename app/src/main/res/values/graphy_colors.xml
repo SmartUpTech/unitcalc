@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="graphy_primary">#C23A2B</color>
-    <color name="graphy_input">#E8DFD2</color>
-    <color name="graphy_operation">#C23A2B</color>
-    <color name="graphy_result">#1A1612</color>
+    <color name="graphy_input">#00000000</color>
+    <color name="graphy_operation">#00000000</color>
+    <color name="graphy_result">#00000000</color>
     <color name="graphy_warning">#C23A2B</color>
     <color name="graphy_time">#8A8174</color>
     <color name="graphy_secondary">#6B6358</color>
@@ -12,10 +12,10 @@
     <color name="graphy_connector_highlight">#C23A2B</color>
 
     <color name="graphy_surface">#F3EDE3</color>
-    <color name="graphy_surface_elevated">#EDE6DA</color>
+    <color name="graphy_surface_elevated">#F3EDE3</color>
 
     <color name="graphy_on_primary">#F3EDE3</color>
     <color name="graphy_on_input">#1A1612</color>
-    <color name="graphy_on_operation">#F3EDE3</color>
-    <color name="graphy_on_result">#F3EDE3</color>
+    <color name="graphy_on_operation">#C23A2B</color>
+    <color name="graphy_on_result">#1A1612</color>
 </resources>

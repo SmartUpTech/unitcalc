@@ -22,6 +22,8 @@
     <string name="tab_calculate">Calculate</string>
     <string name="tab_convert">Convert</string>
     <string name="graphy_empty">Calculate first, then open Graphy to see how the answer was produced.</string>
+    <string name="graphy_converter_empty">Enter a value to see how the conversion is calculated.</string>
+    <string name="same_unit">same unit</string>
     <string name="history_today">Today</string>
     <string name="history_yesterday">Yesterday</string>
     <string name="no_conversion_history">No conversion history yet</string>

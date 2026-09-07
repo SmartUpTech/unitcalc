@@ -37,7 +37,8 @@ import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
-import net.smartlogic.unitconverter.utils.NumberUtils;
+import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -393,6 +394,48 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         outputValue.setText(finalStr);
         GenericFunctions.adjustTextSize(outputValue, 21);
+        updateParentGraphy(in, from, to, fromSym, toSym, finalStr);
+    }
+
+    private void updateParentGraphy(String in, Unit from, Unit to, String fromSym, String toSym, String finalStr) {
+        Fragment parent = getParentFragment();
+        if (!(parent instanceof ConverterFragment)) {
+            return;
+        }
+        ConverterFragment converter = (ConverterFragment) parent;
+        if (in.isEmpty()) {
+            converter.clearConversionGraphy();
+            return;
+        }
+
+        String operationLabel;
+        if (from.getId() == to.getId()) {
+            operationLabel = getString(R.string.same_unit);
+        } else if (selectedConversion.getId() == Conversion.TEMPERATURE) {
+            operationLabel = getString(from.getLabelResource()) + " → "
+                    + getString(to.getLabelResource());
+        } else {
+            double factor = from.getConversionToBaseUnit() * to.getConversionFromBaseUnit();
+            operationLabel = "× " + formatFactor(factor);
+        }
+
+        String inputDisplay = in + " " + fromSym;
+        String resultDisplay = finalStr + " " + toSym;
+        String explanation = inputDisplay + " " + operationLabel + " = " + resultDisplay;
+        GraphyOutput output = ConversionGraphBuilder.build(
+                ConversionGraphBuilder.UNIT_CONVERTER_ID,
+                inputDisplay,
+                operationLabel,
+                resultDisplay,
+                explanation
+        );
+        converter.updateConversionGraphy(output, inputDisplay + " = " + resultDisplay);
+    }
+
+    @NonNull
+    private String formatFactor(double factor) {
+        DecimalFormat df = new DecimalFormat("#.########");
+        return df.format(factor);
     }
 
     public void initialDropDown(Conversion s) {

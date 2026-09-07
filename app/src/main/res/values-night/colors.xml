@@ -14,7 +14,7 @@
     <color name="key_equals_text">#E06A4A</color>
     <color name="app_bar">#1A1C1F</color>
     <color name="on_app_bar">#E8E4DE</color>
-    <color name="nav_background">#141518</color>
+    <color name="nav_background">#1A1C1F</color>
     <color name="nav_selected">#E08A3C</color>
     <color name="nav_unselected">#8A8680</color>
     <color name="workspace_tab_selected">#E08A3C</color>

@@ -10,7 +10,7 @@ import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 
 /**
- * Default Graphy renderer that draws expression graphs as left-to-right flowcharts.
+ * Default Graphy renderer that draws expression graphs as top-to-bottom flowcharts.
  */
 public final class FlowchartRenderer implements GraphyRenderer {
 
