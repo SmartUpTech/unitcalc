@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/SettingsSectionTitle"
+            android:text="@string/prefs_title_formatting" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="56dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingVertical="10dp">
+
+                    <TextView
+                        style="@style/SettingsRowTitle"
+                        android:text="@string/prefs_title_dark_mode" />
+
+                    <TextView
+                        style="@style/SettingsRowSummary"
+                        android:text="@string/prefs_summary_dark_mode" />
+                </LinearLayout>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switch_dark_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/prefs_title_dark_mode" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_number_decimals"
+                layout="@layout/item_settings_choice_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_group_separator"
+                layout="@layout/item_settings_choice_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_decimal_separator"
+                layout="@layout/item_settings_choice_row" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/SettingsSectionTitle"
+            android:layout_marginTop="24dp"
+            android:text="@string/title_activity_feedback" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp">
+
+            <include
+                android:id="@+id/row_rate"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_share"
+                layout="@layout/item_settings_action_row" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/SettingsSectionTitle"
+            android:layout_marginTop="24dp"
+            android:text="@string/title_activity_info" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp">
+
+            <include
+                android:id="@+id/row_website"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_privacy"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_version"
+                layout="@layout/item_settings_info_row" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

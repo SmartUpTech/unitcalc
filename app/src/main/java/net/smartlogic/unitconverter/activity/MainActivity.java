@@ -354,6 +354,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 }
             }
         }
+        MenuItem settingsItem = menu.findItem(R.id.menu_settings);
+        if (settingsItem != null && settingsItem.getIcon() != null) {
+            settingsItem.getIcon().setTint(ContextCompat.getColor(this, R.color.screen_expression_text));
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 

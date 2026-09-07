@@ -197,4 +197,32 @@
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 
+    <style name="SettingsSectionTitle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/screen_result_text</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="SettingsRowTitle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:textColor">@color/screen_result_text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SettingsRowSummary" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:textColor">@color/screen_expression_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="SettingsRowValue" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:textColor">@color/screen_expression_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

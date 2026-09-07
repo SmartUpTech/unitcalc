@@ -285,6 +285,9 @@
     <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
     <string name="prefs_title_decimal_separator">Decimal Separator</string>
     <string name="prefs_title_light_theme">Use Light Theme</string>
+    <string name="prefs_title_dark_mode">Dark mode</string>
+    <string name="prefs_summary_dark_mode">Use a darker appearance across the app</string>
+    <string name="settings_open">Open settings</string>
 
     <string name="pref_rate_title">Rate us on Google Play</string>
     <string name="pref_rate_summary">You seem to be liking our app. Why not rate us 5 stars?</string>
