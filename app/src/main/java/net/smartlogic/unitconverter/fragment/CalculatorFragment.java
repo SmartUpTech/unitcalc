@@ -244,7 +244,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
         if (id == R.id.clear) {
             expression = "";
-            tvExpression.setText("");
+            updateExpressionDisplay();
             tvResult.setText("0");
             isResultDisplayed = false;
             latestGraphyOutput = null;
@@ -273,9 +273,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void restoreFromHistory(@NonNull CalculationHistoryItem item) {
         expression = item.expression;
-        tvExpression.setText(item.expression);
-        tvResult.setText(item.result);
         isResultDisplayed = false;
+        updateExpressionDisplay();
+        tvResult.setText(item.result);
         calculateResult(false);
         updateGraphyTabState();
         selectWorkspaceTab(0);
@@ -292,7 +292,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 expression = expression.substring(0, expression.length() - 1);
             }
         }
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
         calculateResult(false);
     }
 
@@ -322,7 +322,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
             }
         }
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
     }
 
     private void handleInput(String input) {
@@ -393,7 +393,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             expression += input;
         }
         
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
         calculateResult(false);
     }
 
@@ -407,6 +407,17 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private boolean isOperatorChar(char c) {
         return c == '+' || c == '-' || c == '×' || c == '÷';
+    }
+
+    private void updateExpressionDisplay() {
+        if (tvExpression == null) {
+            return;
+        }
+        if (isResultDisplayed || expression.isEmpty()) {
+            tvExpression.setText("");
+        } else {
+            tvExpression.setText(expression + "=");
+        }
     }
 
     private boolean hasGraphyContent() {
@@ -526,8 +537,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             if (isFinal) {
                 dbHelper.addHistory(expression, formatted);
                 expression = formatted.replace(",", "");
-                tvExpression.setText("");
                 isResultDisplayed = true;
+                updateExpressionDisplay();
             }
         } catch (Exception e) {
             if (isFinal) {
