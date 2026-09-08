@@ -4,7 +4,7 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screen_background">
+    android:background="@color/chrome_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,16 +12,6 @@
         android:orientation="vertical"
         tools:context=".fragment.CalculatorFragment">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/workspace_tabs"
-            style="@style/WorkspaceTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/workspace_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <include layout="@layout/workspace_tabs_pager" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

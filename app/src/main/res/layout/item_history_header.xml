@@ -3,7 +3,7 @@
     android:id="@+id/tv_history_section"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fontFamily="@font/oswald"
+    android:fontFamily="@font/app_text"
     android:letterSpacing="0.08"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"

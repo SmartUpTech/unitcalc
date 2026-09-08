@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
-        android:fontFamily="@font/oswald_regular"
+        android:fontFamily="@font/app_text"
         android:padding="8dp"
         android:textColor="@color/screen_expression_text"
         android:textSize="12sp" />
@@ -48,7 +48,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/oswald_regular"
+                    android:fontFamily="@font/app_text"
                     android:text="@string/str_from"
                     android:textColor="@color/screen_expression_text"
                     android:textSize="12sp" />
@@ -67,7 +67,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@null"
-                        android:fontFamily="@font/oswald"
+                        android:fontFamily="@font/app_text"
                         android:gravity="center_vertical|start"
                         android:importantForAutofill="no"
                         android:inputType="textMultiLine"
@@ -113,7 +113,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/oswald"
+                                android:fontFamily="@font/app_text"
                                 android:maxLines="1"
                                 android:textColor="@color/screen_result_text"
                                 android:textSize="@dimen/converter_unit_text_size" />
@@ -122,7 +122,7 @@
                                 android:id="@+id/fromCurrencyISO"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/oswald_regular"
+                                android:fontFamily="@font/app_text"
                                 android:textColor="@color/screen_expression_text"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -174,7 +174,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/oswald_regular"
+                    android:fontFamily="@font/app_text"
                     android:text="@string/str_to"
                     android:textColor="@color/screen_expression_text"
                     android:textSize="12sp" />
@@ -194,7 +194,7 @@
                         android:layout_weight="1"
                         android:background="@null"
                         android:focusable="false"
-                        android:fontFamily="@font/oswald"
+                        android:fontFamily="@font/app_text"
                         android:gravity="center_vertical|start"
                         android:importantForAutofill="no"
                         android:inputType="textMultiLine"
@@ -238,7 +238,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/oswald"
+                                android:fontFamily="@font/app_text"
                                 android:maxLines="1"
                                 android:textColor="@color/screen_result_text"
                                 android:textSize="@dimen/converter_unit_text_size" />
@@ -247,7 +247,7 @@
                                 android:id="@+id/toCurrencyISO"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/oswald_regular"
+                                android:fontFamily="@font/app_text"
                                 android:textColor="@color/screen_expression_text"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -290,7 +290,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:fontFamily="@font/oswald_regular"
+                android:fontFamily="@font/app_text"
                 android:textColor="@color/screen_expression_text"
                 android:textSize="@dimen/h5" />
         </RelativeLayout>

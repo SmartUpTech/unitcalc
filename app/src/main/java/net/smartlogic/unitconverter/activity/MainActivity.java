@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
 
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.app_bar));
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.chrome_surface));
         WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
         boolean night = (getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;

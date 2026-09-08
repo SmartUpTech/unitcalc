@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/oswald"
+            android:fontFamily="@font/app_text"
             android:gravity="center"
             android:maxLines="2"
             android:textColor="@color/screen_expression_text"
