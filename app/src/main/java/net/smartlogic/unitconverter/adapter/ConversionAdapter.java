@@ -41,6 +41,7 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
             holder = new Holder();
             holder.textView = convertView.findViewById(R.id.textView);
             holder.imageView = convertView.findViewById(R.id.image);
+            holder.iconContainer = convertView.findViewById(R.id.icon_container);
             holder.indicator = convertView.findViewById(R.id.indicator);
             convertView.setTag(holder);
         } else {
@@ -53,6 +54,8 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
         boolean selected = position == selectedItem;
         convertView.setSelected(selected);
         holder.indicator.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
+        holder.iconContainer.setBackgroundResource(
+                selected ? R.drawable.bg_category_icon_selected : R.drawable.bg_category_icon_default);
         int accent = ContextCompat.getColor(context, R.color.accent);
         int muted = ContextCompat.getColor(context, R.color.screen_expression_text);
         holder.textView.setTextColor(selected ? accent : muted);
@@ -64,6 +67,7 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
     private static class Holder {
         TextView textView;
         ImageView imageView;
+        View iconContainer;
         View indicator;
     }
 

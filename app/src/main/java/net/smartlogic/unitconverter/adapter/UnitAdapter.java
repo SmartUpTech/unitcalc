@@ -65,19 +65,26 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        View v = super.getDropDownView(position, convertView, parent);
-        TextView tv = v.findViewById(R.id.textView);
+        Holder holder;
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.spinner_unit_dropdown_item, parent, false);
+            holder = new Holder();
+            holder.textView = convertView.findViewById(R.id.textView);
+            convertView.setTag(holder);
+        } else {
+            holder = (Holder) convertView.getTag();
+        }
 
         Unit unit = units.get(position);
         String label = context.getString(unit.getLabelResource());
         String symbol = unit.getSymbol();
 
         if (symbol != null && !symbol.isEmpty()) {
-            tv.setText(String.format("%s (%s)", label, symbol));
+            holder.textView.setText(String.format("%s (%s)", label, symbol));
         } else {
-            tv.setText(label);
+            holder.textView.setText(label);
         }
-        return v;
+        return convertView;
     }
 
     private static class Holder {

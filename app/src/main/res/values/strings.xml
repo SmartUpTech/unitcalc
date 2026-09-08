@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Graphy Calculator</string>
+    <string name="launcher_name">Calculator</string>
+    <string name="brand_name">Graphy Calculator</string>
+    <string name="app_name">@string/brand_name</string>
     <string name="app_bar_brand">GRAPHY</string>
     <string name="app_bar_product">CALCULATOR</string>
 
@@ -8,11 +10,11 @@
     <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
     <string name="url_smartup_website">https://smartuptech.github.io</string>
     <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
-    <string name="description">Unit Converter is wonderful app for converting Unit and Metrics. UNIT CONVERTER is best UnitConverter app.</string>
-    <string name="keywords">Unit Converter app is a UNIT CONVERTER and is very good Unit Converter</string>
+    <string name="description">Graphy Calculator is a wonderful app for everyday maths, unit conversion, and currency rates.</string>
+    <string name="keywords">Graphy Calculator app for maths, unit conversion, and currency conversion</string>
     <string name="company">SMARTUP</string>
 
-    <string name="note_share_body">Hi,\n\nI am using this excellent Unit Converter App.\nIt\'s accurate, customizable yet light-weight. Must try it.\n\n</string>
+    <string name="note_share_body">Hi,\n\nI am using Graphy Calculator.\nIt\'s accurate, customizable yet light-weight. Must try it.\n\n</string>
 
     <string name="share">Share</string>
     <string name="url_exchangeratesapi">exchangeratesapi.io</string>
@@ -29,12 +31,18 @@
     <string name="history_today">Today</string>
     <string name="history_yesterday">Yesterday</string>
     <string name="no_conversion_history">No conversion history yet</string>
-    <string name="nav_converter">Converter</string>
+    <string name="nav_converter">Convert</string>
     <string name="nav_explore">Explore</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_history">History</string>
     <string name="explore_search_hint">Search calculators</string>
     <string name="no_favorites">No favorites yet</string>
+    <string name="toggle_favorite">Toggle favorite</string>
+    <string name="nav_open_drawer">Open navigation menu</string>
+    <string name="drawer_section_calculators">Calculators</string>
+    <string name="drawer_section_units">Unit converters</string>
+    <string name="drawer_section_currency">Currency</string>
+    <string name="drawer_section_general">General</string>
     <string name="clear_history">Clear history</string>
     <string name="plus">+</string>
     <string name="multiply">×</string>
@@ -277,6 +285,9 @@
     <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
     <string name="prefs_title_decimal_separator">Decimal Separator</string>
     <string name="prefs_title_light_theme">Use Light Theme</string>
+    <string name="prefs_title_dark_mode">Dark mode</string>
+    <string name="prefs_summary_dark_mode">Use a darker appearance across the app</string>
+    <string name="settings_open">Open settings</string>
 
     <string name="pref_rate_title">Rate us on Google Play</string>
     <string name="pref_rate_summary">You seem to be liking our app. Why not rate us 5 stars?</string>
@@ -323,6 +334,7 @@
     <string name="default_decimal_separator">.</string>
     <string name="str_from">From</string>
     <string name="str_to">To</string>
+    <string name="str_swap_units">Swap units</string>
 
     <string name="toast_copied_clipboard">Result copied to clipboard</string>
     <string name="toast_no_results_to_copy">No results to copy</string>

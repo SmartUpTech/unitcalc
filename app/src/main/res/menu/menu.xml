@@ -2,10 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_favorite"
+        android:icon="@drawable/ic_favorite"
+        android:orderInCategory="10"
+        android:title="@string/toggle_favorite"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_settings"
-        android:orderInCategory="100"
+        android:icon="@drawable/ic_tune"
+        android:orderInCategory="20"
         android:title="@string/title_activity_settings"
-        app:showAsAction="never" />
+        android:contentDescription="@string/settings_open"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_other_apps"

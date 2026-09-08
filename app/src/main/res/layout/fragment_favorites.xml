@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     android:background="@color/screen_background">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp" />
+
     <TextView
         android:id="@+id/tv_empty_favorites"
         android:layout_width="wrap_content"
@@ -13,5 +21,4 @@
         android:text="@string/no_favorites"
         android:textColor="@color/screen_expression_text"
         android:textSize="16sp" />
-
 </FrameLayout>
