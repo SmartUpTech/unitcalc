@@ -37,6 +37,7 @@
         android:layout_gravity="start"
         android:background="@color/screen_background"
         app:itemIconTint="@color/category_tab_icon_tint"
+        app:itemTextAppearance="@style/TextAppearance.Graphy.Body1"
         app:itemTextColor="@color/category_tab_text_color" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

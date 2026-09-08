@@ -3,7 +3,7 @@
     android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fontFamily="@font/oswald_regular"
+    android:fontFamily="@font/app_text"
     android:paddingHorizontal="16dp"
     android:paddingVertical="12dp"
     android:textColor="@color/screen_result_text"

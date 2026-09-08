@@ -7,9 +7,61 @@
         <item name="android:statusBarColor">@color/chrome_surface</item>
         <item name="android:navigationBarColor">@color/chrome_surface</item>
         <item name="android:windowBackground">@color/chrome_surface</item>
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="fontFamily">@font/app_text</item>
+        <item name="android:textViewStyle">@style/Widget.Graphy.TextView</item>
+        <item name="materialButtonStyle">@style/Widget.Graphy.Button</item>
+        <item name="materialAlertDialogTheme">@style/GraphyAlertDialogTheme</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Graphy.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Graphy.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Graphy.Button</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Graphy.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Graphy.Subtitle2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Graphy.Caption</item>
         <item name="actionBarStyle">@style/GraphyActionBar</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
+    </style>
+
+    <style name="Widget.Graphy.TextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="Widget.Graphy.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Button" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="TextAppearance.Graphy.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/app_text</item>
+    </style>
+
+    <style name="GraphyAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Graphy.Subtitle1</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.Graphy.Body1</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Graphy.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Graphy.Button</item>
     </style>
 
     <style name="GraphyActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
@@ -22,7 +74,7 @@
 
     <style name="GraphyActionBarTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/on_app_bar</item>
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:letterSpacing">0.02</item>
@@ -58,7 +110,7 @@
     </style>
 
     <style name="WorkspaceTabText" parent="TextAppearance.MaterialComponents.Button">
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
         <item name="android:textSize">13sp</item>
@@ -71,6 +123,8 @@
         <item name="itemActiveIndicatorStyle">@style/GraphyBottomNavigationActiveIndicator</item>
         <item name="itemBackground">@android:color/transparent</item>
         <item name="itemRippleColor">@color/pad_button_ripple_color</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Graphy.Caption</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Graphy.Caption</item>
     </style>
 
     <style name="GraphyBottomNavigationActiveIndicator">
@@ -83,7 +137,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/converter_mode_text_color</item>
@@ -119,7 +173,7 @@
         <item name="cornerRadius">0dp</item>
         <item name="rippleColor">@color/pad_button_ripple_color</item>
         <item name="backgroundTint">@android:color/transparent</item>
-        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textFontWeight" tools:targetApi="p">400</item>
         <item name="android:textSize">@dimen/buttonTextSize</item>
@@ -198,7 +252,7 @@
     </style>
 
     <style name="ResultDisplay">
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_result_text</item>
         <item name="android:textSize">@dimen/resultDisplaySize</item>
         <item name="android:includeFontPadding">false</item>
@@ -219,27 +273,27 @@
     <style name="SettingsSectionTitle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/screen_result_text</item>
         <item name="android:textSize">18sp</item>
     </style>
 
     <style name="SettingsRowTitle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:fontFamily">@font/oswald</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_result_text</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="SettingsRowSummary" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:layout_marginTop">2dp</item>
-        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_expression_text</item>
         <item name="android:textSize">13sp</item>
     </style>
 
     <style name="SettingsRowValue" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:fontFamily">@font/oswald_regular</item>
+        <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_expression_text</item>
         <item name="android:textSize">14sp</item>
     </style>

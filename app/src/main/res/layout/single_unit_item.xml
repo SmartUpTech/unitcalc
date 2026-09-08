@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:ellipsize="end"
-    android:fontFamily="@font/oswald_regular"
+    android:fontFamily="@font/app_text"
     android:gravity="end|center_vertical"
     android:maxLines="1"
     android:paddingVertical="4dp"

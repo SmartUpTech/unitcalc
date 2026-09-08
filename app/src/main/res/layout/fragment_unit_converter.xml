@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/oswald_regular"
+                        android:fontFamily="@font/app_text"
                         android:text="@string/str_from"
                         android:textColor="@color/screen_expression_text"
                         android:textSize="12sp" />
@@ -68,7 +68,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:fontFamily="@font/oswald"
+                            android:fontFamily="@font/app_text"
                             android:gravity="center_vertical|start"
                             android:importantForAutofill="no"
                             android:inputType="textMultiLine"
@@ -139,7 +139,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/oswald_regular"
+                        android:fontFamily="@font/app_text"
                         android:text="@string/str_to"
                         android:textColor="@color/screen_expression_text"
                         android:textSize="12sp" />
@@ -159,7 +159,7 @@
                             android:layout_weight="1"
                             android:background="@null"
                             android:focusable="false"
-                            android:fontFamily="@font/oswald"
+                            android:fontFamily="@font/app_text"
                             android:gravity="center_vertical|start"
                             android:importantForAutofill="no"
                             android:inputType="textMultiLine"
