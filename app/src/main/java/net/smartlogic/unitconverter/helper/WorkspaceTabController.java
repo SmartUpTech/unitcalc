@@ -10,6 +10,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 /**
  * Syncs workspace TabLayout with ViewPager2 swipe navigation.
  * Bottom navigation is unaffected — only in-page workspace tabs use this controller.
+ *
+ * Workspace tabs use {@link R.style#WorkspaceTabLayout}: condensed (scrollable, start-aligned)
+ * and shared via {@link R.layout#workspace_tabs_pager} for all calculator hosts.
  */
 public final class WorkspaceTabController {
 

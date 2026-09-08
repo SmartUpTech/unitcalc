@@ -4,16 +4,16 @@
         <item name="colorPrimary">@color/app_bar</item>
         <item name="colorPrimaryDark">@color/app_bar</item>
         <item name="colorAccent">@color/nav_selected</item>
-        <item name="android:statusBarColor">@color/app_bar</item>
-        <item name="android:navigationBarColor">@color/screen_background</item>
-        <item name="android:windowBackground">@color/screen_background</item>
+        <item name="android:statusBarColor">@color/chrome_surface</item>
+        <item name="android:navigationBarColor">@color/chrome_surface</item>
+        <item name="android:windowBackground">@color/chrome_surface</item>
         <item name="actionBarStyle">@style/GraphyActionBar</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarWidgetTheme">@style/MyActionBarWidgetTheme</item>
     </style>
 
     <style name="GraphyActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
-        <item name="background">@color/app_bar</item>
+        <item name="background">@color/chrome_surface</item>
         <item name="titleTextStyle">@style/GraphyActionBarTitle</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
@@ -41,15 +41,19 @@
     </style>
 
     <style name="WorkspaceTabLayout" parent="Widget.MaterialComponents.TabLayout">
-        <item name="android:background">@color/screen_background</item>
-        <item name="tabIndicatorColor">@color/accent</item>
-        <item name="tabIndicatorHeight">2dp</item>
+        <item name="android:background">@color/chrome_surface</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+        <item name="tabIndicatorHeight">0dp</item>
         <item name="tabSelectedTextColor">@color/accent</item>
         <item name="tabTextColor">@color/screen_expression_text</item>
         <item name="tabRippleColor">@color/pad_button_ripple_color</item>
         <item name="tabUnboundedRipple">true</item>
-        <item name="tabMode">fixed</item>
-        <item name="tabGravity">fill</item>
+        <item name="tabMode">scrollable</item>
+        <item name="tabGravity">start</item>
+        <item name="tabMinWidth">0dp</item>
+        <item name="tabPaddingStart">16dp</item>
+        <item name="tabPaddingEnd">16dp</item>
         <item name="tabTextAppearance">@style/WorkspaceTabText</item>
     </style>
 
@@ -58,6 +62,21 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="GraphyBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/chrome_surface</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+        <item name="itemActiveIndicatorStyle">@style/GraphyBottomNavigationActiveIndicator</item>
+        <item name="itemBackground">@android:color/transparent</item>
+        <item name="itemRippleColor">@color/pad_button_ripple_color</item>
+    </style>
+
+    <style name="GraphyBottomNavigationActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="android:color">@android:color/transparent</item>
     </style>
 
     <style name="ConverterModeToggle" parent="Widget.MaterialComponents.Button.OutlinedButton">
