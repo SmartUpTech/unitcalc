@@ -7,6 +7,14 @@
     <color name="screen_expression_text">#9CA3AF</color>
     <color name="screen_result_text">#FFFFFF</color>
     <color name="keypad_background">@color/chrome_surface</color>
+
+    <!-- Graphy Calculator keypad (dark): prepared for future theme switching -->
+    <!-- Gray scale: "N points off white" = N% black mixed into #FFFFFF -->
+    <color name="calc_key_number">#F2F2F2</color>       <!-- 5% off white -->
+    <color name="calc_key_function">#D9D9D9</color>      <!-- 10% off white -->
+    <color name="calc_key_operator">#D4B84A</color>      <!-- sober gold -->
+    <color name="calc_key_equals">#E8665A</color>         <!-- soft coral red -->
+
     <color name="key_number_bg">#00000000</color>
     <color name="key_number_text">#FFFFFF</color>
     <color name="key_operator_bg">#00000000</color>

@@ -336,6 +336,7 @@
     <string name="str_to">To</string>
     <string name="str_swap_units">Swap units</string>
 
+    <string name="toast_copied">Copied</string>
     <string name="toast_copied_clipboard">Result copied to clipboard</string>
     <string name="toast_no_results_to_copy">No results to copy</string>
     <string name="toast_result_copied">Result copied</string>

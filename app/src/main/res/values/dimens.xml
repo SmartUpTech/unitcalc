@@ -13,6 +13,8 @@
 
     <dimen name="buttonTextSize">22sp</dimen>
 
+    <dimen name="buttonOperatorTextSize">28sp</dimen>
+
     <dimen name="converter_category_height">100dp</dimen>
     <dimen name="converter_category_icon_size">48dp</dimen>
     <dimen name="converter_value_text_size">36sp</dimen>

@@ -55,7 +55,10 @@
                     android:id="@+id/switch_dark_mode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/prefs_title_dark_mode" />
+                    android:contentDescription="@string/prefs_title_dark_mode"
+                    android:textOff=""
+                    android:textOn=""
+                    app:showText="false" />
             </LinearLayout>
 
             <View

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,10 +50,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculatorFragment extends Fragment implements View.OnClickListener, GraphyPanelHost {
+public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
     private TextView tvExpression, tvResult;
     private String expression = "";
+    private String lastEvaluatedExpression = "";
     private Preferences mPrefs;
     private CoordinatorLayout mCoordinatorLayout;
     private boolean isResultDisplayed = false;
@@ -188,7 +190,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine,
                 R.id.dot, R.id.plus, R.id.minus, R.id.multiply, R.id.divide,
-                R.id.equal, R.id.clear, R.id.backspace, R.id.copy,
+                R.id.equal, R.id.backspace, R.id.sign_toggle,
                 R.id.parenthesis_open, R.id.parenthesis_close, R.id.power,
                 R.id.sqrt, R.id.percent
         };
@@ -199,6 +201,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 v.setOnClickListener(this);
             }
         }
+
+        View backspace = pageView.findViewById(R.id.backspace);
+        if (backspace != null) {
+            backspace.setOnLongClickListener(this);
+        }
+        tvExpression.setOnLongClickListener(this);
+        tvResult.setOnLongClickListener(this);
 
         tvExpression.addTextChangedListener(new TextWatcher() {
             @Override
@@ -242,18 +251,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.clear) {
-            expression = "";
-            updateExpressionDisplay();
-            tvResult.setText("0");
-            isResultDisplayed = false;
-            latestGraphyOutput = null;
-            hideGraphy();
-            updateGraphyTabState();
-        } else if (id == R.id.backspace) {
+        if (id == R.id.backspace) {
             handleBackspace();
-        } else if (id == R.id.copy) {
-            copyToClipboard();
+        } else if (id == R.id.sign_toggle) {
+            handleSignToggle();
         } else if (id == R.id.equal) {
             calculateResult(true);
         } else if (id == R.id.dot) {
@@ -267,18 +268,124 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+        if (id == R.id.backspace) {
+            clearAll();
+        } else if (id == R.id.expression || id == R.id.result) {
+            copyExpressionAndResult();
+        }
+        return true;
+    }
+
+    private void clearAll() {
+        expression = "";
+        lastEvaluatedExpression = "";
+        updateExpressionDisplay();
+        tvResult.setText("0");
+        isResultDisplayed = false;
+        latestGraphyOutput = null;
+        hideGraphy();
+        updateGraphyTabState();
+    }
+
     public void openHistoryTab() {
         selectWorkspaceTab(2);
     }
 
     private void restoreFromHistory(@NonNull CalculationHistoryItem item) {
         expression = item.expression;
+        lastEvaluatedExpression = item.expression;
         isResultDisplayed = false;
         updateExpressionDisplay();
         tvResult.setText(item.result);
         calculateResult(false);
         updateGraphyTabState();
         selectWorkspaceTab(0);
+    }
+
+    private void handleSignToggle() {
+        if (isResultDisplayed) {
+            String result = tvResult.getText().toString().replace(",", "");
+            if (result.startsWith("-")) {
+                expression = result.substring(1);
+            } else {
+                expression = "-" + result;
+            }
+            isResultDisplayed = false;
+            updateExpressionDisplay();
+            calculateResult(false);
+            return;
+        }
+
+        if (expression.isEmpty()) {
+            expression = "-";
+            updateExpressionDisplay();
+            return;
+        }
+
+        int end = expression.length();
+        int start = findLastOperandStart(expression, end);
+        if (start < 0) {
+            return;
+        }
+
+        String operand = expression.substring(start, end);
+        String negated = negateOperand(operand);
+        expression = expression.substring(0, start) + negated;
+        updateExpressionDisplay();
+        calculateResult(false);
+    }
+
+    private int findLastOperandStart(@NonNull String expr, int end) {
+        if (end == 0) {
+            return -1;
+        }
+        int i = end - 1;
+        if (expr.charAt(i) == ')') {
+            int depth = 1;
+            i--;
+            while (i >= 0 && depth > 0) {
+                if (expr.charAt(i) == ')') {
+                    depth++;
+                } else if (expr.charAt(i) == '(') {
+                    depth--;
+                }
+                i--;
+            }
+            if (i >= 0 && expr.charAt(i) == '-') {
+                char before = i > 0 ? expr.charAt(i - 1) : '\0';
+                if (i == 0 || before == '(' || isOperatorChar(before) || before == '^') {
+                    return i;
+                }
+            }
+            return i + 1;
+        }
+
+        while (i >= 0) {
+            char c = expr.charAt(i);
+            if (Character.isDigit(c) || c == '.' || c == '%') {
+                i--;
+                continue;
+            }
+            break;
+        }
+        if (i >= 0 && expr.charAt(i) == '-') {
+            char before = i > 0 ? expr.charAt(i - 1) : '\0';
+            if (i == 0 || before == '(' || isOperatorChar(before) || before == '^') {
+                return i;
+            }
+        }
+        return i + 1;
+    }
+
+    @NonNull
+    private String negateOperand(@NonNull String operand) {
+        if (operand.startsWith("-")) {
+            return operand.substring(1);
+        }
+        return "-" + operand;
     }
 
     private void handleBackspace() {
@@ -535,6 +642,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             }
 
             if (isFinal) {
+                lastEvaluatedExpression = expression;
                 dbHelper.addHistory(expression, formatted);
                 expression = formatted.replace(",", "");
                 isResultDisplayed = true;
@@ -553,16 +661,26 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         return df.format(value);
     }
 
-    private void copyToClipboard() {
-        String textToCopy = tvResult.getText().toString();
-        if (textToCopy.equals("0") && expression.isEmpty()) {
-            showToast(getString(R.string.toast_no_results_to_copy));
+    private void copyExpressionAndResult() {
+        String result = tvResult.getText().toString();
+        if (result.equals("0") && expression.isEmpty() && lastEvaluatedExpression.isEmpty()) {
             return;
         }
+
+        String exprPart;
+        if (!expression.isEmpty() && !isResultDisplayed) {
+            exprPart = expression;
+        } else if (!lastEvaluatedExpression.isEmpty()) {
+            exprPart = lastEvaluatedExpression;
+        } else {
+            exprPart = result;
+        }
+
+        String textToCopy = exprPart + " = " + result;
         ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), textToCopy);
         clipboard.setPrimaryClip(clip);
-        showToast(getString(R.string.toast_result_copied));
+        showToast(getString(R.string.toast_copied));
     }
 
     private void showToast(String message) {

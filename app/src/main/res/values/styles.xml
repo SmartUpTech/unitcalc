@@ -200,6 +200,66 @@
         <item name="android:layout_margin">4dp</item>
     </style>
 
+    <style name="ButtonStyle.Equals.Plain" parent="ButtonStyle.Equals">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
+    <style name="CalculatorKey" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textSize">@dimen/buttonTextSize</item>
+        <item name="android:textColor">@color/calc_key_number</item>
+    </style>
+
+    <style name="CalculatorKey.Number" parent="CalculatorKey">
+        <item name="android:textColor">@color/calc_key_number</item>
+    </style>
+
+    <style name="CalculatorKey.Function" parent="CalculatorKey">
+        <item name="android:textColor">@color/calc_key_function</item>
+    </style>
+
+    <style name="CalculatorKey.Operator" parent="CalculatorKey">
+        <item name="android:textColor">@color/calc_key_operator</item>
+    </style>
+
+    <style name="CalculatorKey.SideOperator" parent="CalculatorKey">
+        <item name="android:textSize">@dimen/buttonOperatorTextSize</item>
+        <item name="android:textColor">@color/calc_key_operator</item>
+    </style>
+
+    <style name="CalculatorKey.Equals" parent="CalculatorKey">
+        <item name="android:textSize">@dimen/buttonOperatorTextSize</item>
+        <item name="android:textColor">@color/calc_key_equals</item>
+    </style>
+
+    <style name="CalculatorKey.Icon" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:elevation">0dp</item>
+        <item name="tint">@color/calc_key_function</item>
+        <item name="android:tint" tools:ignore="NewApi">@color/calc_key_function</item>
+    </style>
+
     <style name="ImageButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:elevation">0dp</item>
         <item name="android:background">@android:color/transparent</item>
@@ -227,6 +287,11 @@
         <item name="tint">@color/key_backspace_icon</item>
         <item name="android:tint" tools:ignore="NewApi">@color/key_backspace_icon</item>
         <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="ImageButtonStyle.Backspace.Plain" parent="ImageButtonStyle.Backspace">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_margin">0dp</item>
     </style>
 
     <style name="ImageButtonStyle.Action" parent="Widget.AppCompat.ImageButton">
@@ -280,12 +345,16 @@
     </style>
 
     <style name="SettingsRowTitle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_result_text</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="SettingsRowSummary" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">2dp</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_expression_text</item>
@@ -293,6 +362,8 @@
     </style>
 
     <style name="SettingsRowValue" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_expression_text</item>
         <item name="android:textSize">14sp</item>
