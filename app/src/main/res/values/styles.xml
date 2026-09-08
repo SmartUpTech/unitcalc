@@ -247,6 +247,10 @@
         <item name="android:textColor">@color/calc_key_equals</item>
     </style>
 
+    <style name="CalculatorKey.Utility" parent="CalculatorKey">
+        <item name="android:textColor">@color/calc_key_utility</item>
+    </style>
+
     <style name="CalculatorKey.Icon" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -256,8 +260,8 @@
         <item name="android:background">@null</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:elevation">0dp</item>
-        <item name="tint">@color/calc_key_function</item>
-        <item name="android:tint" tools:ignore="NewApi">@color/calc_key_function</item>
+        <item name="tint">@color/calc_key_utility</item>
+        <item name="android:tint" tools:ignore="NewApi">@color/calc_key_utility</item>
     </style>
 
     <style name="ImageButtonStyle" parent="Widget.AppCompat.ImageButton">

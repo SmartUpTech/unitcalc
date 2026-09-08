@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="graphy_background">#FAF8F3</color>
-    <color name="graphy_primary_text">#1F2937</color>
+    <color name="graphy_background">@color/semantic_background</color>
+    <color name="graphy_primary_text">@color/semantic_primary_text</color>
 
     <color name="graphy_input">#F4C542</color>
     <color name="graphy_constant">#9B7EDE</color>
@@ -17,8 +17,8 @@
     <color name="graphy_connector">#9CA3AF</color>
     <color name="graphy_connector_highlight">#6B7280</color>
 
-    <color name="graphy_surface">#FAF8F3</color>
-    <color name="graphy_surface_elevated">#FAF8F3</color>
+    <color name="graphy_surface">@color/semantic_background</color>
+    <color name="graphy_surface_elevated">@color/semantic_background</color>
 
     <!-- Legacy aliases kept for compatibility -->
     <color name="graphy_primary">#1F2937</color>

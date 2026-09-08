@@ -43,6 +43,7 @@ import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
+import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 
@@ -69,6 +70,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private final GraphyBridge graphyBridge = new GraphyBridge();
     private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
     private GraphyViewTheme graphyTheme;
+    private ExpressionDisplayFormatter.GraphySemanticTheme semanticTheme;
     private GraphyOutput latestGraphyOutput;
 
     private TabLayout workspaceTabs;
@@ -140,6 +142,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         workspaceTabs = view.findViewById(R.id.workspace_tabs);
         workspacePager = view.findViewById(R.id.workspace_pager);
         graphyTheme = new GraphyViewTheme(requireContext());
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
 
         WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
                 WORKSPACE_LAYOUTS,
@@ -522,9 +525,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
         if (isResultDisplayed || expression.isEmpty()) {
             tvExpression.setText("");
-        } else {
-            tvExpression.setText(expression + "=");
+            GenericFunctions.resetTextSize(tvExpression, 21);
+            return;
         }
+        tvExpression.setText(
+                ExpressionDisplayFormatter.formatSpannable(expression, mPrefs, semanticTheme)
+        );
+        GenericFunctions.adjustTextSize(tvExpression, 21);
     }
 
     private boolean hasGraphyContent() {
@@ -771,7 +778,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             } else {
                 CalculationHistoryItem item = (CalculationHistoryItem) rows.get(position);
                 ItemHolder itemHolder = (ItemHolder) holder;
-                itemHolder.tvExpression.setText(item.expression);
+                ExpressionDisplayFormatter.GraphySemanticTheme theme =
+                        ExpressionDisplayFormatter.GraphySemanticTheme.from(itemHolder.itemView.getContext());
+                itemHolder.tvExpression.setText(
+                        ExpressionDisplayFormatter.formatSpannable(item.expression, Preferences.getInstance(itemHolder.itemView.getContext()), theme)
+                );
                 itemHolder.tvResult.setText(item.result);
                 itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt));
                 itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));

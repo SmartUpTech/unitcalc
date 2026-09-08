@@ -11,6 +11,12 @@ import androidx.compose.ui.graphics.Color
 data class GraphySemanticColors(
     val background: Color,
     val primaryText: Color,
+    val secondaryText: Color,
+    val number: Color,
+    val operator: Color,
+    val function: Color,
+    val utility: Color,
+    val equal: Color,
     val input: Color,
     val constant: Color,
     val operation: Color,
@@ -28,8 +34,22 @@ data class GraphySemanticColors(
 )
 
 private object GraphyPalette {
-    val BackgroundLight = Color(0xFFFAF8F3)
-    val PrimaryTextLight = Color(0xFF1F2937)
+    val BackgroundLight = Color(0xFFF7F5F0)
+    val BackgroundDark = Color(0xFF111417)
+    val PrimaryTextLight = Color(0xFF25282C)
+    val PrimaryTextDark = Color(0xFFE2E4E6)
+    val SecondaryTextLight = Color(0xFF85827C)
+    val SecondaryTextDark = Color(0xFF777D83)
+    val NumberLight = Color(0xFF25282C)
+    val NumberDark = Color(0xFFE2E4E6)
+    val OperatorLight = Color(0xFF52677D)
+    val OperatorDark = Color(0xFF7F94AA)
+    val FunctionLight = Color(0xFF62676D)
+    val FunctionDark = Color(0xFF9A9EA3)
+    val UtilityLight = Color(0xFF6B7075)
+    val UtilityDark = Color(0xFF8A9096)
+    val EqualLight = Color(0xFFD94A3A)
+    val EqualDark = Color(0xFFE56A5C)
     val Input = Color(0xFFF4C542)
     val Constant = Color(0xFF9B7EDE)
     val Operation = Color(0xFFF59E0B)
@@ -41,8 +61,8 @@ private object GraphyPalette {
     val ConnectorDark = Color(0xFF4B5563)
     val SecondaryLight = Color(0xFF6B7280)
     val SecondaryDark = Color(0xFF9CA3AF)
-    val SurfaceLight = Color(0xFFFAF8F3)
-    val SurfaceDark = Color(0xFF101418)
+    val SurfaceLight = Color(0xFFF7F5F0)
+    val SurfaceDark = Color(0xFF111417)
 }
 
 fun graphyLightColorScheme(): ColorScheme = lightColorScheme(
@@ -84,6 +104,12 @@ fun graphyDarkColorScheme(): ColorScheme = darkColorScheme(
 fun graphyLightSemanticColors(): GraphySemanticColors = GraphySemanticColors(
     background = GraphyPalette.BackgroundLight,
     primaryText = GraphyPalette.PrimaryTextLight,
+    secondaryText = GraphyPalette.SecondaryTextLight,
+    number = GraphyPalette.NumberLight,
+    operator = GraphyPalette.OperatorLight,
+    function = GraphyPalette.FunctionLight,
+    utility = GraphyPalette.UtilityLight,
+    equal = GraphyPalette.EqualLight,
     input = GraphyPalette.Input,
     constant = GraphyPalette.Constant,
     operation = GraphyPalette.Operation,
@@ -101,8 +127,14 @@ fun graphyLightSemanticColors(): GraphySemanticColors = GraphySemanticColors(
 )
 
 fun graphyDarkSemanticColors(): GraphySemanticColors = GraphySemanticColors(
-    background = GraphyPalette.SurfaceDark,
-    primaryText = Color(0xFFF3F4F6),
+    background = GraphyPalette.BackgroundDark,
+    primaryText = GraphyPalette.PrimaryTextDark,
+    secondaryText = GraphyPalette.SecondaryTextDark,
+    number = GraphyPalette.NumberDark,
+    operator = GraphyPalette.OperatorDark,
+    function = GraphyPalette.FunctionDark,
+    utility = GraphyPalette.UtilityDark,
+    equal = GraphyPalette.EqualDark,
     input = GraphyPalette.Input,
     constant = GraphyPalette.Constant,
     operation = GraphyPalette.Operation,

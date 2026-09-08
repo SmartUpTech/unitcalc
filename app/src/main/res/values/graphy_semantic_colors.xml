@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App-wide mathematical semantic colors (light) -->
+    <color name="semantic_background">#F7F5F0</color>
+    <color name="semantic_number">#25282C</color>
+    <color name="semantic_operator">#52677D</color>
+    <color name="semantic_function">#62676D</color>
+    <color name="semantic_utility">#6B7075</color>
+    <color name="semantic_equal">#D94A3A</color>
+    <color name="semantic_primary_text">#25282C</color>
+    <color name="semantic_secondary_text">#85827C</color>
+</resources>

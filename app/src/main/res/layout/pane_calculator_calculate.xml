@@ -19,11 +19,13 @@
             android:id="@+id/expression"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
+            android:ellipsize="none"
             android:fontFamily="@font/app_text"
             android:gravity="center"
-            android:maxLines="2"
-            android:textColor="@color/screen_expression_text"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/semantic_number"
             android:textSize="@dimen/h2" />
 
         <TextView
