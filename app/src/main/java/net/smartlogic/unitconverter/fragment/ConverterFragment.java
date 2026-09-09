@@ -137,6 +137,10 @@ public class ConverterFragment extends Fragment {
         convertPageBound = false;
         graphyPageBound = false;
         modeToggle = null;
+        graphyPanelController = null;
+        graphyPanel = null;
+        graphyEmpty = null;
+        graphyContext = null;
         pendingReadyActions.clear();
         super.onDestroyView();
     }
@@ -254,7 +258,12 @@ public class ConverterFragment extends Fragment {
         graphyContext = pageView.findViewById(R.id.graphy_context);
         graphyEmpty = pageView.findViewById(R.id.graphy_empty);
         graphyPanel = pageView.findViewById(R.id.graphy_panel);
-        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+        pageView.post(() -> {
+            if (!isAdded() || graphyPanel == null || graphyPanelController != null) {
+                return;
+            }
+            graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+        });
     }
 
     private int pendingUnitCategory = -1;
@@ -325,19 +334,15 @@ public class ConverterFragment extends Fragment {
 
     private void applyWorkspaceTab(int position) {
         if (position == 1) {
-            if (hasGraphyContent()) {
-                showGraphy(latestGraphyOutput, latestGraphyOutput.getExpression());
-            } else {
-                if (graphyEmpty != null) {
-                    graphyEmpty.setVisibility(View.VISIBLE);
-                }
-                if (graphyPanel != null) {
-                    graphyPanel.setVisibility(View.GONE);
-                }
-                if (graphyContext != null) {
-                    graphyContext.setText("");
-                }
+            if (!hasGraphyContent()) {
+                selectWorkspaceTab(0);
+                return;
             }
+            String contextLine = latestGraphyOutput.getExpression();
+            if (contextLine == null) {
+                contextLine = "";
+            }
+            showGraphy(latestGraphyOutput, contextLine);
         }
     }
 

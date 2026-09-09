@@ -124,6 +124,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             workspaceTabController.detach();
             workspaceTabController = null;
         }
+        graphyPageBound = false;
+        graphyPanelController = null;
+        graphyPanel = null;
+        graphyEmpty = null;
+        graphyContext = null;
         super.onDestroyView();
     }
 
@@ -223,7 +228,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         graphyEmpty = pageView.findViewById(R.id.graphy_empty);
         graphyContext = pageView.findViewById(R.id.graphy_context);
         graphyPanel = pageView.findViewById(R.id.graphy_panel);
-        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+        pageView.post(() -> {
+            if (!isAdded() || graphyPanel == null || graphyPanelController != null) {
+                return;
+            }
+            graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+        });
     }
 
     @Override
@@ -532,20 +542,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             onBackPressedCallback.setEnabled(position != 0);
         }
         if (position == 1) {
-            if (latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
-                showGraphy(latestGraphyOutput);
-            } else {
-                hideGraphy();
-                if (graphyEmpty != null) {
-                    graphyEmpty.setVisibility(View.VISIBLE);
-                }
-                if (graphyPanel != null) {
-                    graphyPanel.setVisibility(View.GONE);
-                }
-                if (graphyContext != null) {
-                    graphyContext.setText("");
-                }
+            if (!hasGraphyContent()) {
+                selectWorkspaceTab(0);
+                return;
             }
+            showGraphy(latestGraphyOutput);
         }
     }
 

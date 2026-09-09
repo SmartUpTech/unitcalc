@@ -24,11 +24,30 @@ class GraphyPanelController(
 ) {
     private var expression by mutableStateOf("")
     private var output by mutableStateOf<GraphyOutput?>(null)
+    private var compositionInstalled = false
 
     init {
         composeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed,
         )
+        composeView.post { installCompositionIfNeeded() }
+    }
+
+    fun update(expression: String, output: GraphyOutput?) {
+        this.expression = expression
+        this.output = output
+        installCompositionIfNeeded()
+    }
+
+    private fun installCompositionIfNeeded() {
+        if (compositionInstalled || !fragment.isAdded) {
+            return
+        }
+        if (!composeView.isAttachedToWindow) {
+            composeView.post { installCompositionIfNeeded() }
+            return
+        }
+        compositionInstalled = true
         composeView.setContent {
             val darkTheme = GraphyThemeDefaults.isDarkTheme(composeView.context)
             GraphyTheme(darkTheme = darkTheme) {
@@ -40,10 +59,5 @@ class GraphyPanelController(
                 )
             }
         }
-    }
-
-    fun update(expression: String, output: GraphyOutput?) {
-        this.expression = expression
-        this.output = output
     }
 }
