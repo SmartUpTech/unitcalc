@@ -221,6 +221,16 @@ public class ConverterFragment extends Fragment {
         }
     }
 
+    public void openUnitMode() {
+        pendingCurrencyMode = false;
+        pendingUnitCategory = -1;
+        openConvertWorkspace();
+        if (modeToggle != null) {
+            modeToggle.check(R.id.btn_unit_mode);
+            showConverterTab(TAB_UNIT);
+        }
+    }
+
     private void applyPendingNavigation() {
         if (modeToggle == null) {
             return;

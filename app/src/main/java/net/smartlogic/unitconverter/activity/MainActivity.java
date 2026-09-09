@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             case BASIC_CALCULATOR:
                 selectTab(R.id.calculator);
                 break;
+            case UNIT_CONVERTER:
+                selectTab(R.id.converter);
+                runOnConverterFragment(ConverterFragment::openUnitMode);
+                break;
             case UNIT_CATEGORY:
                 selectTab(R.id.converter);
                 runOnConverterFragment(fragment -> fragment.openUnitCategory(entry.unitCategoryId));
