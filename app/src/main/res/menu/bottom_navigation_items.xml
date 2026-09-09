@@ -12,6 +12,11 @@
         android:title="@string/nav_converter" />
 
     <item
+        android:id="@+id/history"
+        android:icon="@drawable/ic_history"
+        android:title="@string/nav_history" />
+
+    <item
         android:id="@+id/explore"
         android:icon="@drawable/ic_explore"
         android:title="@string/nav_explore" />

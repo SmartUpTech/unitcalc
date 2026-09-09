@@ -27,6 +27,9 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Hosts unit and currency converters behind a single Converter tab.
  */
@@ -40,14 +43,12 @@ public class ConverterFragment extends Fragment {
 
     private static final int[] WORKSPACE_LAYOUTS = {
             R.layout.pane_converter_convert,
-            R.layout.pane_converter_graphy,
-            R.layout.pane_converter_history
+            R.layout.pane_converter_graphy
     };
 
     private static final int[] WORKSPACE_TAB_TITLES = {
             R.string.tab_convert,
-            R.string.graphy,
-            R.string.nav_history
+            R.string.graphy
     };
 
     private MaterialButtonToggleGroup modeToggle;
@@ -69,6 +70,12 @@ public class ConverterFragment extends Fragment {
     private int lastWorkspaceTab;
     private boolean convertPageBound;
     private boolean graphyPageBound;
+    private boolean pendingCurrencyMode;
+    private final List<Runnable> pendingReadyActions = new ArrayList<>();
+
+    public interface ReadyAction {
+        void run(@NonNull ConverterFragment fragment);
+    }
 
     public ConverterFragment() {
     }
@@ -116,6 +123,9 @@ public class ConverterFragment extends Fragment {
                 }
         );
         updateGraphyTabState();
+        if (pendingOpenConvertWorkspace) {
+            openConvertWorkspace();
+        }
     }
 
     @Override
@@ -124,6 +134,10 @@ public class ConverterFragment extends Fragment {
             workspaceTabController.detach();
             workspaceTabController = null;
         }
+        convertPageBound = false;
+        graphyPageBound = false;
+        modeToggle = null;
+        pendingReadyActions.clear();
         super.onDestroyView();
     }
 
@@ -161,7 +175,74 @@ public class ConverterFragment extends Fragment {
             modeToggle.check(R.id.btn_unit_mode);
         }
         showConverterTab(selectedTab);
-        applyPendingUnitCategory();
+        applyPendingNavigation();
+        flushPendingReadyActions();
+    }
+
+    public void runWhenReady(@NonNull ReadyAction action) {
+        if (convertPageBound && modeToggle != null) {
+            action.run(this);
+            return;
+        }
+        pendingReadyActions.add(() -> action.run(this));
+        openConvertWorkspace();
+    }
+
+    private boolean pendingOpenConvertWorkspace;
+
+    public void openConvertWorkspace() {
+        if (workspaceTabController != null) {
+            selectWorkspaceTab(0);
+            pendingOpenConvertWorkspace = false;
+        } else {
+            pendingOpenConvertWorkspace = true;
+        }
+    }
+
+    public void openUnitCategory(int categoryId) {
+        pendingUnitCategory = categoryId;
+        pendingCurrencyMode = false;
+        openConvertWorkspace();
+        if (modeToggle != null) {
+            applyPendingNavigation();
+        }
+    }
+
+    public void openCurrencyMode() {
+        pendingCurrencyMode = true;
+        pendingUnitCategory = -1;
+        openConvertWorkspace();
+        if (modeToggle != null) {
+            applyPendingNavigation();
+        }
+    }
+
+    private void applyPendingNavigation() {
+        if (modeToggle == null) {
+            return;
+        }
+        if (pendingCurrencyMode) {
+            modeToggle.check(R.id.btn_currency_mode);
+            showConverterTab(TAB_CURRENCY);
+            pendingCurrencyMode = false;
+            return;
+        }
+        if (pendingUnitCategory >= 0) {
+            modeToggle.check(R.id.btn_unit_mode);
+            showConverterTab(TAB_UNIT);
+            applyPendingUnitCategory();
+        }
+    }
+
+    private void flushPendingReadyActions() {
+        if (!convertPageBound || modeToggle == null || pendingReadyActions.isEmpty()) {
+            return;
+        }
+        List<Runnable> actions = new ArrayList<>(pendingReadyActions);
+        pendingReadyActions.clear();
+        for (Runnable action : actions) {
+            action.run();
+        }
     }
 
     private void bindGraphyPage(@NonNull View pageView) {
@@ -177,22 +258,6 @@ public class ConverterFragment extends Fragment {
     }
 
     private int pendingUnitCategory = -1;
-
-    public void openUnitCategory(int categoryId) {
-        pendingUnitCategory = categoryId;
-        if (modeToggle != null) {
-            modeToggle.check(R.id.btn_unit_mode);
-            showConverterTab(TAB_UNIT);
-            applyPendingUnitCategory();
-        }
-    }
-
-    public void openCurrencyMode() {
-        if (modeToggle != null) {
-            modeToggle.check(R.id.btn_currency_mode);
-            showConverterTab(TAB_CURRENCY);
-        }
-    }
 
     @NonNull
     public String getActiveCatalogId() {

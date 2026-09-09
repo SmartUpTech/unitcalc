@@ -177,6 +177,15 @@ public final class CalculatorCatalog {
     }
 
     @NonNull
+    public static String titleForId(@NonNull android.content.Context context, @NonNull String id) {
+        Entry entry = getById(id);
+        if (entry != null) {
+            return context.getString(entry.titleRes);
+        }
+        return context.getString(R.string.calculator);
+    }
+
+    @NonNull
     public static String unitId(int categoryId) {
         return UNIT_PREFIX + categoryId;
     }
