@@ -40,8 +40,8 @@
     <string name="toggle_favorite">Toggle favorite</string>
     <string name="nav_open_drawer">Open navigation menu</string>
     <string name="drawer_section_calculators">Calculators</string>
-    <string name="drawer_section_units">Unit converters</string>
-    <string name="drawer_section_currency">Currency</string>
+    <string name="drawer_section_converter">Converter</string>
+    <string name="drawer_unit_converter">Unit Converter</string>
     <string name="drawer_section_general">General</string>
     <string name="clear_history">Clear history</string>
     <string name="plus">+</string>

@@ -20,11 +20,13 @@ import java.util.Map;
 public final class CalculatorCatalog {
 
     public static final String ID_BASIC = CalculationSnapshot.BASIC_CALCULATOR_ID;
+    public static final String ID_UNIT = "unit_converter";
     public static final String ID_CURRENCY = "currency";
     private static final String UNIT_PREFIX = "unit:";
 
     public enum Destination {
         BASIC_CALCULATOR,
+        UNIT_CONVERTER,
         UNIT_CATEGORY,
         CURRENCY,
         EXPLORE,
@@ -85,41 +87,41 @@ public final class CalculatorCatalog {
                 Destination.BASIC_CALCULATOR, -1)));
         SECTIONS.add(new Section(R.string.drawer_section_calculators, calculators));
 
-        List<Entry> units = new ArrayList<>();
-        units.add(register(entry(unitId(Conversion.LENGTH), R.string.length, R.drawable.ic_length,
-                Destination.UNIT_CATEGORY, Conversion.LENGTH)));
-        units.add(register(entry(unitId(Conversion.AREA), R.string.area, R.drawable.ic_area,
-                Destination.UNIT_CATEGORY, Conversion.AREA)));
-        units.add(register(entry(unitId(Conversion.TIME), R.string.time, R.drawable.ic_time,
-                Destination.UNIT_CATEGORY, Conversion.TIME)));
-        units.add(register(entry(unitId(Conversion.TEMPERATURE), R.string.temperature, R.drawable.ic_temperature,
-                Destination.UNIT_CATEGORY, Conversion.TEMPERATURE)));
-        units.add(register(entry(unitId(Conversion.MASS), R.string.mass, R.drawable.ic_mass,
-                Destination.UNIT_CATEGORY, Conversion.MASS)));
-        units.add(register(entry(unitId(Conversion.STORAGE), R.string.storage, R.drawable.ic_storage,
-                Destination.UNIT_CATEGORY, Conversion.STORAGE)));
-        units.add(register(entry(unitId(Conversion.FUEL), R.string.fuel_consumption, R.drawable.ic_fuel,
-                Destination.UNIT_CATEGORY, Conversion.FUEL)));
-        units.add(register(entry(unitId(Conversion.COOKING), R.string.cooking, R.drawable.ic_cooking,
-                Destination.UNIT_CATEGORY, Conversion.COOKING)));
-        units.add(register(entry(unitId(Conversion.SPEED), R.string.speed, R.drawable.ic_speed,
-                Destination.UNIT_CATEGORY, Conversion.SPEED)));
-        units.add(register(entry(unitId(Conversion.VOLUME), R.string.volume, R.drawable.ic_volume,
-                Destination.UNIT_CATEGORY, Conversion.VOLUME)));
-        units.add(register(entry(unitId(Conversion.POWER), R.string.power, R.drawable.ic_power,
-                Destination.UNIT_CATEGORY, Conversion.POWER)));
-        units.add(register(entry(unitId(Conversion.PRESSURE), R.string.pressure, R.drawable.ic_pressure,
-                Destination.UNIT_CATEGORY, Conversion.PRESSURE)));
-        units.add(register(entry(unitId(Conversion.ENERGY), R.string.energy, R.drawable.ic_energy,
-                Destination.UNIT_CATEGORY, Conversion.ENERGY)));
-        units.add(register(entry(unitId(Conversion.TORQUE), R.string.torque, R.drawable.ic_torque,
-                Destination.UNIT_CATEGORY, Conversion.TORQUE)));
-        SECTIONS.add(new Section(R.string.drawer_section_units, units));
+        register(entry(unitId(Conversion.LENGTH), R.string.length, R.drawable.ic_length,
+                Destination.UNIT_CATEGORY, Conversion.LENGTH));
+        register(entry(unitId(Conversion.AREA), R.string.area, R.drawable.ic_area,
+                Destination.UNIT_CATEGORY, Conversion.AREA));
+        register(entry(unitId(Conversion.TIME), R.string.time, R.drawable.ic_time,
+                Destination.UNIT_CATEGORY, Conversion.TIME));
+        register(entry(unitId(Conversion.TEMPERATURE), R.string.temperature, R.drawable.ic_temperature,
+                Destination.UNIT_CATEGORY, Conversion.TEMPERATURE));
+        register(entry(unitId(Conversion.MASS), R.string.mass, R.drawable.ic_mass,
+                Destination.UNIT_CATEGORY, Conversion.MASS));
+        register(entry(unitId(Conversion.STORAGE), R.string.storage, R.drawable.ic_storage,
+                Destination.UNIT_CATEGORY, Conversion.STORAGE));
+        register(entry(unitId(Conversion.FUEL), R.string.fuel_consumption, R.drawable.ic_fuel,
+                Destination.UNIT_CATEGORY, Conversion.FUEL));
+        register(entry(unitId(Conversion.COOKING), R.string.cooking, R.drawable.ic_cooking,
+                Destination.UNIT_CATEGORY, Conversion.COOKING));
+        register(entry(unitId(Conversion.SPEED), R.string.speed, R.drawable.ic_speed,
+                Destination.UNIT_CATEGORY, Conversion.SPEED));
+        register(entry(unitId(Conversion.VOLUME), R.string.volume, R.drawable.ic_volume,
+                Destination.UNIT_CATEGORY, Conversion.VOLUME));
+        register(entry(unitId(Conversion.POWER), R.string.power, R.drawable.ic_power,
+                Destination.UNIT_CATEGORY, Conversion.POWER));
+        register(entry(unitId(Conversion.PRESSURE), R.string.pressure, R.drawable.ic_pressure,
+                Destination.UNIT_CATEGORY, Conversion.PRESSURE));
+        register(entry(unitId(Conversion.ENERGY), R.string.energy, R.drawable.ic_energy,
+                Destination.UNIT_CATEGORY, Conversion.ENERGY));
+        register(entry(unitId(Conversion.TORQUE), R.string.torque, R.drawable.ic_torque,
+                Destination.UNIT_CATEGORY, Conversion.TORQUE));
 
-        List<Entry> currency = new ArrayList<>();
-        currency.add(register(entry(ID_CURRENCY, R.string.currency_converter, R.drawable.ic_currency_converter,
+        List<Entry> converters = new ArrayList<>();
+        converters.add(register(entry(ID_UNIT, R.string.drawer_unit_converter, R.drawable.ic_unit_converter,
+                Destination.UNIT_CONVERTER, -1)));
+        converters.add(register(entry(ID_CURRENCY, R.string.currency_converter, R.drawable.ic_currency_converter,
                 Destination.CURRENCY, -1)));
-        SECTIONS.add(new Section(R.string.drawer_section_currency, currency));
+        SECTIONS.add(new Section(R.string.drawer_section_converter, converters));
 
         List<Entry> general = new ArrayList<>();
         general.add(register(entry("explore", R.string.nav_explore, R.drawable.ic_explore, Destination.EXPLORE, -1)));
