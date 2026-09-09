@@ -20,8 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -37,19 +35,17 @@ import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
-import net.smartlogic.unitconverter.helper.HistoryDateLabels;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
@@ -62,9 +58,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     
     private TextView graphyEmpty;
     private TextView graphyContext;
-    private RecyclerView rvHistory;
-    private HistoryAdapter historyAdapter;
-    private final List<Object> historyRows = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge();
@@ -82,18 +75,15 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private int lastWorkspaceTab = 0;
     private boolean calculatePageBound;
     private boolean graphyPageBound;
-    private boolean historyPageBound;
 
     private static final int[] WORKSPACE_LAYOUTS = {
             R.layout.pane_calculator_calculate,
-            R.layout.pane_calculator_graphy,
-            R.layout.pane_calculator_history
+            R.layout.pane_calculator_graphy
     };
 
     private static final int[] WORKSPACE_TAB_TITLES = {
             R.string.tab_calculate,
-            R.string.graphy,
-            R.string.nav_history
+            R.string.graphy
     };
 
     public static CalculatorFragment newInstance() {
@@ -134,6 +124,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             workspaceTabController.detach();
             workspaceTabController = null;
         }
+        graphyPageBound = false;
+        graphyPanelController = null;
+        graphyPanel = null;
+        graphyEmpty = null;
+        graphyContext = null;
         super.onDestroyView();
     }
 
@@ -175,8 +170,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             bindCalculatePage(pageView);
         } else if (position == 1) {
             bindGraphyPage(pageView);
-        } else if (position == 2) {
-            bindHistoryPage(pageView);
         }
     }
 
@@ -235,19 +228,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         graphyEmpty = pageView.findViewById(R.id.graphy_empty);
         graphyContext = pageView.findViewById(R.id.graphy_context);
         graphyPanel = pageView.findViewById(R.id.graphy_panel);
-        graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
-    }
-
-    private void bindHistoryPage(@NonNull View pageView) {
-        if (historyPageBound) {
-            return;
-        }
-        historyPageBound = true;
-
-        rvHistory = pageView.findViewById(R.id.rv_history);
-        historyAdapter = new HistoryAdapter(historyRows, this::restoreFromHistory);
-        rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvHistory.setAdapter(historyAdapter);
+        pageView.post(() -> {
+            if (!isAdded() || graphyPanel == null || graphyPanelController != null) {
+                return;
+            }
+            graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+        });
     }
 
     @Override
@@ -293,11 +279,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         updateGraphyTabState();
     }
 
-    public void openHistoryTab() {
-        selectWorkspaceTab(2);
-    }
-
-    private void restoreFromHistory(@NonNull CalculationHistoryItem item) {
+    public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
         expression = item.expression;
         lastEvaluatedExpression = item.expression;
         isResultDisplayed = false;
@@ -560,46 +542,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             onBackPressedCallback.setEnabled(position != 0);
         }
         if (position == 1) {
-            if (latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
-                showGraphy(latestGraphyOutput);
-            } else {
-                hideGraphy();
-                if (graphyEmpty != null) {
-                    graphyEmpty.setVisibility(View.VISIBLE);
-                }
-                if (graphyPanel != null) {
-                    graphyPanel.setVisibility(View.GONE);
-                }
-                if (graphyContext != null) {
-                    graphyContext.setText("");
-                }
+            if (!hasGraphyContent()) {
+                selectWorkspaceTab(0);
+                return;
             }
+            showGraphy(latestGraphyOutput);
         }
-        if (position == 2) {
-            loadHistory();
-        }
-    }
-
-    private void loadHistory() {
-        List<CalculationHistoryItem> items = dbHelper.getAllHistory();
-        historyRows.clear();
-        String lastSection = null;
-        for (CalculationHistoryItem item : items) {
-            String section = HistoryDateLabels.sectionLabel(requireContext(), item.createdAt);
-            if (!section.equals(lastSection)) {
-                historyRows.add(section);
-                lastSection = section;
-            }
-            historyRows.add(item);
-        }
-        if (getView() != null) {
-            getView().findViewById(R.id.tv_empty_history).setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
-        }
-        historyAdapter.notifyDataSetChanged();
-    }
-
-    private void toggleHistory(boolean show) {
-        selectWorkspaceTab(show ? 2 : 0);
     }
 
     private void calculateResult(boolean isFinal) {
@@ -650,7 +598,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
             if (isFinal) {
                 lastEvaluatedExpression = expression;
-                dbHelper.addHistory(expression, formatted);
+                dbHelper.addHistory(expression, formatted, CalculatorCatalog.ID_BASIC);
                 expression = formatted.replace(",", "");
                 isResultDisplayed = true;
                 updateExpressionDisplay();
@@ -738,82 +686,5 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             expression = "";
         }
         graphyPanelController.update(expression, output);
-    }
-
-    private static class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private static final int TYPE_HEADER = 0;
-        private static final int TYPE_ITEM = 1;
-
-        private final List<Object> rows;
-        private final OnItemClickListener listener;
-
-        interface OnItemClickListener {
-            void onItemClick(CalculationHistoryItem item);
-        }
-
-        HistoryAdapter(List<Object> rows, OnItemClickListener listener) {
-            this.rows = rows;
-            this.listener = listener;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return rows.get(position) instanceof String ? TYPE_HEADER : TYPE_ITEM;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            if (viewType == TYPE_HEADER) {
-                return new HeaderHolder(inflater.inflate(R.layout.item_history_header, parent, false));
-            }
-            return new ItemHolder(inflater.inflate(R.layout.item_history, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            if (holder instanceof HeaderHolder) {
-                ((HeaderHolder) holder).title.setText((String) rows.get(position));
-            } else {
-                CalculationHistoryItem item = (CalculationHistoryItem) rows.get(position);
-                ItemHolder itemHolder = (ItemHolder) holder;
-                ExpressionDisplayFormatter.GraphySemanticTheme theme =
-                        ExpressionDisplayFormatter.GraphySemanticTheme.from(itemHolder.itemView.getContext());
-                itemHolder.tvExpression.setText(
-                        ExpressionDisplayFormatter.formatSpannable(item.expression, Preferences.getInstance(itemHolder.itemView.getContext()), theme)
-                );
-                itemHolder.tvResult.setText(item.result);
-                itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt));
-                itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return rows.size();
-        }
-
-        static class HeaderHolder extends RecyclerView.ViewHolder {
-            final TextView title;
-
-            HeaderHolder(View v) {
-                super(v);
-                title = v.findViewById(R.id.tv_history_section);
-            }
-        }
-
-        static class ItemHolder extends RecyclerView.ViewHolder {
-            final TextView tvExpression;
-            final TextView tvResult;
-            final TextView tvTime;
-
-            ItemHolder(View v) {
-                super(v);
-                tvExpression = v.findViewById(R.id.tv_history_expression);
-                tvResult = v.findViewById(R.id.tv_history_result);
-                tvTime = v.findViewById(R.id.tv_history_time);
-            }
-        }
     }
 }

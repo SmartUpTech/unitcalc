@@ -36,8 +36,10 @@ import net.smartlogic.unitconverter.fragment.CalculatorFragment;
 import net.smartlogic.unitconverter.fragment.ConverterFragment;
 import net.smartlogic.unitconverter.fragment.ExploreFragment;
 import net.smartlogic.unitconverter.fragment.FavoritesFragment;
+import net.smartlogic.unitconverter.fragment.HistoryFragment;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
@@ -145,8 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case HISTORY:
-                selectTab(R.id.calculator);
-                runOnCalculatorFragment(CalculatorFragment::openHistoryTab);
+                selectTab(R.id.history);
                 break;
             case RATE_APP:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_app_link))));
@@ -155,6 +156,44 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 shareApp();
                 break;
             default:
+                break;
+        }
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
+    public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
+        CalculatorCatalog.Entry entry = CalculatorCatalog.getById(item.calculatorId);
+        if (entry == null) {
+            entry = CalculatorCatalog.getById(CalculatorCatalog.ID_BASIC);
+        }
+        if (entry == null) {
+            return;
+        }
+
+        final CalculatorCatalog.Entry targetEntry = entry;
+        switch (targetEntry.destination) {
+            case BASIC_CALCULATOR:
+                selectTab(R.id.calculator);
+                runOnCalculatorFragment(fragment -> fragment.restoreFromHistory(item));
+                break;
+            case UNIT_CATEGORY:
+                selectTab(R.id.converter);
+                runOnConverterFragment(fragment -> {
+                    fragment.openConvertWorkspace();
+                    fragment.openUnitCategory(targetEntry.unitCategoryId);
+                });
+                break;
+            case CURRENCY:
+                selectTab(R.id.converter);
+                runOnConverterFragment(fragment -> {
+                    fragment.openConvertWorkspace();
+                    fragment.openCurrencyMode();
+                });
+                break;
+            default:
+                selectTab(R.id.calculator);
+                runOnCalculatorFragment(fragment -> fragment.restoreFromHistory(item));
                 break;
         }
         refreshActiveCalculatorId();
@@ -170,36 +209,40 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
     }
 
-    private void runOnConverterFragment(@NonNull ConverterAction action) {
+    private void runOnConverterFragment(@NonNull ConverterFragment.ReadyAction action) {
+        Runnable task = () -> {
+            Fragment fragment = tabFragments.get(R.id.converter);
+            if (fragment instanceof ConverterFragment) {
+                ((ConverterFragment) fragment).runWhenReady(action);
+            }
+        };
+
         Fragment fragment = tabFragments.get(R.id.converter);
         if (fragment instanceof ConverterFragment) {
-            action.run((ConverterFragment) fragment);
-        } else {
-            findViewById(R.id.frame_layout).post(() -> {
-                Fragment loaded = tabFragments.get(R.id.converter);
-                if (loaded instanceof ConverterFragment) {
-                    action.run((ConverterFragment) loaded);
-                }
-            });
+            task.run();
+            return;
         }
+
+        selectTab(R.id.converter);
+        findViewById(R.id.frame_layout).post(task);
     }
 
     private void runOnCalculatorFragment(@NonNull CalculatorAction action) {
+        Runnable task = () -> {
+            Fragment fragment = tabFragments.get(R.id.calculator);
+            if (fragment instanceof CalculatorFragment) {
+                action.run((CalculatorFragment) fragment);
+            }
+        };
+
         Fragment fragment = tabFragments.get(R.id.calculator);
         if (fragment instanceof CalculatorFragment) {
-            action.run((CalculatorFragment) fragment);
-        } else {
-            findViewById(R.id.frame_layout).post(() -> {
-                Fragment loaded = tabFragments.get(R.id.calculator);
-                if (loaded instanceof CalculatorFragment) {
-                    action.run((CalculatorFragment) loaded);
-                }
-            });
+            task.run();
+            return;
         }
-    }
 
-    private interface ConverterAction {
-        void run(@NonNull ConverterFragment fragment);
+        selectTab(R.id.calculator);
+        findViewById(R.id.frame_layout).post(task);
     }
 
     private interface CalculatorAction {
@@ -212,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         registerRestoredFragment(R.id.calculator, AppConst.TAG_CALC);
         registerRestoredFragment(R.id.converter, AppConst.TAG_CONVERTER);
+        registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
     }
@@ -260,6 +304,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         transaction.commit();
         activeFragment = fragment;
+        if (itemId == R.id.converter && fragment instanceof ConverterFragment) {
+            ((ConverterFragment) fragment).openConvertWorkspace();
+        }
         updateCurrentTag(itemId);
     }
 
@@ -270,6 +317,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         if (itemId == R.id.converter) {
             return ConverterFragment.newInstance();
+        }
+        if (itemId == R.id.history) {
+            return HistoryFragment.newInstance();
         }
         if (itemId == R.id.explore) {
             return ExploreFragment.newInstance();
@@ -285,6 +335,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             AppConst.CURRENT_TAG = AppConst.TAG_CALC;
         } else if (itemId == R.id.converter) {
             AppConst.CURRENT_TAG = AppConst.TAG_CONVERTER;
+        } else if (itemId == R.id.history) {
+            AppConst.CURRENT_TAG = AppConst.TAG_HISTORY;
         } else if (itemId == R.id.explore) {
             AppConst.CURRENT_TAG = AppConst.TAG_EXPLORE;
         } else if (itemId == R.id.favorites) {
@@ -298,6 +350,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         if (AppConst.TAG_CONVERTER.equals(tag)) {
             return R.id.converter;
+        }
+        if (AppConst.TAG_HISTORY.equals(tag)) {
+            return R.id.history;
         }
         if (AppConst.TAG_EXPLORE.equals(tag)) {
             return R.id.explore;
@@ -315,6 +370,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         if (itemId == R.id.converter) {
             return AppConst.TAG_CONVERTER;
+        }
+        if (itemId == R.id.history) {
+            return AppConst.TAG_HISTORY;
         }
         if (itemId == R.id.explore) {
             return AppConst.TAG_EXPLORE;

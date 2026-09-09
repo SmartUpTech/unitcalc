@@ -46,20 +46,22 @@ public final class WorkspaceTabController {
                     return;
                 }
                 if (!callback.isTabEnabled(position)) {
-                    int skipTarget = findSkipTarget(position, lastValidPosition);
-                    if (skipTarget >= 0) {
-                        suppressPageCallback = true;
-                        pager.setCurrentItem(skipTarget, false);
-                        suppressPageCallback = false;
-                        lastValidPosition = skipTarget;
-                        callback.onTabSelected(skipTarget);
-                    } else {
-                        revertToLastValidTab();
-                    }
+                    revertToLastValidTab();
                     return;
                 }
                 lastValidPosition = position;
                 callback.onTabSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if (state != ViewPager2.SCROLL_STATE_IDLE || suppressPageCallback) {
+                    return;
+                }
+                int current = pager.getCurrentItem();
+                if (!callback.isTabEnabled(current)) {
+                    revertToLastValidTab();
+                }
             }
         });
 
@@ -68,7 +70,7 @@ public final class WorkspaceTabController {
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
                 if (!callback.isTabEnabled(position)) {
-                    revertTabSelection();
+                    revertToLastValidTab();
                 }
             }
 
@@ -88,7 +90,7 @@ public final class WorkspaceTabController {
 
     public void selectTab(int position) {
         if (!callback.isTabEnabled(position)) {
-            revertTabSelection();
+            revertToLastValidTab();
             return;
         }
         if (pager.getCurrentItem() == position) {
@@ -118,22 +120,5 @@ public final class WorkspaceTabController {
         if (tab != null) {
             tab.select();
         }
-    }
-
-    private int findSkipTarget(int disabledPosition, int originPosition) {
-        int pageCount = pager.getAdapter() != null ? pager.getAdapter().getItemCount() : 0;
-        int forward = disabledPosition + 1;
-        if (disabledPosition > originPosition
-                && forward < pageCount
-                && callback.isTabEnabled(forward)) {
-            return forward;
-        }
-        int backward = disabledPosition - 1;
-        if (disabledPosition < originPosition
-                && backward >= 0
-                && callback.isTabEnabled(backward)) {
-            return backward;
-        }
-        return -1;
     }
 }
