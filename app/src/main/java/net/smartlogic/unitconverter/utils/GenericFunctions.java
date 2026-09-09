@@ -26,9 +26,11 @@ public class GenericFunctions {
             return;
         }
 
-        String text = textView.getText().toString();
-        if (text.isEmpty()) {
+        CharSequence text = textView.getText();
+        if (text == null || text.length() == 0) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, maxSp);
+            textView.setHorizontallyScrolling(false);
+            textView.scrollTo(0, 0);
             return;
         }
 
@@ -43,7 +45,7 @@ public class GenericFunctions {
         // Reduction loop: start from max and go down until it fits or hits 8sp
         while (targetSizeSp > 8) {
             paint.setTextSize(targetSizeSp * density);
-            if (paint.measureText(text) > availableWidth) {
+            if (paint.measureText(text, 0, text.length()) > availableWidth) {
                 targetSizeSp -= 2;
             } else {
                 break;
@@ -53,6 +55,18 @@ public class GenericFunctions {
 
         if (Math.abs(targetSizeSp - currentSizeSp) > 0.1) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, targetSizeSp);
+        }
+
+        paint.setTextSize(textView.getTextSize());
+        boolean overflow = paint.measureText(text, 0, text.length()) > availableWidth;
+        textView.setHorizontallyScrolling(overflow);
+        if (overflow) {
+            textView.post(() -> {
+                int scrollX = (int) (paint.measureText(text, 0, text.length()) - availableWidth);
+                textView.scrollTo(Math.max(0, scrollX), 0);
+            });
+        } else {
+            textView.scrollTo(0, 0);
         }
     }
 

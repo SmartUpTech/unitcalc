@@ -2,19 +2,19 @@
 <resources>
     <!-- Option 1: Soft Accent (Light) -->
     <!-- Unified chrome: app bar, bottom nav, and main screen share one surface color -->
-    <color name="chrome_surface">#FCFBF7</color>
-    <color name="screen_background">@color/chrome_surface</color>
-    <color name="surface_elevated">#FCFBF7</color>
-    <color name="screen_expression_text">#6B7280</color>
-    <color name="screen_result_text">#000000</color>
-    <color name="keypad_background">@color/chrome_surface</color>
+    <color name="chrome_surface">@color/semantic_background</color>
+    <color name="screen_background">@color/semantic_background</color>
+    <color name="surface_elevated">@color/semantic_background</color>
+    <color name="screen_expression_text">@color/semantic_secondary_text</color>
+    <color name="screen_result_text">@color/semantic_number</color>
+    <color name="keypad_background">@color/semantic_background</color>
 
-    <!-- Graphy Calculator keypad (light): text-only keys, no backgrounds -->
-    <!-- Gray scale: "N points off black" = N% white mixed into #000000 -->
-    <color name="calc_key_number">#0D0D0D</color>       <!-- 5% off black -->
-    <color name="calc_key_function">#1A1A1A</color>      <!-- 10% off black: %, ^, √, (, ), -/+, backspace -->
-    <color name="calc_key_operator">#9A7B2E</color>      <!-- sober mustard gold: +, -, ×, ÷ -->
-    <color name="calc_key_equals">#D94A3D</color>        <!-- medium coral red: = -->
+    <!-- Calculator keypad semantic colors (text-only keys, no backgrounds) -->
+    <color name="calc_key_number">@color/semantic_number</color>
+    <color name="calc_key_function">@color/semantic_function</color>
+    <color name="calc_key_operator">@color/semantic_operator</color>
+    <color name="calc_key_utility">@color/semantic_utility</color>
+    <color name="calc_key_equals">@color/semantic_equal</color>
 
     <color name="key_number_bg">#00000000</color>
     <color name="key_number_text">#000000</color>
