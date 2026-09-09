@@ -22,6 +22,7 @@ public final class CalculatorCatalog {
     public static final String ID_BASIC = CalculationSnapshot.BASIC_CALCULATOR_ID;
     public static final String ID_UNIT = "unit_converter";
     public static final String ID_CURRENCY = "currency";
+    public static final String ID_TIMER = "timer";
     private static final String UNIT_PREFIX = "unit:";
 
     public enum Destination {
@@ -33,6 +34,7 @@ public final class CalculatorCatalog {
         FAVORITES,
         SETTINGS,
         HISTORY,
+        TIMER,
         RATE_APP,
         SHARE_APP
     }
@@ -62,7 +64,8 @@ public final class CalculatorCatalog {
         public boolean isFavoriteEligible() {
             return destination == Destination.BASIC_CALCULATOR
                     || destination == Destination.UNIT_CATEGORY
-                    || destination == Destination.CURRENCY;
+                    || destination == Destination.CURRENCY
+                    || destination == Destination.TIMER;
         }
     }
 
@@ -122,6 +125,11 @@ public final class CalculatorCatalog {
         converters.add(register(entry(ID_CURRENCY, R.string.currency_converter, R.drawable.ic_currency_converter,
                 Destination.CURRENCY, -1)));
         SECTIONS.add(new Section(R.string.drawer_section_converter, converters));
+
+        List<Entry> utilities = new ArrayList<>();
+        utilities.add(register(entry(ID_TIMER, R.string.timer, R.drawable.ic_timer,
+                Destination.TIMER, -1)));
+        SECTIONS.add(new Section(R.string.drawer_section_utilities, utilities));
 
         List<Entry> general = new ArrayList<>();
         general.add(register(entry("explore", R.string.nav_explore, R.drawable.ic_explore, Destination.EXPLORE, -1)));

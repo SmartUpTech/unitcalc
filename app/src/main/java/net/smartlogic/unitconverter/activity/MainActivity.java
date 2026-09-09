@@ -41,8 +41,11 @@ import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.timer.TimerFragment;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
+
+    public static final String EXTRA_OPEN_TIMER = "open_timer";
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private boolean initialTabSelected;
     private FavoritesRepository favoritesRepository;
     private String activeCalculatorId = CalculatorCatalog.ID_BASIC;
+    private Fragment timerFragment;
+    private boolean timerVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +99,22 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         restoreFragmentsIfNeeded(savedInstanceState);
         setUpBottomNavigation();
+        if (shouldOpenTimer(getIntent())) {
+            showTimerScreen();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (shouldOpenTimer(intent)) {
+            showTimerScreen();
+        }
+    }
+
+    private boolean shouldOpenTimer(@Nullable Intent intent) {
+        return intent != null && intent.getBooleanExtra(EXTRA_OPEN_TIMER, false);
     }
 
     private void setupDrawerMenu() {
@@ -152,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 break;
             case HISTORY:
                 selectTab(R.id.history);
+                break;
+            case TIMER:
+                showTimerScreen();
                 break;
             case RATE_APP:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_app_link))));
@@ -262,6 +286,14 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
+        Fragment restoredTimer = getSupportFragmentManager().findFragmentByTag(AppConst.TAG_TIMER);
+        if (restoredTimer != null) {
+            timerFragment = restoredTimer;
+            timerVisible = !restoredTimer.isHidden();
+            if (timerVisible) {
+                activeFragment = restoredTimer;
+            }
+        }
     }
 
     private void registerRestoredFragment(int menuId, String tag) {
@@ -290,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void selectTab(int itemId) {
+        hideTimerScreen(false);
         Fragment fragment = tabFragments.get(itemId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -388,11 +421,56 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void refreshActiveCalculatorId() {
-        if (activeFragment instanceof CalculatorFragment) {
+        if (timerVisible) {
+            activeCalculatorId = CalculatorCatalog.ID_TIMER;
+        } else if (activeFragment instanceof CalculatorFragment) {
             activeCalculatorId = CalculatorCatalog.ID_BASIC;
         } else if (activeFragment instanceof ConverterFragment) {
             activeCalculatorId = ((ConverterFragment) activeFragment).getActiveCatalogId();
         }
+    }
+
+    private void showTimerScreen() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (timerFragment == null) {
+            timerFragment = getSupportFragmentManager().findFragmentByTag(AppConst.TAG_TIMER);
+        }
+        if (timerFragment == null) {
+            timerFragment = TimerFragment.newInstance();
+            if (activeFragment != null && !timerVisible) {
+                transaction.hide(activeFragment);
+            }
+            transaction.add(R.id.frame_layout, timerFragment, AppConst.TAG_TIMER);
+        } else if (!timerVisible) {
+            if (activeFragment != null) {
+                transaction.hide(activeFragment);
+            }
+            transaction.show(timerFragment);
+        }
+        transaction.commit();
+        timerVisible = true;
+        activeFragment = timerFragment;
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
+    private void hideTimerScreen(boolean restoreTab) {
+        if (!timerVisible || timerFragment == null) {
+            return;
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.hide(timerFragment);
+        if (restoreTab) {
+            Fragment tabFragment = tabFragments.get(resolveMenuIdForTag(AppConst.CURRENT_TAG));
+            if (tabFragment != null) {
+                transaction.show(tabFragment);
+                activeFragment = tabFragment;
+            }
+        }
+        transaction.commit();
+        timerVisible = false;
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
     }
 
     private void updateFavoriteMenuItem() {
@@ -476,6 +554,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     public void onBackPressed() {
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        if (timerVisible) {
+            hideTimerScreen(true);
             return;
         }
         super.onBackPressed();

@@ -17,10 +17,11 @@ public class CalculatorCatalogTest {
     public void drawerSections_groupConvertersUnderSingleCategory() {
         List<CalculatorCatalog.Section> sections = CalculatorCatalog.getSections();
 
-        assertEquals(3, sections.size());
+        assertEquals(4, sections.size());
         assertEquals(R.string.drawer_section_calculators, sections.get(0).titleRes);
         assertEquals(R.string.drawer_section_converter, sections.get(1).titleRes);
-        assertEquals(R.string.drawer_section_general, sections.get(2).titleRes);
+        assertEquals(R.string.drawer_section_utilities, sections.get(2).titleRes);
+        assertEquals(R.string.drawer_section_general, sections.get(3).titleRes);
 
         CalculatorCatalog.Section converterSection = sections.get(1);
         assertEquals(2, converterSection.entries.size());
@@ -44,6 +45,14 @@ public class CalculatorCatalogTest {
             }
         }
         assertTrue(hasUnitCategory);
+    }
+
+    @Test
+    public void timerEntry_isFavoriteEligible() {
+        CalculatorCatalog.Entry entry = CalculatorCatalog.getById(CalculatorCatalog.ID_TIMER);
+        assertNotNull(entry);
+        assertTrue(entry.isFavoriteEligible());
+        assertEquals(CalculatorCatalog.Destination.TIMER, entry.destination);
     }
 
     @Test

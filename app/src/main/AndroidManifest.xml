@@ -5,6 +5,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".app.UnitConverter"
@@ -45,6 +51,44 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.smartlogic.unitconverter.activity.MainActivity" />
         </activity>
+
+        <service
+            android:name=".timer.service.TimerForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="timer_countdown" />
+        </service>
+
+        <receiver
+            android:name=".timer.service.TimerAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="net.smartlogic.unitconverter.timer.ALARM" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".timer.service.TimerActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="net.smartlogic.unitconverter.timer.PAUSE" />
+                <action android:name="net.smartlogic.unitconverter.timer.RESUME" />
+                <action android:name="net.smartlogic.unitconverter.timer.STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".timer.widget.TimerWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/timer_widget_info" />
+        </receiver>
 
     </application>
 
