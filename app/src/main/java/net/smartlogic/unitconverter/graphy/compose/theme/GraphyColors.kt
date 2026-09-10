@@ -6,6 +6,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import net.smartlogic.unitconverter.theme.CalculatorTheme
+import net.smartlogic.unitconverter.theme.ThemeManager
 
 @Immutable
 data class GraphySemanticColors(
@@ -150,5 +152,73 @@ fun graphyDarkSemanticColors(): GraphySemanticColors = GraphySemanticColors(
     onOperation = Color(0xFFFFFFFF),
     onResult = GraphyPalette.ResultOn,
 )
+
+fun graphySemanticColors(theme: CalculatorTheme): GraphySemanticColors {
+    val background = Color(theme.background)
+    val main = Color(theme.mainText)
+    val functions = Color(theme.functions)
+    val operator = Color(theme.operatorContentColor())
+    val equal = Color(theme.equal)
+    val light = graphyLightSemanticColors()
+    return light.copy(
+        background = background,
+        primaryText = main,
+        secondaryText = functions,
+        number = main,
+        operator = operator,
+        function = functions,
+        utility = functions,
+        equal = equal,
+        connector = functions,
+        connectorHighlight = functions,
+        surfaceElevated = background,
+    )
+}
+
+fun graphyColorScheme(theme: CalculatorTheme): ColorScheme {
+    val background = Color(theme.background)
+    val main = Color(theme.mainText)
+    val functions = Color(theme.functions)
+    val onEqual = Color(theme.background)
+    return if (theme.isLightBackground()) {
+        lightColorScheme(
+            primary = main,
+            onPrimary = onEqual,
+            secondary = functions,
+            onSecondary = onEqual,
+            tertiary = Color(theme.equal),
+            onTertiary = onEqual,
+            background = background,
+            onBackground = main,
+            surface = background,
+            onSurface = main,
+            surfaceContainerHigh = background,
+            onSurfaceVariant = functions,
+            outline = functions,
+        )
+    } else {
+        darkColorScheme(
+            primary = main,
+            onPrimary = background,
+            secondary = functions,
+            onSecondary = background,
+            tertiary = Color(theme.equal),
+            onTertiary = background,
+            background = background,
+            onBackground = main,
+            surface = background,
+            onSurface = main,
+            surfaceContainerHigh = background,
+            onSurfaceVariant = functions,
+            outline = functions,
+        )
+    }
+}
+
+fun graphySemanticColorsFromManager(): GraphySemanticColors =
+    graphySemanticColors(ThemeManager.get())
+
+fun graphyColorSchemeFromManager(): ColorScheme =
+    graphyColorScheme(ThemeManager.get())
 
 val LocalGraphySemanticColors = staticCompositionLocalOf { graphyLightSemanticColors() }

@@ -17,6 +17,7 @@ import net.smartlogic.unitconverter.activity.MainActivity;
 import net.smartlogic.unitconverter.adapter.CalculatorCatalogAdapter;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,12 +66,16 @@ public class FavoritesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         loadFavorites();
+        ThemeApplier.apply(view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         loadFavorites();
+        if (getView() != null) {
+            ThemeApplier.apply(getView());
+        }
     }
 
     private void loadFavorites() {

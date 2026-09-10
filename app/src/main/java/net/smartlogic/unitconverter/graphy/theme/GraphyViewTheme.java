@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 
 /**
  * Typed accessor for Graphy design tokens.
@@ -21,12 +22,12 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getBackgroundColor() {
-        return color(R.color.graphy_background);
+        return ThemeManager.get().background;
     }
 
     @ColorInt
     public int getPrimaryTextColor() {
-        return color(R.color.graphy_primary_text);
+        return ThemeManager.get().mainText;
     }
 
     @ColorInt
@@ -51,12 +52,12 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getResultFillColor() {
-        return color(R.color.graphy_result_fill);
+        return ThemeManager.get().equal;
     }
 
     @ColorInt
     public int getResultOnColor() {
-        return color(R.color.graphy_result_on);
+        return ThemeManager.get().background;
     }
 
     @ColorInt
@@ -76,7 +77,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getResultNodeColor() {
-        return color(R.color.graphy_result_fill);
+        return ThemeManager.get().equal;
     }
 
     @ColorInt
@@ -86,22 +87,22 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getConnectorColor() {
-        return color(R.color.graphy_connector);
+        return ThemeManager.get().functions;
     }
 
     @ColorInt
     public int getConnectorHighlightColor() {
-        return color(R.color.graphy_connector_highlight);
+        return ThemeManager.get().functions;
     }
 
     @ColorInt
     public int getSurfaceColor() {
-        return color(R.color.graphy_surface);
+        return ThemeManager.get().background;
     }
 
     @ColorInt
     public int getSurfaceElevatedColor() {
-        return color(R.color.graphy_surface_elevated);
+        return ThemeManager.get().background;
     }
 
     @ColorInt
@@ -126,7 +127,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getOnResultColor() {
-        return color(R.color.graphy_on_result);
+        return ThemeManager.get().background;
     }
 
     @ColorInt
@@ -146,7 +147,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getSecondaryColor() {
-        return color(R.color.graphy_secondary);
+        return ThemeManager.get().functions;
     }
 
     public float getNodeCornerRadius() {

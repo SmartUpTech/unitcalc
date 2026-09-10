@@ -26,6 +26,7 @@ import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,8 +124,17 @@ public class ConverterFragment extends Fragment {
                 }
         );
         updateGraphyTabState();
+        ThemeApplier.apply(view);
         if (pendingOpenConvertWorkspace) {
             openConvertWorkspace();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            ThemeApplier.apply(getView());
         }
     }
 
@@ -146,6 +156,7 @@ public class ConverterFragment extends Fragment {
     }
 
     private void bindWorkspacePage(int position, @NonNull View pageView) {
+        ThemeApplier.apply(pageView);
         if (position == 0) {
             bindConvertPage(pageView);
         } else if (position == 1) {

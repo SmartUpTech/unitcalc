@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
-import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeDefaults
 import net.smartlogic.unitconverter.timer.compose.TimerScreen
 
 class TimerFragment : Fragment() {
@@ -32,8 +31,7 @@ class TimerFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                val darkTheme = GraphyThemeDefaults.isDarkTheme(requireContext())
-                GraphyTheme(darkTheme = darkTheme) {
+                GraphyTheme {
                     TimerScreen(viewModel = viewModel)
                 }
             }

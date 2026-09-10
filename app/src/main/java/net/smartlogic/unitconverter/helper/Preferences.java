@@ -9,7 +9,7 @@ import net.smartlogic.unitconverter.R;
 
 public class Preferences {
 
-    public static final String PREFS_THEME = "pref_theme";
+    public static final String PREFS_SELECTED_THEME = "selected_theme";
     public static final String PREFS_NUMBER_OF_DECIMALS = "number_decimals";
     public static final String PREFS_DECIMAL_SEPARATOR = "decimal_separator";
     public static final String PREFS_GROUP_SEPARATOR = "group_separator";
@@ -43,15 +43,12 @@ public class Preferences {
         return mPrefs;
     }
 
-    public boolean isLightTheme() {
-        return !mPrefs.getBoolean(PREFS_THEME, false);
+    public String getSelectedThemeId() {
+        return mPrefs.getString(PREFS_SELECTED_THEME, "porcelain_white");
     }
 
-    public String getPrefsTheme() {
-        if (mPrefs.getBoolean(PREFS_THEME, false)) {
-            return ThemeHelper.DARK_MODE;
-        }
-        return ThemeHelper.LIGHT_MODE;
+    public void setSelectedThemeId(String themeId) {
+        mPrefs.edit().putString(PREFS_SELECTED_THEME, themeId).apply();
     }
 
     public int getLastConversion() {

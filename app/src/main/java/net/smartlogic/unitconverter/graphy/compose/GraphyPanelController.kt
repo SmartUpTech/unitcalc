@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
-import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeDefaults
 import net.smartlogic.unitconverter.graphy.compose.ui.GraphyPanel
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme
@@ -49,8 +48,7 @@ class GraphyPanelController(
         }
         compositionInstalled = true
         composeView.setContent {
-            val darkTheme = GraphyThemeDefaults.isDarkTheme(composeView.context)
-            GraphyTheme(darkTheme = darkTheme) {
+            GraphyTheme {
                 GraphyPanel(
                     expression = expression,
                     output = output,

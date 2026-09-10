@@ -4,8 +4,8 @@ import android.app.Application;
 
 import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.AppOpenManager;
-import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.ThemeHelper;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 
 public class UnitConverter extends Application {
 
@@ -15,7 +15,7 @@ public class UnitConverter extends Application {
         AdMobManager.getInstance(this);
         AppOpenManager.getInstance(this);
 
-        Preferences pref = Preferences.getInstance(this);
-        ThemeHelper.applyTheme(pref.getPrefsTheme());
+        ThemeHelper.lockResourceNightMode();
+        ThemeManager.init(this);
     }
 }

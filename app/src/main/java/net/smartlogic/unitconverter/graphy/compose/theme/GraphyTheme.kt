@@ -1,27 +1,37 @@
 package net.smartlogic.unitconverter.graphy.compose.theme
 
-import android.content.Context
-import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import net.smartlogic.unitconverter.theme.CalculatorTheme
+import net.smartlogic.unitconverter.theme.ThemeManager
 
 object GraphyThemeDefaults {
-    fun isDarkTheme(context: Context): Boolean {
-        val nightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return nightMode == Configuration.UI_MODE_NIGHT_YES
-    }
+    fun currentTheme(): CalculatorTheme = ThemeManager.get()
+
+    fun isDarkTheme(): Boolean = !ThemeManager.get().isLightBackground()
 }
 
 @Composable
 fun GraphyTheme(
-    darkTheme: Boolean = isGraphyDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) graphyDarkColorScheme() else graphyLightColorScheme()
-    val semanticColors = if (darkTheme) graphyDarkSemanticColors() else graphyLightSemanticColors()
+    var revision by remember { mutableIntStateOf(0) }
+    DisposableEffect(Unit) {
+        val listener = ThemeManager.Listener { revision++ }
+        ThemeManager.addListener(listener)
+        onDispose { ThemeManager.removeListener(listener) }
+    }
+    revision
+
+    val theme = ThemeManager.get()
+    val colorScheme = graphyColorScheme(theme)
+    val semanticColors = graphySemanticColors(theme)
 
     CompositionLocalProvider(
         LocalGraphySemanticColors provides semanticColors,
@@ -41,13 +51,7 @@ fun GraphyTheme(
 }
 
 @Composable
-fun isGraphyDarkTheme(): Boolean {
-    val context = LocalContext.current
-    return when {
-        GraphyThemeDefaults.isDarkTheme(context) -> true
-        else -> isSystemInDarkTheme()
-    }
-}
+fun isGraphyDarkTheme(): Boolean = GraphyThemeDefaults.isDarkTheme()
 
 object GraphyThemeTokens {
     val semanticColors: GraphySemanticColors
