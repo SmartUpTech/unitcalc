@@ -18,18 +18,21 @@
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
     <string name="calculator">Calculator</string>
+
+    <!-- Calculator keypad: operators and functions (shared across calculators) -->
     <string name="plus">+</string>
+    <string name="minus">-</string>
     <string name="multiply">×</string>
     <string name="divide">÷</string>
+    <string name="equal">=</string>
     <string name="clear">AC</string>
-    <string name="history">History</string>
-    <string name="no_history">No history yet</string>
-    <string name="scientific_mode">Scientific Mode</string>
-    <string name="standard_mode">Standard Mode</string>
-    <string name="history_cleared">History cleared</string>
-    <string name="invalid_expression">Invalid Expression</string>
+    <string name="sqrt">√</string>
+    <string name="exponent">^</string>
+    <string name="percent">%</string>
+    <string name="parenthesis_open">(</string>
+    <string name="parenthesis_close">)</string>
 
-    <!-- Numbers -->
+    <!-- Calculator keypad: numbers -->
     <string name="one">1</string>
     <string name="two">2</string>
     <string name="three">3</string>
@@ -40,10 +43,31 @@
     <string name="eight">8</string>
     <string name="nine">9</string>
     <string name="zero">0</string>
-    <string name="minus">−</string>
     <string name="double_zero">00</string>
     <string name="dot">.</string>
-    <string name="equal">=</string>
+
+    <!-- Calculator parser tokens (do not translate) -->
+    <string name="func_sqrt" translatable="false">sqrt</string>
+    <string name="func_sqrt_paren" translatable="false">sqrt(</string>
+
+    <!-- Calculator UI -->
+    <string name="history">History</string>
+    <string name="no_history">No history yet</string>
+    <string name="scientific_mode">Scientific Mode</string>
+    <string name="standard_mode">Standard Mode</string>
+    <string name="history_cleared">History cleared</string>
+    <string name="invalid_expression">Invalid Expression</string>
+    <string name="clip_label_calculator_result">Calculator Result</string>
+
+    <!-- Calculator content descriptions -->
+    <string name="cd_history">History</string>
+    <string name="cd_close_history">Close History</string>
+    <string name="cd_clear_history">Clear History</string>
+    <string name="cd_backspace">Backspace</string>
+    <string name="cd_copy">Copy</string>
+    <string name="cd_reverse">Reverse</string>
+    <string name="cd_share">Share</string>
+    <string name="cd_refresh">Refresh</string>
 
     <!-- Conversions -->
     <string name="area">Area</string>

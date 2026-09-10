@@ -220,14 +220,14 @@
             <ImageButton
                 android:id="@+id/share"
                 style="@style/ActionButtons"
-                android:contentDescription="Share"
+                android:contentDescription="@string/cd_share"
                 android:src="@drawable/share"
                 app:tint="@color/colorNewGrey" />
 
             <ImageButton
                 android:id="@+id/refresh"
                 style="@style/ActionButtons"
-                android:contentDescription="Refresh"
+                android:contentDescription="@string/cd_refresh"
                 android:src="@drawable/ic_unit_converter"
                 app:tint="@color/colorNewGrey" />
         </LinearLayout>
@@ -319,7 +319,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="@drawable/pad_button_background"
-                    android:contentDescription="Reverse"
+                    android:contentDescription="@string/cd_reverse"
                     android:src="@drawable/ic_reverse"
                     app:tint="@color/display_result_text_color" />
 
@@ -329,7 +329,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="@drawable/pad_button_background"
-                    android:contentDescription="Backspace"
+                    android:contentDescription="@string/cd_backspace"
                     android:src="@drawable/backspace"
                     app:tint="@color/display_result_text_color" />
 
@@ -339,7 +339,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="@drawable/pad_button_background"
-                    android:contentDescription="Copy"
+                    android:contentDescription="@string/cd_copy"
                     android:src="@drawable/ic_copy"
                     app:tint="@color/display_result_text_color" />
 
@@ -349,7 +349,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="AC"
+                    android:text="@string/clear"
                     android:textColor="@android:color/holo_red_dark" />
             </LinearLayout>
         </LinearLayout>
