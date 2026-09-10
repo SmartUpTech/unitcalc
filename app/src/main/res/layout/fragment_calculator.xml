@@ -36,7 +36,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_history"
                     app:tint="@color/colorNewGrey"
-                    android:contentDescription="History" />
+                    android:contentDescription="@string/cd_history" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                         android:textSize="@dimen/h1"
                         android:maxLines="1"
                         android:ellipsize="start"
-                        android:text="0" />
+                        android:text="@string/zero" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -93,7 +93,7 @@
                     android:background="@drawable/pad_button_background"
                     android:src="@drawable/backspace"
                     app:tint="@color/display_result_text_color"
-                    android:contentDescription="Backspace" />
+                    android:contentDescription="@string/cd_backspace" />
 
                 <ImageButton
                     android:id="@+id/copy"
@@ -103,7 +103,7 @@
                     android:background="@drawable/pad_button_background"
                     android:src="@drawable/ic_copy"
                     app:tint="@color/display_result_text_color"
-                    android:contentDescription="Copy" />
+                    android:contentDescription="@string/cd_copy" />
 
             </LinearLayout>
 
@@ -116,10 +116,10 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp"
                 android:weightSum="4">
-                <Button android:id="@+id/parenthesis_open" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="(" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/parenthesis_close" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text=")" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/power" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="^" android:textColor="@color/colorHighlighter" />
-                <Button android:id="@+id/sqrt" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="√" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/parenthesis_open" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="@string/parenthesis_open" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/parenthesis_close" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="@string/parenthesis_close" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/power" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="@string/exponent" android:textColor="@color/colorHighlighter" />
+                <Button android:id="@+id/sqrt" style="@style/ButtonStyle.Number" android:layout_width="0dp" android:layout_weight="1" android:text="@string/sqrt" android:textColor="@color/colorHighlighter" />
             </LinearLayout>
 
             <!-- Number Pad -->
@@ -135,10 +135,10 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:stretchColumns="*">
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/seven" style="@style/ButtonStyle.Number" android:text="7" /><Button android:id="@+id/eight" style="@style/ButtonStyle.Number" android:text="8" /><Button android:id="@+id/nine" style="@style/ButtonStyle.Number" android:text="9" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/four" style="@style/ButtonStyle.Number" android:text="4" /><Button android:id="@+id/five" style="@style/ButtonStyle.Number" android:text="5" /><Button android:id="@+id/six" style="@style/ButtonStyle.Number" android:text="6" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/one" style="@style/ButtonStyle.Number" android:text="1" /><Button android:id="@+id/two" style="@style/ButtonStyle.Number" android:text="2" /><Button android:id="@+id/three" style="@style/ButtonStyle.Number" android:text="3" /></TableRow>
-                    <TableRow android:layout_weight="1"><Button android:id="@+id/zero" style="@style/ButtonStyle.Number" android:text="0" /><Button android:id="@+id/dot" style="@style/ButtonStyle.Number" android:text="." /><Button android:id="@+id/percent" style="@style/ButtonStyle.Number" android:text="%" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/seven" style="@style/ButtonStyle.Number" android:text="@string/seven" /><Button android:id="@+id/eight" style="@style/ButtonStyle.Number" android:text="@string/eight" /><Button android:id="@+id/nine" style="@style/ButtonStyle.Number" android:text="@string/nine" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/four" style="@style/ButtonStyle.Number" android:text="@string/four" /><Button android:id="@+id/five" style="@style/ButtonStyle.Number" android:text="@string/five" /><Button android:id="@+id/six" style="@style/ButtonStyle.Number" android:text="@string/six" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/one" style="@style/ButtonStyle.Number" android:text="@string/one" /><Button android:id="@+id/two" style="@style/ButtonStyle.Number" android:text="@string/two" /><Button android:id="@+id/three" style="@style/ButtonStyle.Number" android:text="@string/three" /></TableRow>
+                    <TableRow android:layout_weight="1"><Button android:id="@+id/zero" style="@style/ButtonStyle.Number" android:text="@string/zero" /><Button android:id="@+id/dot" style="@style/ButtonStyle.Number" android:text="@string/dot" /><Button android:id="@+id/percent" style="@style/ButtonStyle.Number" android:text="@string/percent" /></TableRow>
                 </TableLayout>
 
                 <LinearLayout
@@ -147,11 +147,11 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:weightSum="5">
-                    <Button android:id="@+id/divide" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="÷" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/multiply" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="×" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/minus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="-" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/plus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="+" android:textColor="@color/colorHighlighter"/>
-                    <Button android:id="@+id/equal" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="=" android:background="@color/pad_button_equal" android:textColor="@color/unit_text_color" />
+                    <Button android:id="@+id/divide" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="@string/divide" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/multiply" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="@string/multiply" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/minus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="@string/minus" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/plus" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="@string/plus" android:textColor="@color/colorHighlighter"/>
+                    <Button android:id="@+id/equal" style="@style/ButtonStyle.Number" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:text="@string/equal" android:background="@color/pad_button_equal" android:textColor="@color/unit_text_color" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -182,7 +182,7 @@
                     android:src="@drawable/ic_arrow_forward"
                     android:rotation="180"
                     app:tint="@color/colorNewGrey"
-                    android:contentDescription="Close History" />
+                    android:contentDescription="@string/cd_close_history" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -202,7 +202,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_delete"
                     app:tint="@color/colorNewGrey"
-                    android:contentDescription="Clear History" />
+                    android:contentDescription="@string/cd_clear_history" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

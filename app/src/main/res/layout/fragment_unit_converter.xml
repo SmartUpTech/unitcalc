@@ -248,7 +248,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:background="@drawable/pad_button_background"
-                        android:contentDescription="Reverse"
+                        android:contentDescription="@string/cd_reverse"
                         android:src="@drawable/ic_reverse"
                         app:tint="@color/display_result_text_color" />
 
@@ -258,7 +258,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:background="@drawable/pad_button_background"
-                        android:contentDescription="Backspace"
+                        android:contentDescription="@string/cd_backspace"
                         android:src="@drawable/backspace"
                         app:tint="@color/display_result_text_color" />
 
@@ -268,7 +268,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:background="@drawable/pad_button_background"
-                        android:contentDescription="Copy"
+                        android:contentDescription="@string/cd_copy"
                         android:src="@drawable/ic_copy"
                         app:tint="@color/display_result_text_color" />
 

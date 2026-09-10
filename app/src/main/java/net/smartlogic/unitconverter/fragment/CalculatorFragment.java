@@ -39,6 +39,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private TextView tvExpression, tvResult;
     private String expression = "";
+    private String symZero, symDot, symSqrt, symExponent, symPercent;
+    private String symPlus, symMinus, symMultiply, symDivide;
+    private String symParenOpen, symParenClose;
+    private String funcSqrt, funcSqrtParen;
     private Preferences mPrefs;
     private CoordinatorLayout mCoordinatorLayout;
     private boolean isResultDisplayed = false;
@@ -97,6 +101,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void initViews(View view) {
+        initSymbols();
+
         tvExpression = view.findViewById(R.id.expression);
         tvResult = view.findViewById(R.id.result);
         mCoordinatorLayout = view.findViewById(R.id.cl);
@@ -151,6 +157,22 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         });
     }
 
+    private void initSymbols() {
+        symZero = getString(R.string.zero);
+        symDot = getString(R.string.dot);
+        symSqrt = getString(R.string.sqrt);
+        symExponent = getString(R.string.exponent);
+        symPercent = getString(R.string.percent);
+        symPlus = getString(R.string.plus);
+        symMinus = getString(R.string.minus);
+        symMultiply = getString(R.string.multiply);
+        symDivide = getString(R.string.divide);
+        symParenOpen = getString(R.string.parenthesis_open);
+        symParenClose = getString(R.string.parenthesis_close);
+        funcSqrt = getString(R.string.func_sqrt);
+        funcSqrtParen = getString(R.string.func_sqrt_paren);
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -158,7 +180,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (id == R.id.clear) {
             expression = "";
             tvExpression.setText("");
-            tvResult.setText("0");
+            tvResult.setText(symZero);
             isResultDisplayed = false;
         } else if (id == R.id.backspace) {
             handleBackspace();
@@ -188,8 +210,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             expression = "";
             isResultDisplayed = false;
         } else if (!expression.isEmpty()) {
-            if (expression.endsWith("sqrt(")) {
-                expression = expression.substring(0, expression.length() - 5);
+            if (expression.endsWith(funcSqrtParen)) {
+                expression = expression.substring(0, expression.length() - funcSqrtParen.length());
             } else {
                 expression = expression.substring(0, expression.length() - 1);
             }
@@ -200,26 +222,26 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void handleDotInput() {
         if (isResultDisplayed) {
-            expression = "0.";
+            expression = symZero + symDot;
             isResultDisplayed = false;
         } else {
             if (expression.isEmpty()) {
-                expression = "0.";
+                expression = symZero + symDot;
             } else {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (isOperatorChar(lastChar) || lastChar == '(') {
-                    expression += "0.";
+                if (isOperatorChar(lastChar) || lastChar == symParenOpen.charAt(0)) {
+                    expression += symZero + symDot;
                 } else if (Character.isDigit(lastChar)) {
                     // Check if current number already has a dot
                     int lastOpIndex = -1;
-                    String ops = "+-×÷^%()";
+                    String ops = symPlus + symMinus + symMultiply + symDivide + symExponent + symPercent + symParenOpen + symParenClose;
                     for (int i = 0; i < ops.length(); i++) {
                         int idx = expression.lastIndexOf(ops.charAt(i));
                         if (idx > lastOpIndex) lastOpIndex = idx;
                     }
                     String lastNumber = expression.substring(lastOpIndex + 1);
-                    if (!lastNumber.contains(".")) {
-                        expression += ".";
+                    if (!lastNumber.contains(symDot)) {
+                        expression += symDot;
                     }
                 }
             }
@@ -231,7 +253,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (TextUtils.isEmpty(input)) return;
 
         if (isResultDisplayed) {
-            if (isOperatorChar(input.charAt(0)) || input.equals("^") || input.equals("%")) {
+            if (isOperatorChar(input.charAt(0)) || input.equals(symExponent) || input.equals(symPercent)) {
                 expression = tvResult.getText().toString().replace(",", "");
             } else {
                 expression = "";
@@ -239,57 +261,57 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             isResultDisplayed = false;
         }
 
-        if (input.equals("√")) {
+        if (input.equals(symSqrt)) {
             // Implicit multiplication: 2√ -> 2*sqrt(
             if (!expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (Character.isDigit(lastChar) || lastChar == ')' || lastChar == '%') {
-                    expression += "×";
+                if (Character.isDigit(lastChar) || lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0)) {
+                    expression += symMultiply;
                 }
             }
-            expression += "sqrt(";
-        } else if (input.equals("(")) {
+            expression += funcSqrtParen;
+        } else if (input.equals(symParenOpen)) {
             if (!expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (Character.isDigit(lastChar) || lastChar == ')' || lastChar == '%' || lastChar == '.') {
-                    expression += "×";
+                if (Character.isDigit(lastChar) || lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0) || lastChar == symDot.charAt(0)) {
+                    expression += symMultiply;
                 }
             }
-            expression += "(";
-        } else if (input.equals(")")) {
+            expression += symParenOpen;
+        } else if (input.equals(symParenClose)) {
             // Only allow ) if there's an open bracket
-            int openCount = countOccurrences(expression, '(');
-            int closeCount = countOccurrences(expression, ')');
+            int openCount = countOccurrences(expression, symParenOpen.charAt(0));
+            int closeCount = countOccurrences(expression, symParenClose.charAt(0));
             if (openCount > closeCount && !expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (Character.isDigit(lastChar) || lastChar == ')' || lastChar == '%' || lastChar == '.') {
-                    expression += ")";
+                if (Character.isDigit(lastChar) || lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0) || lastChar == symDot.charAt(0)) {
+                    expression += symParenClose;
                 }
             }
-        } else if (isOperatorChar(input.charAt(0)) || input.equals("^") || input.equals("%")) {
+        } else if (isOperatorChar(input.charAt(0)) || input.equals(symExponent) || input.equals(symPercent)) {
             if (expression.isEmpty()) {
-                if (input.equals("-")) expression = "-";
+                if (input.equals(symMinus)) expression = symMinus;
             } else {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (isOperatorChar(lastChar) || lastChar == '^') {
+                if (isOperatorChar(lastChar) || lastChar == symExponent.charAt(0)) {
                     // Replace operator
                     expression = expression.substring(0, expression.length() - 1) + input;
-                } else if (lastChar == '.') {
+                } else if (lastChar == symDot.charAt(0)) {
                     // 2.+ -> 2+
                     expression = expression.substring(0, expression.length() - 1) + input;
-                } else if (lastChar != '(') {
+                } else if (lastChar != symParenOpen.charAt(0)) {
                     expression += input;
-                } else if (input.equals("-")) {
+                } else if (input.equals(symMinus)) {
                     // Allow negative sign after parenthesis: (-
-                    expression += "-";
+                    expression += symMinus;
                 }
             }
         } else {
             // Number input
             if (!expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
-                if (lastChar == ')' || lastChar == '%') {
-                    expression += "×";
+                if (lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0)) {
+                    expression += symMultiply;
                 }
             }
             expression += input;
@@ -308,7 +330,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private boolean isOperatorChar(char c) {
-        return c == '+' || c == '-' || c == '×' || c == '÷';
+        return c == symPlus.charAt(0) || c == symMinus.charAt(0) || c == symMultiply.charAt(0) || c == symDivide.charAt(0);
     }
 
     private void toggleHistory(boolean show) {
@@ -339,19 +361,19 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void calculateResult(boolean isFinal) {
         if (expression.isEmpty()) {
-            tvResult.setText("0");
+            tvResult.setText(symZero);
             return;
         }
 
         try {
-            String sanitized = expression.replace('×', '*').replace('÷', '/').replace("√", "sqrt");
+            String sanitized = expression.replace(symMultiply.charAt(0), '*').replace(symDivide.charAt(0), '/').replace(symSqrt, funcSqrt);
             
             // Auto-close parentheses for final calculation
             if (isFinal) {
-                int openCount = countOccurrences(sanitized, '(');
-                int closeCount = countOccurrences(sanitized, ')');
+                int openCount = countOccurrences(sanitized, symParenOpen.charAt(0));
+                int closeCount = countOccurrences(sanitized, symParenClose.charAt(0));
                 while (openCount > closeCount) {
-                    sanitized += ")";
+                    sanitized += symParenClose;
                     openCount--;
                 }
                 // Trim trailing operators
@@ -390,12 +412,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void copyToClipboard() {
         String textToCopy = tvResult.getText().toString();
-        if (textToCopy.equals("0") && expression.isEmpty()) {
+        if (textToCopy.equals(symZero) && expression.isEmpty()) {
             showToast(getString(R.string.toast_no_results_to_copy));
             return;
         }
         ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Calculator Result", textToCopy);
+        ClipData clip = ClipData.newPlainText(getString(R.string.clip_label_calculator_result), textToCopy);
         clipboard.setPrimaryClip(clip);
         showToast(getString(R.string.toast_result_copied));
     }
@@ -475,7 +497,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                     } else {
                         x = parseFactor();
                     }
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
+                    if (func.equals(funcSqrt)) x = Math.sqrt(x);
                     else return Double.NaN;
                 } else {
                     return Double.NaN;
