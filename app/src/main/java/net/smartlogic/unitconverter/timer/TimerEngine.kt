@@ -12,7 +12,6 @@ import net.smartlogic.unitconverter.timer.model.TimerPhase
 import net.smartlogic.unitconverter.timer.model.TimerUiState
 import net.smartlogic.unitconverter.timer.notification.TimerNotificationHelper
 import net.smartlogic.unitconverter.timer.service.AndroidTimerBackgroundCoordinator
-import net.smartlogic.unitconverter.timer.service.NoOpTimerBackgroundCoordinator
 import net.smartlogic.unitconverter.timer.service.TimerBackgroundCoordinator
 import net.smartlogic.unitconverter.timer.widget.TimerWidgetUpdater
 

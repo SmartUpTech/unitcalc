@@ -6,11 +6,7 @@ import androidx.annotation.Nullable;
 /**
  * A directed connection between two Graphy nodes.
  */
-public final class GraphyConnection {
-
-    private final String fromNodeId;
-    private final String toNodeId;
-    private final String label;
+public record GraphyConnection(String fromNodeId, String toNodeId, String label) {
 
     public GraphyConnection(@NonNull String fromNodeId,
                             @NonNull String toNodeId,
@@ -20,18 +16,21 @@ public final class GraphyConnection {
         this.label = label;
     }
 
+    @Override
     @NonNull
-    public String getFromNodeId() {
+    public String fromNodeId() {
         return fromNodeId;
     }
 
+    @Override
     @NonNull
-    public String getToNodeId() {
+    public String toNodeId() {
         return toNodeId;
     }
 
+    @Override
     @Nullable
-    public String getLabel() {
+    public String label() {
         return label;
     }
 }

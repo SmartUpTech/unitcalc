@@ -152,25 +152,18 @@ public final class ConversionGraphBuilder {
         return id;
     }
 
-    public static final class BranchSpec {
-        public final String constantLabel;
-        public final String resultDisplay;
-
-        public BranchSpec(@NonNull String constantLabel, @NonNull String resultDisplay) {
-            this.constantLabel = constantLabel;
-            this.resultDisplay = resultDisplay;
+    public record BranchSpec(String constantLabel, String resultDisplay) {
+            public BranchSpec(@NonNull String constantLabel, @NonNull String resultDisplay) {
+                this.constantLabel = constantLabel;
+                this.resultDisplay = resultDisplay;
+            }
         }
-    }
 
-    private static final class BranchIds {
-        final String constantId;
-        final String operationId;
-        final String resultId;
-
-        BranchIds(@NonNull String constantId, @NonNull String operationId, @NonNull String resultId) {
-            this.constantId = constantId;
-            this.operationId = operationId;
-            this.resultId = resultId;
+    private record BranchIds(String constantId, String operationId, String resultId) {
+            private BranchIds(@NonNull String constantId, @NonNull String operationId, @NonNull String resultId) {
+                this.constantId = constantId;
+                this.operationId = operationId;
+                this.resultId = resultId;
+            }
         }
-    }
 }

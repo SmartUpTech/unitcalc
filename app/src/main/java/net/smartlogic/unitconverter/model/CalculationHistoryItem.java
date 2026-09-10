@@ -2,12 +2,8 @@ package net.smartlogic.unitconverter.model;
 
 import androidx.annotation.NonNull;
 
-public class CalculationHistoryItem {
-
-    public final String expression;
-    public final String result;
-    public final long createdAt;
-    @NonNull public final String calculatorId;
+public record CalculationHistoryItem(String expression, String result, long createdAt,
+                                     @NonNull String calculatorId) {
 
     public CalculationHistoryItem(@NonNull String expression, @NonNull String result) {
         this(expression, result, 0L, CalculatorCatalog.ID_BASIC);

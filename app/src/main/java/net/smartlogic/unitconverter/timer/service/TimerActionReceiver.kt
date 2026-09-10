@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import net.smartlogic.unitconverter.timer.TimerEngine
-import net.smartlogic.unitconverter.timer.notification.TimerNotificationHelper
 
 class TimerActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {

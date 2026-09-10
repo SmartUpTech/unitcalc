@@ -38,9 +38,9 @@ import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
-import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
@@ -293,11 +293,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
-        expression = item.expression;
-        lastEvaluatedExpression = item.expression;
+        expression = item.expression();
+        lastEvaluatedExpression = item.expression();
         isResultDisplayed = false;
         updateExpressionDisplay();
-        tvResult.setText(item.result);
+        tvResult.setText(item.result());
         calculateResult(false);
         updateGraphyTabState();
         selectWorkspaceTab(0);

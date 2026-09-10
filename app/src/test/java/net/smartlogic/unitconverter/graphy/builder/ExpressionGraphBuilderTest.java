@@ -123,8 +123,8 @@ public class ExpressionGraphBuilderTest {
         GraphyOutput output = builder.build(snapshot, evaluation.getTrace());
 
         assertEquals(1, output.getNodes().size());
-        assertEquals(GraphyNodeType.RESULT, output.getNodes().get(0).getType());
-        assertEquals("42", output.getNodes().get(0).getDisplayValue());
+        assertEquals(GraphyNodeType.RESULT, output.getNodes().get(0).type());
+        assertEquals("42", output.getNodes().get(0).displayValue());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class ExpressionGraphBuilderTest {
 
     private static boolean hasNodeType(GraphyOutput output, GraphyNodeType type) {
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == type) {
+            if (node.type() == type) {
                 return true;
             }
         }
@@ -174,7 +174,7 @@ public class ExpressionGraphBuilderTest {
     private static int countNodeType(GraphyOutput output, GraphyNodeType type) {
         int count = 0;
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == type) {
+            if (node.type() == type) {
                 count++;
             }
         }
@@ -183,7 +183,7 @@ public class ExpressionGraphBuilderTest {
 
     private static boolean hasDisplayValue(GraphyOutput output, String value) {
         for (GraphyNode node : output.getNodes()) {
-            if (value.equals(node.getDisplayValue())) {
+            if (value.equals(node.displayValue())) {
                 return true;
             }
         }
@@ -193,7 +193,7 @@ public class ExpressionGraphBuilderTest {
     private static int countDisplayValue(GraphyOutput output, String value) {
         int count = 0;
         for (GraphyNode node : output.getNodes()) {
-            if (value.equals(node.getDisplayValue())) {
+            if (value.equals(node.displayValue())) {
                 count++;
             }
         }
@@ -203,9 +203,9 @@ public class ExpressionGraphBuilderTest {
     private static void assertNoDuplicateDisplayValues(GraphyOutput output) {
         Set<String> derivedAndResults = new HashSet<>();
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == GraphyNodeType.DERIVED || node.getType() == GraphyNodeType.RESULT) {
-                assertTrue("Duplicate result node for " + node.getDisplayValue(),
-                        derivedAndResults.add(node.getDisplayValue()));
+            if (node.type() == GraphyNodeType.DERIVED || node.type() == GraphyNodeType.RESULT) {
+                assertTrue("Duplicate result node for " + node.displayValue(),
+                        derivedAndResults.add(node.displayValue()));
             }
         }
     }

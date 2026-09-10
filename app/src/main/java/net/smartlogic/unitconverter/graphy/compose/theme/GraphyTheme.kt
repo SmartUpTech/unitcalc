@@ -14,7 +14,7 @@ import net.smartlogic.unitconverter.theme.ThemeManager
 object GraphyThemeDefaults {
     fun currentTheme(): CalculatorTheme = ThemeManager.get()
 
-    fun isDarkTheme(): Boolean = !ThemeManager.get().isLightBackground()
+    fun isDarkTheme(): Boolean = !ThemeManager.get().isLightBackground
 }
 
 @Composable

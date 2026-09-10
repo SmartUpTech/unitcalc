@@ -54,17 +54,17 @@ final class GraphLayoutEngine {
         this.currentMaxWidth = maxWidthPx > 0 ? maxWidthPx : 1000f; // Default if not provided
 
         for (GraphyNode node : output.getNodes()) {
-            nodeMap.put(node.getId(), node);
-            incoming.put(node.getId(), new ArrayList<>());
-            outgoing.put(node.getId(), new ArrayList<>());
+            nodeMap.put(node.id(), node);
+            incoming.put(node.id(), new ArrayList<>());
+            outgoing.put(node.id(), new ArrayList<>());
         }
         for (GraphyConnection connection : output.getConnections()) {
-            if (!nodeMap.containsKey(connection.getFromNodeId())
-                    || !nodeMap.containsKey(connection.getToNodeId())) {
+            if (!nodeMap.containsKey(connection.fromNodeId())
+                    || !nodeMap.containsKey(connection.toNodeId())) {
                 continue;
             }
-            outgoing.get(connection.getFromNodeId()).add(connection.getToNodeId());
-            incoming.get(connection.getToNodeId()).add(connection.getFromNodeId());
+            outgoing.get(connection.fromNodeId()).add(connection.toNodeId());
+            incoming.get(connection.toNodeId()).add(connection.fromNodeId());
         }
 
         measureNodes(output, theme);
@@ -119,26 +119,26 @@ final class GraphLayoutEngine {
     private void measureNodes(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
         android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         for (GraphyNode node : output.getNodes()) {
-            float textSize = node.getType() == GraphyNodeType.RESULT
+            float textSize = node.type() == GraphyNodeType.RESULT
                     ? resultTextSize : valueTextSize;
             paint.setTextSize(textSize);
             String text = displayText(node);
             float measured = paint.measureText(text);
-            textWidths.put(node.getId(), measured);
+            textWidths.put(node.id(), measured);
 
-            if (node.getType() == GraphyNodeType.OPERATION) {
-                nodeWidths.put(node.getId(), operationSize);
-                nodeHeights.put(node.getId(), operationSize);
-            } else if (node.getType() == GraphyNodeType.RESULT) {
+            if (node.type() == GraphyNodeType.OPERATION) {
+                nodeWidths.put(node.id(), operationSize);
+                nodeHeights.put(node.id(), operationSize);
+            } else if (node.type() == GraphyNodeType.RESULT) {
                 float width = Math.max(minNodeWidth, measured + padding * 1.6f);
                 float height = Math.max(minNodeHeight, textSize + padding * 1.2f);
-                nodeWidths.put(node.getId(), width);
-                nodeHeights.put(node.getId(), height);
+                nodeWidths.put(node.id(), width);
+                nodeHeights.put(node.id(), height);
             } else {
                 float width = Math.max(minNodeWidth, measured + padding * 1.4f);
                 float height = Math.max(minNodeHeight, textSize + padding);
-                nodeWidths.put(node.getId(), width);
-                nodeHeights.put(node.getId(), height);
+                nodeWidths.put(node.id(), width);
+                nodeHeights.put(node.id(), height);
             }
         }
     }
@@ -146,17 +146,17 @@ final class GraphLayoutEngine {
     @Nullable
     private String findRootValueNode(@NonNull GraphyOutput output) {
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == GraphyNodeType.RESULT) {
-                return node.getId();
+            if (node.type() == GraphyNodeType.RESULT) {
+                return node.id();
             }
         }
         GraphyNode lastDerived = null;
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == GraphyNodeType.DERIVED) {
+            if (node.type() == GraphyNodeType.DERIVED) {
                 lastDerived = node;
             }
         }
-        return lastDerived != null ? lastDerived.getId() : null;
+        return lastDerived != null ? lastDerived.id() : null;
     }
 
     @NonNull
@@ -170,8 +170,8 @@ final class GraphLayoutEngine {
             return LayoutBox.empty();
         }
 
-        if (valueNode.getType() == GraphyNodeType.INPUT
-                || valueNode.getType() == GraphyNodeType.CONSTANT) {
+        if (valueNode.type() == GraphyNodeType.INPUT
+                || valueNode.type() == GraphyNodeType.CONSTANT) {
             LayoutBox leaf = singleNodeBox(valueNodeId);
             layoutCache.put(valueNodeId, leaf);
             return leaf;
@@ -228,8 +228,8 @@ final class GraphLayoutEngine {
         if (node == null) {
             return false;
         }
-        if (node.getType() == GraphyNodeType.INPUT
-                || node.getType() == GraphyNodeType.CONSTANT) {
+        if (node.type() == GraphyNodeType.INPUT
+                || node.type() == GraphyNodeType.CONSTANT) {
             return false;
         }
         String producer = findProducer(valueNodeId);
@@ -475,8 +475,8 @@ final class GraphLayoutEngine {
     private LayoutBox layoutBranchGraph(@NonNull GraphyOutput output) {
         String inputId = null;
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == GraphyNodeType.INPUT) {
-                inputId = node.getId();
+            if (node.type() == GraphyNodeType.INPUT) {
+                inputId = node.id();
             }
         }
         if (inputId == null) {
@@ -494,8 +494,8 @@ final class GraphLayoutEngine {
 
         List<String> branchConstantIds = new ArrayList<>();
         for (GraphyConnection connection : output.getConnections()) {
-            if (connection.getFromNodeId().equals(inputId)) {
-                branchConstantIds.add(connection.getToNodeId());
+            if (connection.fromNodeId().equals(inputId)) {
+                branchConstantIds.add(connection.toNodeId());
             }
         }
 
@@ -574,7 +574,7 @@ final class GraphLayoutEngine {
             }
             visited.add(current);
             GraphyNode node = nodeMap.get(current);
-            if (node != null && node.getType() == GraphyNodeType.CONSTANT) {
+            if (node != null && node.type() == GraphyNodeType.CONSTANT) {
                 return current;
             }
             for (String source : incoming.getOrDefault(current, new ArrayList<>())) {
@@ -636,8 +636,8 @@ final class GraphLayoutEngine {
     private String firstResultOutgoing(@NonNull String operationId) {
         for (String target : outgoing.getOrDefault(operationId, new ArrayList<>())) {
             GraphyNode node = nodeMap.get(target);
-            if (node != null && (node.getType() == GraphyNodeType.RESULT
-                    || node.getType() == GraphyNodeType.DERIVED)) {
+            if (node != null && (node.type() == GraphyNodeType.RESULT
+                    || node.type() == GraphyNodeType.DERIVED)) {
                 return target;
             }
         }
@@ -648,7 +648,7 @@ final class GraphLayoutEngine {
     private String findProducer(@NonNull String valueNodeId) {
         for (String source : incoming.get(valueNodeId)) {
             GraphyNode node = nodeMap.get(source);
-            if (node != null && node.getType() == GraphyNodeType.OPERATION) {
+            if (node != null && node.type() == GraphyNodeType.OPERATION) {
                 return source;
             }
         }
@@ -657,10 +657,10 @@ final class GraphLayoutEngine {
 
     @NonNull
     private static String displayText(@NonNull GraphyNode node) {
-        if (node.getType() == GraphyNodeType.OPERATION) {
-            return formatOperator(node.getLabel());
+        if (node.type() == GraphyNodeType.OPERATION) {
+            return formatOperator(node.label());
         }
-        return node.getDisplayValue();
+        return node.displayValue();
     }
 
     @NonNull
@@ -726,77 +726,62 @@ final class GraphLayoutEngine {
         return new LayoutBox(bounds, width, height, rootNodeId);
     }
 
-    static final class LayoutResult {
-        final Map<String, LayoutBox> nodeBounds;
-        final int contentWidth;
-        final int contentHeight;
-
-        LayoutResult(@NonNull Map<String, LayoutBox> nodeBounds, int contentWidth, int contentHeight) {
-            this.nodeBounds = nodeBounds;
-            this.contentWidth = contentWidth;
-            this.contentHeight = contentHeight;
-        }
-
-        @NonNull
-        static LayoutResult empty() {
-            return new LayoutResult(new HashMap<>(), 0, 0);
-        }
-    }
-
-    static final class LayoutBox {
-        final Map<String, LayoutBox> nodeBounds;
-        final float width;
-        final float height;
-        final float x;
-        final float y;
-        final String rootNodeId;
-
-        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float width, float height, String rootNodeId) {
-            this(nodeBounds, 0f, 0f, width, height, rootNodeId);
-        }
-
-        LayoutBox(float x, float y, float width, float height, String rootNodeId) {
-            this.nodeBounds = new HashMap<>();
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.rootNodeId = rootNodeId;
-        }
-
-        LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float x, float y, float width, float height, String rootNodeId) {
-            this.nodeBounds = nodeBounds;
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.rootNodeId = rootNodeId;
-        }
-
-        @NonNull
-        LayoutBox offset(float dx, float dy) {
-            if (nodeBounds.isEmpty()) {
-                return new LayoutBox(x + dx, y + dy, width, height, rootNodeId);
+    record LayoutResult(Map<String, LayoutBox> nodeBounds, int contentWidth, int contentHeight) {
+            LayoutResult(@NonNull Map<String, LayoutBox> nodeBounds, int contentWidth, int contentHeight) {
+                this.nodeBounds = nodeBounds;
+                this.contentWidth = contentWidth;
+                this.contentHeight = contentHeight;
             }
-            Map<String, LayoutBox> shifted = new HashMap<>();
-            for (Map.Entry<String, LayoutBox> entry : nodeBounds.entrySet()) {
-                shifted.put(entry.getKey(), entry.getValue().offset(dx, dy));
+
+            @NonNull
+            static LayoutResult empty() {
+                return new LayoutResult(new HashMap<>(), 0, 0);
             }
-            return new LayoutBox(shifted, x + dx, y + dy, width, height, rootNodeId);
         }
 
-        int complexity() {
-            if (nodeBounds.isEmpty()) return 1;
-            int count = 0;
-            for (LayoutBox b : nodeBounds.values()) {
-                if (b.nodeBounds.isEmpty()) count++;
+    record LayoutBox(Map<String, LayoutBox> nodeBounds, float x, float y, float width, float height,
+                     String rootNodeId) {
+            LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float width, float height, String rootNodeId) {
+                this(nodeBounds, 0f, 0f, width, height, rootNodeId);
             }
-            return count;
-        }
 
-        @NonNull
-        static LayoutBox empty() {
-            return new LayoutBox(new HashMap<>(), 0f, 0f, null);
+            LayoutBox(float x, float y, float width, float height, String rootNodeId) {
+                this(new HashMap<>(), x, y, width, height, rootNodeId);
+            }
+
+            LayoutBox(@NonNull Map<String, LayoutBox> nodeBounds, float x, float y, float width, float height, String rootNodeId) {
+                this.nodeBounds = nodeBounds;
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.rootNodeId = rootNodeId;
+            }
+
+            @NonNull
+            LayoutBox offset(float dx, float dy) {
+                if (nodeBounds.isEmpty()) {
+                    return new LayoutBox(x + dx, y + dy, width, height, rootNodeId);
+                }
+                Map<String, LayoutBox> shifted = new HashMap<>();
+                for (Map.Entry<String, LayoutBox> entry : nodeBounds.entrySet()) {
+                    shifted.put(entry.getKey(), entry.getValue().offset(dx, dy));
+                }
+                return new LayoutBox(shifted, x + dx, y + dy, width, height, rootNodeId);
+            }
+
+            int complexity() {
+                if (nodeBounds.isEmpty()) return 1;
+                int count = 0;
+                for (LayoutBox b : nodeBounds.values()) {
+                    if (b.nodeBounds.isEmpty()) count++;
+                }
+                return count;
+            }
+
+            @NonNull
+            static LayoutBox empty() {
+                return new LayoutBox(new HashMap<>(), 0f, 0f, null);
+            }
         }
-    }
 }

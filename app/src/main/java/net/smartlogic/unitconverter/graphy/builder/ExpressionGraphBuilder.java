@@ -13,7 +13,6 @@ import net.smartlogic.unitconverter.utils.EvalTrace;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Converts expression evaluation traces into connected Graphy graphs.

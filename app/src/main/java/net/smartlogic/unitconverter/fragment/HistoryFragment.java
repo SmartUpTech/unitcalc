@@ -23,8 +23,8 @@ import net.smartlogic.unitconverter.helper.HistoryDateLabels;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
-import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +102,7 @@ public class HistoryFragment extends Fragment {
         historyRows.clear();
         String lastSection = null;
         for (CalculationHistoryItem item : items) {
-            String section = HistoryDateLabels.sectionLabel(requireContext(), item.createdAt);
+            String section = HistoryDateLabels.sectionLabel(requireContext(), item.createdAt());
             if (!section.equals(lastSection)) {
                 historyRows.add(section);
                 lastSection = section;
@@ -164,17 +164,17 @@ public class HistoryFragment extends Fragment {
             ExpressionDisplayFormatter.GraphySemanticTheme theme =
                     ExpressionDisplayFormatter.GraphySemanticTheme.from(context);
 
-            itemHolder.tvCalculator.setText(CalculatorCatalog.titleForId(context, item.calculatorId));
-            itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt));
+            itemHolder.tvCalculator.setText(CalculatorCatalog.titleForId(context, item.calculatorId()));
+            itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt()));
             itemHolder.tvExpression.setText(
-                    ExpressionDisplayFormatter.formatSpannable(item.expression, prefs, theme)
+                    ExpressionDisplayFormatter.formatSpannable(item.expression(), prefs, theme)
             );
-            itemHolder.tvResult.setText(item.result);
+            itemHolder.tvResult.setText(item.result());
             net.smartlogic.unitconverter.theme.CalculatorTheme colors =
                     net.smartlogic.unitconverter.theme.ThemeManager.get();
-            itemHolder.tvResult.setTextColor(colors.mainText);
-            itemHolder.tvCalculator.setTextColor(colors.functions);
-            itemHolder.tvTime.setTextColor(colors.functions);
+            itemHolder.tvResult.setTextColor(colors.mainText());
+            itemHolder.tvCalculator.setTextColor(colors.functions());
+            itemHolder.tvTime.setTextColor(colors.functions());
             itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
 

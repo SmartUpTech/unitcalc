@@ -2,7 +2,6 @@ package net.smartlogic.unitconverter.graphy.integration;
 
 import androidx.annotation.NonNull;
 
-import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 
 /**

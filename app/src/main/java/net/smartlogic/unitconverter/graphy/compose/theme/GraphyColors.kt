@@ -180,7 +180,7 @@ fun graphyColorScheme(theme: CalculatorTheme): ColorScheme {
     val main = Color(theme.mainText)
     val functions = Color(theme.functions)
     val onEqual = Color(theme.background)
-    return if (theme.isLightBackground()) {
+    return if (theme.isLightBackground) {
         lightColorScheme(
             primary = main,
             onPrimary = onEqual,

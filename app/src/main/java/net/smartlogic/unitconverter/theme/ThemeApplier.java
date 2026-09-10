@@ -64,14 +64,14 @@ public final class ThemeApplier {
         CalculatorTheme theme = ThemeManager.get();
         ColorStateList selectedEqual = navigationTint(theme);
         if (bottomNav != null) {
-            bottomNav.setBackgroundColor(theme.background);
+            bottomNav.setBackgroundColor(theme.background());
             bottomNav.setItemIconTintList(selectedEqual);
             bottomNav.setItemTextColor(selectedEqual);
-            bottomNav.setItemRippleColor(ColorStateList.valueOf(theme.functions & 0x33FFFFFF | 0x33000000));
+            bottomNav.setItemRippleColor(ColorStateList.valueOf(theme.functions() & 0x33FFFFFF | 0x33000000));
             bottomNav.setItemActiveIndicatorEnabled(false);
         }
         if (drawer != null) {
-            drawer.setBackgroundColor(theme.background);
+            drawer.setBackgroundColor(theme.background());
             drawer.setItemIconTintList(selectedEqual);
             drawer.setItemTextColor(selectedEqual);
             drawer.setItemBackground(null);
@@ -85,7 +85,7 @@ public final class ThemeApplier {
                 new int[]{android.R.attr.state_selected},
                 new int[]{}
         };
-        int[] colors = new int[]{theme.equal, theme.equal, theme.functions};
+        int[] colors = new int[]{theme.equal(), theme.equal(), theme.functions()};
         return new ColorStateList(states, colors);
     }
 
@@ -94,9 +94,9 @@ public final class ThemeApplier {
             return;
         }
         CalculatorTheme theme = ThemeManager.get();
-        tabLayout.setBackgroundColor(theme.background);
-        tabLayout.setTabTextColors(theme.functions, theme.equal);
-        tabLayout.setSelectedTabIndicatorColor(theme.equal);
+        tabLayout.setBackgroundColor(theme.background());
+        tabLayout.setTabTextColors(theme.functions(), theme.equal());
+        tabLayout.setSelectedTabIndicatorColor(theme.equal());
     }
 
     @NonNull
@@ -116,7 +116,7 @@ public final class ThemeApplier {
                 || id == R.id.keypad
                 || id == R.id.frame_layout
                 || id == R.id.history_root) {
-            view.setBackgroundColor(theme.background);
+            view.setBackgroundColor(theme.background());
         }
 
         if (view instanceof TabLayout) {
@@ -124,25 +124,24 @@ public final class ThemeApplier {
         }
 
         if (contains(NUMBER_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.mainText);
+            ((TextView) view).setTextColor(theme.mainText());
         } else if (contains(FUNCTION_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.functions);
+            ((TextView) view).setTextColor(theme.functions());
         } else if (contains(OPERATOR_IDS, id) && view instanceof TextView) {
             ((TextView) view).setTextColor(theme.operatorContentColor());
         } else if (id == R.id.equal && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.equal);
+            ((TextView) view).setTextColor(theme.equal());
         } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.mainText);
+            ((TextView) view).setTextColor(theme.mainText());
         } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.functions);
+            ((TextView) view).setTextColor(theme.functions());
         }
 
         if (contains(ICON_IDS, id) && view instanceof ImageView) {
-            ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(theme.mainText));
+            ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(theme.mainText()));
         }
 
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
+        if (view instanceof ViewGroup group) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 applyRecursive(group.getChildAt(i), theme);
             }

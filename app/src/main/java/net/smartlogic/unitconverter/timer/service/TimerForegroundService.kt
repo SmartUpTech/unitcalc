@@ -13,8 +13,7 @@ class TimerForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val engine = TimerEngine.getInstance(this)
-        val phase = engine.uiState.value.phase
-        when (phase) {
+        when (val phase = engine.uiState.value.phase) {
             is TimerPhase.Running -> {
                 val notification = notificationHelper.buildRunningNotification(
                     label = phase.label,

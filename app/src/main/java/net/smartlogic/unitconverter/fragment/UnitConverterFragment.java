@@ -31,6 +31,8 @@ import com.google.android.material.snackbar.Snackbar;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
+import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HorizontalListView;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
@@ -38,8 +40,6 @@ import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
-import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
-import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -401,10 +401,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
     private void updateParentGraphy(String in, Unit from, Unit to, String fromSym, String toSym, String finalStr) {
         Fragment parent = getParentFragment();
-        if (!(parent instanceof ConverterFragment)) {
+        if (!(parent instanceof ConverterFragment converter)) {
             return;
         }
-        ConverterFragment converter = (ConverterFragment) parent;
         if (in.isEmpty()) {
             converter.clearConversionGraphy();
             return;
@@ -562,8 +561,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         mPrefs.setLastToConversion(1);
         initialDropDown(conversions.getById(categoryId));
         convertAndDisplay(inputValue.getText().toString());
-        if (horizontalListView.getAdapter() instanceof ConversionAdapter) {
-            ConversionAdapter adapter = (ConversionAdapter) horizontalListView.getAdapter();
+        if (horizontalListView.getAdapter() instanceof ConversionAdapter adapter) {
             adapter.setSelectedItem(categoryId);
             adapter.notifyDataSetChanged();
         }

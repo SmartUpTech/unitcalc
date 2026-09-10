@@ -22,12 +22,12 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getBackgroundColor() {
-        return ThemeManager.get().background;
+        return ThemeManager.get().background();
     }
 
     @ColorInt
     public int getPrimaryTextColor() {
-        return ThemeManager.get().mainText;
+        return ThemeManager.get().mainText();
     }
 
     @ColorInt
@@ -52,12 +52,12 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getResultFillColor() {
-        return ThemeManager.get().equal;
+        return ThemeManager.get().equal();
     }
 
     @ColorInt
     public int getResultOnColor() {
-        return ThemeManager.get().background;
+        return ThemeManager.get().background();
     }
 
     @ColorInt
@@ -77,7 +77,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getResultNodeColor() {
-        return ThemeManager.get().equal;
+        return ThemeManager.get().equal();
     }
 
     @ColorInt
@@ -87,22 +87,22 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getConnectorColor() {
-        return ThemeManager.get().functions;
+        return ThemeManager.get().functions();
     }
 
     @ColorInt
     public int getConnectorHighlightColor() {
-        return ThemeManager.get().functions;
+        return ThemeManager.get().functions();
     }
 
     @ColorInt
     public int getSurfaceColor() {
-        return ThemeManager.get().background;
+        return ThemeManager.get().background();
     }
 
     @ColorInt
     public int getSurfaceElevatedColor() {
-        return ThemeManager.get().background;
+        return ThemeManager.get().background();
     }
 
     @ColorInt
@@ -127,7 +127,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getOnResultColor() {
-        return ThemeManager.get().background;
+        return ThemeManager.get().background();
     }
 
     @ColorInt
@@ -147,7 +147,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getSecondaryColor() {
-        return ThemeManager.get().functions;
+        return ThemeManager.get().functions();
     }
 
     public float getNodeCornerRadius() {

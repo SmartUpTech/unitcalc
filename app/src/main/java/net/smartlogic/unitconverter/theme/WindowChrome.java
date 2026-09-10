@@ -32,7 +32,7 @@ public final class WindowChrome {
         Window window = activity.getWindow();
         WindowCompat.setDecorFitsSystemWindows(window, true);
 
-        int chrome = theme.background;
+        int chrome = theme.background();
         window.setStatusBarColor(chrome);
         window.setNavigationBarColor(chrome);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -63,18 +63,18 @@ public final class WindowChrome {
     }
 
     private static void applyActionBarBrand(@NonNull View custom, @NonNull CalculatorTheme theme) {
-        custom.setBackgroundColor(theme.background);
+        custom.setBackgroundColor(theme.background());
         ImageView menu = custom.findViewById(R.id.btn_nav_menu);
         if (menu != null && menu.getDrawable() != null) {
-            DrawableCompat.setTint(DrawableCompat.wrap(menu.getDrawable().mutate()), theme.mainText);
+            DrawableCompat.setTint(DrawableCompat.wrap(menu.getDrawable().mutate()), theme.mainText());
         }
         TextView brand = custom.findViewById(R.id.tv_app_bar_brand);
         if (brand != null) {
-            brand.setTextColor(theme.mainText);
+            brand.setTextColor(theme.mainText());
         }
         TextView product = custom.findViewById(R.id.tv_app_bar_product);
         if (product != null) {
-            product.setTextColor(theme.functions);
+            product.setTextColor(theme.functions());
         }
     }
 }

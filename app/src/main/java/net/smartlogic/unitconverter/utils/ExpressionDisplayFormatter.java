@@ -63,21 +63,17 @@ public final class ExpressionDisplayFormatter {
         SQRT_GROUP
     }
 
-    private static final class Token {
-        final TokenKind kind;
-        final String value;
-        final List<Token> children;
+    private record Token(TokenKind kind, String value, List<Token> children) {
+            Token(@NonNull TokenKind kind, @NonNull String value) {
+                this(kind, value, null);
+            }
 
-        Token(@NonNull TokenKind kind, @NonNull String value) {
-            this(kind, value, null);
+            private Token(@NonNull TokenKind kind, @NonNull String value, @Nullable List<Token> children) {
+                this.kind = kind;
+                this.value = value;
+                this.children = children;
+            }
         }
-
-        Token(@NonNull TokenKind kind, @NonNull String value, @Nullable List<Token> children) {
-            this.kind = kind;
-            this.value = value;
-            this.children = children;
-        }
-    }
 
     private ExpressionDisplayFormatter() {
     }
@@ -419,64 +415,40 @@ public final class ExpressionDisplayFormatter {
         }
     }
 
-    public static final class GraphySemanticTheme {
-        @ColorInt public final int numberColor;
-        @ColorInt public final int operatorColor;
-        @ColorInt public final int functionColor;
-        @ColorInt public final int utilityColor;
-        @ColorInt public final int equalColor;
-        @ColorInt public final int primaryTextColor;
-        @ColorInt public final int secondaryTextColor;
-        @ColorInt public final int backgroundColor;
-
-        public GraphySemanticTheme(
-                @ColorInt int numberColor,
-                @ColorInt int operatorColor,
-                @ColorInt int functionColor,
-                @ColorInt int utilityColor,
-                @ColorInt int equalColor,
-                @ColorInt int primaryTextColor,
-                @ColorInt int secondaryTextColor,
-                @ColorInt int backgroundColor
-        ) {
-            this.numberColor = numberColor;
-            this.operatorColor = operatorColor;
-            this.functionColor = functionColor;
-            this.utilityColor = utilityColor;
-            this.equalColor = equalColor;
-            this.primaryTextColor = primaryTextColor;
-            this.secondaryTextColor = secondaryTextColor;
-            this.backgroundColor = backgroundColor;
-        }
+    public record GraphySemanticTheme(@ColorInt int numberColor, @ColorInt int operatorColor,
+                                      @ColorInt int functionColor, @ColorInt int utilityColor,
+                                      @ColorInt int equalColor, @ColorInt int primaryTextColor,
+                                      @ColorInt int secondaryTextColor,
+                                      @ColorInt int backgroundColor) {
 
         @NonNull
-        public static GraphySemanticTheme from(@NonNull Context context) {
-            CalculatorTheme theme = ThemeManager.get();
-            return new GraphySemanticTheme(
-                    theme.mainText,
-                    theme.operatorContentColor(),
-                    theme.functions,
-                    theme.functions,
-                    theme.equal,
-                    theme.mainText,
-                    theme.functions,
-                    theme.background
-            );
-        }
+            public static GraphySemanticTheme from(@NonNull Context context) {
+                CalculatorTheme theme = ThemeManager.get();
+                return new GraphySemanticTheme(
+                        theme.mainText(),
+                        theme.operatorContentColor(),
+                        theme.functions(),
+                        theme.functions(),
+                        theme.equal(),
+                        theme.mainText(),
+                        theme.functions(),
+                        theme.background()
+                );
+            }
 
-        @ColorInt
-        public int colorFor(@NonNull SemanticRole role) {
-            switch (role) {
-                case OPERATOR:
-                    return operatorColor;
-                case FUNCTION:
-                    return functionColor;
-                case EQUAL:
-                    return equalColor;
-                case NUMBER:
-                default:
-                    return numberColor;
+            @ColorInt
+            public int colorFor(@NonNull SemanticRole role) {
+                switch (role) {
+                    case OPERATOR:
+                        return operatorColor;
+                    case FUNCTION:
+                        return functionColor;
+                    case EQUAL:
+                        return equalColor;
+                    case NUMBER:
+                    default:
+                        return numberColor;
+                }
             }
         }
-    }
 }

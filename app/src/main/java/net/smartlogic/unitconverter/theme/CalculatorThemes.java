@@ -76,7 +76,7 @@ public final class CalculatorThemes {
             return defaultTheme();
         }
         for (CalculatorTheme theme : ALL) {
-            if (theme.id.equals(id)) {
+            if (theme.id().equals(id)) {
                 return theme;
             }
         }

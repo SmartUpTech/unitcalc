@@ -6,13 +6,8 @@ import androidx.annotation.Nullable;
 /**
  * A single node in a Graphy output graph.
  */
-public final class GraphyNode {
-
-    private final String id;
-    private final GraphyNodeType type;
-    private final String label;
-    private final String displayValue;
-    private final String semanticRole;
+public record GraphyNode(String id, GraphyNodeType type, String label, String displayValue,
+                         String semanticRole) {
 
     public GraphyNode(@NonNull String id,
                       @NonNull GraphyNodeType type,
@@ -26,28 +21,33 @@ public final class GraphyNode {
         this.semanticRole = semanticRole;
     }
 
+    @Override
     @NonNull
-    public String getId() {
+    public String id() {
         return id;
     }
 
+    @Override
     @NonNull
-    public GraphyNodeType getType() {
+    public GraphyNodeType type() {
         return type;
     }
 
+    @Override
     @NonNull
-    public String getLabel() {
+    public String label() {
         return label;
     }
 
+    @Override
     @NonNull
-    public String getDisplayValue() {
+    public String displayValue() {
         return displayValue;
     }
 
+    @Override
     @Nullable
-    public String getSemanticRole() {
+    public String semanticRole() {
         return semanticRole;
     }
 }

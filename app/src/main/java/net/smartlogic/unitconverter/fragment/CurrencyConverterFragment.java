@@ -33,14 +33,14 @@ import androidx.fragment.app.Fragment;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
+import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 import net.smartlogic.unitconverter.utils.Utils;
-import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
-import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -297,10 +297,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                                     String formattedOut,
                                     float rate) {
         Fragment parent = getParentFragment();
-        if (!(parent instanceof ConverterFragment)) {
+        if (!(parent instanceof ConverterFragment converter)) {
             return;
         }
-        ConverterFragment converter = (ConverterFragment) parent;
         if (inStr.isEmpty() || inStr.equals("0")) {
             converter.clearConversionGraphy();
             return;

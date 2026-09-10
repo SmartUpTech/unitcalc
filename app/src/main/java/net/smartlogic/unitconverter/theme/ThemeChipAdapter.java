@@ -51,7 +51,7 @@ public final class ThemeChipAdapter extends RecyclerView.Adapter<ThemeChipAdapte
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         CalculatorTheme theme = themes.get(position);
-        holder.bind(theme, theme.id.equals(selectedId), listener);
+        holder.bind(theme, theme.id().equals(selectedId), listener);
     }
 
     @Override
@@ -69,14 +69,14 @@ public final class ThemeChipAdapter extends RecyclerView.Adapter<ThemeChipAdapte
 
         void bind(@NonNull CalculatorTheme theme, boolean selected,
                   @NonNull OnThemeClickListener listener) {
-            label.setText(theme.name);
-            label.setTextColor(theme.mainText);
+            label.setText(theme.name());
+            label.setTextColor(theme.mainText());
             GradientDrawable background = new GradientDrawable();
-            background.setColor(theme.background);
+            background.setColor(theme.background());
             background.setCornerRadius(itemView.getResources().getDisplayMetrics().density * 12f);
             int stroke = selected ? Math.round(itemView.getResources().getDisplayMetrics().density * 2f) : 0;
             if (selected) {
-                int outline = ColorUtils.setAlphaComponent(theme.mainText, 230);
+                int outline = ColorUtils.setAlphaComponent(theme.mainText(), 230);
                 background.setStroke(stroke, outline);
             } else {
                 background.setStroke(0, 0);

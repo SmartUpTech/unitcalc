@@ -32,7 +32,7 @@ public class GraphyBridgeTest {
         assertEquals(CalculationSnapshot.BASIC_CALCULATOR_ID, output.getCalculatorId());
         assertEquals("2+3*4", output.getExpression());
         assertEquals("14", output.getResult());
-        assertTrue(output.getNodes().stream().anyMatch(n -> n.getType() == GraphyNodeType.RESULT));
+        assertTrue(output.getNodes().stream().anyMatch(n -> n.type() == GraphyNodeType.RESULT));
     }
 
     @Test

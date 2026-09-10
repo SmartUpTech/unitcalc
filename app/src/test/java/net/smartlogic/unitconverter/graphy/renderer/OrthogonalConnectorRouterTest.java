@@ -10,6 +10,7 @@ import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,9 +261,7 @@ public class OrthogonalConnectorRouterTest {
 
     private static List<GraphyNode> nodes(GraphyNode... values) {
         List<GraphyNode> list = new ArrayList<>();
-        for (GraphyNode node : values) {
-            list.add(node);
-        }
+        Collections.addAll(list, values);
         return list;
     }
 

@@ -168,16 +168,16 @@ public class SettingsActivity extends AppCompatActivity {
             chips.setHasFixedSize(false);
             themeChipAdapter = new ThemeChipAdapter(
                     CalculatorThemes.all(),
-                    ThemeManager.get().id,
+                    ThemeManager.get().id(),
                     this::onThemeSelected);
             chips.setAdapter(themeChipAdapter);
         }
 
         private void onThemeSelected(@NonNull CalculatorTheme theme) {
-            if (theme.id.equals(ThemeManager.get().id)) {
+            if (theme.id().equals(ThemeManager.get().id())) {
                 return;
             }
-            ThemeManager.select(requireContext(), theme.id);
+            ThemeManager.select(requireContext(), theme.id());
             if (getActivity() != null) {
                 getActivity().recreate();
             }
@@ -185,7 +185,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void applySettingsTheme(@NonNull View view) {
             CalculatorTheme theme = ThemeManager.get();
-            view.setBackgroundColor(theme.background);
+            view.setBackgroundColor(theme.background());
             ThemeApplier.apply(view);
             int[] cardIds = {R.id.card_display, R.id.card_feedback, R.id.card_information};
             float radius = 16f * getResources().getDisplayMetrics().density;
@@ -193,8 +193,8 @@ public class SettingsActivity extends AppCompatActivity {
             for (int id : cardIds) {
                 View card = view.findViewById(id);
                 if (card != null) {
-                    GradientDrawable drawable = ThemeApplier.roundedFill(theme.background, radius);
-                    drawable.setStroke(stroke, theme.functions);
+                    GradientDrawable drawable = ThemeApplier.roundedFill(theme.background(), radius);
+                    drawable.setStroke(stroke, theme.functions());
                     card.setBackground(drawable);
                 }
             }
@@ -204,12 +204,12 @@ public class SettingsActivity extends AppCompatActivity {
             for (int id : sectionIds) {
                 TextView section = view.findViewById(id);
                 if (section != null) {
-                    section.setTextColor(theme.mainText);
+                    section.setTextColor(theme.mainText());
                 }
             }
             TextView themeTitle = view.findViewById(R.id.tv_theme_title);
             if (themeTitle != null) {
-                themeTitle.setTextColor(theme.mainText);
+                themeTitle.setTextColor(theme.mainText());
             }
         }
 

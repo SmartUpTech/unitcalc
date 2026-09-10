@@ -124,12 +124,12 @@ public class FlowchartGraphView extends View {
         }
 
         GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme, maxLayoutWidth);
-        for (Map.Entry<String, GraphLayoutEngine.LayoutBox> entry : result.nodeBounds.entrySet()) {
+        for (Map.Entry<String, GraphLayoutEngine.LayoutBox> entry : result.nodeBounds().entrySet()) {
             GraphLayoutEngine.LayoutBox box = entry.getValue();
-            nodeBounds.put(entry.getKey(), new RectF(box.x, box.y, box.x + box.width, box.y + box.height));
+            nodeBounds.put(entry.getKey(), new RectF(box.x(), box.y(), box.x() + box.width(), box.y() + box.height()));
         }
-        contentWidth = result.contentWidth;
-        contentHeight = result.contentHeight;
+        contentWidth = result.contentWidth();
+        contentHeight = result.contentHeight();
         connectorRouter = new OrthogonalConnectorRouter(
                 output.getNodes(),
                 output.getConnections(),
@@ -145,11 +145,11 @@ public class FlowchartGraphView extends View {
         connectorPaint.setStrokeWidth(theme.getConnectorStrokeWidth());
 
         for (GraphyConnection connection : output.getConnections()) {
-            if (!nodeBounds.containsKey(connection.getFromNodeId())
-                    || !nodeBounds.containsKey(connection.getToNodeId())) {
+            if (!nodeBounds.containsKey(connection.fromNodeId())
+                    || !nodeBounds.containsKey(connection.toNodeId())) {
                 continue;
             }
-            drawOrthogonalConnector(canvas, connection.getFromNodeId(), connection.getToNodeId());
+            drawOrthogonalConnector(canvas, connection.fromNodeId(), connection.toNodeId());
         }
     }
 
@@ -231,7 +231,7 @@ public class FlowchartGraphView extends View {
                 continue;
             }
 
-            if (node.getType() == GraphyNodeType.OPERATION) {
+            if (node.type() == GraphyNodeType.OPERATION) {
                 drawOperationNode(canvas, node, bounds);
             } else {
                 drawValueNode(canvas, node, bounds);
@@ -243,13 +243,13 @@ public class FlowchartGraphView extends View {
     private List<String> buildDrawOrder() {
         List<String> order = new ArrayList<>();
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() != GraphyNodeType.RESULT) {
-                order.add(node.getId());
+            if (node.type() != GraphyNodeType.RESULT) {
+                order.add(node.id());
             }
         }
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == GraphyNodeType.RESULT) {
-                order.add(node.getId());
+            if (node.type() == GraphyNodeType.RESULT) {
+                order.add(node.id());
             }
         }
         return order;
@@ -261,7 +261,7 @@ public class FlowchartGraphView extends View {
         int fillColor;
         int textColor;
 
-        switch (node.getType()) {
+        switch (node.type()) {
             case INPUT:
                 fillColor = theme.getInputColor();
                 textColor = theme.getOnInputColor();
@@ -297,12 +297,12 @@ public class FlowchartGraphView extends View {
 
         // Draw text
         textPaint.setColor(textColor);
-        textPaint.setTextSize(node.getType() == GraphyNodeType.RESULT ? theme.getResultTextSize() : theme.getValueTextSize());
-        textPaint.setFakeBoldText(node.getType() == GraphyNodeType.RESULT || "primary".equals(node.getSemanticRole()));
+        textPaint.setTextSize(node.type() == GraphyNodeType.RESULT ? theme.getResultTextSize() : theme.getValueTextSize());
+        textPaint.setFakeBoldText(node.type() == GraphyNodeType.RESULT || "primary".equals(node.semanticRole()));
         textPaint.setTextAlign(Paint.Align.CENTER);
         
         float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
-        canvas.drawText(node.getDisplayValue(), bounds.centerX(), textY, textPaint);
+        canvas.drawText(node.displayValue(), bounds.centerX(), textY, textPaint);
     }
 
     private void drawOperationNode(@NonNull Canvas canvas,
@@ -322,7 +322,7 @@ public class FlowchartGraphView extends View {
         textPaint.setTextSize(theme.getOperationTextSize());
         textPaint.setFakeBoldText(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        String symbol = GraphLayoutEngine.formatOperator(node.getLabel());
+        String symbol = GraphLayoutEngine.formatOperator(node.label());
         float textY = cy - (textPaint.descent() + textPaint.ascent()) / 2f;
         canvas.drawText(symbol, cx, textY, textPaint);
     }
@@ -331,7 +331,7 @@ public class FlowchartGraphView extends View {
     @Nullable
     private GraphyNode findNode(@NonNull String id) {
         for (GraphyNode node : output.getNodes()) {
-            if (node.getId().equals(id)) {
+            if (node.id().equals(id)) {
                 return node;
             }
         }

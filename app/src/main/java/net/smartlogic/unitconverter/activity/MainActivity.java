@@ -35,11 +35,11 @@ import net.smartlogic.unitconverter.fragment.FavoritesFragment;
 import net.smartlogic.unitconverter.fragment.HistoryFragment;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
-import net.smartlogic.unitconverter.model.CalculationHistoryItem;
-import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.timer.TimerFragment;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
-        CalculatorCatalog.Entry entry = CalculatorCatalog.getById(item.calculatorId);
+        CalculatorCatalog.Entry entry = CalculatorCatalog.getById(item.calculatorId());
         if (entry == null) {
             entry = CalculatorCatalog.getById(CalculatorCatalog.ID_BASIC);
         }
@@ -480,15 +480,15 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 boolean isFavorite = favoritesRepository.isFavorite(activeCalculatorId);
                 favoriteItem.setIcon(R.drawable.ic_favorite);
                 if (isFavorite) {
-                    favoriteItem.getIcon().setTint(ThemeManager.get().equal);
+                    favoriteItem.getIcon().setTint(ThemeManager.get().equal());
                 } else {
-                    favoriteItem.getIcon().setTint(ThemeManager.get().functions);
+                    favoriteItem.getIcon().setTint(ThemeManager.get().functions());
                 }
             }
         }
         MenuItem settingsItem = menu.findItem(R.id.menu_settings);
         if (settingsItem != null && settingsItem.getIcon() != null) {
-            settingsItem.getIcon().setTint(ThemeManager.get().functions);
+            settingsItem.getIcon().setTint(ThemeManager.get().functions());
         }
         return super.onPrepareOptionsMenu(menu);
     }

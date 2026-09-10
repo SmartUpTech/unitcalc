@@ -47,13 +47,13 @@ final class OrthogonalConnectorRouter {
         this.nodeTypes = new HashMap<>();
         this.incoming = new HashMap<>();
         for (GraphyNode node : nodes) {
-            nodeTypes.put(node.getId(), node.getType());
-            incoming.put(node.getId(), new ArrayList<>());
+            nodeTypes.put(node.id(), node.type());
+            incoming.put(node.id(), new ArrayList<>());
         }
         for (GraphyConnection connection : connections) {
-            List<String> targets = incoming.get(connection.getToNodeId());
+            List<String> targets = incoming.get(connection.toNodeId());
             if (targets != null) {
-                targets.add(connection.getFromNodeId());
+                targets.add(connection.fromNodeId());
             }
         }
         assignBypassLanes(connections);
@@ -285,8 +285,8 @@ final class OrthogonalConnectorRouter {
         List<String> left = new ArrayList<>();
         List<String> right = new ArrayList<>();
         for (GraphyConnection connection : connections) {
-            String fromId = connection.getFromNodeId();
-            String toId = connection.getToNodeId();
+            String fromId = connection.fromNodeId();
+            String toId = connection.toNodeId();
             RectF from = nodeBounds.get(fromId);
             RectF to = nodeBounds.get(toId);
             if (from == null || to == null) {

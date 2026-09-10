@@ -32,7 +32,7 @@ public final class ThemeManager {
 
     public static void select(@NonNull Context context, @NonNull String themeId) {
         CalculatorTheme theme = CalculatorThemes.fromId(themeId);
-        Preferences.getInstance(context).setSelectedThemeId(theme.id);
+        Preferences.getInstance(context).setSelectedThemeId(theme.id());
         current = theme;
         for (Listener listener : listeners) {
             listener.onThemeChanged(theme);

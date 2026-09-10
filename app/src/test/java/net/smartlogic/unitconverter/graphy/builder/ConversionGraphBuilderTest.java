@@ -7,9 +7,6 @@ import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -74,7 +71,7 @@ public class ConversionGraphBuilderTest {
 
     private static boolean hasNodeType(GraphyOutput output, GraphyNodeType type) {
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == type) {
+            if (node.type() == type) {
                 return true;
             }
         }
@@ -84,7 +81,7 @@ public class ConversionGraphBuilderTest {
     private static int countNodeType(GraphyOutput output, GraphyNodeType type) {
         int count = 0;
         for (GraphyNode node : output.getNodes()) {
-            if (node.getType() == type) {
+            if (node.type() == type) {
                 count++;
             }
         }
