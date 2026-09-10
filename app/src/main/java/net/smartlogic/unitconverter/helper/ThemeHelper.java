@@ -1,36 +1,26 @@
 package net.smartlogic.unitconverter.helper;
 
-import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
-//https://github.com/android/user-interface-samples/tree/master/DarkTheme
+/**
+ * Locks the process to a single resource configuration so OEM force-dark /
+ * DayNight cannot override {@link net.smartlogic.unitconverter.theme.CalculatorTheme}.
+ */
+public final class ThemeHelper {
 
-public class ThemeHelper {
+    private ThemeHelper() {
+    }
 
-    public static final String LIGHT_MODE = "light";
-    public static final String DARK_MODE = "dark";
-    public static final String DEFAULT_MODE = "default";
+    public static void lockResourceNightMode() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+    }
 
-    public static void applyTheme(@NonNull String themePref) {
-        switch (themePref) {
-            case LIGHT_MODE: {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                break;
-            }
-            case DARK_MODE: {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                break;
-            }
-            default: {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
-                }
-                break;
-            }
-        }
+    /**
+     * @deprecated Appearance is controlled only by {@code selected_theme}.
+     */
+    @Deprecated
+    public static void applyTheme(@NonNull String ignored) {
+        lockResourceNightMode();
     }
 }

@@ -1,7 +1,7 @@
 package net.smartlogic.unitconverter.activity;
 
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,17 +16,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
-
-import com.google.android.material.materialswitch.MaterialSwitch;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.Preferences;
-import net.smartlogic.unitconverter.helper.ThemeHelper;
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.CalculatorThemes;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.ThemeChipAdapter;
+import net.smartlogic.unitconverter.theme.ThemeManager;
+import net.smartlogic.unitconverter.theme.WindowChrome;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -36,13 +38,13 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
 
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.chrome_surface));
-        WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        boolean night = (getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        wic.setAppearanceLightStatusBars(!night);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_activity_settings);
+            actionBar.setElevation(0f);
+        }
+        WindowChrome.apply(this);
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -52,20 +54,18 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.title_activity_settings);
-            actionBar.setElevation(0f);
-            actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.action_bar_background));
-        }
-
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.settings, new SettingsFragment())
                     .commitNow();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        WindowChrome.apply(this);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends Fragment {
 
         private Preferences preferences;
-        private MaterialSwitch darkModeSwitch;
+        private ThemeChipAdapter themeChipAdapter;
 
         @Nullable
         @Override
@@ -95,15 +95,7 @@ public class SettingsActivity extends AppCompatActivity {
             super.onViewCreated(view, savedInstanceState);
             preferences = Preferences.getInstance(requireContext());
 
-            darkModeSwitch = view.findViewById(R.id.switch_dark_mode);
-            darkModeSwitch.setChecked(
-                    preferences.getPrefsTheme().equals(ThemeHelper.DARK_MODE));
-            darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                ThemeHelper.applyTheme(isChecked ? ThemeHelper.DARK_MODE : ThemeHelper.LIGHT_MODE);
-                preferences.getPreferences().edit()
-                        .putBoolean(Preferences.PREFS_THEME, isChecked)
-                        .apply();
-            });
+            bindThemeRow(view.findViewById(R.id.row_theme));
 
             bindChoiceRow(
                     view.findViewById(R.id.row_number_decimals),
@@ -163,6 +155,62 @@ public class SettingsActivity extends AppCompatActivity {
             TextView versionValue = versionRow.findViewById(R.id.tv_info_value);
             versionTitle.setText(R.string.pref_version_title);
             versionValue.setText(BuildConfig.VERSION_NAME);
+
+            applySettingsTheme(view);
+        }
+
+        private void bindThemeRow(@NonNull View row) {
+            TextView title = row.findViewById(R.id.tv_theme_title);
+            title.setText(R.string.prefs_title_theme);
+            RecyclerView chips = row.findViewById(R.id.rv_theme_chips);
+            chips.setLayoutManager(new LinearLayoutManager(
+                    requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            chips.setHasFixedSize(false);
+            themeChipAdapter = new ThemeChipAdapter(
+                    CalculatorThemes.all(),
+                    ThemeManager.get().id,
+                    this::onThemeSelected);
+            chips.setAdapter(themeChipAdapter);
+        }
+
+        private void onThemeSelected(@NonNull CalculatorTheme theme) {
+            if (theme.id.equals(ThemeManager.get().id)) {
+                return;
+            }
+            ThemeManager.select(requireContext(), theme.id);
+            if (getActivity() != null) {
+                getActivity().recreate();
+            }
+        }
+
+        private void applySettingsTheme(@NonNull View view) {
+            CalculatorTheme theme = ThemeManager.get();
+            view.setBackgroundColor(theme.background);
+            ThemeApplier.apply(view);
+            int[] cardIds = {R.id.card_display, R.id.card_feedback, R.id.card_information};
+            float radius = 16f * getResources().getDisplayMetrics().density;
+            int stroke = Math.round(getResources().getDisplayMetrics().density);
+            for (int id : cardIds) {
+                View card = view.findViewById(id);
+                if (card != null) {
+                    GradientDrawable drawable = ThemeApplier.roundedFill(theme.background, radius);
+                    drawable.setStroke(stroke, theme.functions);
+                    card.setBackground(drawable);
+                }
+            }
+            int[] sectionIds = {
+                    R.id.tv_section_display, R.id.tv_section_feedback, R.id.tv_section_information
+            };
+            for (int id : sectionIds) {
+                TextView section = view.findViewById(id);
+                if (section != null) {
+                    section.setTextColor(theme.mainText);
+                }
+            }
+            TextView themeTitle = view.findViewById(R.id.tv_theme_title);
+            if (themeTitle != null) {
+                themeTitle.setTextColor(theme.mainText);
+            }
         }
 
         private void bindChoiceRow(@NonNull View row, @NonNull String title, @NonNull String summary,

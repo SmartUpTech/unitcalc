@@ -24,6 +24,7 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,12 +75,16 @@ public class HistoryFragment extends Fragment {
 
         view.findViewById(R.id.btn_clear_history).setOnClickListener(v -> clearHistory());
         refreshHistory();
+        ThemeApplier.apply(view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         refreshHistory();
+        if (getView() != null) {
+            ThemeApplier.apply(getView());
+        }
     }
 
     private void onHistoryItemSelected(@NonNull CalculationHistoryItem item) {
@@ -165,6 +170,11 @@ public class HistoryFragment extends Fragment {
                     ExpressionDisplayFormatter.formatSpannable(item.expression, prefs, theme)
             );
             itemHolder.tvResult.setText(item.result);
+            net.smartlogic.unitconverter.theme.CalculatorTheme colors =
+                    net.smartlogic.unitconverter.theme.ThemeManager.get();
+            itemHolder.tvResult.setTextColor(colors.mainText);
+            itemHolder.tvCalculator.setTextColor(colors.functions);
+            itemHolder.tvTime.setTextColor(colors.functions);
             itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
 

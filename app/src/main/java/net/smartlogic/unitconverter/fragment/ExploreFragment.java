@@ -20,6 +20,7 @@ import net.smartlogic.unitconverter.activity.MainActivity;
 import net.smartlogic.unitconverter.adapter.CalculatorCatalogAdapter;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +85,7 @@ public class ExploreFragment extends Fragment {
                 filterEntries(s.toString());
             }
         });
+        ThemeApplier.apply(view);
     }
 
     private void filterEntries(@NonNull String query) {

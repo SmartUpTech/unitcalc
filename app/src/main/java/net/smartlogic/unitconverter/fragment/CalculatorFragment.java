@@ -38,6 +38,7 @@ import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
@@ -119,6 +120,15 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
+        if (getView() != null) {
+            ThemeApplier.apply(getView());
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         if (workspaceTabController != null) {
             workspaceTabController.detach();
@@ -138,6 +148,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         workspacePager = view.findViewById(R.id.workspace_pager);
         graphyTheme = new GraphyViewTheme(requireContext());
         semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
+        ThemeApplier.apply(view);
 
         WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
                 WORKSPACE_LAYOUTS,
@@ -166,6 +177,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void bindWorkspacePage(int position, @NonNull View pageView) {
+        ThemeApplier.apply(pageView);
         if (position == 0) {
             bindCalculatePage(pageView);
         } else if (position == 1) {
@@ -204,6 +216,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
         tvExpression.setOnLongClickListener(this);
         tvResult.setOnLongClickListener(this);
+        ThemeApplier.apply(pageView);
 
         tvExpression.addTextChangedListener(new TextWatcher() {
             @Override

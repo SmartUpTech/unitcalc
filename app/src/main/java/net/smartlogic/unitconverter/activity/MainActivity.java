@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -17,11 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -39,6 +35,9 @@ import net.smartlogic.unitconverter.fragment.FavoritesFragment;
 import net.smartlogic.unitconverter.fragment.HistoryFragment;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.ThemeManager;
+import net.smartlogic.unitconverter.theme.WindowChrome;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.timer.TimerFragment;
@@ -66,27 +65,19 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.chrome_surface));
-        WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        boolean night = (getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        wic.setAppearanceLightStatusBars(!night);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setCustomView(R.layout.action_bar_brand);
             actionBar.setElevation(0f);
-            actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.action_bar_background));
             View customView = actionBar.getCustomView();
             ImageButton menuButton = customView.findViewById(R.id.btn_nav_menu);
             if (menuButton != null) {
                 menuButton.setOnClickListener(v -> openDrawer());
             }
         }
+        WindowChrome.apply(this);
         context = this;
         favoritesRepository = FavoritesRepository.getInstance(this);
 
@@ -99,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         restoreFragmentsIfNeeded(savedInstanceState);
         setUpBottomNavigation();
+        ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
         if (shouldOpenTimer(getIntent())) {
             showTimerScreen();
         }
@@ -488,15 +480,15 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 boolean isFavorite = favoritesRepository.isFavorite(activeCalculatorId);
                 favoriteItem.setIcon(R.drawable.ic_favorite);
                 if (isFavorite) {
-                    favoriteItem.getIcon().setTint(ContextCompat.getColor(this, R.color.accent));
+                    favoriteItem.getIcon().setTint(ThemeManager.get().equal);
                 } else {
-                    favoriteItem.getIcon().setTint(ContextCompat.getColor(this, R.color.screen_expression_text));
+                    favoriteItem.getIcon().setTint(ThemeManager.get().functions);
                 }
             }
         }
         MenuItem settingsItem = menu.findItem(R.id.menu_settings);
         if (settingsItem != null && settingsItem.getIcon() != null) {
-            settingsItem.getIcon().setTint(ContextCompat.getColor(this, R.color.screen_expression_text));
+            settingsItem.getIcon().setTint(ThemeManager.get().functions);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -540,6 +532,14 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        WindowChrome.apply(this);
+        ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
+        ThemeApplier.apply(findViewById(R.id.drawer_layout));
     }
 
     @Override

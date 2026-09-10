@@ -8,10 +8,10 @@ import android.text.style.ForegroundColorSpan;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
-import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -451,15 +451,16 @@ public final class ExpressionDisplayFormatter {
 
         @NonNull
         public static GraphySemanticTheme from(@NonNull Context context) {
+            CalculatorTheme theme = ThemeManager.get();
             return new GraphySemanticTheme(
-                    ContextCompat.getColor(context, R.color.semantic_number),
-                    ContextCompat.getColor(context, R.color.semantic_operator),
-                    ContextCompat.getColor(context, R.color.semantic_function),
-                    ContextCompat.getColor(context, R.color.semantic_utility),
-                    ContextCompat.getColor(context, R.color.semantic_equal),
-                    ContextCompat.getColor(context, R.color.semantic_primary_text),
-                    ContextCompat.getColor(context, R.color.semantic_secondary_text),
-                    ContextCompat.getColor(context, R.color.semantic_background)
+                    theme.mainText,
+                    theme.operatorContentColor(),
+                    theme.functions,
+                    theme.functions,
+                    theme.equal,
+                    theme.mainText,
+                    theme.functions,
+                    theme.background
             );
         }
 

@@ -301,6 +301,8 @@
     <string name="title_activity_info">Information</string>
 
     <!-- Preferences -->
+    <string name="prefs_title_display">Display</string>
+    <string name="prefs_title_theme">Theme</string>
     <string name="prefs_title_formatting">Customization</string>
     <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>
     <string name="prefs_title_number_decimals">Number of Decimals</string>
@@ -308,9 +310,6 @@
     <string name="prefs_title_group_separator">Group Separator</string>
     <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
     <string name="prefs_title_decimal_separator">Decimal Separator</string>
-    <string name="prefs_title_light_theme">Use Light Theme</string>
-    <string name="prefs_title_dark_mode">Dark mode</string>
-    <string name="prefs_summary_dark_mode">Use a darker appearance across the app</string>
     <string name="settings_open">Open settings</string>
 
     <string name="pref_rate_title">Rate us on Google Play</string>
