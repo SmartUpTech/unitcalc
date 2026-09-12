@@ -27,24 +27,31 @@ public final class ThemeApplier {
     };
     private static final int[] FUNCTION_IDS = {
             R.id.power, R.id.sqrt, R.id.parenthesis_open, R.id.parenthesis_close,
-            R.id.percent, R.id.sign_toggle
+            R.id.percent, R.id.sign_toggle, R.id.ac
     };
     private static final int[] OPERATOR_IDS = {
             R.id.divide, R.id.multiply, R.id.minus, R.id.plus
     };
     private static final int[] ICON_IDS = {
             R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
-            R.id.btn_clear_history
+            R.id.btn_clear_history, R.id.share, R.id.refresh, R.id.catalog_icon,
+            R.id.btn_favorite
     };
     private static final int[] MAIN_TEXT_IDS = {
             R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
             R.id.txtRate, R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
-            R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO
+            R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
+            R.id.fromCurrency, R.id.toCurrency, R.id.fromCurrencyISO, R.id.toCurrencyISO,
+            R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
             R.id.tv_choice_value, R.id.tv_info_value, R.id.tv_history_expression,
-            R.id.tv_empty_history
+            R.id.tv_empty_history, R.id.txtLastUpdateTime, R.id.tv_history_time
+    };
+    private static final int[] CLEAR_BACKGROUND_IDS = {
+            R.id.converter_card, R.id.reverse_container, R.id.converter_divider,
+            R.id.converter_mode_toggle, R.id.btn_unit_mode, R.id.btn_currency_mode
     };
 
     private ThemeApplier() {
@@ -115,7 +122,13 @@ public final class ThemeApplier {
                 || id == R.id.calculate_pane
                 || id == R.id.keypad
                 || id == R.id.frame_layout
-                || id == R.id.history_root) {
+                || id == R.id.history_root
+                || id == R.id.main_content
+                || id == R.id.ll_main
+                || id == R.id.convert_pane
+                || id == R.id.converter_container
+                || id == R.id.explore_root
+                || id == R.id.favorites_root) {
             view.setBackgroundColor(theme.background());
         }
 
@@ -123,22 +136,33 @@ public final class ThemeApplier {
             applyTabLayout((TabLayout) view);
         }
 
-        if (contains(NUMBER_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.mainText());
-        } else if (contains(FUNCTION_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.functions());
-        } else if (contains(OPERATOR_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.operatorContentColor());
-        } else if (id == R.id.equal && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.equal());
-        } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.mainText());
-        } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView) {
-            ((TextView) view).setTextColor(theme.functions());
+        boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;
+
+        if (isKey || contains(CLEAR_BACKGROUND_IDS, id)) {
+            if (view instanceof com.google.android.material.button.MaterialButton mb
+                    && mb.getParent() instanceof com.google.android.material.button.MaterialButtonToggleGroup) {
+                mb.setBackgroundTintList(null);
+            } else {
+                view.setBackground(null);
+            }
         }
 
-        if (contains(ICON_IDS, id) && view instanceof ImageView) {
-            ImageViewCompat.setImageTintList((ImageView) view, ColorStateList.valueOf(theme.mainText()));
+        if (contains(NUMBER_IDS, id) && view instanceof TextView tv) {
+            tv.setTextColor(theme.mainText());
+        } else if (contains(FUNCTION_IDS, id) && view instanceof TextView tv) {
+            tv.setTextColor(theme.functions());
+        } else if (contains(OPERATOR_IDS, id) && view instanceof TextView tv) {
+            tv.setTextColor(theme.operatorContentColor());
+        } else if (id == R.id.equal && view instanceof TextView tv) {
+            tv.setTextColor(theme.equal());
+        } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView tv) {
+            tv.setTextColor(theme.mainText());
+        } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView tv) {
+            tv.setTextColor(theme.functions());
+        }
+
+        if (contains(ICON_IDS, id) && view instanceof ImageView iv) {
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.mainText()));
         }
 
         if (view instanceof ViewGroup group) {

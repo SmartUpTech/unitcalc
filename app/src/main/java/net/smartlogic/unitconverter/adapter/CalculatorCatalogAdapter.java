@@ -8,12 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
+
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +62,13 @@ public class CalculatorCatalogAdapter extends RecyclerView.Adapter<CalculatorCat
         holder.title.setText(entry.titleRes);
         holder.icon.setImageResource(entry.iconRes);
 
+        CalculatorTheme theme = ThemeManager.get();
+        ThemeApplier.apply(holder.itemView);
+
         if (showFavoriteButton && entry.isFavoriteEligible()) {
             holder.favorite.setVisibility(View.VISIBLE);
             boolean isFavorite = favoritesRepository.isFavorite(entry.id);
-            int tint = ContextCompat.getColor(holder.itemView.getContext(),
-                    isFavorite ? R.color.accent : R.color.screen_expression_text);
+            int tint = isFavorite ? theme.equal() : theme.functions();
             holder.favorite.setColorFilter(tint);
             holder.favorite.setOnClickListener(v -> {
                 boolean next = favoritesRepository.toggleFavorite(entry.id);

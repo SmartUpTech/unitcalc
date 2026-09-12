@@ -1,0 +1,49 @@
+# Build & Compilation
+.gradle/
+.kotlin/
+build/
+bin/
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+/app/build/
+/app/release/
+
+# IDE Settings
+.idea/
+*.iml
+.vscode/
+
+# VCS Metadata
+.git/
+
+# Local/Sensitive Config
+local.properties
+keystore.properties
+*.jks
+*.keystore
+google-services.json
+google-services-desktop.json
+
+# Binary Assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.pdf
+*.zip
+*.ico
+*.ttf
+*.otf
+*.jar
+*.aab
+*.apk
+
+# System Metadata
+Thumbs.db
+.DS_Store
+
+# Agent Artifacts
+.artifacts/

@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.utils.Conversions;
 
 public class ConversionAdapter extends ArrayAdapter<Integer> {
@@ -51,13 +51,16 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
         holder.textView.setText(context.getString(conversions.getById(val[position]).getLabelResource()));
         holder.imageView.setImageResource(conversions.getById(val[position]).getImageResource());
 
+        CalculatorTheme theme = ThemeManager.get();
         boolean selected = position == selectedItem;
         convertView.setSelected(selected);
         holder.indicator.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
+        holder.indicator.setBackgroundColor(theme.equal());
         holder.iconContainer.setBackgroundResource(
                 selected ? R.drawable.bg_category_icon_selected : R.drawable.bg_category_icon_default);
-        int accent = ContextCompat.getColor(context, R.color.accent);
-        int muted = ContextCompat.getColor(context, R.color.screen_expression_text);
+        
+        int accent = theme.equal();
+        int muted = theme.functions();
         holder.textView.setTextColor(selected ? accent : muted);
         holder.imageView.setColorFilter(selected ? accent : muted);
 

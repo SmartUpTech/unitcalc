@@ -154,6 +154,7 @@ public class HistoryFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof HeaderHolder) {
                 ((HeaderHolder) holder).title.setText((String) rows.get(position));
+                ThemeApplier.apply(holder.itemView);
                 return;
             }
 
@@ -161,20 +162,17 @@ public class HistoryFragment extends Fragment {
             ItemHolder itemHolder = (ItemHolder) holder;
             Context context = itemHolder.itemView.getContext();
             Preferences prefs = Preferences.getInstance(context);
-            ExpressionDisplayFormatter.GraphySemanticTheme theme =
+            ExpressionDisplayFormatter.GraphySemanticTheme semanticTheme =
                     ExpressionDisplayFormatter.GraphySemanticTheme.from(context);
 
             itemHolder.tvCalculator.setText(CalculatorCatalog.titleForId(context, item.calculatorId()));
             itemHolder.tvTime.setText(HistoryDateLabels.formatTime(item.createdAt()));
             itemHolder.tvExpression.setText(
-                    ExpressionDisplayFormatter.formatSpannable(item.expression(), prefs, theme)
+                    ExpressionDisplayFormatter.formatSpannable(item.expression(), prefs, semanticTheme)
             );
             itemHolder.tvResult.setText(item.result());
-            net.smartlogic.unitconverter.theme.CalculatorTheme colors =
-                    net.smartlogic.unitconverter.theme.ThemeManager.get();
-            itemHolder.tvResult.setTextColor(colors.mainText());
-            itemHolder.tvCalculator.setTextColor(colors.functions());
-            itemHolder.tvTime.setTextColor(colors.functions());
+
+            ThemeApplier.apply(itemHolder.itemView);
             itemHolder.itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
 

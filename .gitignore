@@ -1,24 +1,39 @@
-*.iml
-.gradle
-/local.properties
-/.idea
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/app/src/main/Thumbs.db
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-/app/src/main/res/*/Thumbs.db
-/app/src/main/res/drawable*/Thumbs.db
-/app/build
-/app/release
-Thumbs.db
+# Built artifacts
+bin/
+gen/
+out/
+build/
+.gradle/
+.kotlin/
+app/build/
+app/release/
 
-.artifacts/
+# IDE files
+.idea/
+*.iml
+local.properties
 keystore.properties
+captures/
+.externalNativeBuild/
+.cxx/
+.navigation/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# User artifacts
+.artifacts/
+
+# Signing files
+*.jks
+*.keystore
+*.p12
+*.key
+google-services.json
+
+# Misc
+*.log
+*.temp
+*.tmp

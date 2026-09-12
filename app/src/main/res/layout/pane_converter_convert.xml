@@ -28,8 +28,8 @@
             android:text="@string/currency_converter" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/converter_container"
+    <FrameLayout
+        android:id="@+id/converter_placeholder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

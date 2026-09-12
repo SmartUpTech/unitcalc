@@ -125,6 +125,7 @@ public class ConverterFragment extends Fragment {
         );
         updateGraphyTabState();
         ThemeApplier.apply(view);
+        ensureChildFragments();
         if (pendingOpenConvertWorkspace) {
             openConvertWorkspace();
         }
@@ -151,6 +152,7 @@ public class ConverterFragment extends Fragment {
         graphyPanel = null;
         graphyEmpty = null;
         graphyContext = null;
+        childFragmentsInitialized = false;
         pendingReadyActions.clear();
         super.onDestroyView();
     }
@@ -169,6 +171,26 @@ public class ConverterFragment extends Fragment {
             return;
         }
         convertPageBound = true;
+
+        View container = getView() != null ? getView().findViewById(R.id.converter_container) : null;
+        ViewGroup placeholder = pageView.findViewById(R.id.converter_placeholder);
+        if (container != null && placeholder != null) {
+            ViewGroup parent = (ViewGroup) container.getParent();
+            if (parent != null && parent != placeholder) {
+                parent.removeView(container);
+            }
+            if (container.getParent() == null) {
+                container.setVisibility(View.VISIBLE);
+                ViewGroup.LayoutParams lp = container.getLayoutParams();
+                if (lp == null) {
+                    lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                } else {
+                    lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                }
+                placeholder.addView(container, lp);
+            }
+        }
 
         modeToggle = pageView.findViewById(R.id.converter_mode_toggle);
         modeToggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {

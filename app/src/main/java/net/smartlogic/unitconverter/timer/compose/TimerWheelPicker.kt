@@ -6,12 +6,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,20 +43,23 @@ fun TimerWheelPicker(
 ) {
     val semantic = GraphyThemeTokens.semanticColors
     val values = range.toList()
-    val selectedIndex = values.indexOf(value).coerceAtLeast(0)
     val itemHeight = 36.dp
     val visibleCount = 5
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = selectedIndex)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = values.indexOf(value).coerceAtLeast(0))
 
-    LaunchedEffect(value) {
-        val target = values.indexOf(value).coerceAtLeast(0)
-        if (listState.firstVisibleItemIndex != target) {
-            listState.scrollToItem(target)
+    val centerIndex by remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val itemSize = layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0
+            if (itemSize <= 0) 0 else {
+                val center = layoutInfo.viewportEndOffset / 2
+                layoutInfo.visibleItemsInfo.minByOrNull { Math.abs((it.offset + it.size / 2) - center) }?.index ?: 0
+            }
         }
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
+        snapshotFlow { centerIndex }
             .distinctUntilChanged()
             .collect { index ->
                 val clamped = index.coerceIn(0, values.lastIndex)
@@ -53,6 +67,13 @@ fun TimerWheelPicker(
                     onValueChange(values[clamped])
                 }
             }
+    }
+
+    LaunchedEffect(value) {
+        val target = values.indexOf(value).coerceAtLeast(0)
+        if (centerIndex != target) {
+            listState.animateScrollToItem(target)
+        }
     }
 
     Box(
@@ -73,10 +94,11 @@ fun TimerWheelPicker(
             modifier = Modifier.fillMaxWidth(),
             flingBehavior = rememberSnapFlingBehavior(listState),
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(vertical = itemHeight * 2)
         ) {
             items(values.size) { index ->
                 val itemValue = values[index]
-                val isSelected = itemValue == value
+                val isSelected = index == centerIndex
                 Text(
                     text = "$itemValue $unitLabel",
                     modifier = Modifier
