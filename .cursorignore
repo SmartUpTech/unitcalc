@@ -1,4 +1,4 @@
-# Build & Compilation
+# Build & Generated
 .gradle/
 .kotlin/
 build/
@@ -10,23 +10,20 @@ captures/
 /app/build/
 /app/release/
 
-# IDE Settings
+# IDE
 .idea/
 *.iml
 .vscode/
-
-# VCS Metadata
 .git/
 
-# Local/Sensitive Config
+# Config & Sensitive
 local.properties
 keystore.properties
 *.jks
 *.keystore
-google-services.json
-google-services-desktop.json
+google-services*.json
 
-# Binary Assets
+# Assets & Binaries
 *.png
 *.jpg
 *.jpeg
@@ -41,9 +38,19 @@ google-services-desktop.json
 *.aab
 *.apk
 
-# System Metadata
+# System
 Thumbs.db
 .DS_Store
 
-# Agent Artifacts
+# Agent History
 .artifacts/
+
+# Redundant Android Resources (Compression)
+app/src/main/res/mipmap-*
+
+# Optional context (uncomment if not testing)
+# app/src/test/
+# app/src/androidTest/
+
+
+app/src/main/ic_launcher-playstore.png
