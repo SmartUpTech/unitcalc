@@ -3,10 +3,9 @@
     android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:ellipsize="end"
     android:fontFamily="@font/app_text"
-    android:gravity="end|center_vertical"
-    android:maxLines="1"
-    android:paddingVertical="4dp"
+    android:gravity="start|center_vertical"
+    android:paddingVertical="@dimen/converter_small_spacing"
+    android:minHeight="@dimen/converter_touch_target"
     android:textColor="@color/screen_expression_text"
     android:textSize="@dimen/converter_unit_text_size" />

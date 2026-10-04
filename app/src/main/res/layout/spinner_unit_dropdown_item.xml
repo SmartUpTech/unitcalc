@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fontFamily="@font/app_text"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp"
+    android:paddingHorizontal="@dimen/converter_card_padding"
+    android:paddingVertical="@dimen/converter_spacing"
+    android:minHeight="@dimen/converter_touch_target"
     android:textColor="@color/screen_result_text"
-    android:textSize="15sp" />
+    android:textSize="@dimen/h3" />

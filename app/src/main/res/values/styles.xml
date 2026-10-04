@@ -377,4 +377,56 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="ConverterLabel" parent="">
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textSize">@dimen/converter_label_text_size</item>
+        <item name="android:textColor">@color/screen_expression_text</item>
+    </style>
+
+    <style name="ConverterSelectorText" parent="">
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textSize">@dimen/converter_unit_text_size</item>
+        <item name="android:textColor">@color/screen_result_text</item>
+        <item name="android:gravity">start|center_vertical</item>
+    </style>
+
+    <style name="ConverterValue" parent="">
+        <item name="android:background">@null</item>
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textSize">@dimen/converter_value_text_size</item>
+        <item name="android:textColor">@color/screen_result_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:importantForAutofill">no</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="ConverterIconButton" parent="ImageButtonStyle.Action">
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">@dimen/converter_touch_target</item>
+        <item name="android:layout_height">@dimen/converter_touch_target</item>
+        <item name="android:layout_weight">0</item>
+    </style>
+
+    <style name="ConverterKeyIcon" parent="ImageButtonStyle.Action">
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:minHeight">@dimen/converter_key_min_height</item>
+    </style>
+    <!-- Foreground feedback survives ThemeApplier's flat key backgrounds. -->
+    <style name="ConverterNumberKey" parent="ButtonStyle.Number">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:minHeight">@dimen/converter_key_min_height</item>
+    </style>
+
+    <style name="ConverterOperatorKey" parent="ConverterNumberKey">
+        <item name="android:textColor">@color/key_operator_text</item>
+    </style>
+
+    <style name="ConverterActionKey" parent="ConverterNumberKey">
+        <item name="android:textColor">@color/key_action_text</item>
+    </style>
 </resources>

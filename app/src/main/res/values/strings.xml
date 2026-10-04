@@ -383,4 +383,14 @@
     <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
     <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/9257395921</string>-->
 
+    <string name="converter_input_amount">Input amount</string>
+    <string name="converter_output_amount">Converted amount</string>
+    <string name="converter_copy_result">Copy conversion</string>
+    <string name="converter_share_result">Share conversion</string>
+    <string name="converter_refresh_rates">Refresh exchange rates</string>
+    <string name="converter_backspace">Delete last digit</string>
+    <string name="converter_clear_input">Clear input</string>
+    <string name="converter_clear_key" translatable="false">AC</string>
+    <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
+    <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
 </resources>
