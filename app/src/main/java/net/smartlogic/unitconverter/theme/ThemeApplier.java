@@ -41,16 +41,18 @@ public final class ThemeApplier {
             R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
             R.id.txtRate, R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
             R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
-            R.id.fromCurrency, R.id.toCurrency, R.id.fromCurrencyISO, R.id.toCurrencyISO,
+            R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
             R.id.tv_choice_value, R.id.tv_info_value, R.id.tv_history_expression,
-            R.id.tv_empty_history, R.id.txtLastUpdateTime, R.id.tv_history_time
+            R.id.tv_empty_history, R.id.txtLastUpdateTime, R.id.tv_history_time,
+            R.id.converter_from_label, R.id.converter_to_label,
+            R.id.fromCurrencyISO, R.id.toCurrencyISO
     };
     private static final int[] CLEAR_BACKGROUND_IDS = {
-            R.id.converter_card, R.id.reverse_container, R.id.converter_divider,
+            R.id.converter_card, R.id.reverse_container,
             R.id.converter_mode_toggle, R.id.btn_unit_mode, R.id.btn_currency_mode
     };
 

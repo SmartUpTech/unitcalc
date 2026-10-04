@@ -38,14 +38,12 @@ import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.utils.Conversions;
-import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
@@ -110,10 +108,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         copy = view.findViewById(R.id.copy);
 
         subtract = view.findViewById(R.id.minus);
+        subtract.setVisibility(View.VISIBLE);
 
         dot = view.findViewById(R.id.dot);
         double_zero = view.findViewById(R.id.double_zero);
-
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
@@ -347,14 +345,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
-                GenericFunctions.adjustTextSize(inputValue, 36);
             }
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
-
-        GenericFunctions.adjustTextSize(inputValue, 36);
-        GenericFunctions.adjustTextSize(outputValue, 36);
 
         return view;
     }
@@ -395,7 +389,6 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         String finalStr = applyFormatting(result);
 
         outputValue.setText(finalStr);
-        GenericFunctions.adjustTextSize(outputValue, 36);
         updateParentGraphy(in, from, to, fromSym, toSym, finalStr);
     }
 

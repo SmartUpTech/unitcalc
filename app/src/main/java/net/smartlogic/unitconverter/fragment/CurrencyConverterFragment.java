@@ -72,26 +72,11 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private TextView lastRefreshTime;
     private ImageView fromFlag, toFlag, refresh;
     private LinearLayout llMain;
+    private RelativeLayout rlFromUnit, rlToUnit;
     private ArrayList<Currency> currencies;
     private BottomSheetCurrencyDialogFragment bottomSheetCurrencyDialogFragment;
     private OnChooseCurrencyListener onChooseCurrencyListener;
     private Utils utils;
-    private final TextWatcher outputTextSizeAdjuster = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // Not required
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Not required
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            adjustTextSize(outputValue);
-        }
-    };
 
     public CurrencyConverterFragment() {
         // Required empty public constructor
@@ -102,10 +87,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public void adjustTextSize(EditText editText) {
-        GenericFunctions.adjustTextSize(editText, 36);
     }
 
     public int getDrawableResourceId(String name) {
@@ -284,7 +265,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             //format.setRoundingMode(RoundingMode.CEILING);
             String formattedOut = format.format(out);
             outputValue.setText(formattedOut);
-            adjustTextSize(outputValue);
             updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate);
         } else if (getParentFragment() instanceof ConverterFragment) {
             ((ConverterFragment) getParentFragment()).clearConversionGraphy();
@@ -346,6 +326,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         //Button subtract = view.findViewById(R.id.minus);
         Button ac = view.findViewById(R.id.ac);
+        ac.setVisibility(View.VISIBLE);
         Button dot = view.findViewById(R.id.dot);
         Button double_zero = view.findViewById(R.id.double_zero);
 
@@ -355,8 +336,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         inputSymbol = view.findViewById(R.id.inputSymbol);
         outputSymbol = view.findViewById(R.id.outputSymbol);
 
-        RelativeLayout rlFromUnit = view.findViewById(R.id.fromUnit);
-        RelativeLayout rlToUnit = view.findViewById(R.id.toUnit);
+        rlFromUnit = view.findViewById(R.id.fromUnit);
+        rlToUnit = view.findViewById(R.id.toUnit);
 
         llMain = view.findViewById(R.id.ll_main);
 
@@ -420,16 +401,12 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         prefs = Preferences.getInstance(context);
         utils = new Utils();
 
-        outputValue.addTextChangedListener(outputTextSizeAdjuster);
         currencyRates = new HashMap<>();
 
         onChooseCurrency(currencies.get(prefs.getFromCurrencyIndex()), "FROM");
         onChooseCurrency(currencies.get(prefs.getToCurrencyIndex()), "TO");
         refreshCurrencyRates(false);
         displayRates();
-
-        adjustTextSize(inputValue);
-        adjustTextSize(outputValue);
 
         lastRefreshTime.setText(AppConst.simpleDateFormat.format(prefs.getCurrencyLastUpdateDate()));
 
@@ -447,7 +424,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
-                adjustTextSize(inputValue);
             }
         };
 
@@ -456,7 +432,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         final ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) llMain.getLayoutParams();
         mlp.setMargins(0, 0, 0, 0);
         llMain.setLayoutParams(mlp);
-
 
         return view;
     }
@@ -530,12 +505,14 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             fromFlag.setImageResource(c.getFlagImageResource());
             fromCurrency.setText(displayName);
             fromCurrencyISO.setText(c.getCurrencyISOCode());
+            rlFromUnit.setContentDescription(getString(R.string.converter_source_currency, name, c.getCurrencyISOCode()));
             prefs.setFromCurrencyIndex(currencies.indexOf(c));
             inputSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
         } else if (type.equals("TO")) {
             toFlag.setImageResource(c.getFlagImageResource());
             toCurrency.setText(displayName);
             toCurrencyISO.setText(c.getCurrencyISOCode());
+            rlToUnit.setContentDescription(getString(R.string.converter_destination_currency, name, c.getCurrencyISOCode()));
             prefs.setToCurrencyIndex(currencies.indexOf(c));
             outputSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
         }
