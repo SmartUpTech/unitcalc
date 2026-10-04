@@ -17,16 +17,13 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.theme.CalculatorTheme;
-import net.smartlogic.unitconverter.theme.CalculatorThemes;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
-import net.smartlogic.unitconverter.theme.ThemeChipAdapter;
+import net.smartlogic.unitconverter.theme.ThemeSelectorController;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
 
@@ -81,7 +78,6 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends Fragment {
 
         private Preferences preferences;
-        private ThemeChipAdapter themeChipAdapter;
 
         @Nullable
         @Override
@@ -162,25 +158,10 @@ public class SettingsActivity extends AppCompatActivity {
         private void bindThemeRow(@NonNull View row) {
             TextView title = row.findViewById(R.id.tv_theme_title);
             title.setText(R.string.prefs_title_theme);
-            RecyclerView chips = row.findViewById(R.id.rv_theme_chips);
-            chips.setLayoutManager(new LinearLayoutManager(
-                    requireContext(), LinearLayoutManager.HORIZONTAL, false));
-            chips.setHasFixedSize(false);
-            themeChipAdapter = new ThemeChipAdapter(
-                    CalculatorThemes.all(),
-                    ThemeManager.get().id(),
-                    this::onThemeSelected);
-            chips.setAdapter(themeChipAdapter);
-        }
-
-        private void onThemeSelected(@NonNull CalculatorTheme theme) {
-            if (theme.id().equals(ThemeManager.get().id())) {
-                return;
-            }
-            ThemeManager.select(requireContext(), theme.id());
-            if (getActivity() != null) {
-                getActivity().recreate();
-            }
+            ThemeSelectorController.bind(row.findViewById(R.id.theme_selector), this, () -> {
+                if (getView() != null) applySettingsTheme(getView());
+                if (getActivity() != null) WindowChrome.apply(getActivity());
+            });
         }
 
         private void applySettingsTheme(@NonNull View view) {

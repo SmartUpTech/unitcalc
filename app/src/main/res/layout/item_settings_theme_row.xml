@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="10dp"
-    android:paddingBottom="14dp">
+    android:paddingTop="@dimen/graphy_spacing_sm"
+    android:paddingBottom="@dimen/graphy_spacing_md">
 
     <TextView
         android:id="@+id/tv_theme_title"
@@ -13,13 +13,9 @@
         android:layout_height="wrap_content"
         android:text="@string/prefs_title_theme" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_theme_chips"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/theme_selector"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_marginTop="10dp"
-        android:clipToPadding="false"
-        android:nestedScrollingEnabled="false"
-        android:overScrollMode="never"
-        android:paddingEnd="4dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/graphy_spacing_sm" />
 </LinearLayout>

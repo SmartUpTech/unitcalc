@@ -6,6 +6,7 @@ import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.helper.AppOpenManager;
 import net.smartlogic.unitconverter.helper.ThemeHelper;
 import net.smartlogic.unitconverter.theme.ThemeManager;
+import net.smartlogic.unitconverter.theme.ThemeUsageTracker;
 
 public class UnitConverter extends Application {
 
@@ -17,5 +18,6 @@ public class UnitConverter extends Application {
 
         ThemeHelper.lockResourceNightMode();
         ThemeManager.init(this);
+        ThemeUsageTracker.install(this);
     }
 }
