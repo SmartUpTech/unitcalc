@@ -16,7 +16,7 @@ public class GraphySemanticStyleTest {
     @Test public void everySemanticForegroundHasContrastInEveryAppTheme() {
         for (var theme : CalculatorThemes.all()) {
             for (var type : GraphyNodeType.values()) {
-                assertTrue(theme.name() + ": " + type,
+                assertTrue(theme.id() + ": " + type,
                         ColorUtils.calculateContrast(GraphySemanticStyle.content(theme, type),
                                 GraphySemanticStyle.fill(theme, type)) >= 4.5);
             }

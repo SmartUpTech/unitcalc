@@ -35,6 +35,13 @@ import static org.junit.Assert.*;
 @Config(sdk = 35, application = Application.class, qualifiers = "w360dp-h800dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class GraphyRenderingTest {
+    @org.junit.Before public void unlockThemesForRenderingCoverage() {
+        // These rendering tests exercise every palette, independent of the usage gate.
+        net.smartlogic.unitconverter.helper.Preferences.getInstance(RuntimeEnvironment.getApplication())
+                .getPreferences().edit().putInt(
+                        net.smartlogic.unitconverter.helper.Preferences.PREFS_THEME_USAGE_DAYS,
+                        Integer.MAX_VALUE).apply();
+    }
     @After public void reset() {
         RuntimeEnvironment.setFontScale(1f);
         ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.DEFAULT_ID);

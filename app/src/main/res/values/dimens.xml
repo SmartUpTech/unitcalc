@@ -1,4 +1,7 @@
 <resources>
+    <dimen name="theme_card_width">180dp</dimen>
+    <dimen name="theme_selection_stroke">1dp</dimen>
+    <dimen name="theme_state_icon_size">20dp</dimen>
 
     <dimen name="h1">32sp</dimen>
     <dimen name="resultDisplaySize">56sp</dimen>

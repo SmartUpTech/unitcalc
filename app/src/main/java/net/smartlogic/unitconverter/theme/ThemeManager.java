@@ -22,7 +22,9 @@ public final class ThemeManager {
     }
 
     public static void init(@NonNull Context context) {
-        current = CalculatorThemes.fromId(Preferences.getInstance(context).getSelectedThemeId());
+        Preferences preferences = Preferences.getInstance(context);
+        preferences.getThemeProgression();
+        current = CalculatorThemes.fromId(preferences.getSelectedThemeId());
     }
 
     @NonNull
@@ -31,8 +33,9 @@ public final class ThemeManager {
     }
 
     public static void select(@NonNull Context context, @NonNull String themeId) {
+        if (themeId.equals(current.id())) return;
+        if (!Preferences.getInstance(context).setSelectedThemeId(themeId)) return;
         CalculatorTheme theme = CalculatorThemes.fromId(themeId);
-        Preferences.getInstance(context).setSelectedThemeId(theme.id());
         current = theme;
         for (Listener listener : listeners) {
             listener.onThemeChanged(theme);

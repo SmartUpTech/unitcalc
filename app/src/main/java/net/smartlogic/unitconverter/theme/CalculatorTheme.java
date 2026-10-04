@@ -2,13 +2,14 @@ package net.smartlogic.unitconverter.theme;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.graphics.ColorUtils;
 
 /**
  * Central calculator appearance. UI code must read these fields rather than
  * branching on theme id or name.
  */
-public record CalculatorTheme(@NonNull String id, @NonNull String name, @ColorInt int background,
+public record CalculatorTheme(@NonNull String id, @StringRes int nameRes, int unlockRank, @ColorInt int background,
                               @ColorInt int mainText, @ColorInt int functions,
                               @ColorInt int operators, @ColorInt int equal) {
 
