@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Play Compliance"
+  short_description: "Review Android permissions, privacy, and release policy"
+  default_prompt: "Use $google-play-compliance to review this change against current Google Play requirements."
