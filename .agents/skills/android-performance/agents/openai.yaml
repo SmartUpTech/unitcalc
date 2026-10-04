@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Performance"
+  short_description: "Profile and improve Java, XML, and Compose performance"
+  default_prompt: "Use $android-performance to measure and improve this Android performance issue."
