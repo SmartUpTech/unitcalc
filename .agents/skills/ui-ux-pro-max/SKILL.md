@@ -8,6 +8,7 @@ description: Design and review Android UI/UX for Java/XML and Kotlin/Jetpack Com
 ## Workflow
 
 1. Read the root AGENTS.md and only the relevant docs/DESIGN_SYSTEM.md, docs/THEME.md, or docs/GRAPHY_ENGINE.md. Preserve existing theme tokens, components, and app behavior; treat search results as suggestions.
+   For resource rules, semantic roles and light/dark behavior, also follow [android-theme-consistency](../android-theme-consistency/SKILL.md); for navigation/state changes follow [android-development](../android-development/SKILL.md).
 2. Detect whether the target screen uses XML Views, Compose, or interoperability. Keep its current framework unless the task requests migration. Use resource strings and existing dimensions/styles; support all existing languages.
 3. Search one concern with 2–5 meaningful terms. Run from the repository root (or resolve an absolute repository path first):
    ```bash
