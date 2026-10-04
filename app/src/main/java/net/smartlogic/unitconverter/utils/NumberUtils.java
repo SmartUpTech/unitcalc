@@ -2,6 +2,13 @@ package net.smartlogic.unitconverter.utils;
 
 public class NumberUtils {
 
+    /** Shared calculator/Graphy display boundary. Does not change internal precision. */
+    public static String formatCalculator(double value, int decimals) {
+        java.text.DecimalFormat formatter = new java.text.DecimalFormat("#,###.########");
+        formatter.setMaximumFractionDigits(decimals);
+        return formatter.format(value);
+    }
+
     public static Float parseFloat(String str) {
         if (!StringUtils.isNotBlank(str)) return 0f;
         String clean = str.replaceAll("[^0-9.\\-]", "");

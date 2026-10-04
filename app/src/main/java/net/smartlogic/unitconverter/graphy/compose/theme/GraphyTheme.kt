@@ -1,6 +1,10 @@
 package net.smartlogic.unitconverter.graphy.compose.theme
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.dimensionResource
+import net.smartlogic.unitconverter.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -8,14 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import net.smartlogic.unitconverter.theme.CalculatorTheme
 import net.smartlogic.unitconverter.theme.ThemeManager
-
-object GraphyThemeDefaults {
-    fun currentTheme(): CalculatorTheme = ThemeManager.get()
-
-    fun isDarkTheme(): Boolean = !ThemeManager.get().isLightBackground
-}
 
 @Composable
 fun GraphyTheme(
@@ -33,42 +30,26 @@ fun GraphyTheme(
     val colorScheme = graphyColorScheme(theme)
     val semanticColors = graphySemanticColors(theme)
 
+    val spacing = GraphySpacing(
+        dimensionResource(R.dimen.graphy_spacing_xs), dimensionResource(R.dimen.graphy_spacing_sm),
+        dimensionResource(R.dimen.graphy_spacing_md), dimensionResource(R.dimen.graphy_spacing_lg))
+    val shape = RoundedCornerShape(dimensionResource(R.dimen.graphy_node_corner_radius))
     CompositionLocalProvider(
         LocalGraphySemanticColors provides semanticColors,
-        LocalGraphyTextStyles provides GraphyTextStylesDefault,
-        LocalGraphyShapeTokens provides GraphyShapeTokensDefault,
-        LocalGraphySpacing provides GraphySpacingDefault,
-        LocalGraphyElevation provides GraphyElevationDefault,
-        LocalGraphyComponentTokens provides GraphyComponentTokensDefault,
+        LocalGraphySpacing provides spacing,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = GraphyTypography,
-            shapes = GraphyShapes,
+            shapes = Shapes(small = shape, medium = shape, large = shape),
             content = content,
         )
     }
 }
 
-@Composable
-fun isGraphyDarkTheme(): Boolean = GraphyThemeDefaults.isDarkTheme()
-
 object GraphyThemeTokens {
     val semanticColors: GraphySemanticColors
         @Composable get() = LocalGraphySemanticColors.current
-
-    val textStyles: GraphyTextStyles
-        @Composable get() = LocalGraphyTextStyles.current
-
-    val shapes: GraphyShapeTokens
-        @Composable get() = LocalGraphyShapeTokens.current
-
     val spacing: GraphySpacing
         @Composable get() = LocalGraphySpacing.current
-
-    val elevation: GraphyElevation
-        @Composable get() = LocalGraphyElevation.current
-
-    val components: GraphyComponentTokens
-        @Composable get() = LocalGraphyComponentTokens.current
 }

@@ -1,10 +1,6 @@
 package net.smartlogic.unitconverter.graphy.compose.ui
 
-import android.view.Gravity
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,77 +24,92 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
+import net.smartlogic.unitconverter.graphy.model.GraphyNode
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartGraphView
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme
 
 @Composable
 fun GraphyPanel(
-    expression: String,
     output: GraphyOutput?,
     viewTheme: GraphyViewTheme,
     modifier: Modifier = Modifier,
 ) {
     val spacing = GraphyThemeTokens.spacing
     val semanticColors = GraphyThemeTokens.semanticColors
-    val panelDescription = stringResource(R.string.graphy_panel_content_description)
     var showLegend by remember { mutableStateOf(false) }
+    var selectedNode by remember(output) { mutableStateOf<GraphyNode?>(null) }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(semanticColors.background)
-            .semantics { contentDescription = panelDescription },
+    Column(
+        modifier = modifier.fillMaxSize().background(semanticColors.background)
+            .padding(spacing.sm),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = spacing.sm, vertical = spacing.sm),
-        ) {
-            if (output != null) {
-                GraphyResultSection(
-                    result = output.result,
-                    modifier = Modifier.padding(top = spacing.sm, bottom = spacing.md)
-                )
-
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(top = spacing.sm)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    GraphyFlowchartHost(
-                        output = output,
-                        viewTheme = viewTheme,
-                        maxWidth = constraints.maxWidth,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(R.string.graphy_explanation_label),
+                style = MaterialTheme.typography.titleMedium,
+                color = semanticColors.primaryText, modifier = Modifier.weight(1f))
+            GraphyHeader(onInfoClick = { showLegend = true })
+        }
+        Text(stringResource(R.string.graphy_node_hint), style = MaterialTheme.typography.bodySmall,
+            color = semanticColors.secondaryText, modifier = Modifier.padding(bottom = spacing.sm))
+        if (output == null || output.isEmpty) {
+            Text(stringResource(R.string.graphy_unavailable), color = semanticColors.secondaryText)
+        } else {
+            (output.metadata[GraphyOutput.METADATA_NOTICE] as? String)?.let { notice ->
+                Text(notice, style = MaterialTheme.typography.bodySmall,
+                    color = semanticColors.secondaryText, modifier = Modifier.padding(bottom = spacing.sm))
+            }
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxWidth().weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                val graphWidth = constraints.maxWidth
+                Column {
+                    GraphyFlowchartHost(output, viewTheme, graphWidth, { selectedNode = it },
+                        modifier = Modifier.fillMaxWidth())
+                    GraphyExplanation(output)
                 }
             }
         }
-
-        GraphyHeader(
-            onInfoClick = { showLegend = true },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(spacing.sm)
-        )
     }
 
     if (showLegend) {
         GraphyLegendDialog(onDismiss = { showLegend = false })
     }
+    selectedNode?.let { node ->
+        if (output != null) GraphyNodeDetails(node, output, viewTheme) { selectedNode = null }
+    }
+}
+
+@Composable
+private fun GraphyNodeDetails(node: GraphyNode, output: GraphyOutput,
+                             viewTheme: GraphyViewTheme, onDismiss: () -> Unit) {
+    val spacing = GraphyThemeTokens.spacing
+    AlertDialog(onDismissRequest = onDismiss,
+        title = { Text(viewTheme.nodeCaption(node)) },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
+                Text(node.displayValue, style = MaterialTheme.typography.bodyLarge)
+                node.formula?.takeIf { it != node.displayValue }?.let { Text(it) }
+                node.description?.takeIf { it.isNotBlank() }?.let { Text(it) }
+                output.connections.filter { it.toNodeId() == node.id }.forEach { edge ->
+                    output.nodes.firstOrNull { it.id == edge.fromNodeId() }?.let { source ->
+                        Text(stringResource(R.string.graphy_dependency, source.displayValue))
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.ok)) } })
 }
 
 @Composable
@@ -106,50 +118,25 @@ private fun GraphyHeader(
     modifier: Modifier = Modifier,
 ) {
     val infoDescription = stringResource(R.string.graphy_info_content_description)
-    val spacing = GraphyThemeTokens.spacing
-
-    Box(
-        modifier = modifier
-            .clickable(onClick = onInfoClick)
-            .padding(spacing.xs)
-            .semantics { contentDescription = infoDescription },
-    ) {
-        Text(
-            text = "ⓘ",
+    IconButton(onClick = onInfoClick,
+        modifier = modifier.semantics { contentDescription = infoDescription }) {
+        Text(text = stringResource(R.string.graphy_info_symbol),
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
-private fun GraphyResultSection(
-    result: String,
-    modifier: Modifier = Modifier,
-) {
+private fun GraphyExplanation(output: GraphyOutput) {
     val spacing = GraphyThemeTokens.spacing
-    val semanticColors = GraphyThemeTokens.semanticColors
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .shadow(elevation = 2.dp, shape = MaterialTheme.shapes.medium)
-                .background(
-                    color = semanticColors.resultFill,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .padding(horizontal = spacing.lg, vertical = spacing.sm)
-        ) {
-            Text(
-                text = result,
-                style = MaterialTheme.typography.headlineMedium,
-                color = semanticColors.resultOn,
-                fontWeight = FontWeight.Bold
-            )
+    var expanded by remember(output) { mutableStateOf(false) }
+    val explanation = output.explanationTemplate ?: return
+    Column(modifier = Modifier.padding(vertical = spacing.sm)) {
+        TextButton(onClick = { expanded = !expanded }) {
+            Text(stringResource(if (expanded) R.string.graphy_hide_details else R.string.graphy_show_details))
         }
+        if (expanded) Text(text = explanation, style = MaterialTheme.typography.bodyMedium,
+            color = GraphyThemeTokens.semanticColors.secondaryText)
     }
 }
 
@@ -166,7 +153,7 @@ private fun GraphyLegendDialog(onDismiss: () -> Unit) {
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(GraphyThemeTokens.spacing.sm)) {
                 LegendRow(color = semanticColors.input, label = stringResource(R.string.graphy_legend_input))
                 LegendRow(color = semanticColors.constant, label = stringResource(R.string.graphy_legend_constant))
                 LegendRow(color = semanticColors.operation, label = stringResource(R.string.graphy_legend_operator))
@@ -189,11 +176,11 @@ private fun LegendRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(GraphyThemeTokens.spacing.sm),
     ) {
         Box(
             modifier = Modifier
-                .size(14.dp)
+                .size(GraphyThemeTokens.spacing.md)
                 .background(color, shape = MaterialTheme.shapes.small),
         )
         Text(
@@ -209,34 +196,21 @@ private fun GraphyFlowchartHost(
     output: GraphyOutput,
     viewTheme: GraphyViewTheme,
     maxWidth: Int,
+    onNodeSelected: (GraphyNode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val flowchartDescription = stringResource(R.string.graphy_flowchart_content_description)
-
+    val colors = GraphyThemeTokens.semanticColors
+    val configuration = LocalConfiguration.current
     AndroidView(
-        modifier = modifier.semantics { contentDescription = flowchartDescription },
-        factory = {
-            FrameLayout(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                )
-            }
-        },
-        update = { container ->
-            container.removeAllViews()
-            val graphView = FlowchartGraphView(context)
+        modifier = modifier,
+        factory = { context -> FlowchartGraphView(context) },
+        onReset = null,
+        onRelease = { it.setOnNodeClickListener(null) },
+        update = { graphView ->
+            graphView.setOnNodeClickListener { onNodeSelected(it) }
             graphView.setMaxWidth(maxWidth)
-            graphView.setGraph(output, viewTheme)
-            container.addView(
-                graphView,
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    Gravity.CENTER_HORIZONTAL,
-                ),
-            )
+            graphView.setBackgroundColor(colors.background.toArgb())
+            graphView.setGraph(output, viewTheme, configuration)
         },
     )
 }

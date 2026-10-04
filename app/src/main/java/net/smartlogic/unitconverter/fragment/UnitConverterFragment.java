@@ -31,7 +31,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
-import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HorizontalListView;
 import net.smartlogic.unitconverter.helper.Preferences;
@@ -42,7 +42,6 @@ import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
@@ -366,6 +365,16 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + context.getString(from.getLabelResource()) + " to " + context.getString(to.getLabelResource()));
 
+        double input;
+        try { input = NumberUtils.parseDouble(in); }
+        catch (NumberFormatException invalid) {
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
+        if (!Double.isFinite(input)) {
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
         double result;
 
         String fromSym = from.getSymbol();
@@ -377,109 +386,32 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         outputSymbol.setText(toSym);
 
         if (selectedConversion.getId() == Conversion.TEMPERATURE) {
-            result = conversions.convertTemperatureValue(NumberUtils.parseDouble(in),from, to);
+            result = conversions.convertTemperatureValue(input,from, to);
             result = in.isEmpty() ? 0 : result;
         }
         else if (selectedConversion.getId() == Conversion.FUEL) {
-            result = conversions.convertFuelValue(NumberUtils.parseDouble(in),from, to);
+            result = conversions.convertFuelValue(input,from, to);
         }
         else
-            result = conversions.convert(NumberUtils.parseDouble(in),from, to);
+            result = conversions.convert(input,from, to);
 
         String finalStr = applyFormatting(result);
 
         outputValue.setText(finalStr);
-        updateParentGraphy(in, from, to, fromSym, toSym, finalStr);
+        updateParentGraphy(in, from, to, fromSym, toSym, finalStr, result);
     }
 
-    private void updateParentGraphy(String in, Unit from, Unit to, String fromSym, String toSym, String finalStr) {
-        Fragment parent = getParentFragment();
-        if (!(parent instanceof ConverterFragment converter)) {
-            return;
-        }
-        if (in.isEmpty()) {
+    private void updateParentGraphy(String in, Unit from, Unit to, String fromSym,
+                                    String toSym, String finalStr, double result) {
+        if (!(getParentFragment() instanceof ConverterFragment converter)) return;
+        if (in.trim().isEmpty() || in.equals("-")) {
             converter.clearConversionGraphy();
             return;
         }
-
-        String inputDisplay = in + " " + fromSym;
-        String primaryConstant = buildConstantLabel(from, to);
-        String primaryResult = finalStr + " " + toSym;
-        String explanation = inputDisplay + " " + primaryConstant + " = " + primaryResult;
-
-        double inputValue = NumberUtils.parseDouble(in);
-        List<Unit> units = selectedConversion.getUnits();
-        int fromIndex = fromUnit.getSelectedItemPosition();
-        int toIndex = toUnit.getSelectedItemPosition();
-
-        ConversionGraphBuilder.BranchSpec primaryBranch =
-                new ConversionGraphBuilder.BranchSpec(primaryConstant, primaryResult);
-
-        List<ConversionGraphBuilder.BranchSpec> relatedBranches = new ArrayList<>();
-        for (Unit relatedUnit : pickRelatedUnits(units, fromIndex, toIndex)) {
-            double converted = convertValue(inputValue, from, relatedUnit);
-            String relatedSym = relatedUnit.getSymbol();
-            if (relatedSym == null || relatedSym.isEmpty()) {
-                relatedSym = String.valueOf(relatedUnit.getId());
-            }
-            String relatedConstant = buildConstantLabel(from, relatedUnit);
-            String relatedResult = applyFormatting(converted) + " " + relatedSym;
-            relatedBranches.add(new ConversionGraphBuilder.BranchSpec(relatedConstant, relatedResult));
-        }
-
-        GraphyOutput output = ConversionGraphBuilder.buildMultiBranch(
-                ConversionGraphBuilder.UNIT_CONVERTER_ID,
-                inputDisplay,
-                primaryBranch,
-                relatedBranches,
-                explanation
-        );
-        converter.updateConversionGraphy(output, inputDisplay);
-    }
-
-    @NonNull
-    private List<Unit> pickRelatedUnits(@NonNull List<Unit> units, int fromIndex, int toIndex) {
-        List<Unit> related = new ArrayList<>();
-        if (units.size() <= 2) {
-            return related;
-        }
-        for (int step = 1; step < units.size() && related.size() < ConversionGraphBuilder.MAX_RELATED_BRANCHES; step++) {
-            int candidateIndex = (toIndex + step) % units.size();
-            if (candidateIndex == fromIndex || candidateIndex == toIndex) {
-                continue;
-            }
-            related.add(units.get(candidateIndex));
-        }
-        return related;
-    }
-
-    private double convertValue(double value, @NonNull Unit from, @NonNull Unit to) {
-        if (selectedConversion.getId() == Conversion.TEMPERATURE) {
-            return conversions.convertTemperatureValue(value, from, to);
-        }
-        if (selectedConversion.getId() == Conversion.FUEL) {
-            return conversions.convertFuelValue(value, from, to);
-        }
-        return conversions.convert(value, from, to);
-    }
-
-    @NonNull
-    private String buildConstantLabel(@NonNull Unit from, @NonNull Unit to) {
-        if (from.getId() == to.getId()) {
-            return getString(R.string.same_unit);
-        }
-        if (selectedConversion.getId() == Conversion.TEMPERATURE) {
-            return getString(from.getLabelResource()) + " → "
-                    + getString(to.getLabelResource());
-        }
-        double factor = from.getConversionToBaseUnit() * to.getConversionFromBaseUnit();
-        return "× " + formatFactor(factor);
-    }
-
-    @NonNull
-    private String formatFactor(double factor) {
-        DecimalFormat df = new DecimalFormat("#.########");
-        return df.format(factor);
+        GraphyOutput output = ConversionGraphAdapter.unit(requireContext(), conversions,
+                selectedConversion.getId(), from, to, NumberUtils.parseDouble(in), result,
+                in + " " + fromSym, finalStr + " " + toSym, fromSym, toSym);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     public void initialDropDown(Conversion s) {

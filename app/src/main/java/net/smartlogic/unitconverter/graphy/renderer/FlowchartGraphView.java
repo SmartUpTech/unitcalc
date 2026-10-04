@@ -8,6 +8,15 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.MotionEvent;
+import android.view.KeyEvent;
+import android.os.Bundle;
+import android.graphics.Rect;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.customview.widget.ExploreByTouchHelper;
+import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.graphy.model.GraphyTopology;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +51,18 @@ public class FlowchartGraphView extends View {
     private int contentWidth;
     private int contentHeight;
     private int maxLayoutWidth = Integer.MAX_VALUE;
-    private float drawScale = 1f;
+    private Map<String, GraphyNodeContent> nodeContent = java.util.Collections.emptyMap();
+    private List<GraphyNode> orderedNodes = java.util.Collections.emptyList();
+    private NodeAccessibility accessibility;
+    private String pressedNodeId;
+    public interface NodeClickListener { void onNodeClicked(GraphyNode node); }
+    private NodeClickListener nodeClickListener;
+    public void setOnNodeClickListener(@Nullable NodeClickListener listener) {
+        nodeClickListener = listener;
+        accessibility.invalidateRoot();
+    }
+    private net.smartlogic.unitconverter.theme.CalculatorTheme resolvedTheme;
+    private android.content.res.Configuration resolvedConfiguration;
 
     public FlowchartGraphView(@NonNull Context context) {
         super(context);
@@ -60,39 +80,49 @@ public class FlowchartGraphView extends View {
         connectorPaint.setStyle(Paint.Style.STROKE);
         connectorPaint.setStrokeCap(Paint.Cap.SQUARE);
         connectorPaint.setStrokeJoin(Paint.Join.MITER);
+        setFocusable(true);
+        accessibility = new NodeAccessibility();
+        ViewCompat.setAccessibilityDelegate(this, accessibility);
     }
 
     public void setMaxWidth(int maxWidth) {
-        this.maxLayoutWidth = maxWidth;
+        if (this.maxLayoutWidth != maxWidth && maxWidth > 0) {
+            this.maxLayoutWidth = maxWidth;
+            layoutNodes();
+            requestLayout();
+        }
     }
 
     public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme) {
+        setGraph(output, theme, getResources().getConfiguration());
+    }
+
+    public void setGraph(@NonNull GraphyOutput output, @NonNull GraphyViewTheme theme,
+                         @NonNull android.content.res.Configuration configuration) {
+        var selectedTheme = net.smartlogic.unitconverter.theme.ThemeManager.get();
+        if (this.output == output && this.theme == theme && selectedTheme == resolvedTheme
+                && configuration.equals(resolvedConfiguration)) return;
+        resolvedTheme = selectedTheme;
+        resolvedConfiguration = new android.content.res.Configuration(configuration);
         this.output = output;
+        orderedNodes = GraphyTopology.orderedNodes(output);
         this.theme = theme;
         layoutNodes();
         requestLayout();
         invalidate();
+        accessibility.invalidateRoot();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int specWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        drawScale = 1f;
-        int width = Math.max(contentWidth, 0);
-        int height = Math.max(contentHeight, 0);
-
-        if (contentWidth > 0 && widthMode != MeasureSpec.UNSPECIFIED && specWidth > 0
-                && specWidth < contentWidth) {
-            drawScale = specWidth / (float) contentWidth;
-            width = specWidth;
-            height = (int) Math.ceil(contentHeight * drawScale);
-        } else if (widthMode == MeasureSpec.EXACTLY) {
-            width = specWidth;
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED && width > 0
+                && width != maxLayoutWidth) {
+            maxLayoutWidth = width;
+            layoutNodes();
         }
-
-        height = resolveSize(height, heightMeasureSpec);
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(resolveSize(contentWidth, widthMeasureSpec),
+                resolveSize(contentHeight, heightMeasureSpec));
     }
 
     @Override
@@ -104,11 +134,6 @@ public class FlowchartGraphView extends View {
 
         canvas.drawColor(theme.getBackgroundColor());
         canvas.save();
-        if (drawScale != 1f) {
-            canvas.scale(drawScale, drawScale);
-        } else if (contentWidth > 0 && getWidth() > contentWidth) {
-            canvas.translate((getWidth() - contentWidth) / 2f, 0f);
-        }
         drawConnectors(canvas);
         drawNodes(canvas);
         canvas.restore();
@@ -123,11 +148,17 @@ public class FlowchartGraphView extends View {
             return;
         }
 
-        GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme, maxLayoutWidth);
+        GraphLayoutEngine.LayoutResult result = layoutEngine.layout(output, theme, maxLayoutWidth == Integer.MAX_VALUE
+                ? getResources().getDisplayMetrics().widthPixels : maxLayoutWidth);
         for (Map.Entry<String, GraphLayoutEngine.LayoutBox> entry : result.nodeBounds().entrySet()) {
             GraphLayoutEngine.LayoutBox box = entry.getValue();
             nodeBounds.put(entry.getKey(), new RectF(box.x(), box.y(), box.x() + box.width(), box.y() + box.height()));
         }
+        orderedNodes = new ArrayList<>(orderedNodes);
+        orderedNodes.sort(java.util.Comparator
+                .comparingDouble((GraphyNode node) -> nodeBounds.containsKey(node.id()) ? nodeBounds.get(node.id()).top : 0)
+                .thenComparingDouble(node -> nodeBounds.containsKey(node.id()) ? nodeBounds.get(node.id()).left : 0));
+        nodeContent = result.content();
         contentWidth = result.contentWidth();
         contentHeight = result.contentHeight();
         connectorRouter = new OrthogonalConnectorRouter(
@@ -164,9 +195,9 @@ public class FlowchartGraphView extends View {
             return;
         }
 
-        float clearance = 8f;
-        float arrowSize = theme.getConnectorStrokeWidth() * 2.1f;
-        float arrowLength = arrowSize * 1.35f;
+        float clearance = theme.getConnectorClearance();
+        float arrowSize = theme.getArrowSize();
+        float arrowLength = theme.getArrowLength();
 
         List<PointF> drawn = new ArrayList<>(points.size());
         for (PointF point : points) {
@@ -207,8 +238,8 @@ public class FlowchartGraphView extends View {
                                float dirX,
                                float dirY,
                                float size) {
-        float baseX = tipX - dirX * size * 1.35f;
-        float baseY = tipY - dirY * size * 1.35f;
+        float baseX = tipX - dirX * theme.getArrowLength();
+        float baseY = tipY - dirY * theme.getArrowLength();
         float perpX = -dirY;
         float perpY = dirX;
         Path arrow = new Path();
@@ -223,118 +254,121 @@ public class FlowchartGraphView extends View {
     }
 
     private void drawNodes(@NonNull Canvas canvas) {
-        List<String> drawOrder = buildDrawOrder();
-        for (String nodeId : drawOrder) {
-            GraphyNode node = findNode(nodeId);
-            RectF bounds = nodeBounds.get(nodeId);
-            if (node == null || bounds == null) {
-                continue;
-            }
-
-            if (node.type() == GraphyNodeType.OPERATION) {
-                drawOperationNode(canvas, node, bounds);
-            } else {
-                drawValueNode(canvas, node, bounds);
+        for (int index = 0; index < orderedNodes.size(); index++) {
+            GraphyNode node = orderedNodes.get(index);
+            RectF bounds = nodeBounds.get(node.id());
+            GraphyNodeContent content = nodeContent.get(node.id());
+            if (bounds == null || content == null) continue;
+            fillPaint.setColor(theme.nodeFill(node.type()));
+            float radius = node.type() == GraphyNodeType.OPERATION
+                    ? bounds.height() / 2 : theme.getNodeCornerRadius();
+            canvas.drawRoundRect(bounds, radius, radius, fillPaint);
+            content.draw(canvas, bounds);
+            if (node.id().equals(pressedNodeId)
+                    || accessibility.getKeyboardFocusedVirtualViewId() == index
+                    || accessibility.getAccessibilityFocusedVirtualViewId() == index) {
+                strokePaint.setColor(theme.getConnectorColor());
+                strokePaint.setStrokeWidth(theme.getConnectorStrokeWidth());
+                canvas.drawRoundRect(bounds, radius, radius, strokePaint);
             }
         }
     }
-
-    @NonNull
-    private List<String> buildDrawOrder() {
-        List<String> order = new ArrayList<>();
-        for (GraphyNode node : output.getNodes()) {
-            if (node.type() != GraphyNodeType.RESULT) {
-                order.add(node.id());
-            }
-        }
-        for (GraphyNode node : output.getNodes()) {
-            if (node.type() == GraphyNodeType.RESULT) {
-                order.add(node.id());
-            }
-        }
-        return order;
-    }
-
-    private void drawValueNode(@NonNull Canvas canvas,
-                               @NonNull GraphyNode node,
-                               @NonNull RectF bounds) {
-        int fillColor;
-        int textColor;
-
-        switch (node.type()) {
-            case INPUT:
-                fillColor = theme.getInputColor();
-                textColor = theme.getOnInputColor();
-                break;
-            case CONSTANT:
-                fillColor = theme.getConstantColor();
-                textColor = theme.getOnConstantColor();
-                break;
-            case DERIVED:
-                fillColor = theme.getDerivedColor();
-                textColor = theme.getOnDerivedColor();
-                break;
-            case RESULT:
-                fillColor = theme.getResultFillColor();
-                textColor = theme.getOnResultColor();
-                break;
-            default:
-                fillColor = theme.getSurfaceElevatedColor();
-                textColor = theme.getPrimaryTextColor();
-                break;
-        }
-
-        float radius = theme.getNodeCornerRadius();
-
-        // Draw slight shadow
-        fillPaint.setColor(0x20000000);
-        RectF shadowBounds = new RectF(bounds.left + 2, bounds.top + 2, bounds.right + 2, bounds.bottom + 2);
-        canvas.drawRoundRect(shadowBounds, radius, radius, fillPaint);
-
-        // Draw block
-        fillPaint.setColor(fillColor);
-        canvas.drawRoundRect(bounds, radius, radius, fillPaint);
-
-        // Draw text
-        textPaint.setColor(textColor);
-        textPaint.setTextSize(node.type() == GraphyNodeType.RESULT ? theme.getResultTextSize() : theme.getValueTextSize());
-        textPaint.setFakeBoldText(node.type() == GraphyNodeType.RESULT || "primary".equals(node.semanticRole()));
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        
-        float textY = bounds.centerY() - (textPaint.descent() + textPaint.ascent()) / 2f;
-        canvas.drawText(node.displayValue(), bounds.centerX(), textY, textPaint);
-    }
-
-    private void drawOperationNode(@NonNull Canvas canvas,
-                                   @NonNull GraphyNode node,
-                                   @NonNull RectF bounds) {
-        float cx = bounds.centerX();
-        float cy = bounds.centerY();
-        float radius = bounds.width() / 2f;
-
-        fillPaint.setColor(theme.getOperationNodeColor());
-        strokePaint.setColor(theme.getOperationStrokeColor());
-        strokePaint.setStrokeWidth(theme.getConnectorStrokeWidth());
-        canvas.drawCircle(cx, cy, radius, fillPaint);
-        canvas.drawCircle(cx, cy, radius, strokePaint);
-
-        textPaint.setColor(theme.getOperationColor());
-        textPaint.setTextSize(theme.getOperationTextSize());
-        textPaint.setFakeBoldText(true);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        String symbol = GraphLayoutEngine.formatOperator(node.label());
-        float textY = cy - (textPaint.descent() + textPaint.ascent()) / 2f;
-        canvas.drawText(symbol, cx, textY, textPaint);
-    }
-
 
     @Nullable
-    private GraphyNode findNode(@NonNull String id) {
-        for (GraphyNode node : output.getNodes()) {
-            if (node.id().equals(id)) {
-                return node;
-            }
+    private GraphyNode findNode(String id) {
+        for (GraphyNode node : orderedNodes) if (node.id().equals(id)) return node;
+        return null;
+    }
+
+    @Nullable
+    private GraphyNode hitNode(float x, float y) {
+        for (GraphyNode node : orderedNodes) {
+            RectF bounds = nodeBounds.get(node.id());
+            if (bounds != null && bounds.contains(x, y)) return node;
         }
         return null;
+    }
+
+    private void showDetails(GraphyNode node) {
+        if (nodeClickListener != null) nodeClickListener.onNodeClicked(node);
+    }
+
+    @Override public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            GraphyNode hit = hitNode(event.getX(), event.getY());
+            pressedNodeId = hit == null ? null : hit.id();
+            invalidate();
+            return pressedNodeId != null;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            GraphyNode hit = hitNode(event.getX(), event.getY());
+            if (hit != null && hit.id().equals(pressedNodeId)) {
+                performClick();
+                showDetails(hit);
+            }
+            pressedNodeId = null;
+            invalidate();
+            return true;
+        }
+        if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+            pressedNodeId = null;
+            invalidate();
+        }
+        return pressedNodeId != null;
+    }
+
+    @Override public boolean performClick() { super.performClick(); return true; }
+    @Override public boolean dispatchHoverEvent(MotionEvent event) {
+        return accessibility.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
+    }
+    @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        return accessibility.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
+    }
+    @Override protected void onFocusChanged(boolean gainFocus, int direction, Rect previous) {
+        super.onFocusChanged(gainFocus, direction, previous);
+        accessibility.onFocusChanged(gainFocus, direction, previous);
+    }
+
+    private final class NodeAccessibility extends ExploreByTouchHelper {
+        NodeAccessibility() { super(FlowchartGraphView.this); }
+        @Override protected int getVirtualViewAt(float x, float y) {
+            GraphyNode hit = hitNode(x, y);
+            return hit == null ? INVALID_ID : orderedNodes.indexOf(hit);
+        }
+        @Override protected void getVisibleVirtualViews(List<Integer> ids) {
+            for (int i = 0; i < orderedNodes.size(); i++) ids.add(i);
+        }
+        @Override protected void onPopulateNodeForVirtualView(int id, AccessibilityNodeInfoCompat info) {
+            GraphyNode node = orderedNodes.get(id);
+            RectF bounds = nodeBounds.get(node.id());
+            Rect rect = new Rect();
+            if (bounds != null) bounds.roundOut(rect);
+            info.setBoundsInParent(rect);
+            String description = getContext().getString(R.string.graphy_node_accessibility,
+                    theme.nodeRole(node.type()), node.displayValue());
+            for (var edge : output.getConnections()) {
+                if (edge.toNodeId().equals(node.id())) {
+                    GraphyNode source = findNode(edge.fromNodeId());
+                    if (source != null) description += ". " + getContext().getString(
+                            R.string.graphy_dependency, source.displayValue());
+                }
+            }
+            info.setContentDescription(description);
+            if (nodeClickListener != null) {
+                info.setClassName(android.widget.Button.class.getName());
+                info.setClickable(true);
+                info.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK);
+            }
+        }
+        @Override protected void onVirtualViewKeyboardFocusChanged(int id, boolean focused) {
+            invalidate();
+        }
+        @Override protected boolean onPerformActionForVirtualView(int id, int action, Bundle args) {
+            if (action == AccessibilityNodeInfoCompat.ACTION_CLICK && nodeClickListener != null && id >= 0 && id < orderedNodes.size()) {
+                showDetails(orderedNodes.get(id));
+                return true;
+            }
+            return false;
+        }
     }
 }

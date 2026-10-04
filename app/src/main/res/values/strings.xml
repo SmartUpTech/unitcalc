@@ -86,8 +86,8 @@
     <string name="graphy_explanation_label">How this answer was calculated</string>
     <string name="graphy_panel_content_description">Graphy calculation explanation panel</string>
     <string name="graphy_flowchart_content_description">Calculation flowchart diagram</string>
-    <string name="graphy_info_content_description">Graphy color legend</string>
-    <string name="graphy_legend_title">Graphy Legend</string>
+    <string name="graphy_info_content_description">Graphy node guide</string>
+    <string name="graphy_legend_title">Graphy node guide</string>
     <string name="graphy_legend_input">User-entered values</string>
     <string name="graphy_legend_constant">Fixed values / conversion factors</string>
     <string name="graphy_legend_operator">Mathematical operation</string>
@@ -393,4 +393,32 @@
     <string name="converter_clear_key" translatable="false">AC</string>
     <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
     <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
+    <string name="graphy_role_input">Input</string>
+    <string name="graphy_role_constant">Constant</string>
+    <string name="graphy_role_operation">Operation</string>
+    <string name="graphy_role_derived">Intermediate value</string>
+    <string name="graphy_role_result">Result</string>
+    <string name="graphy_role_decision">Classification</string>
+    <string name="graphy_role_visualization">Visualization</string>
+    <string name="graphy_role_explanation">Explanation</string>
+    <string name="graphy_node_accessibility">%1$s: %2$s</string>
+    <string name="graphy_dependency">Uses %1$s</string>
+    <string name="graphy_info_symbol">ⓘ</string>
+    <string name="graphy_show_details">Show formula and details</string>
+    <string name="graphy_hide_details">Hide details</string>
+    <string name="graphy_relationship">Conversion relationship</string>
+    <string name="graphy_exchange_rate">Exchange rate</string>
+    <string name="graphy_unit_relationship">1 %1$s = %2$s %3$s</string>
+    <string name="graphy_linear_formula">%1$s × %2$s</string>
+    <string name="graphy_reciprocal_formula">%1$s ÷ %2$s</string>
+    <string name="graphy_equation">%1$s = %2$s</string>
+    <string name="graphy_mapping">Conversion rule</string>
+    <string name="graphy_piecewise">This conversion uses the existing piecewise Gas Mark rule, including its range limits.</string>
+    <string name="graphy_fuel_rounding">Fuel consumption uses an inverse relationship. The result follows the converter’s existing division and rounding rules.</string>
+    <string name="graphy_zero_fuel">The inverse relationship is undefined at zero. The existing converter returns the input unchanged for this case.</string>
+    <string name="graphy_rate_cached">Cached exchange rate; last fetched %1$s. Rates can change and cached rates may be outdated.</string>
+    <string name="graphy_rate_unknown_time">Exchange rates can change. The time of this cached rate is unavailable.</string>
+    <string name="graphy_offset_formula">(%1$s) %2$s %3$s</string>
+    <string name="graphy_node_hint">Tap a node for details</string>
+    <string name="graphy_unavailable">A Graphy explanation is unavailable for the current values.</string>
 </resources>

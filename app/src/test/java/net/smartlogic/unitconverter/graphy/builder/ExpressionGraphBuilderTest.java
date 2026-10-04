@@ -162,6 +162,28 @@ public class ExpressionGraphBuilderTest {
         assertTrue(output.getConnections().size() >= 3);
     }
 
+    @Test
+    public void build_usesAuthoritativeFormattedResult() {
+        EvaluationResult evaluation = ExpressionEvaluator.evaluate("10000/3");
+        CalculationSnapshot snapshot = CalculationSnapshot.create("basic", "10000/3", "10000/3",
+                "3,333.33", evaluation);
+        GraphyOutput output = builder.build(snapshot, evaluation.getTrace());
+        assertTrue(hasDisplayValue(output, "3,333.33"));
+        assertFalse(hasDisplayValue(output, "3333.3333333333335"));
+    }
+
+    @Test
+    public void build_explainsComputedPercentageWithoutCollapsingItsInputs() {
+        EvaluationResult evaluation = ExpressionEvaluator.evaluate("600*(2+3)%");
+        GraphyOutput output = builder.build(CalculationSnapshot.create("basic", "600*(2+3)%",
+                "600*(2+3)%", "30", evaluation), evaluation.getTrace());
+        assertTrue(hasDisplayValue(output, "5"));
+        assertTrue(hasDisplayValue(output, "0.05"));
+        assertFalse(hasDisplayValue(output, "(%"));
+        assertTrue(output.getNodes().stream().anyMatch(node -> node.type() == GraphyNodeType.DERIVED
+                && node.formula() != null && node.formula().contains("100")));
+    }
+
     private static boolean hasNodeType(GraphyOutput output, GraphyNodeType type) {
         for (GraphyNode node : output.getNodes()) {
             if (node.type() == type) {

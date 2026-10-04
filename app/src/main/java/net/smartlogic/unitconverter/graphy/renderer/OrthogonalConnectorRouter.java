@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 
 import net.smartlogic.unitconverter.graphy.model.GraphyConnection;
 import net.smartlogic.unitconverter.graphy.model.GraphyNode;
-import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,14 +24,13 @@ import java.util.Set;
 final class OrthogonalConnectorRouter {
 
     private final Map<String, RectF> nodeBounds;
-    private final Map<String, GraphyNodeType> nodeTypes;
     private final Map<String, List<String>> incoming;
     private final float horizontalGap;
     private final float contentWidth;
     private final float clearance;
     private final Map<String, Integer> leftLaneIndex = new HashMap<>();
     private final Map<String, Integer> rightLaneIndex = new HashMap<>();
-    private final Map<String, Float> obstacleHeights = new HashMap<>();
+    private final Map<String, Float> routeSpans = new HashMap<>();
 
     OrthogonalConnectorRouter(@NonNull List<GraphyNode> nodes,
                               @NonNull List<GraphyConnection> connections,
@@ -41,13 +39,11 @@ final class OrthogonalConnectorRouter {
                               float verticalGap,
                               float contentWidth) {
         this.nodeBounds = nodeBounds;
-        this.horizontalGap = Math.max(horizontalGap, 8f);
-        this.contentWidth = contentWidth > 0f ? contentWidth : 1000f;
-        this.clearance = 8f;
-        this.nodeTypes = new HashMap<>();
+        this.horizontalGap = Math.max(horizontalGap, 1f);
+        this.contentWidth = Math.max(contentWidth, this.horizontalGap * 2);
+        this.clearance = this.horizontalGap / 3f;
         this.incoming = new HashMap<>();
         for (GraphyNode node : nodes) {
-            nodeTypes.put(node.id(), node.type());
             incoming.put(node.id(), new ArrayList<>());
         }
         for (GraphyConnection connection : connections) {
@@ -65,13 +61,6 @@ final class OrthogonalConnectorRouter {
         RectF to = nodeBounds.get(toId);
         if (from == null || to == null) {
             return Collections.emptyList();
-        }
-
-        GraphyNodeType fromType = nodeTypes.get(fromId);
-        GraphyNodeType toType = nodeTypes.get(toId);
-
-        if (fromType == GraphyNodeType.OPERATION || toType != GraphyNodeType.OPERATION) {
-            return routePorts(from, Port.BOTTOM, to, Port.TOP);
         }
 
         if (needsBypass(fromId, toId, from, to)) {
@@ -95,12 +84,13 @@ final class OrthogonalConnectorRouter {
                                 @NonNull RectF to) {
         float gapTop = from.bottom;
         float gapBottom = to.top;
-        if (gapBottom <= gapTop + 4f) {
+        if (gapBottom <= gapTop + clearance / 2) {
             return null;
         }
 
-        float slabPad = Math.max(from.width() * 0.45f, 8f);
-        RectF slab = new RectF(from.centerX() - slabPad, gapTop, from.centerX() + slabPad, gapBottom);
+        // Include the horizontal part of a merge, not just the source's vertical stem.
+        RectF slab = new RectF(Math.min(from.centerX(), to.centerX()) - clearance,
+                gapTop, Math.max(from.centerX(), to.centerX()) + clearance, gapBottom);
 
         RectF union = null;
         for (Map.Entry<String, RectF> entry : nodeBounds.entrySet()) {
@@ -109,7 +99,7 @@ final class OrthogonalConnectorRouter {
                 continue;
             }
             RectF box = entry.getValue();
-            if (box.bottom <= gapTop + 2f || box.top >= gapBottom - 2f) {
+            if (box.bottom <= gapTop + clearance / 4 || box.top >= gapBottom - clearance / 4) {
                 continue;
             }
             if (RectF.intersects(box, slab) || occupiesColumn(box, from, gapTop, gapBottom)) {
@@ -125,7 +115,7 @@ final class OrthogonalConnectorRouter {
             if (subgraph == null) {
                 continue;
             }
-            if (subgraph.bottom <= gapTop + 2f || subgraph.top >= gapBottom - 2f) {
+            if (subgraph.bottom <= gapTop + clearance / 4 || subgraph.top >= gapBottom - clearance / 4) {
                 continue;
             }
             if (RectF.intersects(subgraph, slab)
@@ -273,12 +263,7 @@ final class OrthogonalConnectorRouter {
     }
 
     private boolean chooseLeftLane(@NonNull RectF from, @NonNull RectF to) {
-        if (Math.abs(from.centerX() - to.centerX()) < 4f) {
-            float spaceLeft = from.centerX();
-            float spaceRight = contentWidth - from.centerX();
-            return spaceLeft >= spaceRight;
-        }
-        return from.centerX() < to.centerX();
+        return from.centerX() <= contentWidth / 2;
     }
 
     private void assignBypassLanes(@NonNull List<GraphyConnection> connections) {
@@ -292,17 +277,11 @@ final class OrthogonalConnectorRouter {
             if (from == null || to == null) {
                 continue;
             }
-            if (nodeTypes.get(toId) != GraphyNodeType.OPERATION) {
-                continue;
-            }
-            if (nodeTypes.get(fromId) == GraphyNodeType.OPERATION) {
-                continue;
-            }
             RectF obstacle = obstacleUnion(fromId, toId, from, to);
             if (obstacle == null) {
                 continue;
             }
-            obstacleHeights.put(fromId, obstacle.height());
+            routeSpans.put(fromId, Math.max(routeSpans.getOrDefault(fromId, 0f), to.top - from.bottom));
             if (chooseLeftLane(from, to)) {
                 if (!left.contains(fromId)) {
                     left.add(fromId);
@@ -311,8 +290,8 @@ final class OrthogonalConnectorRouter {
                 right.add(fromId);
             }
         }
-        sortByObstacleHeight(left);
-        sortByObstacleHeight(right);
+        sortByRouteSpan(left);
+        sortByRouteSpan(right);
         for (int i = 0; i < left.size(); i++) {
             leftLaneIndex.put(left.get(i), i + 1);
         }
@@ -321,12 +300,12 @@ final class OrthogonalConnectorRouter {
         }
     }
 
-    private void sortByObstacleHeight(@NonNull List<String> ids) {
+    private void sortByRouteSpan(@NonNull List<String> ids) {
         Collections.sort(ids, new Comparator<String>() {
             @Override
             public int compare(String a, String b) {
-                float ha = obstacleHeights.getOrDefault(a, 0f);
-                float hb = obstacleHeights.getOrDefault(b, 0f);
+                float ha = routeSpans.getOrDefault(a, 0f);
+                float hb = routeSpans.getOrDefault(b, 0f);
                 return Float.compare(ha, hb);
             }
         });
