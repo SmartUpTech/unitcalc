@@ -306,6 +306,9 @@ public class ConverterFragment extends Fragment {
                 return;
             }
             graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+            if (latestGraphyOutput != null) {
+                graphyPanelController.update(latestGraphyOutput);
+            }
         });
     }
 
@@ -331,6 +334,10 @@ public class ConverterFragment extends Fragment {
     }
 
     public void updateConversionGraphy(@NonNull GraphyOutput output, @NonNull String contextLine) {
+        if (!graphyRenderer.supports(output)) {
+            clearConversionGraphy();
+            return;
+        }
         latestGraphyOutput = output;
         updateGraphyTabState();
         if (workspaceTabController != null
@@ -344,7 +351,7 @@ public class ConverterFragment extends Fragment {
         latestGraphyOutput = null;
         updateGraphyTabState();
         if (graphyPanelController != null) {
-            graphyPanelController.update("", null);
+            graphyPanelController.update(null);
         }
         if (graphyContext != null) {
             graphyContext.setText("");
@@ -402,7 +409,7 @@ public class ConverterFragment extends Fragment {
         if (graphyContext != null) {
             graphyContext.setVisibility(View.GONE);
         }
-        graphyPanelController.update(contextLine, output);
+        graphyPanelController.update(output);
     }
 
     private void ensureChildFragments() {

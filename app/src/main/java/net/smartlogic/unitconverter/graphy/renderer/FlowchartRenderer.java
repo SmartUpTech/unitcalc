@@ -16,7 +16,7 @@ public final class FlowchartRenderer implements GraphyRenderer {
 
     @Override
     public boolean supports(@NonNull GraphyOutput output) {
-        return !output.isEmpty();
+        return !net.smartlogic.unitconverter.graphy.model.GraphyTopology.orderedNodes(output).isEmpty();
     }
 
     @NonNull

@@ -11,6 +11,13 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+// Provider credentials stay outside version control (local.properties, Gradle properties or CI environment).
+def currencyProperties = new Properties()
+def currencyPropertiesFile = rootProject.file("local.properties")
+if (currencyPropertiesFile.exists()) {
+    currencyPropertiesFile.withInputStream { currencyProperties.load(it) }
+}
+
 android {
 
     compileSdk {
@@ -25,9 +32,18 @@ android {
         }
         versionCode 12
         versionName "2.0"
+        (1..4).each { index ->
+            def keyName = "CURRENCY_RATE_KEY_${index}"
+            def keyValue = providers.gradleProperty(keyName)
+                    .orElse(providers.environmentVariable(keyName))
+                    .getOrElse(currencyProperties.getProperty(keyName, ""))
+            buildConfigField "String", keyName, groovy.json.JsonOutput.toJson(keyValue)
+        }
     }
 
     namespace "net.smartlogic.unitconverter"
+
+    testOptions { unitTests.includeAndroidResources = true }
 
     buildFeatures {
         buildConfig = true

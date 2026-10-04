@@ -1,169 +1,67 @@
 package net.smartlogic.unitconverter.graphy.builder;
 
-import androidx.annotation.NonNull;
-
+import net.smartlogic.unitconverter.graphy.integration.ConversionSnapshot;
+import net.smartlogic.unitconverter.graphy.model.ConversionTransformation;
 import net.smartlogic.unitconverter.graphy.model.GraphyConnection;
 import net.smartlogic.unitconverter.graphy.model.GraphyNode;
 import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Builds conversion graphs with a primary branch and up to four related unit branches.
- */
+/** Semantic converter adapter. Never guesses mathematics from display strings. */
 public final class ConversionGraphBuilder {
-
     public static final String UNIT_CONVERTER_ID = "unit-converter";
     public static final String CURRENCY_CONVERTER_ID = "currency-converter";
-    public static final int MAX_RELATED_BRANCHES = 4;
+    private ConversionGraphBuilder() { }
 
-    private ConversionGraphBuilder() {
+    /** Localized explanatory content; contains no layout, color or component instructions. */
+    public record Text(String relationshipLabel, String relationship, String operation,
+                       String explanation, String notice) {
+        public Text(String relationshipLabel, String relationship, String operation, String explanation) {
+            this(relationshipLabel, relationship, operation, explanation, null);
+        }
     }
 
-    /**
-     * Single conversion path (legacy / currency).
-     */
-    @NonNull
-    public static GraphyOutput build(@NonNull String calculatorId,
-                                     @NonNull String inputDisplay,
-                                     @NonNull String operationLabel,
-                                     @NonNull String resultDisplay,
-                                     @NonNull String explanation) {
-        if (inputDisplay.trim().isEmpty()) {
-            return GraphyOutput.empty(calculatorId, inputDisplay, resultDisplay);
+    public static GraphyOutput build(String calculatorId, ConversionSnapshot snapshot, Text text) {
+        if (!snapshot.isValid()) {
+            return GraphyOutput.empty(calculatorId, snapshot.sourceDisplay(), snapshot.targetDisplay());
         }
-
-        List<GraphyNode> nodes = new ArrayList<>();
-        List<GraphyConnection> connections = new ArrayList<>();
-
-        String inputId = addNode(nodes, GraphyNodeType.INPUT, inputDisplay, inputDisplay, "input");
-        BranchIds branch = addBranch(nodes, connections, operationLabel, resultDisplay, true, true);
-        connections.add(new GraphyConnection(inputId, branch.constantId, null));
-
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("layout", "branch");
-        metadata.put("primaryBranchId", branch.resultId);
-
-        return GraphyOutput.create(
-                calculatorId,
-                inputDisplay + " → " + resultDisplay,
-                resultDisplay,
-                nodes,
-                connections,
-                explanation,
-                metadata
+        var kind = snapshot.transformation().kind();
+        boolean rate = kind == ConversionTransformation.Kind.RATE_BASED;
+        var relationshipType = rate ? GraphyNodeType.DERIVED
+                : kind == ConversionTransformation.Kind.DIRECT ? GraphyNodeType.EXPLANATION : GraphyNodeType.CONSTANT;
+        List<GraphyNode> nodes = java.util.Arrays.asList(
+                new GraphyNode("source", GraphyNodeType.INPUT, snapshot.sourceDisplay(),
+                        snapshot.sourceDisplay(), "input", null, null),
+                new GraphyNode("relationship", relationshipType, text.relationshipLabel(),
+                        text.relationship(), rate ? "exchange-rate" : "relationship",
+                        text.operation(), text.explanation()),
+                new GraphyNode("operation", GraphyNodeType.OPERATION, text.operation(),
+                        text.operation(), "conversion", text.operation(), text.explanation()),
+                new GraphyNode("target", GraphyNodeType.RESULT, snapshot.targetDisplay(),
+                        snapshot.targetDisplay(), "result", text.operation(), text.explanation())
         );
+        List<GraphyConnection> edges = java.util.Arrays.asList(new GraphyConnection("source", "relationship", null),
+                new GraphyConnection("relationship", "operation", null),
+                // Carry the input as a real dependency, as well as the relationship.
+                new GraphyConnection("source", "operation", null),
+                new GraphyConnection("operation", "target", null));
+        Map<String, Object> metadata = new LinkedHashMap<>();
+        if (text.notice() != null && !text.notice().trim().isEmpty()) {
+            metadata.put(GraphyOutput.METADATA_NOTICE, text.notice());
+        }
+        metadata.put("transformation", snapshot.transformation());
+        metadata.put("sourceUnit", snapshot.sourceUnit());
+        metadata.put("targetUnit", snapshot.targetUnit());
+        if (rate) {
+            metadata.put("rate", snapshot.transformation().steps().get(0).operand());
+            metadata.put("rateTimestamp", snapshot.rateTimestamp());
+            metadata.put("sourceCurrency", snapshot.sourceUnit());
+            metadata.put("targetCurrency", snapshot.targetUnit());
+        }
+        return GraphyOutput.create(calculatorId, snapshot.sourceDisplay() + " → " + snapshot.targetDisplay(),
+                snapshot.targetDisplay(), nodes, edges, text.explanation(), metadata);
     }
-
-    /**
-     * Primary selected conversion plus up to four clearly related unit branches.
-     */
-    @NonNull
-    public static GraphyOutput buildMultiBranch(@NonNull String calculatorId,
-                                                @NonNull String inputDisplay,
-                                                @NonNull BranchSpec primaryBranch,
-                                                @NonNull List<BranchSpec> relatedBranches,
-                                                @NonNull String explanation) {
-        if (inputDisplay.trim().isEmpty()) {
-            return GraphyOutput.empty(calculatorId, inputDisplay, primaryBranch.resultDisplay);
-        }
-
-        List<GraphyNode> nodes = new ArrayList<>();
-        List<GraphyConnection> connections = new ArrayList<>();
-
-        String inputId = addNode(nodes, GraphyNodeType.INPUT, inputDisplay, inputDisplay, "input");
-
-        BranchIds primary = addBranch(nodes, connections, primaryBranch.constantLabel,
-                primaryBranch.resultDisplay, true, true);
-        connections.add(new GraphyConnection(inputId, primary.constantId, null));
-
-        int relatedCount = Math.min(relatedBranches.size(), MAX_RELATED_BRANCHES);
-        for (int i = 0; i < relatedCount; i++) {
-            BranchSpec spec = relatedBranches.get(i);
-            BranchIds related = addBranch(nodes, connections, spec.constantLabel,
-                    spec.resultDisplay, false, false);
-            connections.add(new GraphyConnection(inputId, related.constantId, null));
-        }
-
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("layout", "branch");
-        metadata.put("primaryBranchId", primary.resultId);
-
-        return GraphyOutput.create(
-                calculatorId,
-                inputDisplay,
-                primaryBranch.resultDisplay,
-                nodes,
-                connections,
-                explanation,
-                metadata
-        );
-    }
-
-    @NonNull
-    private static BranchIds addBranch(@NonNull List<GraphyNode> nodes,
-                                       @NonNull List<GraphyConnection> connections,
-                                       @NonNull String constantLabel,
-                                       @NonNull String resultDisplay,
-                                       boolean primary,
-                                       boolean finalResult) {
-        String constantId = addNode(nodes, GraphyNodeType.CONSTANT, constantLabel,
-                constantLabel, primary ? "primary-constant" : "related-constant");
-
-        String operatorSymbol = extractOperatorSymbol(constantLabel);
-        String operationId = addNode(nodes, GraphyNodeType.OPERATION, operatorSymbol,
-                operatorSymbol, "conversion");
-
-        GraphyNodeType resultType = finalResult ? GraphyNodeType.RESULT : GraphyNodeType.DERIVED;
-        String resultRole = primary ? "primary" : "related";
-        String resultId = addNode(nodes, resultType, resultDisplay, resultDisplay, resultRole);
-
-        connections.add(new GraphyConnection(constantId, operationId, null));
-        connections.add(new GraphyConnection(operationId, resultId, null));
-
-        return new BranchIds(constantId, operationId, resultId);
-    }
-
-    @NonNull
-    private static String extractOperatorSymbol(@NonNull String constantLabel) {
-        if (constantLabel.startsWith("×") || constantLabel.startsWith("x") || constantLabel.startsWith("*")) {
-            return "*";
-        }
-        if (constantLabel.startsWith("÷") || constantLabel.startsWith("/")) {
-            return "/";
-        }
-        if (constantLabel.contains("→")) {
-            return "→";
-        }
-        return "×";
-    }
-
-    private static String addNode(@NonNull List<GraphyNode> nodes,
-                                  @NonNull GraphyNodeType type,
-                                  @NonNull String label,
-                                  @NonNull String displayValue,
-                                  @NonNull String semanticRole) {
-        String id = "node-" + (nodes.size() + 1);
-        nodes.add(new GraphyNode(id, type, label, displayValue, semanticRole));
-        return id;
-    }
-
-    public record BranchSpec(String constantLabel, String resultDisplay) {
-            public BranchSpec(@NonNull String constantLabel, @NonNull String resultDisplay) {
-                this.constantLabel = constantLabel;
-                this.resultDisplay = resultDisplay;
-            }
-        }
-
-    private record BranchIds(String constantId, String operationId, String resultId) {
-            private BranchIds(@NonNull String constantId, @NonNull String operationId, @NonNull String resultId) {
-                this.constantId = constantId;
-                this.operationId = operationId;
-                this.resultId = resultId;
-            }
-        }
 }

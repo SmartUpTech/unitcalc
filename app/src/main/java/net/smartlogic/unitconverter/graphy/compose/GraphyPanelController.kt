@@ -21,7 +21,6 @@ class GraphyPanelController(
     private val fragment: Fragment,
     private val viewTheme: GraphyViewTheme,
 ) {
-    private var expression by mutableStateOf("")
     private var output by mutableStateOf<GraphyOutput?>(null)
     private var compositionInstalled = false
 
@@ -32,8 +31,7 @@ class GraphyPanelController(
         composeView.post { installCompositionIfNeeded() }
     }
 
-    fun update(expression: String, output: GraphyOutput?) {
-        this.expression = expression
+    fun update(output: GraphyOutput?) {
         this.output = output
         installCompositionIfNeeded()
     }
@@ -50,7 +48,6 @@ class GraphyPanelController(
         composeView.setContent {
             GraphyTheme {
                 GraphyPanel(
-                    expression = expression,
                     output = output,
                     viewTheme = viewTheme,
                     modifier = Modifier.fillMaxSize(),

@@ -1,90 +1,51 @@
 package net.smartlogic.unitconverter.graphy.builder;
 
-import net.smartlogic.unitconverter.graphy.model.GraphyNode;
-import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
-import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
-
+import net.smartlogic.unitconverter.graphy.integration.ConversionSnapshot;
+import net.smartlogic.unitconverter.graphy.model.*;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ConversionGraphBuilderTest {
-
-    private final FlowchartRenderer renderer = new FlowchartRenderer();
-
-    @Test
-    public void build_createsBranchConversionGraph() {
-        GraphyOutput output = ConversionGraphBuilder.build(
-                ConversionGraphBuilder.UNIT_CONVERTER_ID,
-                "100 km",
-                "× 0.621371",
-                "62.14 mi",
-                "100 km × 0.621371 = 62.14 mi"
-        );
-
-        assertEquals("100 km → 62.14 mi", output.getExpression());
-        assertEquals("62.14 mi", output.getResult());
-        assertTrue(renderer.supports(output));
-        assertEquals(4, output.getNodes().size());
-        assertEquals(3, output.getConnections().size());
-        assertEquals("branch", output.getMetadata().get("layout"));
-        assertTrue(hasNodeType(output, GraphyNodeType.INPUT));
-        assertTrue(hasNodeType(output, GraphyNodeType.CONSTANT));
-        assertTrue(hasNodeType(output, GraphyNodeType.OPERATION));
-        assertTrue(hasNodeType(output, GraphyNodeType.RESULT));
+    private GraphyOutput build(double input, double result, ConversionTransformation transformation) {
+        return ConversionGraphBuilder.build("test", new ConversionSnapshot(input, result,
+                input + " km", "formatted result", "km", "mi", transformation, 1234),
+                new ConversionGraphBuilder.Text("Relationship", "1 km = 0.621371 mi", "× factor", "Explanation"));
     }
-
-    @Test
-    public void buildMultiBranch_includesPrimaryAndRelatedBranches() {
-        GraphyOutput output = ConversionGraphBuilder.buildMultiBranch(
-                ConversionGraphBuilder.UNIT_CONVERTER_ID,
-                "12.5 km",
-                new ConversionGraphBuilder.BranchSpec("× 1,000", "12,500 m"),
-                java.util.Arrays.asList(
-                        new ConversionGraphBuilder.BranchSpec("× 1,000,000", "12,500,000 mm"),
-                        new ConversionGraphBuilder.BranchSpec("÷ 1.609", "7.767 mi")
-                ),
-                "12.5 km conversion"
-        );
-
-        assertEquals(10, output.getNodes().size());
-        assertEquals(9, output.getConnections().size());
-        assertEquals("branch", output.getMetadata().get("layout"));
-        assertEquals(1, countNodeType(output, GraphyNodeType.RESULT));
-        assertEquals(2, countNodeType(output, GraphyNodeType.DERIVED));
+    @Test public void linearUsesCommonPrimitivesAndPreservesDisplay() {
+        GraphyOutput output = build(5, 3.106855, ConversionTransformation.linear(0.621371));
+        assertEquals("formatted result", output.getResult());
+        assertEquals(GraphyNodeType.INPUT, output.getNodes().get(0).type());
+        assertEquals(GraphyNodeType.CONSTANT, output.getNodes().get(1).type());
+        assertEquals(GraphyNodeType.OPERATION, output.getNodes().get(2).type());
+        assertEquals(GraphyNodeType.RESULT, output.getNodes().get(3).type());
+        assertEquals(4, GraphyTopology.orderedNodes(output).size());
+        assertTrue(output.getConnections().stream().anyMatch(edge -> edge.fromNodeId().equals("source")
+                && edge.toNodeId().equals("operation")));
+        assertFalse(output.getMetadata().containsKey("layout"));
     }
-
-    @Test
-    public void build_returnsEmptyForBlankInput() {
-        GraphyOutput output = ConversionGraphBuilder.build(
-                ConversionGraphBuilder.UNIT_CONVERTER_ID,
-                " ",
-                "× 1",
-                "0",
-                ""
-        );
-
-        assertTrue(output.isEmpty());
+    @Test public void dynamicRateIsDerivedAndCarriesIdentityAndTime() {
+        GraphyOutput output = build(0, 0, ConversionTransformation.rate(83.5));
+        assertFalse(output.isEmpty());
+        assertEquals(GraphyNodeType.DERIVED, output.getNodes().get(1).type());
+        assertEquals("exchange-rate", output.getNodes().get(1).semanticRole());
+        assertEquals(1234L, output.getMetadata().get("rateTimestamp"));
+        assertEquals(83.5, (double) output.getMetadata().get("rate"), 0);
+        assertEquals("km", output.getMetadata().get("sourceCurrency"));
     }
-
-    private static boolean hasNodeType(GraphyOutput output, GraphyNodeType type) {
-        for (GraphyNode node : output.getNodes()) {
-            if (node.type() == type) {
-                return true;
-            }
-        }
-        return false;
+    @Test public void invalidRateOrNonFiniteResultProducesEmptyGraph() {
+        assertTrue(build(1, 0, ConversionTransformation.rate(0)).isEmpty());
+        assertTrue(build(1, 0, ConversionTransformation.rate(-1)).isEmpty());
+        assertTrue(build(1, Double.POSITIVE_INFINITY, ConversionTransformation.linear(2)).isEmpty());
+        assertTrue(build(Double.NaN, 1, ConversionTransformation.linear(2)).isEmpty());
+        assertTrue(build(1, 1, ConversionTransformation.linear(Double.NaN)).isEmpty());
     }
-
-    private static int countNodeType(GraphyOutput output, GraphyNodeType type) {
-        int count = 0;
-        for (GraphyNode node : output.getNodes()) {
-            if (node.type() == type) {
-                count++;
-            }
-        }
-        return count;
+    @Test public void directMappingDoesNotPretendToBeConstantMultiplication() {
+        GraphyOutput output = build(5, 375, ConversionTransformation.direct());
+        assertEquals(GraphyNodeType.EXPLANATION, output.getNodes().get(1).type());
+    }
+    @Test public void modelsAreImmutable() {
+        GraphyOutput output = build(5, 10, ConversionTransformation.linear(2));
+        assertThrows(UnsupportedOperationException.class, () -> output.getNodes().clear());
+        assertThrows(UnsupportedOperationException.class, () -> output.getMetadata().clear());
     }
 }

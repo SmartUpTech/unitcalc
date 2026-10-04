@@ -18,6 +18,8 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
+@org.robolectric.annotation.Config(sdk = 35, application = android.app.Application.class)
 public class OrthogonalConnectorRouterTest {
 
     private static final float GAP = 24f;

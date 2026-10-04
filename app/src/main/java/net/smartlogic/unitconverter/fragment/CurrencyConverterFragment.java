@@ -33,7 +33,7 @@ import androidx.fragment.app.Fragment;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
-import net.smartlogic.unitconverter.graphy.builder.ConversionGraphBuilder;
+import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.Preferences;
@@ -55,13 +55,13 @@ import java.util.concurrent.Executors;
 public class CurrencyConverterFragment extends Fragment implements OnClickListener, OnLongClickListener, OnChooseCurrencyListener {
 
     private static final String exchangeUrl1 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl1Key1 = "fca_live_2zeiOdgJr0ZukYsoLsLcQgCxzD5MdihXeNYDOijN"; // info-smartupapps
+    private static final String exchangeUrl1Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_1; // info-smartupapps
     private static final String exchangeUrl2 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl2Key1 = "fca_live_8McvHo9qLx5TlQob16WmnFogeRnyiq0tuwQMWXZe"; // smartlogic
+    private static final String exchangeUrl2Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_2; // smartlogic
     private static final String exchangeUrl3 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl3Key1 = "fca_live_Ri1lstwGfoGLRJnWDYn02zZG1Oejj5dZArvsEcVB"; // mlc
+    private static final String exchangeUrl3Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_3; // mlc
     private static final String exchangeUrl4 = "";
-    private static final String exchangeUrl4Key1 = "";
+    private static final String exchangeUrl4Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_4;
 
     private EditText inputValue, outputValue;
     private TextView inputSymbol, outputSymbol;
@@ -254,7 +254,12 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         Float outRate = currencyRates.get(outCurrency);
 
         if (inRate != null && outRate != null) {
-            Float in = NumberUtils.parseFloat(inStr);
+            Float in;
+            try { in = NumberUtils.parseFloat(inStr); }
+            catch (NumberFormatException invalid) {
+                if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+                return;
+            }
             //Log.d("SHRIKI", "Input:" + in + " " + inCurrency + " at rate (EUR) " + inRate);
             float out = in * (outRate / inRate);
             //Log.d("SHRIKI", "Output:" + out + " " + outCurrency + " at rate (EUR) " + outRate);
@@ -265,44 +270,23 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             //format.setRoundingMode(RoundingMode.CEILING);
             String formattedOut = format.format(out);
             outputValue.setText(formattedOut);
-            updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate);
+            updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate, in, out);
         } else if (getParentFragment() instanceof ConverterFragment) {
             ((ConverterFragment) getParentFragment()).clearConversionGraphy();
         }
     }
 
-    private void updateParentGraphy(String inStr,
-                                    String inCurrency,
-                                    String outCurrency,
-                                    String formattedOut,
-                                    float rate) {
-        Fragment parent = getParentFragment();
-        if (!(parent instanceof ConverterFragment converter)) {
-            return;
-        }
-        if (inStr.isEmpty() || inStr.equals("0")) {
+    private void updateParentGraphy(String inStr, String inCurrency, String outCurrency,
+                                    String formattedOut, float rate, float input, float result) {
+        if (!(getParentFragment() instanceof ConverterFragment converter)) return;
+        if (inStr.trim().isEmpty() || inStr.equals("-")) {
             converter.clearConversionGraphy();
             return;
         }
-
-        String operationLabel = "× " + formatRate(rate);
-        String inputDisplay = inStr + " " + inCurrency;
-        String resultDisplay = formattedOut + " " + outCurrency;
-        String explanation = inputDisplay + " " + operationLabel + " = " + resultDisplay;
-        GraphyOutput output = ConversionGraphBuilder.build(
-                ConversionGraphBuilder.CURRENCY_CONVERTER_ID,
-                inputDisplay,
-                operationLabel,
-                resultDisplay,
-                explanation
-        );
+        GraphyOutput output = ConversionGraphAdapter.currency(requireContext(), input, result, rate,
+                inStr + " " + inCurrency, formattedOut + " " + outCurrency,
+                inCurrency, outCurrency, prefs.getCurrencyLastUpdateDate());
         converter.updateConversionGraphy(output, output.getExpression());
-    }
-
-    @NonNull
-    private String formatRate(float rate) {
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#.########");
-        return df.format(rate);
     }
 
     private void initUILayout(View view) {

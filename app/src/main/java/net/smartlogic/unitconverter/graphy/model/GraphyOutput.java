@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public final class GraphyOutput {
 
+    public static final String METADATA_NOTICE = "notice";
+
     private final String calculatorId;
     private final String expression;
     private final String result;
@@ -32,10 +34,10 @@ public final class GraphyOutput {
         this.calculatorId = calculatorId;
         this.expression = expression;
         this.result = result;
-        this.nodes = new ArrayList<>(nodes);
-        this.connections = new ArrayList<>(connections);
+        this.nodes = Collections.unmodifiableList(new ArrayList<>(nodes));
+        this.connections = Collections.unmodifiableList(new ArrayList<>(connections));
         this.explanationTemplate = explanationTemplate;
-        this.metadata = metadata == null ? new HashMap<>() : new HashMap<>(metadata);
+        this.metadata = Collections.unmodifiableMap(metadata == null ? new HashMap<>() : new HashMap<>(metadata));
     }
 
     public static GraphyOutput empty(@NonNull String calculatorId,
@@ -73,12 +75,12 @@ public final class GraphyOutput {
 
     @NonNull
     public List<GraphyNode> getNodes() {
-        return Collections.unmodifiableList(nodes);
+        return nodes;
     }
 
     @NonNull
     public List<GraphyConnection> getConnections() {
-        return Collections.unmodifiableList(connections);
+        return connections;
     }
 
     @Nullable
@@ -88,7 +90,7 @@ public final class GraphyOutput {
 
     @NonNull
     public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
+        return metadata;
     }
 
     public boolean isEmpty() {

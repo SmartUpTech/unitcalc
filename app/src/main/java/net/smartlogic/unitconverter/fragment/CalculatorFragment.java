@@ -44,9 +44,8 @@ import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.utils.EvaluationResult;
 import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
 import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
+import net.smartlogic.unitconverter.utils.NumberUtils;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
-
-import java.text.DecimalFormat;
 
 public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
@@ -61,7 +60,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private TextView graphyContext;
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
-    private final GraphyBridge graphyBridge = new GraphyBridge();
+    private final GraphyBridge graphyBridge = new GraphyBridge(
+            new net.smartlogic.unitconverter.graphy.builder.ExpressionGraphBuilder(this::formatResult));
     private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
     private GraphyViewTheme graphyTheme;
     private ExpressionDisplayFormatter.GraphySemanticTheme semanticTheme;
@@ -246,6 +246,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 return;
             }
             graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+            if (latestGraphyOutput != null) {
+                graphyPanelController.update(latestGraphyOutput);
+            }
         });
     }
 
@@ -588,6 +591,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
             EvaluationResult evaluationResult = ExpressionEvaluator.evaluate(sanitized);
             if (!evaluationResult.isValid()) {
+                latestGraphyOutput = null;
+                hideGraphy();
+                updateGraphyTabState();
                 if (isFinal) showToast(getString(R.string.invalid_expression));
                 return;
             }
@@ -617,6 +623,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 updateExpressionDisplay();
             }
         } catch (Exception e) {
+            latestGraphyOutput = null;
+            hideGraphy();
+            updateGraphyTabState();
             if (isFinal) {
                 showToast(getString(R.string.invalid_expression));
             }
@@ -624,9 +633,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private String formatResult(double value) {
-        DecimalFormat df = new DecimalFormat("#,###.########");
-        df.setMaximumFractionDigits(mPrefs.getNumberDecimals());
-        return df.format(value);
+        return NumberUtils.formatCalculator(value, mPrefs.getNumberDecimals());
     }
 
     private void copyExpressionAndResult() {
@@ -681,7 +688,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void hideGraphy() {
         graphyVisible = false;
         if (graphyPanelController != null) {
-            graphyPanelController.update("", null);
+            graphyPanelController.update(null);
         }
     }
 
@@ -698,6 +705,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (expression == null) {
             expression = "";
         }
-        graphyPanelController.update(expression, output);
+        graphyPanelController.update(output);
     }
 }
