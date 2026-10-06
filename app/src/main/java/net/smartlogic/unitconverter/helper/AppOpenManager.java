@@ -76,12 +76,14 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
                 && AppOpenAdPreloader.isAdAvailable(adUnitId);
     }
 
+    public static boolean isShowingAd() { return isShowingAd; }
+
     public void showAdIfAvailable() {
         if (BuildConfig.DEBUG && DEBUG_FLAG) {
             Log.d(TAG, "AdMob AppOpen showAdIfAvailable in AppOpenManager");
         }
 
-        if (isShowingAd || currentActivity == null) {
+        if (isShowingAd || currentActivity == null || AdMobManager.isGamesAdShowing()) {
             return;
         }
 

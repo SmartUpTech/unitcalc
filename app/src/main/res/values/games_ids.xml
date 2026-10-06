@@ -1,0 +1,4 @@
+<resources>
+    <!-- History remains a native destination in the drawer/Explore after Play takes its tab. -->
+    <item type="id" name="history" />
+</resources>
