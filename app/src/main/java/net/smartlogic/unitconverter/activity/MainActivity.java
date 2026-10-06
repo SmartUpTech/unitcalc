@@ -33,6 +33,8 @@ import net.smartlogic.unitconverter.fragment.ConverterFragment;
 import net.smartlogic.unitconverter.fragment.ExploreFragment;
 import net.smartlogic.unitconverter.fragment.FavoritesFragment;
 import net.smartlogic.unitconverter.fragment.HistoryFragment;
+import net.smartlogic.unitconverter.games.GamesConfig;
+import net.smartlogic.unitconverter.games.GamesFragment;
 import net.smartlogic.unitconverter.helper.FavoritesRepository;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
@@ -45,6 +47,7 @@ import net.smartlogic.unitconverter.timer.TimerFragment;
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
     public static final String EXTRA_OPEN_TIMER = "open_timer";
+    private static final String SAVED_TAB_TAG = "main_tab_tag";
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -182,6 +185,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         updateFavoriteMenuItem();
     }
 
+    public boolean closeNavigationDrawerIfOpen() {
+        if (drawerLayout == null || !drawerLayout.isDrawerOpen(GravityCompat.START)) return false;
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
         CalculatorCatalog.Entry entry = CalculatorCatalog.getById(item.calculatorId());
         if (entry == null) {
@@ -273,11 +282,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (savedInstanceState == null) {
             return;
         }
+        AppConst.CURRENT_TAG = savedInstanceState.getString(SAVED_TAB_TAG, AppConst.CURRENT_TAG);
         registerRestoredFragment(R.id.calculator, AppConst.TAG_CALC);
         registerRestoredFragment(R.id.converter, AppConst.TAG_CONVERTER);
         registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
+        registerRestoredFragment(R.id.play, GamesConfig.TAG);
         Fragment restoredTimer = getSupportFragmentManager().findFragmentByTag(AppConst.TAG_TIMER);
         if (restoredTimer != null) {
             timerFragment = restoredTimer;
@@ -309,7 +320,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         if (!initialTabSelected) {
             initialTabSelected = true;
-            bottomNavigationView.setSelectedItemId(resolveMenuIdForTag(AppConst.CURRENT_TAG));
+            int restoredId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+            if (restoredId == R.id.history) selectTab(restoredId);
+            else bottomNavigationView.setSelectedItemId(restoredId);
         }
     }
 
@@ -341,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @NonNull
     private Fragment createFragmentFor(int itemId) {
+        if (itemId == R.id.play) return new GamesFragment();
         if (itemId == R.id.calculator) {
             return CalculatorFragment.newInstance();
         }
@@ -360,6 +374,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void updateCurrentTag(int itemId) {
+        if (itemId == R.id.play) {
+            AppConst.CURRENT_TAG = GamesConfig.TAG;
+            return;
+        }
         if (itemId == R.id.calculator) {
             AppConst.CURRENT_TAG = AppConst.TAG_CALC;
         } else if (itemId == R.id.converter) {
@@ -374,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private int resolveMenuIdForTag(@NonNull String tag) {
+        if (GamesConfig.TAG.equals(tag)) return R.id.play;
         if (AppConst.TAG_CALC.equals(tag)) {
             return R.id.calculator;
         }
@@ -394,6 +413,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @NonNull
     private String fragmentTagFor(int itemId) {
+        if (itemId == R.id.play) return GamesConfig.TAG;
         if (itemId == R.id.calculator) {
             return AppConst.TAG_CALC;
         }
@@ -474,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         MenuItem favoriteItem = menu.findItem(R.id.menu_favorite);
         if (favoriteItem != null) {
             CalculatorCatalog.Entry entry = CalculatorCatalog.getById(activeCalculatorId);
-            boolean showFavorite = entry != null && entry.isFavoriteEligible();
+            boolean showFavorite = !(activeFragment instanceof GamesFragment) && entry != null && entry.isFavoriteEligible();
             favoriteItem.setVisible(showFavorite);
             if (showFavorite) {
                 boolean isFavorite = favoritesRepository.isFavorite(activeCalculatorId);
@@ -487,6 +507,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             }
         }
         MenuItem settingsItem = menu.findItem(R.id.menu_settings);
+        MenuItem gamesPrivacy = menu.findItem(R.id.menu_games_privacy);
+        if (gamesPrivacy != null) {
+            gamesPrivacy.setVisible(activeFragment instanceof GamesFragment games && games.isAdded()
+                    && games.isPrivacyOptionsRequired());
+        }
         if (settingsItem != null && settingsItem.getIcon() != null) {
             settingsItem.getIcon().setTint(ThemeManager.get().functions());
         }
@@ -512,6 +537,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.menu_games_privacy && activeFragment instanceof GamesFragment games) {
+            games.showPrivacyOptions();
+            return true;
+        }
         if (id == R.id.menu_favorite) {
             CalculatorCatalog.Entry entry = CalculatorCatalog.getById(activeCalculatorId);
             if (entry != null && entry.isFavoriteEligible()) {
@@ -544,7 +573,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @Override
     protected void onPostResume() {
-        bottomNavigationView.setSelectedItemId(resolveMenuIdForTag(AppConst.CURRENT_TAG));
+        int currentId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+        if (currentId == R.id.history) {
+            if (!(activeFragment instanceof HistoryFragment)) selectTab(currentId);
+        } else {
+            bottomNavigationView.setSelectedItemId(currentId);
+        }
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
         super.onPostResume();
@@ -561,5 +595,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(SAVED_TAB_TAG, AppConst.CURRENT_TAG);
+        super.onSaveInstanceState(outState);
     }
 }

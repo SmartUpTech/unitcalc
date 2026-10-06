@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <FrameLayout android:id="@+id/games_web_container"
+        android:layout_width="match_parent" android:layout_height="match_parent" />
+    <LinearLayout android:id="@+id/games_status"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:gravity="center" android:orientation="vertical"
+        android:padding="@dimen/converter_card_padding"
+        android:accessibilityLiveRegion="polite">
+        <ProgressBar android:id="@+id/games_progress"
+            android:layout_width="@dimen/converter_touch_target"
+            android:layout_height="@dimen/converter_touch_target" />
+        <TextView android:id="@+id/games_status_text"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/converter_spacing" android:gravity="center"
+            android:text="@string/games_loading"
+            android:textAppearance="@style/TextAppearance.Graphy.Body1" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/games_retry"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:minHeight="@dimen/converter_touch_target"
+            android:text="@string/games_retry" android:visibility="gone" />
+    </LinearLayout>
+</FrameLayout>

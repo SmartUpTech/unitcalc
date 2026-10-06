@@ -35,6 +35,14 @@
     <string name="nav_explore">Explore</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_history">History</string>
+    <string name="nav_play">Play</string>
+    <string name="nav_play_favourites">Favourites</string>
+    <string name="games_loading">Getting your games ready…</string>
+    <string name="games_load_error">Games couldn’t load. Check your connection and try again.</string>
+    <string name="games_update_webview">Update Android System WebView to play games securely.</string>
+    <string name="games_save_error">Your result couldn’t be saved. Please try again.</string>
+    <string name="games_retry">Try again</string>
+    <string name="games_privacy_options">Games ad privacy choices</string>
     <string name="explore_search_hint">Search calculators</string>
     <string name="no_favorites">No favorites yet</string>
     <string name="toggle_favorite">Toggle favorite</string>

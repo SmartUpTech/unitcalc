@@ -12,11 +12,6 @@
         android:title="@string/nav_converter" />
 
     <item
-        android:id="@+id/history"
-        android:icon="@drawable/ic_history"
-        android:title="@string/nav_history" />
-
-    <item
         android:id="@+id/explore"
         android:icon="@drawable/ic_explore"
         android:title="@string/nav_explore" />
@@ -24,6 +19,11 @@
     <item
         android:id="@+id/favorites"
         android:icon="@drawable/ic_favorite"
-        android:title="@string/nav_favorites" />
+        android:title="@string/nav_play_favourites" />
+
+    <item
+        android:id="@+id/play"
+        android:icon="@drawable/ic_play_games"
+        android:title="@string/nav_play" />
 
 </menu>
