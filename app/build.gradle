@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.plugin.compose'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -20,16 +20,12 @@ if (currencyPropertiesFile.exists()) {
 
 android {
 
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "net.smartlogic.unitconverter"
-        minSdk 26
-        targetSdk {
-            version = release(36)
-        }
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 12
         versionName "2.0"
         (1..4).each { index ->
@@ -123,40 +119,40 @@ android {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation libs.junit
+    testImplementation libs.robolectric
 
-    def composeBom = platform('androidx.compose:compose-bom:2026.09.00')
+    def composeBom = platform(libs.compose.bom)
     implementation composeBom
     androidTestImplementation composeBom
-    implementation 'androidx.compose.ui:ui'
-    implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.foundation:foundation'
-    implementation 'androidx.compose.runtime:runtime'
-    implementation 'androidx.activity:activity-compose:1.13.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.11.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0'
-    debugImplementation 'androidx.compose.ui:ui-tooling'
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling.preview
+    implementation libs.compose.material3
+    implementation libs.compose.foundation
+    implementation libs.compose.runtime
+    implementation libs.activity.compose
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.viewmodel.compose
+    implementation libs.lifecycle.viewmodel.ktx
+    debugImplementation libs.compose.ui.tooling
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.8.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
-    implementation 'androidx.core:core-splashscreen:1.2.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.2.1'
-    implementation 'androidx.webkit:webkit:1.12.1'
-    implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'com.google.android.material:material:1.14.0'
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation libs.core.splashscreen
+    implementation libs.legacy.support.v4
+    implementation libs.preference
+    implementation libs.webkit
+    implementation libs.user.messaging.platform
+    implementation libs.cardview
+    implementation libs.viewpager2
+    implementation libs.material
 
     // GMA Next-Gen AdMob SDK
-    implementation 'com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.4.0'
+    implementation libs.ads.mobile.sdk
 
     // For App Open Ads lifecycle support
-    implementation "androidx.lifecycle:lifecycle-runtime:2.11.0"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.11.0"
-    implementation "androidx.lifecycle:lifecycle-process:2.11.0"
+    implementation libs.lifecycle.runtime
+    implementation libs.lifecycle.common.java8
+    implementation libs.lifecycle.process
 }
