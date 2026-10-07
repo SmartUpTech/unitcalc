@@ -67,18 +67,18 @@ public class AdMobManager {
         this.context = context.getApplicationContext();
         String appId = this.context.getString(R.string.am_app_id);
 
-        new Thread(() -> MobileAds.initialize(
+        MobileAds.initialize(
                 this.context,
                 new InitializationConfig.Builder(appId).build(),
                 initializationStatus -> {
                     initialized = true;
                     startPreloading();
-                    mainHandler.post(this::notifyReadyCallbacks);
+                    notifyReadyCallbacks();
                     if (BuildConfig.DEBUG && DEBUG_FLAG) {
                         Log.d(TAG, "AdMob onInitializationComplete with status " + initializationStatus);
                     }
                 }
-        )).start();
+        );
     }
 
     public static synchronized AdMobManager getInstance(Context context) {
