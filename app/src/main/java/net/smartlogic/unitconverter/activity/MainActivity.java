@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -47,6 +44,7 @@ import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
 import net.smartlogic.unitconverter.timer.TimerFragment;
+import net.smartlogic.unitconverter.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
@@ -313,20 +311,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
     }
 
-    private boolean hasValidatedInternetConnection() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager == null) return false;
-
-        Network activeNetwork = connectivityManager.getActiveNetwork();
-        if (activeNetwork == null) return false;
-
-        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-        return capabilities != null
-                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
-    }
-
     private void showGamesOfflineDialog() {
         if (isFinishing() || isDestroyed()) return;
         new MaterialAlertDialogBuilder(this)
@@ -339,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private void setUpBottomNavigation() {
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.play && !hasValidatedInternetConnection()) {
+            if (item.getItemId() == R.id.play && !new Utils().isNetworkAvailable(this)) {
                 showGamesOfflineDialog();
                 return false;
             }
