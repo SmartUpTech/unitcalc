@@ -36,6 +36,7 @@ import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.DatabaseHelper;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
 import net.smartlogic.unitconverter.model.CalculationHistoryItem;
@@ -206,6 +207,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         for (int id : ids) {
             View v = pageView.findViewById(id);
             if (v != null) {
+                InteractionFeedbackManager.configure(v);
                 v.setOnClickListener(this);
             }
         }
@@ -255,6 +257,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        String before = expression;
 
         if (id == R.id.backspace) {
             handleBackspace();
@@ -262,6 +265,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             handleSignToggle();
         } else if (id == R.id.equal) {
             calculateResult(true);
+            return;
         } else if (id == R.id.dot) {
             handleDotInput();
         } else {
@@ -271,13 +275,21 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             }
             handleInput(input);
         }
+        if (!before.equals(expression)) {
+            InteractionFeedbackManager.perform(v,
+                    id == R.id.backspace || id == R.id.sign_toggle
+                            ? InteractionFeedbackManager.Type.ACTION
+                            : InteractionFeedbackManager.Type.INPUT);
+        }
     }
 
     @Override
     public boolean onLongClick(View v) {
         int id = v.getId();
         if (id == R.id.backspace) {
+            boolean hadInput = !expression.isEmpty();
             clearAll();
+            if (hadInput) InteractionFeedbackManager.perform(v, InteractionFeedbackManager.Type.ACTION);
         } else if (id == R.id.expression || id == R.id.result) {
             copyExpressionAndResult();
         }
@@ -594,7 +606,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 latestGraphyOutput = null;
                 hideGraphy();
                 updateGraphyTabState();
-                if (isFinal) showToast(getString(R.string.invalid_expression));
+                if (isFinal) {
+                    showToast(getString(R.string.invalid_expression));
+                    feedbackFinal(InteractionFeedbackManager.Type.ERROR);
+                }
                 return;
             }
 
@@ -621,6 +636,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 expression = formatted.replace(",", "");
                 isResultDisplayed = true;
                 updateExpressionDisplay();
+                feedbackFinal(InteractionFeedbackManager.Type.CONFIRM);
             }
         } catch (Exception e) {
             latestGraphyOutput = null;
@@ -628,8 +644,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             updateGraphyTabState();
             if (isFinal) {
                 showToast(getString(R.string.invalid_expression));
+                feedbackFinal(InteractionFeedbackManager.Type.ERROR);
             }
         }
+    }
+
+    private void feedbackFinal(InteractionFeedbackManager.Type type) {
+        if (tvExpression != null) InteractionFeedbackManager.perform(tvExpression, type);
     }
 
     private String formatResult(double value) {
