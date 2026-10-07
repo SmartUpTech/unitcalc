@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
 import net.smartlogic.unitconverter.R;
@@ -43,6 +44,7 @@ import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
 import net.smartlogic.unitconverter.timer.TimerFragment;
+import net.smartlogic.unitconverter.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
@@ -309,9 +311,22 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
     }
 
+    private void showGamesOfflineDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.games_offline_title)
+                .setMessage(R.string.games_offline_message)
+                .setPositiveButton(R.string.games_offline_action, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     private void setUpBottomNavigation() {
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.play && !new Utils().isNetworkAvailable(this)) {
+                showGamesOfflineDialog();
+                return false;
+            }
             selectTab(item.getItemId());
             refreshActiveCalculatorId();
             updateFavoriteMenuItem();
