@@ -29,6 +29,40 @@ class ThemeSelectorViewModelTest {
 
     @After fun teardown() = store.clear()
 
+    @Test fun everyInitialUnlockedThemeCanBeSelectedAndEveryLockedTapIsRejected() {
+        val initialCards = model.uiState.value.cards
+        assertEquals(3, initialCards.count { it.unlocked })
+        initialCards.filter { it.unlocked }.forEach { card ->
+            assertTrue(model.requestTheme(card.theme.id()))
+            ThemeManager.select(RuntimeEnvironment.getApplication(), card.theme.id())
+            assertEquals(card.theme.id(), model.uiState.value.cards.single { it.selected }.theme.id())
+        }
+        val selectedId = preferences.selectedThemeId
+        initialCards.filterNot { it.unlocked }.forEach { card ->
+            assertFalse(model.requestTheme(card.theme.id()))
+            assertEquals(card.theme.nameRes(), model.uiState.value.lockedThemeNameRes)
+            assertEquals((card.theme.unlockRank() - 3) * 3, model.uiState.value.daysUntilTappedUnlock)
+            assertEquals(selectedId, preferences.selectedThemeId)
+            assertEquals(selectedId, model.uiState.value.cards.single { it.selected }.theme.id())
+        }
+    }
+
+    @Test fun dialogCountdownUsesTappedThemeAndUpdatesWhileOpen() {
+        val day = java.time.LocalDate.of(2026, 10, 4)
+        assertFalse(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
+        preferences.recordThemeUsage(day)
+        assertEquals(2, model.uiState.value.daysUntilTappedUnlock)
+        preferences.recordThemeUsage(day.plusDays(1))
+        assertEquals(1, model.uiState.value.daysUntilTappedUnlock)
+        preferences.recordThemeUsage(day.plusDays(2))
+        assertNull(model.uiState.value.lockedThemeNameRes)
+        assertTrue(model.uiState.value.cards.single { it.theme.id() == CalculatorThemes.GRAPHITE_BLACK.id() }.unlocked)
+        assertEquals(CalculatorThemes.DEFAULT_ID, preferences.selectedThemeId)
+
+        assertFalse(model.requestTheme(CalculatorThemes.PURPLE_MOUNTAIN_MAJESTY.id()))
+        assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
+    }
+
     @Test fun lockedTapShowsCorrectDialogWithoutChangingSelection() {
         assertFalse(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
         assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
