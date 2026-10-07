@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 public class GamesConfigTest {
     @Test public void embeddedEntryPreservesCentralRoute() {
-        assertEquals("https://smartuptech.in/games/index.html?embedded=1#shape_fit", GamesConfig.embeddedUrl());
+        assertEquals("https://smartuptech.in/games/index.html?embedded=1", GamesConfig.embeddedUrl());
         assertTrue(GamesConfig.isTrustedUrl(GamesConfig.embeddedUrl()));
     }
 

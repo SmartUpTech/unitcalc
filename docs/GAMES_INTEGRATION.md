@@ -11,7 +11,7 @@ contains process-memory-only ad bookkeeping. Ad thresholds remain in the existin
 game enum, game icon list, or game-specific bridge method.
 
 `GamesConfig.ENTRY_URL` is the only production entry definition. It currently
-contains the requested `#shape_fit` route. The integration adds `embedded=1`
+contains the requested route. The integration adds `embedded=1`
 before that hash. The landing page is the same document without a hash; the web
 Back action navigates there. Changing the centralized entry hash requires no
 changes to Activities, Fragments, or bridge classes.

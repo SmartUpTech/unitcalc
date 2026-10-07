@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 /** The host owns transport configuration; the website owns all games and routes. */
 public final class GamesConfig {
-    public static final String ENTRY_URL = "https://smartuptech.in/games/index.html#shape_fit";
+    public static final String ENTRY_URL = "https://smartuptech.in/games/index.html";
     public static final String TAG = "games";
     public static final String BRIDGE_NAME = "AndroidGames";
     public static final int BRIDGE_VERSION = 1;
