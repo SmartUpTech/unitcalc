@@ -5,10 +5,17 @@
     android:id="@+id/reverse_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <View
+        android:id="@+id/converter_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/converter_divider_height"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/converter_touch_target"
+        android:background="@color/screen_expression_text" />
     <ImageButton
         android:id="@+id/reverse"
         style="@style/ConverterIconButton"
-        android:layout_gravity="center"
+        android:layout_gravity="end|center_vertical"
         android:contentDescription="@string/str_swap_units"
         android:src="@drawable/ic_reverse" />
 </FrameLayout>

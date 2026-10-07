@@ -17,13 +17,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/converter_spacing">
-            <net.smartlogic.unitconverter.helper.HorizontalListView
-                android:id="@+id/horizontal_list"
+            <LinearLayout
+                android:id="@+id/category_selector"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/converter_category_height"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/converter_card_margin"
-                android:paddingTop="@dimen/converter_small_spacing" />
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/converter_touch_target"
+                android:layout_marginHorizontal="@dimen/converter_card_margin"
+                android:layout_marginTop="@dimen/converter_spacing"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:id="@+id/category_icon"
+                    android:layout_width="@dimen/converter_flag_width"
+                    android:layout_height="@dimen/converter_flag_width"
+                    android:padding="@dimen/converter_small_spacing"
+                    android:importantForAccessibility="no" />
+                <TextView
+                    android:id="@+id/category_title"
+                    style="@style/ConverterSelectorText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/converter_spacing"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+                <ImageView
+                    android:id="@+id/category_chevron"
+                    android:layout_width="@dimen/converter_chevron_size"
+                    android:layout_height="@dimen/converter_chevron_size"
+                    android:src="@drawable/ic_chevron_down"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/converter_card"
                 android:layout_width="match_parent"
@@ -143,6 +170,13 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone" />
+            <TextView
+                android:id="@+id/unit_rate"
+                style="@style/ConverterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/converter_card_margin"
+                android:layout_marginBottom="@dimen/converter_spacing" />
             <include
                 layout="@layout/converter_keypad"
                 android:layout_width="match_parent"
