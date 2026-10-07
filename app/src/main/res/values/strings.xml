@@ -37,6 +37,9 @@
     <string name="nav_history">History</string>
     <string name="nav_play">Play</string>
     <string name="nav_play_favourites">Favourites</string>
+    <string name="games_offline_title">Internet connection needed</string>
+    <string name="games_offline_message">Connect to the internet to play games.</string>
+    <string name="games_offline_action">OK</string>
     <string name="games_loading">Getting your games ready…</string>
     <string name="games_load_error">Games couldn’t load. Check your connection and try again.</string>
     <string name="games_update_webview">Update Android System WebView to play games securely.</string>
