@@ -1,6 +1,6 @@
 ---
 name: design-system
-description: Guidelines for UI consistency, component usage, and layout rules. Use this when creating new UI screens or modifying existing layouts to ensure they adhere to the Graphy Calculator design system.
+description: Guidelines for UI consistency, component usage, and layout rules. Use this when creating new UI screens or modifying existing layouts to ensure they adhere to the Calculator+ design system.
 ---
 
 # DESIGN SYSTEM

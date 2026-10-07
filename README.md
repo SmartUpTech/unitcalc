@@ -1,8 +1,8 @@
-# Unit Converter (Graphy Calculator)
+# Calculator+
 
 A simple Android app that helps you **calculate numbers**, **convert units**, and **check currency rates** — all in one place.
 
-It is being upgraded into **Graphy Calculator**: the same fast tools you already use, plus a future **Graphy** view that visually explains *how* an answer was worked out.
+It features **Calculator+**: the same fast tools you already use, plus a **Graphy** view that visually explains *how* an answer was worked out.
 
 ---
 
@@ -119,4 +119,4 @@ After you press **=**, a **Graphy** chip appears in the top-right of the calcula
 - **Build:** `./gradlew assembleDebug`
 - **Tests:** `./gradlew test`
 
-Project planning and tasks are tracked in Notion under **Graphy Calculator**.
+Project planning and tasks are tracked in Notion under **Calculator+**.
