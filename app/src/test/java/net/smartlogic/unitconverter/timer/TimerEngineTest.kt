@@ -1,5 +1,7 @@
 package net.smartlogic.unitconverter.timer
 
+import android.content.Context
+
 import net.smartlogic.unitconverter.timer.model.RecentTimer
 import net.smartlogic.unitconverter.timer.model.TimerDraft
 import net.smartlogic.unitconverter.timer.model.TimerPhase
@@ -21,6 +23,9 @@ class TimerEngineTest {
     @Before
     fun setUp() {
         TimerEngine.resetForTests()
+        RuntimeEnvironment.getApplication()
+            .getSharedPreferences("timer_prefs", Context.MODE_PRIVATE)
+            .edit().clear().commit()
         clock = FakeTimerClock()
         engine = TimerEngine.getInstance(RuntimeEnvironment.getApplication())
         engine.setClockForTests(clock)
@@ -86,6 +91,36 @@ class TimerEngineTest {
         engine.updateDraft(TimerDraft())
         engine.startFromDraft()
         assertTrue(engine.uiState.value.phase is TimerPhase.Setting)
+    }
+
+    @Test
+    fun reentry_keepsOneRunningTimerAndUsesElapsedTime() {
+        engine.startFromDraft()
+        clock.advance(3_500L)
+        val reopened = TimerEngine.getInstance(RuntimeEnvironment.getApplication())
+        assertTrue(engine === reopened)
+        reopened.refreshDisplay()
+        assertEquals(6_500L, reopened.uiState.value.remainingMs)
+        reopened.pause()
+        clock.advance(20_000L)
+        reopened.refreshDisplay()
+        assertEquals(6_500L, reopened.uiState.value.remainingMs)
+        reopened.resume()
+        clock.advance(6_500L)
+        reopened.refreshDisplay()
+        assertTrue(reopened.uiState.value.phase is TimerPhase.Completed)
+    }
+
+    @Test
+    fun reset_cancelsRunningStateAndAllowsFreshStart() {
+        engine.startFromDraft()
+        clock.advance(2_000L)
+        engine.reset()
+        clock.advance(20_000L)
+        engine.refreshDisplay()
+        assertTrue(engine.uiState.value.phase is TimerPhase.Setting)
+        engine.startFromDraft()
+        assertEquals(10_000L, engine.uiState.value.remainingMs)
     }
 
     @Test

@@ -23,6 +23,21 @@ class TimerFragment : Fragment() {
         )[TimerViewModel::class.java]
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.setScreenVisible(!isHidden)
+    }
+
+    override fun onPause() {
+        viewModel.setScreenVisible(false)
+        super.onPause()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        viewModel.setScreenVisible(!hidden && isResumed)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -32,7 +32,14 @@ class TimerForegroundService : Service() {
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, TimerForegroundService::class.java)
-            context.startForegroundService(intent)
+            try {
+                context.startForegroundService(intent)
+            } catch (denied: IllegalStateException) {
+                // Android may reject foreground-service starts from a receiver/background.
+                // The scheduled alarm remains responsible for completion.
+            } catch (denied: SecurityException) {
+                // Device or policy denied this service type; keep the timer/alarm active.
+            }
         }
 
         fun stop(context: Context) {

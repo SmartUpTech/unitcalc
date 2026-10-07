@@ -3,6 +3,7 @@ package net.smartlogic.unitconverter.timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +23,20 @@ class TimerViewModel(
             engine.uiState.value,
         )
 
-    init {
-        viewModelScope.launch {
+    private var displayJob: Job? = null
+
+    fun setScreenVisible(visible: Boolean) {
+        if (!visible) {
+            displayJob?.cancel()
+            displayJob = null
+            return
+        }
+        if (displayJob?.isActive == true) return
+        engine.refreshDisplay()
+        displayJob = viewModelScope.launch {
             while (isActive) {
-                engine.refreshDisplay()
                 delay(250L)
+                engine.refreshDisplay()
             }
         }
     }

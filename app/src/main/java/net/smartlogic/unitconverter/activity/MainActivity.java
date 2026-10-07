@@ -346,9 +346,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void selectTab(int itemId) {
-        hideTimerScreen(false);
         Fragment fragment = tabFragments.get(itemId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (timerVisible && timerFragment != null) {
+            // Hide Timer and reveal the selected tab in one transaction.
+            transaction.hide(timerFragment);
+            timerVisible = false;
+        }
 
         if (fragment == null) {
             fragment = createFragmentFor(itemId);
@@ -596,10 +600,14 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     protected void onPostResume() {
         int currentId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        if (currentId == R.id.history) {
-            if (!(activeFragment instanceof HistoryFragment)) selectTab(currentId);
-        } else {
-            bottomNavigationView.setSelectedItemId(currentId);
+        // A widget/notification may have opened Timer during onCreate.
+        // Reselecting a tab here would immediately hide that screen.
+        if (!timerVisible) {
+            if (currentId == R.id.history) {
+                if (!(activeFragment instanceof HistoryFragment)) selectTab(currentId);
+            } else {
+                bottomNavigationView.setSelectedItemId(currentId);
+            }
         }
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();

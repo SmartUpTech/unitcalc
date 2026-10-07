@@ -208,20 +208,14 @@ class TimerEngine private constructor(
                         completeTimer(phase.label, phase.originalDurationMs)
                     }
                 } else {
+                    val previous = _uiState.value.remainingMs
                     _uiState.update { it.copy(remainingMs = remaining) }
-                    widgetUpdater.update(this)
+                    if (remaining / 1000L != previous / 1000L) {
+                        widgetUpdater.update(this)
+                    }
                 }
             }
-            is TimerPhase.Paused -> {
-                _uiState.update { it.copy(remainingMs = phase.remainingMs) }
-                backgroundCoordinator.showPaused(phase.label, phase.remainingMs)
-                widgetUpdater.update(this)
-            }
-            is TimerPhase.Completed -> {
-                _uiState.update { it.copy(remainingMs = 0L) }
-                widgetUpdater.update(this)
-            }
-            is TimerPhase.Setting -> widgetUpdater.update(this)
+            is TimerPhase.Paused, is TimerPhase.Completed, is TimerPhase.Setting -> Unit
         }
     }
 
@@ -353,8 +347,12 @@ class TimerEngine private constructor(
         )
         if (phase is TimerPhase.Running && remaining > 0L) {
             startBackgroundExecution(phase, remaining)
-        } else if (phase is TimerPhase.Running && remaining <= 0L) {
-            completeTimer(phase.label, phase.originalDurationMs, playAlarm = false)
+        } else if (snapshot?.state == "running" && phase is TimerPhase.Completed) {
+            // An expired persisted timer must not leave its old service/alarm alive.
+            lastFiredCompletionToken = completionToken
+            stopBackgroundExecution()
+            publishPhase(phase, 0L)
+            backgroundCoordinator.showCompleted(snapshot.label)
         }
         widgetUpdater.update(this)
     }

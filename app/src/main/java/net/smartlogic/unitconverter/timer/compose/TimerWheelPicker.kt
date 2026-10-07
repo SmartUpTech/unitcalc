@@ -3,18 +3,11 @@ package net.smartlogic.unitconverter.timer.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -23,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 
 @Composable
@@ -46,33 +41,45 @@ fun TimerWheelPicker(
     val itemHeight = 36.dp
     val visibleCount = 5
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = values.indexOf(value).coerceAtLeast(0))
+    val currentValue by rememberUpdatedState(value)
+    val currentOnValueChange by rememberUpdatedState(onValueChange)
 
     val centerIndex by remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
             val itemSize = layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0
             if (itemSize <= 0) 0 else {
-                val center = layoutInfo.viewportEndOffset / 2
+                val center = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
                 layoutInfo.visibleItemsInfo.minByOrNull { Math.abs((it.offset + it.size / 2) - center) }?.index ?: 0
             }
         }
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { centerIndex }
+        snapshotFlow {
+            if (listState.layoutInfo.visibleItemsInfo.isEmpty() || listState.isScrollInProgress) {
+                null
+            } else {
+                centerIndex
+            }
+        }
+            .filterNotNull()
             .distinctUntilChanged()
             .collect { index ->
                 val clamped = index.coerceIn(0, values.lastIndex)
-                if (values[clamped] != value) {
-                    onValueChange(values[clamped])
+                if (values[clamped] != currentValue) {
+                    currentOnValueChange(values[clamped])
                 }
             }
     }
 
     LaunchedEffect(value) {
         val target = values.indexOf(value).coerceAtLeast(0)
-        if (centerIndex != target) {
-            listState.animateScrollToItem(target)
+        if (!listState.isScrollInProgress &&
+            listState.layoutInfo.visibleItemsInfo.isNotEmpty() &&
+            centerIndex != target
+        ) {
+            listState.scrollToItem(target)
         }
     }
 
