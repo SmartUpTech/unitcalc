@@ -29,6 +29,7 @@
     <dimen name="converter_card_padding">16dp</dimen>
 
     <!-- Converter spacing and minimum touch sizes shared by both modes. -->
+    <dimen name="converter_divider_height">1dp</dimen>
     <dimen name="converter_spacing">8dp</dimen>
     <dimen name="converter_small_spacing">4dp</dimen>
     <dimen name="converter_touch_target">48dp</dimen>

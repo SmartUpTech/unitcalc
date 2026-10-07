@@ -410,6 +410,8 @@
     <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
     <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/9257395921</string>-->
 
+    <string name="converter_currency_separator" translatable="false">·</string>
+    <string name="converter_unit_rate">%1$s %2$s = %3$s %4$s</string>
     <string name="converter_input_amount">Input amount</string>
     <string name="converter_output_amount">Converted amount</string>
     <string name="converter_copy_result">Copy conversion</string>

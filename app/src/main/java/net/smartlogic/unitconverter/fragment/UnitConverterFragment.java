@@ -17,26 +17,27 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
-import net.smartlogic.unitconverter.helper.HorizontalListView;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.utils.Conversions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
@@ -52,7 +53,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     Button dot, double_zero;
     EditText inputValue, outputValue;
     TextView inputSymbol, outputSymbol;
-    HorizontalListView horizontalListView;
+    private View categorySelector;
+    private ImageView categoryIcon;
+    private TextView categoryTitle, unitRate;
     private Context context;
     private Spinner fromUnit, toUnit;
 
@@ -118,7 +121,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         inputSymbol = view.findViewById(R.id.inputSymbol);
         outputSymbol = view.findViewById(R.id.outputSymbol);
 
-        horizontalListView = view.findViewById(R.id.horizontal_list);
+        categorySelector = view.findViewById(R.id.category_selector);
+        categoryIcon = view.findViewById(R.id.category_icon);
+        categoryTitle = view.findViewById(R.id.category_title);
+        unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
 
@@ -252,6 +258,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
+        ThemeApplier.apply(getView());
+        updateCategoryPicker();
         convertAndDisplay(inputValue.getText().toString());
     }
 
@@ -299,36 +307,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         initUILayout(view);
 
-        Integer[] mCustomData = {0,1,2,3,4,5,6,7,8,9,10,11,12,13};
-
-        final ConversionAdapter adapter = new ConversionAdapter(requireActivity(), mCustomData);
-
-        horizontalListView.setAdapter(adapter);
-        horizontalListView.setOnItemClickListener((parent, view1, position, id) -> {
-
-            if (position == Conversion.TEMPERATURE) {
-                inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-            }
-            else {
-                inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            }
-            inputValue.setText("");
-            convertAndDisplay("");
-            mPrefs.setLastConversion(position);
-            mPrefs.setLastFromConversion(0);
-            mPrefs.setLastToConversion(1);
-            initialDropDown(conversions.getById(position));
-            convertAndDisplay(inputValue.getText().toString());
-            adapter.setSelectedItem(position);
-            adapter.notifyDataSetChanged();
-        });
-
-        adapter.setSelectedItem(mPrefs.getLastConversion());
-        adapter.notifyDataSetChanged();
-
+        categorySelector.setOnClickListener(v -> showCategoryPicker());
         initialDropDown(conversions.getById(mPrefs.getLastConversion()));
-
-        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        updateCategoryPicker();
+        updateInputType(getSelectedCategoryId());
 
         inputTextWatcher = new TextWatcher() {
             @Override
@@ -348,6 +330,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
+        ThemeApplier.apply(view);
 
         return view;
     }
@@ -359,6 +342,18 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         Unit from = selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition());
         Unit to = selectedConversion.getUnits().get(toUnit.getSelectedItemPosition());
+        String fromRateSymbol = from.getSymbol();
+        if (fromRateSymbol == null || fromRateSymbol.isEmpty()) fromRateSymbol = String.valueOf(from.getId());
+        String toRateSymbol = to.getSymbol();
+        if (toRateSymbol == null || toRateSymbol.isEmpty()) toRateSymbol = String.valueOf(to.getId());
+        double oneUnit = selectedConversion.getId() == Conversion.TEMPERATURE
+                ? conversions.convertTemperatureValue(1, from, to)
+                : selectedConversion.getId() == Conversion.FUEL
+                    ? conversions.convertFuelValue(1, from, to)
+                    : conversions.convert(1, from, to);
+        unitRate.setText(getString(R.string.converter_unit_rate,
+                getString(R.string.one), fromRateSymbol, applyFormatting(oneUnit), toRateSymbol));
+
 
         /*Unit from = selectedConversion.getUnitByLabelResource(fromUnit.getSelectedItem());
         Unit to = selectedConversion.getUnitByLabelResource(toUnit.getSelectedItem()); */
@@ -434,7 +429,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         fromUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
+                if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
+                    label.setTextColor(ThemeManager.get().mainText());
+                }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastFromConversion(position);
             }
@@ -448,7 +445,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         toUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
+                if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
+                    label.setTextColor(ThemeManager.get().mainText());
+                }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastToConversion(position);
             }
@@ -470,26 +469,45 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         return mPrefs != null ? mPrefs.getLastConversion() : Conversion.LENGTH;
     }
 
+    private void showCategoryPicker() {
+        PopupMenu menu = new PopupMenu(requireContext(), categorySelector);
+        for (int categoryId = Conversion.LENGTH; categoryId < Conversion.CURRENCY; categoryId++) {
+            Conversion category = conversions.getById(categoryId);
+            menu.getMenu().add(0, categoryId, categoryId, category.getLabelResource())
+                    .setCheckable(true).setChecked(categoryId == getSelectedCategoryId());
+        }
+        menu.setOnMenuItemClickListener(item -> {
+            selectCategory(item.getItemId());
+            return true;
+        });
+        menu.show();
+    }
+
+    private void updateCategoryPicker() {
+        if (selectedConversion == null || categorySelector == null) return;
+        categoryTitle.setText(selectedConversion.getLabelResource());
+        categoryIcon.setImageResource(selectedConversion.getImageResource());
+        categoryIcon.setColorFilter(ThemeManager.get().mainText());
+        categorySelector.setContentDescription(getString(selectedConversion.getLabelResource()));
+    }
+
+    private void updateInputType(int categoryId) {
+        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+                | (categoryId == Conversion.TEMPERATURE ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
+        inputValue.setShowSoftInputOnFocus(false);
+    }
+
     public void selectCategory(int categoryId) {
-        if (horizontalListView == null || conversions == null) {
-            return;
-        }
-        if (categoryId == Conversion.TEMPERATURE) {
-            inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        } else {
-            inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        }
+        if (categorySelector == null || conversions == null) return;
+        updateInputType(categoryId);
         inputValue.setText("");
         convertAndDisplay("");
         mPrefs.setLastConversion(categoryId);
         mPrefs.setLastFromConversion(0);
         mPrefs.setLastToConversion(1);
         initialDropDown(conversions.getById(categoryId));
+        updateCategoryPicker();
         convertAndDisplay(inputValue.getText().toString());
-        if (horizontalListView.getAdapter() instanceof ConversionAdapter adapter) {
-            adapter.setSelectedItem(categoryId);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     @Override

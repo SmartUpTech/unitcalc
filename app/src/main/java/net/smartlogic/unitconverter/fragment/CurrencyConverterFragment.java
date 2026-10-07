@@ -31,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.app.AppConst;
 import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
@@ -416,8 +417,15 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         final ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) llMain.getLayoutParams();
         mlp.setMargins(0, 0, 0, 0);
         llMain.setLayoutParams(mlp);
+        ThemeApplier.apply(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ThemeApplier.apply(getView());
     }
 
     public void startAnimationImageView(ImageView img) {

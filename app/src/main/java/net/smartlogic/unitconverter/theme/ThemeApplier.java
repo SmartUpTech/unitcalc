@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.theme;
 
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,25 +36,27 @@ public final class ThemeApplier {
     private static final int[] ICON_IDS = {
             R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
             R.id.btn_clear_history, R.id.share, R.id.refresh, R.id.catalog_icon,
-            R.id.btn_favorite
+            R.id.btn_favorite, R.id.category_icon, R.id.fromChevron,
+            R.id.toChevron, R.id.category_chevron
     };
     private static final int[] MAIN_TEXT_IDS = {
             R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
             R.id.txtRate, R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
             R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
             R.id.fromCurrency, R.id.toCurrency,
-            R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section
+            R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
+            R.id.category_title, R.id.fromCurrencyISO, R.id.toCurrencyISO
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
             R.id.tv_choice_value, R.id.tv_info_value, R.id.tv_history_expression,
             R.id.tv_empty_history, R.id.txtLastUpdateTime, R.id.tv_history_time,
             R.id.converter_from_label, R.id.converter_to_label,
-            R.id.fromCurrencyISO, R.id.toCurrencyISO
+            R.id.unit_rate
     };
     private static final int[] CLEAR_BACKGROUND_IDS = {
             R.id.converter_card, R.id.reverse_container,
-            R.id.converter_mode_toggle, R.id.btn_unit_mode, R.id.btn_currency_mode
+            R.id.converter_mode_toggle
     };
 
     private ThemeApplier() {
@@ -137,6 +140,18 @@ public final class ThemeApplier {
         if (view instanceof TabLayout) {
             applyTabLayout((TabLayout) view);
         }
+        if (id == R.id.converter_divider) {
+            view.setBackgroundColor(withAlpha(theme.functions(), 0x33));
+        }
+        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
+                && view instanceof com.google.android.material.button.MaterialButton button) {
+            int[][] states = {{android.R.attr.state_checked}, {}};
+            button.setTextColor(new ColorStateList(states,
+                    new int[]{theme.mainText(), theme.functions()}));
+            button.setBackgroundTintList(new ColorStateList(states,
+                    new int[]{withAlpha(theme.functions(), 0x26), Color.TRANSPARENT}));
+            button.setStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x55)));
+        }
 
         boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;
 
@@ -172,6 +187,10 @@ public final class ThemeApplier {
                 applyRecursive(group.getChildAt(i), theme);
             }
         }
+    }
+
+    private static int withAlpha(@ColorInt int color, int alpha) {
+        return (color & 0x00FFFFFF) | (alpha << 24);
     }
 
     private static boolean contains(@NonNull int[] ids, int id) {
