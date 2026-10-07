@@ -1,9 +1,8 @@
 # SETTINGS
-- UI: SettingsActivity -> SettingsFragment. Layout: fragment_settings.
-- Custom Rows: Row (tv_title, tv_summary, tv_value). Types: Theme (ComposeView/ThemeSelector), Choice (Dialog), Action (Runnable).
-- Logic: Preferences helper integration. ChoiceDialog (values from arrays).
-- Prefs: PREFS_NUMBER_OF_DECIMALS, PREFS_GROUP_SEPARATOR, PREFS_DECIMAL_SEPARATOR, PREFS_SELECTED_THEME.
+- UI: SettingsActivity -> SettingsFragment -> SettingsUi (ComposeView).
+- Settings uses GraphyTheme's Material 3 color scheme, typography and spacing. The AppCompat action bar is hidden; SettingsUi owns the TopAppBar. WindowChrome keeps status/navigation bar colors in sync.
+- Borderless sections: Appearance, Display, Interaction, Feedback, Information. SettingsRow and SettingsSwitchRow share row spacing/touch targets. SettingsSelectionDialog handles the three simple display choices.
+- ThemeSelector and ThemeSelectorViewModel retain the compact theme cards, progression and locked-theme dialog. ThemeManager selection updates GraphyTheme and WindowChrome immediately without Activity recreation.
+- Preferences helper retains all existing keys and defaults. The screen listens for SharedPreferences changes so values and switches update even when storage changes elsewhere.
 - Actions: Rate (URL), Share (Intent), Website (URL), Privacy (URL).
-- Theming: applySettingsTheme() -> Card background/stroke (functions color) + ThemeApplier.
-- Entry: MainActivity drawer/explore -> SettingsActivity.
-- ThemeSelectorController hosts the Compose row through the existing Graphy theme bridge. ThemeSelectorViewModel derives cards/progress from Preferences; locked taps show a Material 3 dialog and available taps use ThemeManager. Selection updates the Settings surface/chrome immediately without Activity recreation. See THEME.md for progression, migration and catalog-rank rules.
+- Back/Up finish SettingsActivity. The screen is vertically scrollable and its selection dialogs dismiss on Back, outside tap or Cancel.
