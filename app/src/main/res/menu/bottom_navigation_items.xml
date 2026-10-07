@@ -14,12 +14,14 @@
     <item
         android:id="@+id/explore"
         android:icon="@drawable/ic_explore"
-        android:title="@string/nav_explore" />
+        android:title="@string/nav_explore"
+        android:visible="false" />
 
     <item
         android:id="@+id/favorites"
         android:icon="@drawable/ic_favorite"
-        android:title="@string/nav_play_favourites" />
+        android:title="@string/nav_play_favourites"
+        android:visible="false" />
 
     <item
         android:id="@+id/play"

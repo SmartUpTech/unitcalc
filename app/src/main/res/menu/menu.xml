@@ -9,6 +9,7 @@
         android:icon="@drawable/ic_favorite"
         android:orderInCategory="10"
         android:title="@string/toggle_favorite"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
