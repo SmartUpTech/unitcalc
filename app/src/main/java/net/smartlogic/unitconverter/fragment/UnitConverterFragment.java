@@ -34,6 +34,7 @@ import net.smartlogic.unitconverter.adapter.UnitAdapter;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
@@ -127,6 +128,12 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
+        for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
+                R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
+                R.id.dot, R.id.minus, R.id.reverse, R.id.backspace,
+                R.id.fromUnit, R.id.toUnit, R.id.category_selector}) {
+            InteractionFeedbackManager.configure(view.findViewById(id));
+        }
 
         mCoordinatorLayout = view.findViewById(R.id.cl);
 
@@ -174,8 +181,11 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 clipboard.setPrimaryClip(clip);
                 showToast(R.string.toast_copied_positive);
             } else if (id == R.id.backspace) {
+                boolean hadInput = inputValue.length() > 0;
                 inputValue.setText("");
                 convertAndDisplay("");
+                if (hadInput) InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
+                return true;
             }
         }
         catch (Exception ignored) { }
@@ -186,12 +196,14 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         try {
             int id = view.getId();
+            String previous = inputValue.getText().toString();
             if (id == R.id.reverse) {
                 int fromPos = fromUnit.getSelectedItemPosition();
                 int toPos = toUnit.getSelectedItemPosition();
                 fromUnit.setSelection(toPos);
                 toUnit.setSelection(fromPos);
             } else if (id == R.id.backspace) {
+                if (previous.isEmpty()) return;
                 String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);
                 inputValue.setText(substr);
                 inputValue.setSelection(inputValue.getText().length());
@@ -248,6 +260,12 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 } else
                     inputValue.append(data);
                 inputValue.setSelection(inputValue.getText().length());
+            }
+            if (id == R.id.reverse || !previous.equals(inputValue.getText().toString())) {
+                InteractionFeedbackManager.perform(view,
+                        id == R.id.reverse || id == R.id.backspace
+                                ? InteractionFeedbackManager.Type.ACTION
+                                : InteractionFeedbackManager.Type.INPUT);
             }
         }
         catch(Exception e) {
@@ -425,6 +443,14 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         fromUnit.setAdapter(unitAdapter);
         toUnit.setAdapter(unitAdapter);
+        View.OnTouchListener selectionFeedback = (selector, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                InteractionFeedbackManager.perform(selector, InteractionFeedbackManager.Type.ACTION);
+            }
+            return false;
+        };
+        fromUnit.setOnTouchListener(selectionFeedback);
+        toUnit.setOnTouchListener(selectionFeedback);
 
         fromUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -477,7 +503,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                     .setCheckable(true).setChecked(categoryId == getSelectedCategoryId());
         }
         menu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == getSelectedCategoryId()) return true;
             selectCategory(item.getItemId());
+            InteractionFeedbackManager.perform(categorySelector, InteractionFeedbackManager.Type.ACTION);
             return true;
         });
         menu.show();

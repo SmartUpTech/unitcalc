@@ -40,6 +40,10 @@
     <string name="games_offline_title">Internet connection needed</string>
     <string name="games_offline_message">Connect to the internet to play games.</string>
     <string name="games_offline_action">OK</string>
+    <string name="prefs_key_sounds_title">Key Sounds</string>
+    <string name="prefs_key_sounds_summary">Play subtle sounds when using calculator keys</string>
+    <string name="prefs_key_vibration_title">Key Vibration</string>
+    <string name="prefs_key_vibration_summary">Use subtle vibration when using calculator keys</string>
     <string name="games_loading">Getting your games ready…</string>
     <string name="games_load_error">Games couldn’t load. Check your connection and try again.</string>
     <string name="games_update_webview">Update Android System WebView to play games securely.</string>

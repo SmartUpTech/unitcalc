@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.activity;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -94,6 +96,12 @@ public class SettingsActivity extends AppCompatActivity {
             preferences = Preferences.getInstance(requireContext());
 
             bindThemeRow(view.findViewById(R.id.row_theme));
+            bindSwitchRow(view.findViewById(R.id.row_key_sounds),
+                    R.string.prefs_key_sounds_title, R.string.prefs_key_sounds_summary,
+                    preferences.isKeySoundsEnabled(), preferences::setKeySoundsEnabled);
+            bindSwitchRow(view.findViewById(R.id.row_key_vibration),
+                    R.string.prefs_key_vibration_title, R.string.prefs_key_vibration_summary,
+                    preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled);
 
             bindChoiceRow(
                     view.findViewById(R.id.row_number_decimals),
@@ -194,6 +202,11 @@ public class SettingsActivity extends AppCompatActivity {
             if (themeTitle != null) {
                 themeTitle.setTextColor(theme.mainText());
             }
+            for (int id : new int[]{R.id.row_key_sounds, R.id.row_key_vibration}) {
+                MaterialSwitch toggle = view.findViewById(id).findViewById(R.id.settings_switch);
+                toggle.setThumbTintList(ColorStateList.valueOf(theme.mainText()));
+                toggle.setTrackTintList(ColorStateList.valueOf(theme.functions()));
+            }
         }
 
         private void bindChoiceRow(@NonNull View row, @NonNull String title, @NonNull String summary,
@@ -220,6 +233,33 @@ public class SettingsActivity extends AppCompatActivity {
             titleView.setText(title);
             summaryView.setText(summary);
             row.setOnClickListener(v -> action.run());
+        }
+
+        private void bindSwitchRow(@NonNull View row, int title, int summary, boolean enabled,
+                                   @NonNull java.util.function.Consumer<Boolean> save) {
+            ((TextView) row.findViewById(R.id.tv_action_title)).setText(title);
+            ((TextView) row.findViewById(R.id.tv_action_summary)).setText(summary);
+            MaterialSwitch toggle = row.findViewById(R.id.settings_switch);
+            toggle.setChecked(enabled);
+            row.setOnClickListener(v -> {
+                boolean next = !toggle.isChecked();
+                toggle.setChecked(next);
+                row.setActivated(next);
+                save.accept(next);
+            });
+            row.setActivated(enabled);
+            row.setContentDescription(getString(title) + ", " + getString(summary));
+            androidx.core.view.ViewCompat.setAccessibilityDelegate(row,
+                    new androidx.core.view.AccessibilityDelegateCompat() {
+                        @Override
+                        public void onInitializeAccessibilityNodeInfo(View host,
+                                androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                            super.onInitializeAccessibilityNodeInfo(host, info);
+                            info.setClassName("android.widget.Switch");
+                            info.setCheckable(true);
+                            info.setChecked(toggle.isChecked());
+                        }
+                    });
         }
 
         private void showSingleChoiceDialog(@NonNull String title, @NonNull String[] entries,

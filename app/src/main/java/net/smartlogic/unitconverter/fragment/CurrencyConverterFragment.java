@@ -38,6 +38,7 @@ import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
@@ -76,7 +77,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private RelativeLayout rlFromUnit, rlToUnit;
     private ArrayList<Currency> currencies;
     private BottomSheetCurrencyDialogFragment bottomSheetCurrencyDialogFragment;
-    private OnChooseCurrencyListener onChooseCurrencyListener;
     private Utils utils;
 
     public CurrencyConverterFragment() {
@@ -175,16 +175,26 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     public void onClick(View view) {
 
         int id = view.getId();
+        String previous = inputValue.getText().toString();
         if (id == R.id.fromUnit) {
-            showBottomSheet(onChooseCurrencyListener, "FROM");
+            showBottomSheet((currency, type) -> {
+                onChooseCurrency(currency, type);
+                InteractionFeedbackManager.perform(rlFromUnit, InteractionFeedbackManager.Type.ACTION);
+            }, "FROM");
+            InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
         } else if (id == R.id.toUnit) {
-            showBottomSheet(onChooseCurrencyListener, "TO");
+            showBottomSheet((currency, type) -> {
+                onChooseCurrency(currency, type);
+                InteractionFeedbackManager.perform(rlToUnit, InteractionFeedbackManager.Type.ACTION);
+            }, "TO");
+            InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
         } else if (id == R.id.reverse) {
             int tempFromIndex = prefs.getFromCurrencyIndex();
             int tempToIndex = prefs.getToCurrencyIndex();
             onChooseCurrency(currencies.get(tempToIndex), "FROM");
             onChooseCurrency(currencies.get(tempFromIndex), "TO");
         } else if (id == R.id.backspace) {
+            if (previous.isEmpty() || previous.equals("0")) return;
             String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);
             if (substr.isEmpty()) substr = "0";
             inputValue.setText(substr);
@@ -243,6 +253,13 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             if (currentInput2.equals("0")) inputValue.setText(data);
             else inputValue.append(data);
             inputValue.setSelection(inputValue.getText().length());
+        }
+
+        if (id == R.id.reverse || id == R.id.refresh || !previous.equals(inputValue.getText().toString())) {
+            InteractionFeedbackManager.perform(view,
+                    id == R.id.reverse || id == R.id.refresh || id == R.id.backspace || id == R.id.ac
+                            ? InteractionFeedbackManager.Type.ACTION
+                            : InteractionFeedbackManager.Type.INPUT);
         }
 
     }
@@ -323,6 +340,12 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         rlFromUnit = view.findViewById(R.id.fromUnit);
         rlToUnit = view.findViewById(R.id.toUnit);
+        for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
+                R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
+                R.id.dot, R.id.reverse, R.id.backspace, R.id.ac, R.id.refresh,
+                R.id.fromUnit, R.id.toUnit}) {
+            InteractionFeedbackManager.configure(view.findViewById(id));
+        }
 
         llMain = view.findViewById(R.id.ll_main);
 
@@ -381,7 +404,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         this.context = this.getActivity();
         initCurrencies();
         initUILayout(view);
-        onChooseCurrencyListener = this;
 
         prefs = Preferences.getInstance(context);
         utils = new Utils();

@@ -24,6 +24,8 @@ public class Preferences {
     public static final String PREFS_NUMBER_OF_DECIMALS = "number_decimals";
     public static final String PREFS_DECIMAL_SEPARATOR = "decimal_separator";
     public static final String PREFS_GROUP_SEPARATOR = "group_separator";
+    public static final String PREFS_KEY_SOUNDS = "key_sounds";
+    public static final String PREFS_KEY_VIBRATION = "key_vibration";
     private static final String PREFS_LAST_CONVERSION = "last_conversion";
     private static final String PREFS_LAST_FROM_UNIT = "last_from_unit";
     private static final String PREFS_LAST_TO_UNIT = "last_to_unit";
@@ -53,6 +55,22 @@ public class Preferences {
 
     public SharedPreferences getPreferences() {
         return mPrefs;
+    }
+
+    public boolean isKeySoundsEnabled() {
+        return mPrefs.getBoolean(PREFS_KEY_SOUNDS, true);
+    }
+
+    public boolean isKeyVibrationEnabled() {
+        return mPrefs.getBoolean(PREFS_KEY_VIBRATION, true);
+    }
+
+    public void setKeySoundsEnabled(boolean enabled) {
+        mPrefs.edit().putBoolean(PREFS_KEY_SOUNDS, enabled).apply();
+    }
+
+    public void setKeyVibrationEnabled(boolean enabled) {
+        mPrefs.edit().putBoolean(PREFS_KEY_VIBRATION, enabled).apply();
     }
 
     public String getSelectedThemeId() {
