@@ -515,6 +515,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (settingsItem != null && settingsItem.getIcon() != null) {
             settingsItem.getIcon().setTint(ThemeManager.get().functions());
         }
+        // AppCompat installs the menu presenter after the initial window chrome pass.
+        WindowChrome.apply(this);
         return super.onPrepareOptionsMenu(menu);
     }
 
