@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -15,6 +18,7 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
@@ -24,6 +28,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
 import net.smartlogic.unitconverter.R;
@@ -309,9 +314,36 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
     }
 
+    private boolean hasValidatedInternetConnection() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) return false;
+
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) return false;
+
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        return capabilities != null
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+    }
+
+    private void showGamesOfflineDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.games_offline_title)
+                .setMessage(R.string.games_offline_message)
+                .setPositiveButton(R.string.games_offline_action, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     private void setUpBottomNavigation() {
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.play && !hasValidatedInternetConnection()) {
+                showGamesOfflineDialog();
+                return false;
+            }
             selectTab(item.getItemId());
             refreshActiveCalculatorId();
             updateFavoriteMenuItem();
