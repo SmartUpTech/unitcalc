@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             android.view.SubMenu subMenu = navigationView.getMenu().addSubMenu(
                     getString(section.titleRes));
             for (CalculatorCatalog.Entry entry : section.entries) {
+                if (entry.destination == CalculatorCatalog.Destination.EXPLORE
+                        || entry.destination == CalculatorCatalog.Destination.FAVORITES) {
+                    continue;
+                }
                 subMenu.add(Menu.NONE, entry.menuId, order++, getString(entry.titleRes))
                         .setIcon(entry.iconRes);
             }
@@ -520,6 +524,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                     favoriteItem.getIcon().setTint(ThemeManager.get().functions());
                 }
             }
+            favoriteItem.setVisible(false);
         }
         MenuItem settingsItem = menu.findItem(R.id.menu_settings);
         MenuItem gamesPrivacy = menu.findItem(R.id.menu_games_privacy);
