@@ -135,15 +135,14 @@ class ThemeSelectorUiTest {
                 file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
                 bitmap.recycle()
                 assertTrue(file.length() > 0)
-                assertSettingsAppBar(controller.get())
+                assertComposeSettingsAppBar(controller.get())
             } finally {
                 controller.pause().stop().destroy()
             }
         }
     }
 
-    @Test fun settingsAppBarUpdatesTitleAndIconsWhenSelectingATheme() {
-        // Restore an earned dark theme, then select available themes through the real Settings row.
+    @Test fun settingsAppBarAndChromeUpdateImmediatelyWhenSelectingATheme() {
         preferences.preferences.edit().clear()
             .putString(Preferences.PREFS_SELECTED_THEME, CalculatorThemes.GRAPHITE_BLACK.id()).commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
@@ -152,19 +151,14 @@ class ThemeSelectorUiTest {
         val controller = Robolectric.buildActivity(SettingsActivity::class.java).setup().visible()
         try {
             val activity = controller.get()
-            val toolbar = activity.findViewById<Toolbar>(androidx.appcompat.R.id.action_bar)
-            // Settings currently has no overflow actions. Exercise AppCompat's standard overflow
-            // drawable without introducing an unrelated production menu item.
-            toolbar.menu.add("Test action").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            WindowChrome.apply(activity)
             settle()
             val decor = activity.window.decorView
             decor.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY))
             decor.layout(0, 0, decor.measuredWidth, decor.measuredHeight)
             settle()
-            assertSettingsAppBar(activity, checkOverflow = true)
-            val selector = activity.findViewById<ComposeView>(R.id.theme_selector)
+            val selector = activity.findViewById<android.view.ViewGroup>(R.id.settings).getChildAt(0) as ComposeView
+            assertComposeSettingsAppBar(activity)
             for (theme in listOf(CalculatorThemes.GRAPHITE_BLACK, CalculatorThemes.TITANIUM_GRAY)) {
                 val node = cards(selector).single {
                     it.config[SemanticsProperties.ContentDescription].single() == activity.getString(theme.nameRes())
@@ -172,27 +166,26 @@ class ThemeSelectorUiTest {
                 assertTrue(node.config[SemanticsActions.OnClick].action!!.invoke())
                 settle()
                 assertEquals(theme.id(), ThemeManager.get().id())
-                assertSettingsAppBar(activity, checkOverflow = true)
+                assertComposeSettingsAppBar(activity)
             }
         } finally {
             controller.pause().stop().destroy()
         }
     }
 
-    private fun assertSettingsAppBar(activity: SettingsActivity, checkOverflow: Boolean = false) {
-        val bar = activity.supportActionBar!!
-        assertTrue(bar.displayOptions and ActionBar.DISPLAY_SHOW_TITLE != 0)
-        assertTrue(bar.displayOptions and ActionBar.DISPLAY_HOME_AS_UP != 0)
-        val toolbar = activity.findViewById<Toolbar>(androidx.appcompat.R.id.action_bar)
-        val title = (0 until toolbar.childCount).map { toolbar.getChildAt(it) }
-            .filterIsInstance<TextView>().single { it.text == activity.getString(R.string.title_activity_settings) }
-        assertEquals(View.VISIBLE, title.visibility)
-        assertTrue(title.width > 0 && title.height > 0)
-        assertEquals(ThemeManager.get().mainText(), title.currentTextColor)
-        assertIconColor("back", toolbar.navigationIcon!!, ThemeManager.get().mainText())
-        if (checkOverflow) {
-            assertIconColor("overflow", toolbar.overflowIcon!!, ThemeManager.get().mainText())
-        }
+    private fun assertComposeSettingsAppBar(activity: SettingsActivity) {
+        val view = activity.findViewById<android.view.ViewGroup>(R.id.settings).getChildAt(0) as ComposeView
+        assertTrue(nodes(view).any {
+            it.config.getOrNull(SemanticsProperties.Text)?.any { text ->
+                text.text == activity.getString(R.string.title_activity_settings)
+            } == true
+        })
+        assertTrue(nodes(view).any {
+            it.config.getOrNull(SemanticsProperties.ContentDescription)
+                ?.contains(activity.getString(R.string.settings_navigate_back)) == true
+        })
+        assertEquals(ThemeManager.get().background(), activity.window.statusBarColor)
+        assertEquals(ThemeManager.get().background(), activity.window.navigationBarColor)
     }
 
     @Test fun mainOverflowKeepsThemeColorAfterMenuInvalidation() {

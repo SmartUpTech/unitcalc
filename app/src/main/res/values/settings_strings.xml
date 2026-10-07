@@ -1,0 +1,5 @@
+<resources>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_interaction">Interaction</string>
+    <string name="settings_navigate_back">Back</string>
+</resources>
