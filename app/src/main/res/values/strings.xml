@@ -321,20 +321,14 @@
     <string name="theme_sage_green">Sage Green</string>
     <string name="theme_burnt_orange">Burnt Orange</string>
     <string name="theme_golden_poppy">Golden Poppy</string>
-    <string name="theme_preview_result" translatable="false">56</string>
     <string name="theme_state_locked">Locked. Tap for unlock details.</string>
     <string name="theme_state_selected">Selected</string>
     <string name="theme_state_available">Available</string>
     <string name="theme_locked_title">Theme locked</string>
-    <string name="theme_unlock_progress">Current cycle: %1$d / %2$d usage days</string>
-    <string name="theme_all_unlocked">All themes unlocked</string>
+    <string name="theme_locked_dismiss">Got it</string>
     <plurals name="theme_locked_message">
-        <item quantity="one">Unlocks after %1$d more day of using Calculator+. Keep using the app!</item>
-        <item quantity="other">Unlocks after %1$d more days of using Calculator+. Keep using the app!</item>
-    </plurals>
-    <plurals name="theme_next_unlock">
-        <item quantity="one">Next theme: %1$s. Unlocks in %2$d more usage day.</item>
-        <item quantity="other">Next theme: %1$s. Unlocks in %2$d more usage days.</item>
+        <item quantity="one">Unlocks in %1$d more usage day. Keep using Calculator+ to unlock this theme.</item>
+        <item quantity="other">Unlocks in %1$d more usage days. Keep using Calculator+ to unlock this theme.</item>
     </plurals>
     <string name="prefs_title_formatting">Customization</string>
     <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>

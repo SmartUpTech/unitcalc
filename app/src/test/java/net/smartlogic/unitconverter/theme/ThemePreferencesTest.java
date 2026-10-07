@@ -104,8 +104,10 @@ public class ThemePreferencesTest {
                 .getQuantityString(R.plurals.theme_locked_message, 1, 1);
         String plural = RuntimeEnvironment.getApplication().getResources()
                 .getQuantityString(R.plurals.theme_locked_message, 2, 2);
-        assertTrue(singular.contains("1 more day of"));
-        assertTrue(plural.contains("2 more days of"));
+        assertTrue(singular.contains("1 more usage day."));
+        assertTrue(plural.contains("2 more usage days."));
+        assertTrue(singular.contains("Calculator+"));
+        assertTrue(plural.contains("Calculator+"));
     }
 
     @Test public void updateGrandfathersLegacyThemeEvenAfterSelectingAnotherTheme() {
