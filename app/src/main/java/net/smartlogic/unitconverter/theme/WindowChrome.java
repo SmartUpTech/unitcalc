@@ -2,6 +2,7 @@ package net.smartlogic.unitconverter.theme;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -50,6 +52,24 @@ public final class WindowChrome {
             ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setBackgroundDrawable(new ColorDrawable(chrome));
+                View actionBarView = activity.findViewById(androidx.appcompat.R.id.action_bar);
+                if (actionBarView instanceof Toolbar) {
+                    Toolbar toolbar = (Toolbar) actionBarView;
+                    toolbar.setTitleTextColor(theme.mainText());
+                    toolbar.setSubtitleTextColor(theme.functions());
+                    Drawable navigation = toolbar.getNavigationIcon();
+                    if (navigation != null) {
+                        navigation = DrawableCompat.wrap(navigation.mutate());
+                        DrawableCompat.setTint(navigation, theme.mainText());
+                        toolbar.setNavigationIcon(navigation);
+                    }
+                    Drawable overflow = toolbar.getOverflowIcon();
+                    if (overflow != null) {
+                        overflow = DrawableCompat.wrap(overflow.mutate());
+                        DrawableCompat.setTint(overflow, theme.mainText());
+                        toolbar.setOverflowIcon(overflow);
+                    }
+                }
                 View custom = actionBar.getCustomView();
                 if (custom != null) {
                     applyActionBarBrand(custom, theme);

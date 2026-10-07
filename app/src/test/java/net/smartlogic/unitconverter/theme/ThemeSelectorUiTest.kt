@@ -4,8 +4,14 @@ import android.app.Application
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.view.View
+import android.view.MenuItem
+import android.widget.TextView
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.Toolbar
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Surface
@@ -21,6 +27,7 @@ import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.semantics.SemanticsProperties
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.activity.SettingsActivity
+import net.smartlogic.unitconverter.activity.MainActivity
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
 import net.smartlogic.unitconverter.helper.Preferences
 import org.junit.Assert.*
@@ -128,10 +135,101 @@ class ThemeSelectorUiTest {
                 file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
                 bitmap.recycle()
                 assertTrue(file.length() > 0)
+                assertSettingsAppBar(controller.get())
             } finally {
                 controller.pause().stop().destroy()
             }
         }
+    }
+
+    @Test fun settingsAppBarUpdatesTitleAndIconsWhenSelectingATheme() {
+        // Restore an earned dark theme, then select available themes through the real Settings row.
+        preferences.preferences.edit().clear()
+            .putString(Preferences.PREFS_SELECTED_THEME, CalculatorThemes.GRAPHITE_BLACK.id()).commit()
+        ThemeManager.init(RuntimeEnvironment.getApplication())
+        ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.TITANIUM_GRAY.id())
+        RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
+        val controller = Robolectric.buildActivity(SettingsActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            val toolbar = activity.findViewById<Toolbar>(androidx.appcompat.R.id.action_bar)
+            // Settings currently has no overflow actions. Exercise AppCompat's standard overflow
+            // drawable without introducing an unrelated production menu item.
+            toolbar.menu.add("Test action").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            WindowChrome.apply(activity)
+            settle()
+            val decor = activity.window.decorView
+            decor.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY))
+            decor.layout(0, 0, decor.measuredWidth, decor.measuredHeight)
+            settle()
+            assertSettingsAppBar(activity, checkOverflow = true)
+            val selector = activity.findViewById<ComposeView>(R.id.theme_selector)
+            for (theme in listOf(CalculatorThemes.GRAPHITE_BLACK, CalculatorThemes.TITANIUM_GRAY)) {
+                val node = cards(selector).single {
+                    it.config[SemanticsProperties.ContentDescription].single() == activity.getString(theme.nameRes())
+                }
+                assertTrue(node.config[SemanticsActions.OnClick].action!!.invoke())
+                settle()
+                assertEquals(theme.id(), ThemeManager.get().id())
+                assertSettingsAppBar(activity, checkOverflow = true)
+            }
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
+    private fun assertSettingsAppBar(activity: SettingsActivity, checkOverflow: Boolean = false) {
+        val bar = activity.supportActionBar!!
+        assertTrue(bar.displayOptions and ActionBar.DISPLAY_SHOW_TITLE != 0)
+        assertTrue(bar.displayOptions and ActionBar.DISPLAY_HOME_AS_UP != 0)
+        val toolbar = activity.findViewById<Toolbar>(androidx.appcompat.R.id.action_bar)
+        val title = (0 until toolbar.childCount).map { toolbar.getChildAt(it) }
+            .filterIsInstance<TextView>().single { it.text == activity.getString(R.string.title_activity_settings) }
+        assertEquals(View.VISIBLE, title.visibility)
+        assertTrue(title.width > 0 && title.height > 0)
+        assertEquals(ThemeManager.get().mainText(), title.currentTextColor)
+        assertIconColor("back", toolbar.navigationIcon!!, ThemeManager.get().mainText())
+        if (checkOverflow) {
+            assertIconColor("overflow", toolbar.overflowIcon!!, ThemeManager.get().mainText())
+        }
+    }
+
+    @Test fun mainOverflowKeepsThemeColorAfterMenuInvalidation() {
+        for (theme in listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)) {
+            preferences.preferences.edit().clear()
+                .putString(Preferences.PREFS_SELECTED_THEME, theme.id()).commit()
+            ThemeManager.init(RuntimeEnvironment.getApplication())
+            RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
+            val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+            try {
+                val activity = controller.get()
+                settle()
+                val toolbar = activity.findViewById<Toolbar>(androidx.appcompat.R.id.action_bar)
+                assertFalse(activity.supportActionBar!!.displayOptions and ActionBar.DISPLAY_SHOW_TITLE != 0)
+                assertIconColor("main overflow", toolbar.overflowIcon!!, theme.mainText())
+                activity.invalidateOptionsMenu()
+                settle()
+                assertIconColor("main overflow after invalidation", toolbar.overflowIcon!!, theme.mainText())
+            } finally {
+                controller.pause().stop().destroy()
+            }
+        }
+    }
+
+    private fun assertIconColor(name: String, drawable: Drawable, color: Int) {
+        val bitmap = Bitmap.createBitmap(48, 48, Bitmap.Config.ARGB_8888)
+        val bounds = android.graphics.Rect(drawable.bounds)
+        drawable.setBounds(0, 0, bitmap.width, bitmap.height)
+        drawable.draw(Canvas(bitmap))
+        drawable.bounds = bounds
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        val visible = pixels.filter { Color.alpha(it) == 255 }
+        assertTrue(visible.isNotEmpty())
+        assertTrue("$name expected ${Integer.toHexString(color)}, got ${visible.toSet().map(Integer::toHexString)}",
+            visible.all { (it and 0x00ffffff) == (color and 0x00ffffff) })
+        bitmap.recycle()
     }
 
     private fun render(width: Int, fontScale: Float, inspect: (ComposeView, ThemeSelectorViewModel) -> Unit) {
