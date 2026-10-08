@@ -5,6 +5,10 @@ description: Design and review Android UI/UX for Java/XML and Kotlin/Jetpack Com
 
 # UI UX Pro Max — Android
 
+## Calculator+ tool-screen acceptance
+
+Enforce AGENTS.md's mandatory Tool Screen UX rules for calculators, converters and utilities. Keep the complete primary workflow in one available viewport, with no page-level or embedded-content scrolling, including fallback layouts. Audit ScrollView/NestedScrollView, scroll modifiers and lazy lists used as screen containers; do not confuse an input control's picker gesture with scrolling the tool screen. Measure after persistent chrome/insets. Reflow and compact using shared tokens, preserving readable text and accessible controls; never disable scrolling while leaving unreachable overflow. Report physically impossible configurations as unresolved. Compare keypads across tools in the same theme and viewport; require the shared visual and interaction language in the theme skill.
+
 ## Workflow
 
 1. Read the root AGENTS.md and only the relevant docs/DESIGN_SYSTEM.md, docs/THEME.md, or docs/GRAPHY_ENGINE.md. Preserve existing theme tokens, components, and app behavior; treat search results as suggestions.

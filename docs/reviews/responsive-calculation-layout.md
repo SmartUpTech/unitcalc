@@ -2,6 +2,14 @@
 
 Status: implementation proposed; runtime acceptance remains pending. Do not treat this review as device certification.
 
+## Latest acceptance clarification — blocking
+
+The user requires a single non-scrolling screen for every calculator, converter and utility, and consistent keypad look and feel across the app. This supersedes the earlier scrolling-fallback decision described below. The current draft is NOT compliant: CalculationViewport still extends NestedScrollView, CalculationLayout can exceed the viewport, and a test explicitly expects overflow scrolling. These need a non-scrolling, accessible design correction; disabling scroll and clipping overflow is not a fix.
+
+Source audit: TimerScreen uses a fillMaxSize Column rather than a page-scrolling container. TimerWheelPicker uses LazyColumn as a bounded input wheel; that does not demonstrate page scrolling. Small-screen Timer fit has not been runtime-verified. CalculatorKey and ConverterNumberKey/ConverterKeyIcon currently use different base styles and icon padding; shared theme handling alone does not establish visual parity. Cross-tool rendered comparison and any necessary shared-style correction remain outstanding.
+
+AGENTS.md, docs/DESIGN_SYSTEM.md and the UI/UX and Android theme skills now carry the mandatory rules. This documentation update records the requirement and audit findings; it does not claim the current implementation satisfies them.
+
 ## Findings and scope
 
 - Both converter screens nested their complete input/result/keypad workflow in NestedScrollView, using intrinsic-height TableRows and a wrap-content weighted keypad. Large stacked fields, vertical swap rows and whitespace made normal operation scroll.
