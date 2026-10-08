@@ -2,9 +2,11 @@ package net.smartlogic.unitconverter.timer.compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -12,8 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
@@ -36,32 +39,38 @@ fun TimerRunningSection(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(top = spacing.sm),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().weight(1f),
         ) {
             Text(
                 text = displayLabel.uppercase(),
                 color = semantic.secondaryText,
                 fontSize = 13.sp,
                 letterSpacing = 0.08.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
-                    .padding(vertical = spacing.md)
-                    .size(220.dp),
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
-                TimerProgressRing(
-                    remainingMs = remainingMs,
-                    totalMs = originalDurationMs,
-                    modifier = Modifier.matchParentSize(),
-                )
+                val diameter = minOf(maxWidth, maxHeight,
+                    dimensionResource(R.dimen.timer_ring_size))
+                Box(Modifier.size(diameter), contentAlignment = Alignment.Center) {
+                    TimerProgressRing(
+                        remainingMs = remainingMs,
+                        totalMs = originalDurationMs,
+                        modifier = Modifier.matchParentSize(),
+                    )
+                }
                 Text(
                     text = TimerDurationFormatter.formatCountdown(remainingMs),
                     color = semantic.primaryText,
@@ -112,16 +121,20 @@ fun TimerCompletedSection(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(top = spacing.sm),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = displayLabel.uppercase(),
                 color = semantic.secondaryText,
                 fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = TimerDurationFormatter.formatCountdown(0L),

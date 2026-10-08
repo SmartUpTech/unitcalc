@@ -1,59 +1,58 @@
-# Responsive calculator and converter layout review
+# Responsive tool-screen review
 
-Status: implementation proposed; runtime acceptance remains pending. Do not treat this review as device certification.
+Status: updated implementation in draft PR #43; runtime acceptance is still blocked. No device certification is claimed.
 
-## Latest acceptance clarification — blocking
+## Problems found
 
-The user requires a single non-scrolling screen for every calculator, converter and utility, and consistent keypad look and feel across the app. This supersedes the earlier scrolling-fallback decision described below. The current draft is NOT compliant: CalculationViewport still extends NestedScrollView, CalculationLayout can exceed the viewport, and a test explicitly expects overflow scrolling. These need a non-scrolling, accessible design correction; disabling scroll and clipping overflow is not a fix.
+- Unit and currency converters put the complete workflow in NestedScrollView. Stacked selectors, values, swap rows and intrinsic keypad heights exceeded short viewports.
+- The calculator's weighted keypad could shrink below usable touch targets.
+- Converter and calculator keys used different base styles and icon padding.
+- Timer allocated half its screen to recents even when empty; its fixed ring and wheel heights competed with primary controls.
+- Graphy is already a separate tab, so it does not need to consume primary input space.
 
-Source audit: TimerScreen uses a fillMaxSize Column rather than a page-scrolling container. TimerWheelPicker uses LazyColumn as a bounded input wheel; that does not demonstrate page scrolling. Small-screen Timer fit has not been runtime-verified. CalculatorKey and ConverterNumberKey/ConverterKeyIcon currently use different base styles and icon padding; shared theme handling alone does not establish visual parity. Cross-tool rendered comparison and any necessary shared-style correction remain outstanding.
+## Implemented strategy
 
-AGENTS.md, docs/DESIGN_SYSTEM.md and the UI/UX and Android theme skills now carry the mandatory rules. This documentation update records the requirement and audit findings; it does not claim the current implementation satisfies them.
+The existing Java/XML calculator and converters retain their framework. CalculationViewport is now a fixed FrameLayout, not a scrolling host. It supplies the height allocated after activity/workspace chrome to CalculationLayout.
 
-## Findings and scope
+The layout measures controls and keys, compacts structural whitespace, uses side-by-side panes when wide enough, and then tries inline selector/value rows only when labels and selector targets fit. It reduces preferred keypad rows to a font-aware minimum of at least 48dp only after those adaptations. Remaining height is distributed equally. Key width is checked against touch and text requirements.
 
-- Both converter screens nested their complete input/result/keypad workflow in NestedScrollView, using intrinsic-height TableRows and a wrap-content weighted keypad. Large stacked fields, vertical swap rows and whitespace made normal operation scroll.
-- The basic calculator used six weighted keypad rows without a font-aware minimum, allowing keys to become too small when the display consumed the viewport.
-- CalculatorCatalog currently implements one basic calculator, fourteen unit categories sharing UnitConverterFragment, and CurrencyConverterFragment. Timer is outside this task. Graphy is already a separate workspace tab and does not compete with the input keypad.
-- The activity reserves bottom-navigation space; workspace tabs and the mode selector sit above the allocated input viewport. Existing window/inset handling and IME suppression are preserved. Physical system-bar behavior still needs device verification.
+Swap sits beside conversion fields. Compact currency selectors retain flags and ISO codes; full names remain available in selection dialogs and existing accessible descriptions. Unit labels may ellipsize in the selected row, with full names in the picker. Existing horizontally pannable numeric fields retain their complete values; this change removes vertical workflow scrolling, not text-field editing gestures or selection lists.
 
-## Proposed behavior
+Calculator and converter number/function/operator/icon styles now share canonical parents, icon padding, minimum targets and foreground feedback. Their outer keypad padding is shared. ThemeApplier remains the semantic color owner; only the space-warning text was added to its existing text role.
 
-CalculationViewport passes its actual available height to CalculationLayout. The layout measures controls plus keypad, progressively removing structural vertical whitespace, using side-by-side panes when each pane has sufficient width, using inline selector/value rows where practical, and finally reducing preferred 56dp keypad rows to a 48dp or font-height minimum. Spare height goes to equal keypad rows. No numeric text scaling is added.
+Timer recents move to an explicit dialog with previous/next controls, so history no longer takes permanent space away from the primary tool. Setting wheels use the allocated space for one, three or five rows; unit labels are separate from numbers. Running timer decoration scales within remaining space while actions stay reserved. Small timer actions now have 48dp targets. Timer's bounded input wheels remain gesture controls, not scrolling content pages.
 
-Swap sits beside the amount sections. Currency compact rows retain flags and ISO codes; full names remain in selection dialogs and existing accessible selector descriptions. Inline currency rows are used only if their measured labels, ISO text and fixed icons fit. Long selected unit labels ellipsize; dropdown rows retain the full text. Existing horizontally scrollable value fields retain the full underlying values.
+## Explicit unresolved limit
 
-When controls plus accessible keys physically exceed the viewport, overflow remains scrollable instead of clipping or reducing targets further. This includes some very short windows or high font/display scaling. A resize restores the appropriate layout. This exception requires runtime review, especially on small phones with large fonts.
+A viewport that cannot contain readable controls and accessible keys is not a supported complete workflow. Calculator/converter hosts display an explicit expand-window/rotate message while keeping the existing input view and state; they do not expose clipped interactive overflow or add a scrolling fallback. Growing the viewport restores the input surface. Timer has a conservative font-aware space guard.
 
-## Changed components
+This message is graceful failure, NOT satisfaction of the full-workflow acceptance criterion. The exact usability boundary, especially at large font/display scaling, needs rendered tests. A persistent small window that cannot fit remains unresolved. Do not describe every configuration as working.
 
-- Shared CalculationViewport and CalculationLayout View classes.
-- Basic calculator pane, unit and currency converter layouts.
-- Shared converter keypad row allocation and minimum heights.
-- Selected-unit label and one shared pane-width dimension.
+## Scope and logic
 
-The app currently uses XML Views for these screens, so the existing framework and theme components are preserved. No calculation, conversion, currency provider, Graphy, navigation, preference or theme-engine logic was changed.
+Changed: basic calculator pane; shared unit converter covering all fourteen categories; currency converter; shared viewport/layout and keypad resources; selected unit labels; timer setting/running/completed/recents presentation; regression tests.
 
-## Validation
+Calculation, conversion, currency-provider, Graphy and timer state-machine/business logic are unchanged. Existing app destinations and theme architecture remain unchanged. Timer's secondary-history presentation changed deliberately to prioritize its primary workflow.
 
-Passed: XML parsing, preservation of existing control IDs, git diff whitespace checks, scoped source review.
+AGENTS.md, DESIGN_SYSTEM.md and the UI/UX and Android theme skills contain the mandatory single-screen and shared-keypad rules.
 
-Added, but NOT executed: CalculationLayoutTest with actual Android measurement assertions for post-chrome workspaces of 320x400, 360x460, 412x600, 600x340 and 840x700; all fourteen unit categories; long values; repeated resize; 200% font fallback at 320x240 and recovery at 840x1100. These are content-area sizes, not full device resolutions.
+## Validation actually performed
 
-Blocked: Gradle dependency resolution did not reach compilation in this environment. An independent attempt with the installed aapt2 exited 139. No successful build or test result is available.
+- PASS: changed resource XML parses; existing layout control IDs preserved; git diff whitespace checks.
+- PASS: CalculationLayout and CalculationViewport compile against the installed Android 37 API using temporary resource declarations. This is a limited Java/API check, not Android resource linking or an application build.
+- BLOCKED: focused Gradle test attempt on 8 October 2026 failed during project configuration because Android Gradle plugin transitive dependencies are absent from the offline cache. No tests ran and Kotlin/Compose compilation was not reached.
+- No emulator, physical-device, screenshot, TalkBack, all-theme, OEM or system-inset validation completed.
 
-Before marking ready, run:
+Added but NOT executed: Robolectric measurements for content areas 320x400, 360x460, 412x600, 600x340 and 840x700; all fourteen unit categories; long values/labels; overlap and touch-target checks; repeated resizing; 200% font at 320x240 with explicit limit and recovery at 840x1100; narrow-width rejection; shared key typography/padding/feedback. Normal-workspace tests reject the warning state, avoiding a false pass merely because scrolling is absent. These are post-chrome content sizes, not full device resolutions.
 
-```
+## Required before approval
+
+Run:
+
+```sh
 ./gradlew :app:assembleDebug :app:testDebugUnitTest --tests '*CalculationLayoutTest'
 ```
 
-Then inspect real app screens with all themes, 1x/1.3x/2x font scales and display scaling, gesture and 3-button navigation, long labels and values, TalkBack, and supported API/OEM devices. Verify primary control bounds and text legibility, input/result continuity, selectors/swap/reset, theme changes with input present, and switching Graphy tabs. In particular, confirm the window's edge-to-edge behavior on the latest supported Android release. None of these device checks has been performed here.
+Then render calculator, all converter categories and timer phases across small/standard/large phones and foldable/multi-window sizes, 1x/1.3x/2x font and display scaling, every app theme, both navigation modes and supported API levels/OEM devices. Check actual insets, long numeric text, full picker labels, swap/reset, timer wheels and recents paging, theme switching, resize recovery and input retention. Verify IME label editing on timer and latest-Android edge-to-edge behavior. Add timer Compose bounds/interaction coverage; the current automated additions cover the View layouts only.
 
-## Follow-up source verification (8 October)
-
-- Added a width guard for inline unit selectors, including scaled/localized From/To labels and a 48dp selector target. The previous guard covered currencies only.
-- Invalidate the content measurement when the supplied viewport height changes, so height-only window changes cannot depend on ScrollView's measurement-cache behavior.
-- Strengthened regression coverage for height-only resize, long scaled selector labels and non-overlapping primary controls. Test inflation now uses MaterialComponentsViewInflater, matching activity widget substitution rather than measuring framework Buttons.
-- Passed XML/control-ID checks and git diff checks again. CalculationLayout also compiles against the installed Android 37 platform API with temporary resource-ID declarations. This limited Java/API check is not an application build, resource-link check, or runtime test.
-- Retried the focused Gradle tests offline: failed during dependency resolution (uncached Android-plugin transitive dependencies), before compilation/test execution. The PR remains draft, with device and runtime acceptance outstanding.
+Keep the PR draft and unmerged until those checks pass and unsupported configurations are explicitly accepted or redesigned.

@@ -15,13 +15,14 @@ import java.util.List;
  * Allocates the measured workspace to controls first, then equal keypad rows.
  * No screen/OEM breakpoints: measure normal spacing, compact spacing, then inline
  * selector/value rows before reducing keys to their font-aware touch minimum.
- * If even that cannot fit, the parent exposes overflow instead of clipping controls.
+ * If even that cannot fit, report the unsupported viewport to the fixed host.
  */
 public final class CalculationLayout extends LinearLayout {
     private int viewportHeight;
     private ViewGroup keypad;
     private View controls;
     private boolean sideBySide;
+    private boolean fitsViewport;
     private final List<Spacing> spacing = new ArrayList<>();
     private final List<LinearLayout> sections = new ArrayList<>();
     private final List<View> currencyDetails = new ArrayList<>();
@@ -33,11 +34,12 @@ public final class CalculationLayout extends LinearLayout {
     void setViewportHeight(int height) {
         if (viewportHeight != height) {
             viewportHeight = height;
-            // This is an input outside MeasureSpec: ScrollView measures content with
-            // UNSPECIFIED height. Do not reuse an earlier viewport's measurement.
+            // The available viewport is also used during intrinsic-height probes.
             forceLayout();
         }
     }
+
+    boolean fitsViewport() { return fitsViewport; }
 
     @Override protected void onFinishInflate() {
         super.onFinishInflate();
@@ -66,6 +68,7 @@ public final class CalculationLayout extends LinearLayout {
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (keypad == null || viewportHeight == 0) {
+            fitsViewport = false;
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
@@ -88,13 +91,36 @@ public final class CalculationLayout extends LinearLayout {
             needed = measureRequired(widthMeasureSpec, preferredRow);
         }
         if (needed > viewportHeight) needed = measureRequired(widthMeasureSpec, minimumRow);
+        fitsViewport = needed <= viewportHeight;
 
         // The keypad's measured minimum is preserved; weight only distributes spare space.
         LayoutParams keys = (LayoutParams) keypad.getLayoutParams();
         keys.weight = 1;
         if (sideBySide) keys.height = LayoutParams.MATCH_PARENT;
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
-                Math.max(viewportHeight, needed), MeasureSpec.EXACTLY));
+                viewportHeight, MeasureSpec.EXACTLY));
+        fitsViewport = fitsViewport && keysFitWidth(keypad);
+    }
+
+    private boolean keysFitWidth(View view) {
+        if (view.getVisibility() == GONE) return true;
+        if (view instanceof android.widget.Button || view instanceof android.widget.ImageButton) {
+            int minimum = dimension(R.dimen.converter_touch_target);
+            if (view instanceof TextView) {
+                TextView text = (TextView) view;
+                minimum = Math.max(minimum, (int) Math.ceil(text.getPaint().measureText(
+                        text.getText().toString())) + text.getCompoundPaddingLeft()
+                        + text.getCompoundPaddingRight());
+            }
+            return view.getMeasuredWidth() >= minimum;
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                if (!keysFitWidth(group.getChildAt(i))) return false;
+            }
+        }
+        return true;
     }
 
     private int measureRequired(int widthSpec, int rowHeight) {

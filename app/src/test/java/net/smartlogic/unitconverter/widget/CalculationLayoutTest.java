@@ -66,18 +66,23 @@ public class CalculationLayoutTest {
         }
     }
 
-    @Test public void extremeFontScalingFallsBackWithoutCrushingKeysAndRecoversOnResize() {
+    @Test public void impossibleViewportShowsExplicitLimitWithoutScrollingAndRecovers() {
         for (int layout : SCREENS) {
             View root = inflate(layout, 2f);
             measure(root, 320, 240);
-            assertTrue(viewport(root).canScrollVertically(1));
-            assertKeys(root, false);
             CalculationViewport viewport = viewport(root);
-            viewport.scrollTo(0, viewport.getChildAt(0).getHeight());
-            assertTrue(viewport.getScrollY() > 0);
+            assertFalse(viewport.canScrollVertically(1));
+            assertFalse(viewport.canScrollVertically(-1));
+            assertEquals(View.INVISIBLE, viewport.getChildAt(0).getVisibility());
+            assertEquals(View.VISIBLE, root.findViewById(R.id.tool_space_message).getVisibility());
+            TextView input = root.findViewById(R.id.input);
+            String value = input == null ? null : input.getText().toString();
             measure(root, 840, 1100);
             assertFalse(viewport.canScrollVertically(1));
             assertEquals(0, viewport.getScrollY());
+            assertEquals(View.VISIBLE, viewport.getChildAt(0).getVisibility());
+            assertEquals(View.GONE, root.findViewById(R.id.tool_space_message).getVisibility());
+            if (input != null) assertEquals(value, input.getText().toString());
             assertKeys(root, true);
         }
     }
@@ -98,7 +103,8 @@ public class CalculationLayoutTest {
         View root = inflate(R.layout.fragment_unit_converter, 2f);
         ((TextView) root.findViewById(R.id.converter_from_label)).setText("Convert from");
         ((TextView) root.findViewById(R.id.converter_to_label)).setText("Convert into");
-        measure(root, 360, 400);
+        measure(root, 840, 1100);
+        assertKeys(root, true);
         for (int id : new int[]{R.id.fromUnit, R.id.toUnit}) {
             View selector = root.findViewById(id);
             assertTrue("selector must stay tappable", selector.getWidth() >= 48);
@@ -118,6 +124,38 @@ public class CalculationLayoutTest {
                                     bounds((ViewGroup) root, root.findViewById(ids[j]))));
                 }
             }
+        }
+    }
+
+    @Test public void equivalentKeysShareTypographyPaddingAndTouchFeedback() {
+        View calculator = inflate(R.layout.pane_calculator_calculate, 1f);
+        for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
+            View converter = inflate(layout, 1f);
+            for (int id : new int[]{R.id.one, R.id.seven, R.id.zero, R.id.dot}) {
+                TextView expected = calculator.findViewById(id);
+                TextView actual = converter.findViewById(id);
+                assertEquals(expected.getTextSize(), actual.getTextSize(), 0.01f);
+                assertEquals(expected.getTypeface(), actual.getTypeface());
+                assertEquals(expected.getCurrentTextColor(), actual.getCurrentTextColor());
+                assertEquals(expected.getPaddingTop(), actual.getPaddingTop());
+                assertEquals(expected.getPaddingBottom(), actual.getPaddingBottom());
+                assertNotNull(actual.getForeground());
+            }
+            View expected = calculator.findViewById(R.id.backspace);
+            View actual = converter.findViewById(R.id.backspace);
+            assertEquals(expected.getPaddingLeft(), actual.getPaddingLeft());
+            assertEquals(expected.getPaddingTop(), actual.getPaddingTop());
+            assertNotNull(actual.getForeground());
+        }
+    }
+
+    @Test public void narrowWindowDoesNotExposeUndersizedKeyTargets() {
+        for (int layout : SCREENS) {
+            View root = inflate(layout, 1f);
+            measure(root, 180, 700);
+            assertEquals(View.INVISIBLE, viewport(root).getChildAt(0).getVisibility());
+            assertEquals(View.VISIBLE, root.findViewById(R.id.tool_space_message).getVisibility());
+            assertFalse(viewport(root).canScrollVertically(1));
         }
     }
 
@@ -180,6 +218,8 @@ public class CalculationLayoutTest {
     }
 
     private void assertKeys(View root, boolean inside) {
+        assertEquals("workspace must be operable, not the insufficient-space message",
+                View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
         ViewGroup keys = root.findViewById(R.id.keypad);
         assertKeyChildren((ViewGroup) root, keys, inside);
     }

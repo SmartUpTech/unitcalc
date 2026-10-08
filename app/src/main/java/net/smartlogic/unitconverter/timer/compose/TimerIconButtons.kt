@@ -23,7 +23,7 @@ import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 enum class TimerIconButtonSize(val diameter: Dp, val iconSize: Dp) {
     Large(72.dp, 32.dp),
     Medium(56.dp, 24.dp),
-    Small(40.dp, 18.dp),
+    Small(48.dp, 18.dp),
 }
 
 @Composable
