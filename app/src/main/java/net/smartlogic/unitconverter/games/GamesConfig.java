@@ -2,7 +2,10 @@ package net.smartlogic.unitconverter.games;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 /** The host owns transport configuration; the website owns all games and routes. */
 public final class GamesConfig {
@@ -14,6 +17,13 @@ public final class GamesConfig {
     public static final long LOAD_TIMEOUT_MS = 30_000;
     public static final long DATE_CHECK_INTERVAL_MS = 30_000;
     private static final URI ENTRY = URI.create(ENTRY_URL);
+
+    /** Wake at local midnight, while retaining periodic checks for manual clock changes. */
+    public static long nextDateCheckDelayMillis(Instant now, ZoneId zone) {
+        Instant midnight = now.atZone(zone).toLocalDate().plusDays(1).atStartOfDay(zone).toInstant();
+        long remaining = Duration.between(now, midnight).toMillis();
+        return Math.max(1L, Math.min(DATE_CHECK_INTERVAL_MS, remaining));
+    }
     public static final String TRUSTED_ORIGIN = ENTRY.getScheme() + "://" + ENTRY.getHost();
 
     private GamesConfig() {}

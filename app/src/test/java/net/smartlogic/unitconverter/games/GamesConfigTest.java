@@ -1,9 +1,22 @@
 package net.smartlogic.unitconverter.games;
 
 import org.junit.Test;
+import java.time.Instant;
+import java.time.ZoneId;
 import static org.junit.Assert.*;
 
 public class GamesConfigTest {
+    @Test public void nextCheckFollowsDeviceMidnightAcrossZonesAndDst() {
+        assertEquals(1_000L, GamesConfig.nextDateCheckDelayMillis(
+                Instant.parse("2026-10-08T18:29:59Z"), ZoneId.of("Asia/Kolkata")));
+        assertEquals(1_000L, GamesConfig.nextDateCheckDelayMillis(
+                Instant.parse("2026-10-09T06:59:59Z"), ZoneId.of("America/Los_Angeles")));
+        assertEquals(1_000L, GamesConfig.nextDateCheckDelayMillis(
+                Instant.parse("2026-11-02T07:59:59Z"), ZoneId.of("America/Los_Angeles")));
+        assertEquals(GamesConfig.DATE_CHECK_INTERVAL_MS, GamesConfig.nextDateCheckDelayMillis(
+                Instant.parse("2026-10-08T12:00:00Z"), ZoneId.of("Asia/Kolkata")));
+    }
+
     @Test public void embeddedEntryPreservesCentralRoute() {
         assertEquals("https://smartuptech.in/games/index.html?embedded=1", GamesConfig.embeddedUrl());
         assertTrue(GamesConfig.isTrustedUrl(GamesConfig.embeddedUrl()));
