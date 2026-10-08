@@ -5,6 +5,12 @@
 - Task: Scoped changes only. No unrelated refactor.
 - Optimization: Low context consumption. Min file reading.
 
+## TOOL SCREEN UX — MANDATORY
+- Keep every calculator, converter and utility tool on one non-scrolling screen within the actual available viewport. Inputs, results, selectors, essential actions and keypad must be usable together without scrolling the screen or an embedded content panel.
+- Account for system bars, app bars, tabs, navigation and IME. Adapt spacing, arrangement and secondary content; never hide overflow, clip controls, shrink text illegibly or add a scrolling fallback. If an extreme accessibility configuration cannot fit, report the unresolved design constraint instead of claiming compliance.
+- Keep keypad look and feel consistent across the app: shared components/styles, typography, semantic key colors, shapes, spacing, icons, touch targets and interaction feedback. Different tools may need different keys, but must not introduce their own keypad visual style.
+- Verify constrained viewports, font/display scaling and all themes. Source inspection alone does not establish visual or runtime compliance. Follow docs/DESIGN_SYSTEM.md and the UI/theme skills below.
+
 ## ROUTING
 Paths below are relative to docs/. Confirm implementation when a document is stale.
 - UI/Layout -> DESIGN_SYSTEM.md

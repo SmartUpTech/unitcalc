@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tool_space_message" type="id" />
+    <string name="tool_more_space">More screen space needed. Expand the window or rotate your device. Your input is kept.</string>
+    <string name="tool_previous">Previous</string>
+    <string name="tool_next">Next</string>
+    <string name="tool_page">%1$d / %2$d</string>
+    <dimen name="keypad_icon_padding">12dp</dimen>
+    <dimen name="timer_wheel_row_height">48dp</dimen>
+    <dimen name="timer_ring_size">220dp</dimen>
+</resources>

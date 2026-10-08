@@ -45,7 +45,7 @@ public final class ThemeApplier {
             R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
-            R.id.category_title, R.id.fromCurrencyISO, R.id.toCurrencyISO
+            R.id.category_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,

@@ -3,6 +3,8 @@ package net.smartlogic.unitconverter.timer.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +23,18 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
+import net.smartlogic.unitconverter.R
 
 @Composable
 fun TimerWheelPicker(
@@ -38,8 +46,8 @@ fun TimerWheelPicker(
 ) {
     val semantic = GraphyThemeTokens.semanticColors
     val values = range.toList()
-    val itemHeight = 36.dp
-    val visibleCount = 5
+    val itemHeight = maxOf(dimensionResource(R.dimen.timer_wheel_row_height),
+        with(LocalDensity.current) { 24.sp.toDp() })
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = values.indexOf(value).coerceAtLeast(0))
     val currentValue by rememberUpdatedState(value)
     val currentOnValueChange by rememberUpdatedState(onValueChange)
@@ -83,39 +91,52 @@ fun TimerWheelPicker(
         }
     }
 
-    Box(
-        modifier = modifier.height(itemHeight * visibleCount),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(itemHeight)
-                .background(
-                    color = semantic.connector.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-        )
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxWidth(),
-            flingBehavior = rememberSnapFlingBehavior(listState),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(vertical = itemHeight * 2)
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(unitLabel, color = semantic.secondaryText, fontSize = 14.sp,
+            maxLines = 1, overflow = TextOverflow.Ellipsis)
+        BoxWithConstraints(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center,
         ) {
-            items(values.size) { index ->
-                val itemValue = values[index]
-                val isSelected = index == centerIndex
-                Text(
-                    text = "$itemValue $unitLabel",
-                    modifier = Modifier
-                        .height(itemHeight)
-                        .alpha(if (isSelected) 1f else 0.35f)
-                        .padding(horizontal = 4.dp),
-                    color = semantic.primaryText,
-                    fontSize = if (isSelected) 18.sp else 16.sp,
-                    textAlign = TextAlign.Center,
-                )
+            val visibleCount = when {
+                maxHeight >= itemHeight * 5 -> 5
+                maxHeight >= itemHeight * 3 -> 3
+                else -> 1
+            }
+            Box(Modifier.height(itemHeight * visibleCount), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(itemHeight)
+                    .background(
+                        color = semantic.connector.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(12.dp),
+                    ),
+            )
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxWidth(),
+                flingBehavior = rememberSnapFlingBehavior(listState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(vertical = itemHeight * (visibleCount / 2))
+            ) {
+                items(values.size) { index ->
+                    val itemValue = values[index]
+                    val isSelected = index == centerIndex
+                    Text(
+                        text = itemValue.toString(),
+                        modifier = Modifier
+                            .height(itemHeight)
+                            .semantics { contentDescription = "$itemValue $unitLabel" }
+                            .alpha(if (isSelected) 1f else 0.35f)
+                            .padding(horizontal = 4.dp),
+                        color = semantic.primaryText,
+                        fontSize = if (isSelected) 18.sp else 16.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                    )
+                }
+            }
             }
         }
     }

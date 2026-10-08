@@ -1,219 +1,197 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" ?>
+<net.smartlogic.unitconverter.widget.CalculationViewport
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/calculate_pane"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/display_values"
+    <net.smartlogic.unitconverter.widget.CalculationLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp">
-
-        <TextView
-            android:id="@+id/expression"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="none"
-            android:fontFamily="@font/app_text"
-            android:gravity="center"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:textColor="@color/semantic_number"
-            android:textSize="@dimen/h2" />
-
-        <TextView
-            android:id="@+id/result"
-            style="@style/ResultDisplay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autoSizeMaxTextSize="@dimen/resultDisplaySize"
-            android:autoSizeMinTextSize="28sp"
-            android:autoSizeTextType="uniform"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="0" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/keypad"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingBottom="4dp">
-
+        android:orientation="vertical">
         <LinearLayout
+            android:id="@+id/calculation_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/display_values"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/converter_card_margin"
+                android:paddingTop="@dimen/converter_spacing"
+                android:paddingBottom="@dimen/converter_spacing">
+                <TextView
+                    android:id="@+id/expression"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="none"
+                    android:fontFamily="@font/app_text"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="@color/semantic_number"
+                    android:textSize="@dimen/h2"/>
+                <TextView
+                    android:id="@+id/result"
+                    style="@style/ResultDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="@dimen/resultDisplaySize"
+                    android:autoSizeMinTextSize="28sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="0"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/keypad"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/power"
-                style="@style/CalculatorKey.Function"
-                android:text="^" />
-
-            <Button
-                android:id="@+id/sqrt"
-                style="@style/CalculatorKey.Function"
-                android:text="√" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/converter_spacing">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@null"
-                android:clickable="false"
-                android:focusable="false"
-                android:importantForAccessibility="no" />
-
-            <ImageButton
-                android:id="@+id/backspace"
-                style="@style/CalculatorKey.Icon"
-                android:contentDescription="Backspace"
-                android:src="@drawable/backspace" />
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/power"
+                    style="@style/CalculatorKey.Function"
+                    android:text="^"/>
+                <Button
+                    android:id="@+id/sqrt"
+                    style="@style/CalculatorKey.Function"
+                    android:text="√"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:importantForAccessibility="no"/>
+                <ImageButton
+                    android:id="@+id/backspace"
+                    style="@style/CalculatorKey.Icon"
+                    android:contentDescription="Backspace"
+                    android:src="@drawable/backspace"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/parenthesis_open"
+                    style="@style/CalculatorKey.Function"
+                    android:text="("/>
+                <Button
+                    android:id="@+id/parenthesis_close"
+                    style="@style/CalculatorKey.Function"
+                    android:text=")"/>
+                <Button
+                    android:id="@+id/percent"
+                    style="@style/CalculatorKey.Function"
+                    android:text="%"/>
+                <Button
+                    android:id="@+id/divide"
+                    style="@style/CalculatorKey.SideOperator"
+                    android:text="÷"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/seven"
+                    style="@style/CalculatorKey.Number"
+                    android:text="7"/>
+                <Button
+                    android:id="@+id/eight"
+                    style="@style/CalculatorKey.Number"
+                    android:text="8"/>
+                <Button
+                    android:id="@+id/nine"
+                    style="@style/CalculatorKey.Number"
+                    android:text="9"/>
+                <Button
+                    android:id="@+id/multiply"
+                    style="@style/CalculatorKey.SideOperator"
+                    android:text="×"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/four"
+                    style="@style/CalculatorKey.Number"
+                    android:text="4"/>
+                <Button
+                    android:id="@+id/five"
+                    style="@style/CalculatorKey.Number"
+                    android:text="5"/>
+                <Button
+                    android:id="@+id/six"
+                    style="@style/CalculatorKey.Number"
+                    android:text="6"/>
+                <Button
+                    android:id="@+id/minus"
+                    style="@style/CalculatorKey.SideOperator"
+                    android:text="-"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/one"
+                    style="@style/CalculatorKey.Number"
+                    android:text="1"/>
+                <Button
+                    android:id="@+id/two"
+                    style="@style/CalculatorKey.Number"
+                    android:text="2"/>
+                <Button
+                    android:id="@+id/three"
+                    style="@style/CalculatorKey.Number"
+                    android:text="3"/>
+                <Button
+                    android:id="@+id/plus"
+                    style="@style/CalculatorKey.SideOperator"
+                    android:text="+"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/sign_toggle"
+                    style="@style/CalculatorKey.Function"
+                    android:text="-/+"/>
+                <Button
+                    android:id="@+id/zero"
+                    style="@style/CalculatorKey.Number"
+                    android:text="0"/>
+                <Button
+                    android:id="@+id/dot"
+                    style="@style/CalculatorKey.Number"
+                    android:text="."/>
+                <Button
+                    android:id="@+id/equal"
+                    style="@style/CalculatorKey.Equals"
+                    android:text="="/>
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/parenthesis_open"
-                style="@style/CalculatorKey.Function"
-                android:text="(" />
-
-            <Button
-                android:id="@+id/parenthesis_close"
-                style="@style/CalculatorKey.Function"
-                android:text=")" />
-
-            <Button
-                android:id="@+id/percent"
-                style="@style/CalculatorKey.Function"
-                android:text="%" />
-
-            <Button
-                android:id="@+id/divide"
-                style="@style/CalculatorKey.SideOperator"
-                android:text="÷" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/seven"
-                style="@style/CalculatorKey.Number"
-                android:text="7" />
-
-            <Button
-                android:id="@+id/eight"
-                style="@style/CalculatorKey.Number"
-                android:text="8" />
-
-            <Button
-                android:id="@+id/nine"
-                style="@style/CalculatorKey.Number"
-                android:text="9" />
-
-            <Button
-                android:id="@+id/multiply"
-                style="@style/CalculatorKey.SideOperator"
-                android:text="×" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/four"
-                style="@style/CalculatorKey.Number"
-                android:text="4" />
-
-            <Button
-                android:id="@+id/five"
-                style="@style/CalculatorKey.Number"
-                android:text="5" />
-
-            <Button
-                android:id="@+id/six"
-                style="@style/CalculatorKey.Number"
-                android:text="6" />
-
-            <Button
-                android:id="@+id/minus"
-                style="@style/CalculatorKey.SideOperator"
-                android:text="-" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/one"
-                style="@style/CalculatorKey.Number"
-                android:text="1" />
-
-            <Button
-                android:id="@+id/two"
-                style="@style/CalculatorKey.Number"
-                android:text="2" />
-
-            <Button
-                android:id="@+id/three"
-                style="@style/CalculatorKey.Number"
-                android:text="3" />
-
-            <Button
-                android:id="@+id/plus"
-                style="@style/CalculatorKey.SideOperator"
-                android:text="+" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/sign_toggle"
-                style="@style/CalculatorKey.Function"
-                android:text="-/+" />
-
-            <Button
-                android:id="@+id/zero"
-                style="@style/CalculatorKey.Number"
-                android:text="0" />
-
-            <Button
-                android:id="@+id/dot"
-                style="@style/CalculatorKey.Number"
-                android:text="." />
-
-            <Button
-                android:id="@+id/equal"
-                style="@style/CalculatorKey.Equals"
-                android:text="=" />
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+    </net.smartlogic.unitconverter.widget.CalculationLayout>
+</net.smartlogic.unitconverter.widget.CalculationViewport>
