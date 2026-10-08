@@ -41,3 +41,11 @@ Before marking ready, run:
 ```
 
 Then inspect real app screens with all themes, 1x/1.3x/2x font scales and display scaling, gesture and 3-button navigation, long labels and values, TalkBack, and supported API/OEM devices. Verify primary control bounds and text legibility, input/result continuity, selectors/swap/reset, theme changes with input present, and switching Graphy tabs. In particular, confirm the window's edge-to-edge behavior on the latest supported Android release. None of these device checks has been performed here.
+
+## Follow-up source verification (8 October)
+
+- Added a width guard for inline unit selectors, including scaled/localized From/To labels and a 48dp selector target. The previous guard covered currencies only.
+- Invalidate the content measurement when the supplied viewport height changes, so height-only window changes cannot depend on ScrollView's measurement-cache behavior.
+- Strengthened regression coverage for height-only resize, long scaled selector labels and non-overlapping primary controls. Test inflation now uses MaterialComponentsViewInflater, matching activity widget substitution rather than measuring framework Buttons.
+- Passed XML/control-ID checks and git diff checks again. CalculationLayout also compiles against the installed Android 37 platform API with temporary resource-ID declarations. This limited Java/API check is not an application build, resource-link check, or runtime test.
+- Retried the focused Gradle tests offline: failed during dependency resolution (uncached Android-plugin transitive dependencies), before compilation/test execution. The PR remains draft, with device and runtime acceptance outstanding.

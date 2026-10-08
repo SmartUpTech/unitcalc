@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.google.android.material.theme.MaterialComponentsViewInflater;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
 import net.smartlogic.unitconverter.model.Conversion;
@@ -83,10 +85,38 @@ public class CalculationLayoutTest {
     @Test public void compactLayoutRestoresAfterRepeatedWindowChanges() {
         for (int layout : SCREENS) {
             View root = inflate(layout, 1f);
-            for (int[] size : new int[][]{{360, 460}, {840, 700}, {600, 340}, {360, 460}}) {
+            for (int[] size : new int[][]{{360, 700}, {360, 460}, {360, 700},
+                    {840, 700}, {600, 340}, {360, 460}}) {
                 measure(root, size[0], size[1]);
                 assertFalse(label(layout, size), viewport(root).canScrollVertically(1));
                 assertKeys(root, true);
+            }
+        }
+    }
+
+    @Test public void longScaledLabelsDoNotCollapseUnitSelectorTouchTargets() {
+        View root = inflate(R.layout.fragment_unit_converter, 2f);
+        ((TextView) root.findViewById(R.id.converter_from_label)).setText("Convert from");
+        ((TextView) root.findViewById(R.id.converter_to_label)).setText("Convert into");
+        measure(root, 360, 400);
+        for (int id : new int[]{R.id.fromUnit, R.id.toUnit}) {
+            View selector = root.findViewById(id);
+            assertTrue("selector must stay tappable", selector.getWidth() >= 48);
+            assertTrue("selector must stay tappable", selector.getHeight() >= 48);
+        }
+    }
+
+    @Test public void inputAndOutputNeverOverlapSelectorsOrKeypad() {
+        for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
+            View root = inflate(layout, 1f);
+            measure(root, 360, 460);
+            int[] ids = {R.id.fromUnit, R.id.toUnit, R.id.input, R.id.output, R.id.reverse, R.id.keypad};
+            for (int i = 0; i < ids.length; i++) {
+                for (int j = i + 1; j < ids.length; j++) {
+                    assertFalse("controls overlap: " + ids[i] + ", " + ids[j],
+                            Rect.intersects(bounds((ViewGroup) root, root.findViewById(ids[i])),
+                                    bounds((ViewGroup) root, root.findViewById(ids[j]))));
+                }
             }
         }
     }
@@ -96,7 +126,19 @@ public class CalculationLayoutTest {
         Configuration config = new Configuration(app.getResources().getConfiguration());
         config.fontScale = scale;
         Context context = new ContextThemeWrapper(app.createConfigurationContext(config), R.style.AppTheme);
-        View root = LayoutInflater.from(context).inflate(layout, null);
+        LayoutInflater inflater = LayoutInflater.from(context).cloneInContext(context);
+        MaterialComponentsViewInflater widgets = new MaterialComponentsViewInflater();
+        // Match AppCompat/Material activity inflation, rather than silently measuring
+        // framework Buttons whose padding and minimum dimensions may differ.
+        inflater.setFactory2(new LayoutInflater.Factory2() {
+            @Override public View onCreateView(View parent, String name, Context ctx, AttributeSet attrs) {
+                return widgets.createView(parent, name, ctx, attrs, false, true, true, false);
+            }
+            @Override public View onCreateView(String name, Context ctx, AttributeSet attrs) {
+                return onCreateView(null, name, ctx, attrs);
+            }
+        });
+        View root = inflater.inflate(layout, null);
         if (root.findViewById(R.id.input) != null) {
             ((EditText) root.findViewById(R.id.input)).setShowSoftInputOnFocus(false);
             ((TextView) root.findViewById(R.id.input)).setText("100");
@@ -156,11 +198,16 @@ public class CalculationLayoutTest {
     }
 
     private void assertInside(ViewGroup root, View view) {
-        Rect bounds = new Rect(0, 0, view.getWidth(), view.getHeight());
-        root.offsetDescendantRectToMyCoords(view, bounds);
+        Rect bounds = bounds(root, view);
         assertTrue("empty control " + view.getId(), bounds.width() > 0 && bounds.height() > 0);
         assertTrue("outside viewport " + bounds, bounds.left >= 0 && bounds.top >= 0
                 && bounds.right <= root.getWidth() && bounds.bottom <= root.getHeight());
+    }
+
+    private Rect bounds(ViewGroup root, View view) {
+        Rect bounds = new Rect(0, 0, view.getWidth(), view.getHeight());
+        root.offsetDescendantRectToMyCoords(view, bounds);
+        return bounds;
     }
 
     private String label(int layout, int[] size) { return layout + " at " + size[0] + "x" + size[1]; }

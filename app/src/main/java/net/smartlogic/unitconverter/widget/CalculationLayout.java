@@ -30,7 +30,14 @@ public final class CalculationLayout extends LinearLayout {
         super(context, attrs);
     }
 
-    void setViewportHeight(int height) { viewportHeight = height; }
+    void setViewportHeight(int height) {
+        if (viewportHeight != height) {
+            viewportHeight = height;
+            // This is an input outside MeasureSpec: ScrollView measures content with
+            // UNSPECIFIED height. Do not reuse an earlier viewport's measurement.
+            forceLayout();
+        }
+    }
 
     @Override protected void onFinishInflate() {
         super.onFinishInflate();
@@ -76,7 +83,7 @@ public final class CalculationLayout extends LinearLayout {
             arrangePanes(true);
             needed = measureRequired(widthMeasureSpec, preferredRow);
         }
-        if (needed > viewportHeight && !sections.isEmpty() && canInlineCurrency()) {
+        if (needed > viewportHeight && !sections.isEmpty() && canInlineSelectors()) {
             configure(true, true);
             needed = measureRequired(widthMeasureSpec, preferredRow);
         }
@@ -130,21 +137,29 @@ public final class CalculationLayout extends LinearLayout {
         }
     }
 
-    private boolean canInlineCurrency() {
+    private boolean canInlineSelectors() {
         TextView iso = findViewById(R.id.fromCurrencyISO);
-        if (iso == null) return true;
-        TextView toIso = findViewById(R.id.toCurrencyISO);
         TextView from = findViewById(R.id.converter_from_label);
         TextView to = findViewById(R.id.converter_to_label);
         float labelWidth = Math.max(from.getPaint().measureText(from.getText().toString()),
                 to.getPaint().measureText(to.getText().toString()));
-        float codeWidth = Math.max(iso.getPaint().measureText(iso.getText().toString()),
-                toIso.getPaint().measureText(toIso.getText().toString()));
-        int needed = (int) Math.ceil(labelWidth + codeWidth)
-                + dimension(R.dimen.converter_flag_height)
+        int needed = (int) Math.ceil(labelWidth)
+                + dimension(R.dimen.converter_spacing)
+                + dimension(R.dimen.converter_touch_target)
+                + dimension(R.dimen.converter_chevron_size);
+        if (iso != null) {
+            TextView toIso = findViewById(R.id.toCurrencyISO);
+            float codeWidth = Math.max(iso.getPaint().measureText(iso.getText().toString()),
+                    toIso.getPaint().measureText(toIso.getText().toString()));
+            needed = (int) Math.ceil(labelWidth + codeWidth)
+                    + dimension(R.dimen.converter_flag_height)
                 + dimension(R.dimen.converter_chevron_size)
                 + 3 * dimension(R.dimen.converter_spacing);
-        return sections.get(0).getMeasuredWidth() / 2 >= needed;
+        }
+        for (LinearLayout section : sections) {
+            if (section.getMeasuredWidth() / 2 < needed) return false;
+        }
+        return true;
     }
 
     private int dimension(int resource) { return getResources().getDimensionPixelSize(resource); }
