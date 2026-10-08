@@ -38,4 +38,6 @@
     <dimen name="converter_flag_width">32dp</dimen>
     <dimen name="converter_flag_height">24dp</dimen>
     <dimen name="converter_label_text_size">12sp</dimen>
+    <!-- Minimum useful width per pane before moving controls beside the keypad. -->
+    <dimen name="calculation_pane_min_width">280dp</dimen>
 </resources>

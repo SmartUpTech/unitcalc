@@ -414,12 +414,12 @@
 
     <style name="ConverterKeyIcon" parent="ImageButtonStyle.Action">
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:minHeight">@dimen/converter_key_min_height</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
     </style>
     <!-- Foreground feedback survives ThemeApplier's flat key backgrounds. -->
     <style name="ConverterNumberKey" parent="ButtonStyle.Number">
         <item name="android:foreground">?attr/selectableItemBackground</item>
-        <item name="android:minHeight">@dimen/converter_key_min_height</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
     </style>
 
     <style name="ConverterOperatorKey" parent="ConverterNumberKey">

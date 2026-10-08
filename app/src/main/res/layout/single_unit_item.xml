@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:fontFamily="@font/app_text"
     android:gravity="start|center_vertical"
+    android:maxLines="1"
+    android:ellipsize="end"
     android:paddingVertical="@dimen/converter_small_spacing"
     android:minHeight="@dimen/converter_touch_target"
     android:textColor="@color/screen_expression_text"

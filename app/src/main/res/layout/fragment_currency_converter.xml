@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,252 +6,275 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/screen_background">
-    <androidx.core.widget.NestedScrollView
+    <net.smartlogic.unitconverter.widget.CalculationViewport
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         android:clipToPadding="false">
-        <LinearLayout
+        <net.smartlogic.unitconverter.widget.CalculationLayout
             android:id="@+id/ll_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/converter_spacing">
             <LinearLayout
-                android:id="@+id/converter_card"
+                android:id="@+id/calculation_controls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="@dimen/converter_card_margin"
-                android:paddingVertical="@dimen/converter_spacing">
-                <LinearLayout
+                android:orientation="vertical">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/converter_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="@dimen/converter_card_padding">
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:paddingVertical="@dimen/converter_spacing">
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView
-                            style="@style/ConverterLabel"
-                            android:id="@+id/converter_from_label"
-                            android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="0dp"
+                        android:id="@+id/converter_source_section"
+                        android:tag="calculation_section"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/reverse_container"
+                        app:layout_constraintTop_toTopOf="parent">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/converter_spacing"
-                            android:labelFor="@id/fromUnit"
-                            android:text="@string/str_from" />
-                        <RelativeLayout
-                            android:id="@+id/fromUnit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:minHeight="@dimen/converter_touch_target"
-                            android:paddingVertical="@dimen/converter_small_spacing"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/fromFlag"
-                                android:layout_width="@dimen/converter_flag_width"
-                                android:layout_height="@dimen/converter_flag_height"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:scaleType="centerCrop"
-                                android:importantForAccessibility="no"
-                                app:shapeAppearanceOverlay="@style/RoundedCorners" />
-                            <LinearLayout
-                                android:importantForAccessibility="noHideDescendants"
-                                android:layout_width="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                style="@style/ConverterLabel"
+                                android:id="@+id/converter_from_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_toEndOf="@id/fromFlag"
-                                android:layout_toStartOf="@id/fromChevron"
-                                android:layout_marginHorizontal="@dimen/converter_spacing"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_centerVertical="true">
-                                <TextView
-                                    android:id="@+id/fromCurrencyISO"
-                                    style="@style/ConverterSelectorText"
-                                    android:layout_width="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_spacing"
+                                android:labelFor="@id/fromUnit"
+                                android:text="@string/str_from"/>
+                            <RelativeLayout
+                                android:id="@+id/fromUnit"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:minHeight="@dimen/converter_touch_target"
+                                android:paddingVertical="@dimen/converter_small_spacing"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/fromFlag"
+                                    android:layout_width="@dimen/converter_flag_width"
+                                    android:layout_height="@dimen/converter_flag_height"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:scaleType="centerCrop"
+                                    android:importantForAccessibility="no"
+                                    app:shapeAppearanceOverlay="@style/RoundedCorners"/>
+                                <LinearLayout
+                                    android:importantForAccessibility="noHideDescendants"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:singleLine="true" />
-                                <TextView
-                                    style="@style/ConverterLabel"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingHorizontal="@dimen/converter_small_spacing"
-                                    android:text="@string/converter_currency_separator" />
-                                <TextView
-                                    android:id="@+id/fromCurrency"
-                                    style="@style/ConverterSelectorText"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:ellipsize="end"
-                                    android:singleLine="true" />
-                            </LinearLayout>
-                            <ImageView
-                                android:id="@+id/fromChevron"
-                                android:layout_width="@dimen/converter_chevron_size"
-                                android:layout_height="@dimen/converter_chevron_size"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:src="@drawable/ic_chevron_down"
-                                android:importantForAccessibility="no"
-                                android:contentDescription="@null" />
-                        </RelativeLayout>
+                                    android:layout_toEndOf="@id/fromFlag"
+                                    android:layout_toStartOf="@id/fromChevron"
+                                    android:layout_marginHorizontal="@dimen/converter_spacing"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_centerVertical="true">
+                                    <TextView
+                                        android:id="@+id/fromCurrencyISO"
+                                        style="@style/ConverterSelectorText"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:singleLine="true"/>
+                                    <TextView
+                                        style="@style/ConverterLabel"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingHorizontal="@dimen/converter_small_spacing"
+                                        android:tag="currency_detail"
+                                        android:text="@string/converter_currency_separator"/>
+                                    <TextView
+                                        android:id="@+id/fromCurrency"
+                                        style="@style/ConverterSelectorText"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:ellipsize="end"
+                                        android:singleLine="true"/>
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/fromChevron"
+                                    android:layout_width="@dimen/converter_chevron_size"
+                                    android:layout_height="@dimen/converter_chevron_size"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:src="@drawable/ic_chevron_down"
+                                    android:importantForAccessibility="no"
+                                    android:contentDescription="@null"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/input"
+                            style="@style/ConverterValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_input_amount"
+                            android:maxLength="12"
+                            android:text="@string/zero"/>
                     </LinearLayout>
-                    <EditText
-                        android:id="@+id/input"
-                        style="@style/ConverterValue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/converter_input_amount"
-                        android:maxLength="12"
-                        android:text="@string/zero" />
-                </LinearLayout>
-                <include
-                    layout="@layout/converter_swap" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="@dimen/converter_card_padding">
+                    <include
+                        layout="@layout/converter_swap"
+                        android:id="@+id/reverse_container"
+                        android:layout_width="@dimen/converter_touch_target"
+                        android:layout_height="@dimen/converter_touch_target"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView
-                            style="@style/ConverterLabel"
-                            android:id="@+id/converter_to_label"
-                            android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="0dp"
+                        android:id="@+id/converter_target_section"
+                        android:tag="calculation_section"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/reverse_container"
+                        app:layout_constraintTop_toBottomOf="@id/converter_source_section">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/converter_spacing"
-                            android:labelFor="@id/toUnit"
-                            android:text="@string/str_to" />
-                        <RelativeLayout
-                            android:id="@+id/toUnit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:minHeight="@dimen/converter_touch_target"
-                            android:paddingVertical="@dimen/converter_small_spacing"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/toFlag"
-                                android:layout_width="@dimen/converter_flag_width"
-                                android:layout_height="@dimen/converter_flag_height"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:scaleType="centerCrop"
-                                android:importantForAccessibility="no"
-                                app:shapeAppearanceOverlay="@style/RoundedCorners" />
-                            <LinearLayout
-                                android:importantForAccessibility="noHideDescendants"
-                                android:layout_width="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                style="@style/ConverterLabel"
+                                android:id="@+id/converter_to_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_toEndOf="@id/toFlag"
-                                android:layout_toStartOf="@id/toChevron"
-                                android:layout_marginHorizontal="@dimen/converter_spacing"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_centerVertical="true">
-                                <TextView
-                                    android:id="@+id/toCurrencyISO"
-                                    style="@style/ConverterSelectorText"
-                                    android:layout_width="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_spacing"
+                                android:labelFor="@id/toUnit"
+                                android:text="@string/str_to"/>
+                            <RelativeLayout
+                                android:id="@+id/toUnit"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:minHeight="@dimen/converter_touch_target"
+                                android:paddingVertical="@dimen/converter_small_spacing"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/toFlag"
+                                    android:layout_width="@dimen/converter_flag_width"
+                                    android:layout_height="@dimen/converter_flag_height"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:scaleType="centerCrop"
+                                    android:importantForAccessibility="no"
+                                    app:shapeAppearanceOverlay="@style/RoundedCorners"/>
+                                <LinearLayout
+                                    android:importantForAccessibility="noHideDescendants"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:singleLine="true" />
-                                <TextView
-                                    style="@style/ConverterLabel"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingHorizontal="@dimen/converter_small_spacing"
-                                    android:text="@string/converter_currency_separator" />
-                                <TextView
-                                    android:id="@+id/toCurrency"
-                                    style="@style/ConverterSelectorText"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:ellipsize="end"
-                                    android:singleLine="true" />
-                            </LinearLayout>
-                            <ImageView
-                                android:id="@+id/toChevron"
-                                android:layout_width="@dimen/converter_chevron_size"
-                                android:layout_height="@dimen/converter_chevron_size"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:src="@drawable/ic_chevron_down"
-                                android:importantForAccessibility="no"
-                                android:contentDescription="@null" />
-                        </RelativeLayout>
+                                    android:layout_toEndOf="@id/toFlag"
+                                    android:layout_toStartOf="@id/toChevron"
+                                    android:layout_marginHorizontal="@dimen/converter_spacing"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_centerVertical="true">
+                                    <TextView
+                                        android:id="@+id/toCurrencyISO"
+                                        style="@style/ConverterSelectorText"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:singleLine="true"/>
+                                    <TextView
+                                        style="@style/ConverterLabel"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingHorizontal="@dimen/converter_small_spacing"
+                                        android:tag="currency_detail"
+                                        android:text="@string/converter_currency_separator"/>
+                                    <TextView
+                                        android:id="@+id/toCurrency"
+                                        style="@style/ConverterSelectorText"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:ellipsize="end"
+                                        android:singleLine="true"/>
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/toChevron"
+                                    android:layout_width="@dimen/converter_chevron_size"
+                                    android:layout_height="@dimen/converter_chevron_size"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:src="@drawable/ic_chevron_down"
+                                    android:importantForAccessibility="no"
+                                    android:contentDescription="@null"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/output"
+                            style="@style/ConverterValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_output_amount"
+                            android:focusable="false"
+                            android:textIsSelectable="true"
+                            android:text="@string/zero"/>
                     </LinearLayout>
-                    <EditText
-                        android:id="@+id/output"
-                        style="@style/ConverterValue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/converter_output_amount"
-                        android:focusable="false"
-                        android:textIsSelectable="true"
-                        android:text="@string/zero" />
-                </LinearLayout>
-            </LinearLayout>
-            <TextView
-                android:id="@+id/inputSymbol"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone" />
-            <TextView
-                android:id="@+id/outputSymbol"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/converter_card_margin"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <LinearLayout
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/inputSymbol"
                     android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/outputSymbol"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/txtRate"
-                        style="@style/ConverterLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/txtLastUpdateTime"
-                        style="@style/ConverterLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/txtRate"
+                            style="@style/ConverterLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:id="@+id/txtLastUpdateTime"
+                            style="@style/ConverterLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/refresh"
+                        style="@style/ConverterIconButton"
+                        android:contentDescription="@string/converter_refresh_rates"
+                        android:src="@drawable/ic_unit_converter"/>
+                    <ImageButton
+                        android:id="@+id/share"
+                        style="@style/ConverterIconButton"
+                        android:contentDescription="@string/converter_share_result"
+                        android:src="@drawable/share"/>
                 </LinearLayout>
-                <ImageButton
-                    android:id="@+id/refresh"
-                    style="@style/ConverterIconButton"
-                    android:contentDescription="@string/converter_refresh_rates"
-                    android:src="@drawable/ic_unit_converter" />
-                <ImageButton
-                    android:id="@+id/share"
-                    style="@style/ConverterIconButton"
-                    android:contentDescription="@string/converter_share_result"
-                    android:src="@drawable/share" />
             </LinearLayout>
             <include
                 layout="@layout/converter_keypad"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/keypad"/>
+        </net.smartlogic.unitconverter.widget.CalculationLayout>
+    </net.smartlogic.unitconverter.widget.CalculationViewport>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
