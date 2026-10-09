@@ -42,7 +42,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         @Override public void run() {
             if (isPlayingSurfaceVisible()) {
                 configureIfChanged();
-                main.postDelayed(this, GamesConfig.DATE_CHECK_INTERVAL_MS);
+                scheduleDateCheck(this);
             }
         }
     };
@@ -187,6 +187,10 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                 target.configure(config, accepted -> {
                     if (root == null || target != webView || page != documentGeneration || request != configurationGeneration) return;
                     if (!accepted) { showError(R.string.games_load_error); return; }
+                    if (!date.equals(LocalDate.now().toString()) || !zone.equals(ZoneId.systemDefault().getId())) {
+                        configureIfChanged();
+                        return;
+                    }
                     configured = identity;
                     main.removeCallbacks(timeout);
                     target.setVisibility(View.VISIBLE);
@@ -300,6 +304,11 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         updateVisibility();
     }
 
+    private void scheduleDateCheck(Runnable check) {
+        main.postDelayed(check, GamesConfig.nextDateCheckDelayMillis(
+                java.time.Instant.now(), ZoneId.systemDefault()));
+    }
+
     private void updateVisibility() {
         if (root == null) return;
         backCallback.setEnabled(!isHidden());
@@ -309,7 +318,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
             if (configured == null && !failed) main.postDelayed(timeout, GamesConfig.LOAD_TIMEOUT_MS);
             if (webView != null) webView.onResume();
             configureIfChanged();
-            main.postDelayed(dateCheck, GamesConfig.DATE_CHECK_INTERVAL_MS);
+            scheduleDateCheck(dateCheck);
             AdMobManager.getInstance(requireContext()).prepareGamesAds(requireActivity(), this::isPlayingSurfaceVisible,
                     () -> { if (isAdded()) requireActivity().invalidateOptionsMenu(); });
         } else if (webView != null) webView.onPause();
