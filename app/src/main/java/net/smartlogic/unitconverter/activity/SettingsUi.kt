@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,8 +68,9 @@ object SettingsUi {
     @JvmStatic
     fun bind(view: ComposeView, fragment: Fragment, onBack: Runnable) {
         val preferences = Preferences.getInstance(fragment.requireContext())
-        val themes = ViewModelProvider(fragment, ThemeSelectorViewModel.Factory(preferences))
-            [ThemeSelectorViewModel::class.java]
+        val themes = ViewModelProvider(
+            fragment, ThemeSelectorViewModel.Factory(preferences)
+        ).get(ThemeSelectorViewModel::class.java)
         view.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         view.setContent {
             GraphyTheme {
@@ -93,6 +95,13 @@ private fun SettingsScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val spacing = GraphyThemeTokens.spacing
     val themeState by themes.uiState.collectAsStateWithLifecycle()
+    val rateUrl = stringResource(R.string.url_app_link)
+    val shareBody = stringResource(R.string.note_share_body) +
+        stringResource(R.string.url_app_short_link)
+    val brandName = stringResource(R.string.brand_name)
+    val shareTitle = stringResource(R.string.pref_share_title)
+    val websiteUrl = stringResource(R.string.url_smartup_website)
+    val privacyUrl = stringResource(R.string.url_privacy_policy)
     var revision by remember { mutableIntStateOf(0) }
     var activeChoiceKey by rememberSaveable { mutableStateOf<String?>(null) }
     val choices = remember {
@@ -180,37 +189,33 @@ private fun SettingsScreen(
 
             SettingsSection(R.string.title_activity_feedback)
             SettingsRow(stringResource(R.string.pref_rate_title), onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.url_app_link))))
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rateUrl)))
             })
             SettingsDivider()
-            SettingsRow(stringResource(R.string.pref_share_title), onClick = {
-                val body = context.getString(R.string.note_share_body) +
-                    context.getString(R.string.url_app_short_link)
+            SettingsRow(shareTitle, onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.brand_name))
-                    putExtra(Intent.EXTRA_TEXT, body)
+                    putExtra(Intent.EXTRA_SUBJECT, brandName)
+                    putExtra(Intent.EXTRA_TEXT, shareBody)
                 }
-                context.startActivity(Intent.createChooser(intent, context.getString(R.string.pref_share_title)))
+                context.startActivity(Intent.createChooser(intent, shareTitle))
             })
 
             SettingsSection(R.string.title_activity_info)
             SettingsRow(stringResource(R.string.pref_website_title), onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse(context.getString(R.string.url_smartup_website))))
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl)))
             })
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_privacy_title), onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse(context.getString(R.string.url_privacy_policy))))
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl)))
             })
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
     }
     choices.firstOrNull { it.key == activeChoiceKey }?.let { choice ->
-        val values = context.resources.getStringArray(choice.entries)
-        val selected = preferences.preferences.getString(choice.key, context.getString(choice.defaultValue))
+        val values = stringArrayResource(choice.entries)
+        val selected = preferences.preferences.getString(choice.key, stringResource(choice.defaultValue))
         SettingsSelectionDialog(
             title = stringResource(choice.title), values = values, selected = selected,
             onSelect = { value ->
