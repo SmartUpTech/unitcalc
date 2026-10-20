@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/converter_spacing">
-    <LinearLayout
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -29,8 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-    </LinearLayout>
-    <LinearLayout
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -54,8 +54,8 @@
             style="@style/ConverterKeyIcon"
             android:contentDescription="@string/converter_backspace"
             android:src="@drawable/backspace" />
-    </LinearLayout>
-    <LinearLayout
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -79,8 +79,8 @@
             style="@style/ConverterKeyIcon"
             android:contentDescription="@string/converter_copy_result"
             android:src="@drawable/ic_copy" />
-    </LinearLayout>
-    <LinearLayout
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -120,5 +120,5 @@
                 android:text="@string/converter_clear_key"
                 android:contentDescription="@string/converter_clear_input" />
         </FrameLayout>
-    </LinearLayout>
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
 </LinearLayout>

@@ -1,9 +1,13 @@
 package net.smartlogic.unitconverter.widget;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import net.smartlogic.unitconverter.R;
@@ -29,6 +33,15 @@ public final class CalculationLayout extends LinearLayout {
 
     public CalculationLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        try {
+            return super.generateLayoutParams(attrs);
+        } catch (UnsupportedOperationException e) {
+            return new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f);
+        }
     }
 
     void setViewportHeight(int height) {
@@ -104,7 +117,7 @@ public final class CalculationLayout extends LinearLayout {
 
     private boolean keysFitWidth(View view) {
         if (view.getVisibility() == GONE) return true;
-        if (view instanceof android.widget.Button || view instanceof android.widget.ImageButton) {
+        if (view instanceof Button || view instanceof ImageButton) {
             int minimum = dimension(R.dimen.converter_touch_target);
             if (view instanceof TextView) {
                 TextView text = (TextView) view;
@@ -154,7 +167,7 @@ public final class CalculationLayout extends LinearLayout {
         }
         for (LinearLayout section : sections) {
             section.setOrientation(inline ? HORIZONTAL : VERTICAL);
-            section.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            section.setGravity(Gravity.CENTER_VERTICAL);
             for (int i = 0; i < section.getChildCount(); i++) {
                 LayoutParams params = (LayoutParams) section.getChildAt(i).getLayoutParams();
                 params.width = inline ? 0 : LayoutParams.MATCH_PARENT;
@@ -194,7 +207,7 @@ public final class CalculationLayout extends LinearLayout {
         int height = 0;
         if (view instanceof TextView && view.getVisibility() != GONE) {
             TextView text = (TextView) view;
-            android.graphics.Paint.FontMetricsInt metrics = text.getPaint().getFontMetricsInt();
+            Paint.FontMetricsInt metrics = text.getPaint().getFontMetricsInt();
             height = metrics.bottom - metrics.top + text.getCompoundPaddingTop()
                     + text.getCompoundPaddingBottom();
         }

@@ -55,7 +55,7 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="@dimen/converter_spacing">
-            <LinearLayout
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -81,8 +81,8 @@
                     style="@style/CalculatorKey.Icon"
                     android:contentDescription="Backspace"
                     android:src="@drawable/backspace"/>
-            </LinearLayout>
-            <LinearLayout
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -103,8 +103,8 @@
                     android:id="@+id/divide"
                     style="@style/CalculatorKey.SideOperator"
                     android:text="÷"/>
-            </LinearLayout>
-            <LinearLayout
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -125,8 +125,8 @@
                     android:id="@+id/multiply"
                     style="@style/CalculatorKey.SideOperator"
                     android:text="×"/>
-            </LinearLayout>
-            <LinearLayout
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -147,8 +147,8 @@
                     android:id="@+id/minus"
                     style="@style/CalculatorKey.SideOperator"
                     android:text="-"/>
-            </LinearLayout>
-            <LinearLayout
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -169,8 +169,8 @@
                     android:id="@+id/plus"
                     style="@style/CalculatorKey.SideOperator"
                     android:text="+"/>
-            </LinearLayout>
-            <LinearLayout
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+            <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -191,7 +191,7 @@
                     android:id="@+id/equal"
                     style="@style/CalculatorKey.Equals"
                     android:text="="/>
-            </LinearLayout>
+            </net.smartlogic.unitconverter.widget.KeypadRowLayout>
         </LinearLayout>
     </net.smartlogic.unitconverter.widget.CalculationLayout>
 </net.smartlogic.unitconverter.widget.CalculationViewport>
