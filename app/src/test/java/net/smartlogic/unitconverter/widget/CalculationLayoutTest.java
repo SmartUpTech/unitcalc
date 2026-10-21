@@ -39,6 +39,63 @@ public class CalculationLayoutTest {
     private static final int[] SCREENS = {R.layout.pane_calculator_calculate,
             R.layout.fragment_unit_converter, R.layout.fragment_currency_converter};
 
+    @Test public void resizingAmountsNeverMovesConverterControlsOrKeypad() {
+        for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
+            for (float scale : new float[]{1f, 1.3f}) {
+                ViewGroup root = (ViewGroup) inflate(layout, scale);
+                TextView input = root.findViewById(R.id.input);
+                TextView output = root.findViewById(R.id.output);
+                input.setText("1");
+                output.setText("1.12");
+                measure(root, 360, 460);
+                int[] ids = {R.id.input, R.id.output, R.id.fromUnit, R.id.toUnit,
+                        R.id.reverse, R.id.keypad, R.id.seven, R.id.zero};
+                Rect[] original = new Rect[ids.length];
+                for (int i = 0; i < ids.length; i++) original[i] = bounds(root, root.findViewById(ids[i]));
+                float maximum = input.getTextSize();
+                for (String value : new String[]{"123456789012", "1", ""}) {
+                    input.setText(value);
+                    output.setText(value.isEmpty() ? "" : value + ".1234567890123456");
+                    measure(root, 360, 460);
+                    if (value.length() > 1) assertTrue(input.getTextSize() < maximum);
+                    for (int i = 0; i < ids.length; i++) {
+                        assertEquals("layout=" + layout + " scale=" + scale + " id=" + ids[i],
+                                original[i], bounds(root, root.findViewById(ids[i])));
+                    }
+                }
+            }
+        }
+    }
+
+    @Test public void converterAmountsSizeIndependentlyAndSelectorsStayAtQuarterWidth() {
+        for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
+            View root = inflate(layout, 1f);
+            TextView input = root.findViewById(R.id.input);
+            TextView output = root.findViewById(R.id.output);
+            assertEquals("0", input.getHint().toString());
+            View empty = LayoutInflater.from(root.getContext()).inflate(layout, null);
+            assertEquals("", ((TextView) empty.findViewById(R.id.output)).getText().toString());
+            assertFalse(input.getTypeface().isBold());
+            assertFalse(output.getTypeface().isBold());
+            float maximum = input.getTextSize();
+            for (String value : new String[]{"1", "123456789012"}) {
+                input.setText(value);
+                output.setText(value + ".123456789");
+                measure(root, 360, 460);
+                ViewGroup row = root.findViewById(R.id.converter_source_section);
+                assertEquals(90, row.getChildAt(1).getWidth());
+            }
+            input.setText("99999");
+            output.setText("30479695200000000");
+            measure(root, 360, 460);
+            assertEquals(maximum, input.getTextSize(), 0.1f);
+            assertTrue(output.getTextSize() < input.getTextSize());
+            output.setText("1");
+            measure(root, 360, 460);
+            assertEquals(maximum, output.getTextSize(), 0.1f);
+        }
+    }
+
     @Test public void convertersKeepKeypadGeometryStableAcrossModes() {
         for (float scale : new float[]{1f, 1.3f}) {
             for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}}) {

@@ -8,8 +8,10 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 /** Keeps a wrap-content display tall enough to grow back to its autosize maximum. */
 public final class AutoSizeValueTextView extends AppCompatTextView {
+    private final int styledMinimumHeight;
     public AutoSizeValueTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        styledMinimumHeight = getMinimumHeight();
     }
 
     @Override protected void onTextChanged(CharSequence text, int start, int before, int count) {
@@ -25,7 +27,8 @@ public final class AutoSizeValueTextView extends AppCompatTextView {
             Paint.FontMetricsInt metrics = probe.getFontMetricsInt();
             int line = getIncludeFontPadding() ? metrics.bottom - metrics.top
                     : metrics.descent - metrics.ascent;
-            setMinimumHeight(line + getCompoundPaddingTop() + getCompoundPaddingBottom());
+            setMinimumHeight(Math.max(styledMinimumHeight,
+                    line + getCompoundPaddingTop() + getCompoundPaddingBottom()));
         }
         super.onMeasure(widthSpec, heightSpec);
     }

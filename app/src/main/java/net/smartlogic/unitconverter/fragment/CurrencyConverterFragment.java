@@ -35,7 +35,6 @@ import androidx.fragment.app.Fragment;
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.app.AppConst;
-import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.OnChooseCurrencyListener;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HttpHandler;
@@ -52,7 +51,7 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
-public class CurrencyConverterFragment extends Fragment implements OnClickListener, OnLongClickListener, OnChooseCurrencyListener {
+public class CurrencyConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
     private static final ExecutorService RATE_EXECUTOR = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -71,7 +70,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private LinearLayout llMain;
     private RelativeLayout rlFromUnit, rlToUnit;
     private ArrayList<Currency> currencies;
-    private BottomSheetCurrencyDialogFragment bottomSheetCurrencyDialogFragment;
 
     public CurrencyConverterFragment() {
         // Required empty public constructor
@@ -131,13 +129,33 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     }
 
-    public void showBottomSheet(OnChooseCurrencyListener listener, String type) {
-        bottomSheetCurrencyDialogFragment = new BottomSheetCurrencyDialogFragment(listener, currencies, type);
-        bottomSheetCurrencyDialogFragment.show(getChildFragmentManager(), "ABC");
+    private void showCurrencyPicker(boolean source) {
+        ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
+        int[] flags = new int[currencies.size()];
+        for (int i = 0; i < currencies.size(); i++) {
+            Currency currency = currencies.get(i);
+            labels.add(currency.getCurrencyName());
+            details.add(currency.getCurrencyISOCode());
+            keywords.add(currency.getCountry() + " " + currency.getCurrencySymbol());
+            flags[i] = currency.getFlagImageResource();
+        }
+        String title = getString(source ? R.string.converter_picker_from_title : R.string.converter_picker_to_title,
+                getString(R.string.currency_converter));
+        ConverterPickerDialogFragment.newInstance(title, source, 0,
+                source ? prefs.getFromCurrencyIndex() : prefs.getToCurrencyIndex(),
+                labels, details, keywords, flags).showFor(this);
     }
 
-    public void hideBottomSheet() {
-        if (bottomSheetCurrencyDialogFragment != null) bottomSheetCurrencyDialogFragment.dismiss();
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        super.onViewCreated(view, state);
+        getChildFragmentManager().setFragmentResultListener(ConverterPickerDialogFragment.RESULT_KEY,
+                getViewLifecycleOwner(), (key, result) -> {
+                    int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
+                    if (index >= 0 && index < currencies.size()) {
+                        onChooseCurrency(currencies.get(index),
+                                result.getBoolean(ConverterPickerDialogFragment.SOURCE) ? "FROM" : "TO");
+                    }
+                });
     }
 
     @Override
@@ -171,16 +189,10 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         int id = view.getId();
         String previous = inputValue.getText().toString();
         if (id == R.id.fromUnit) {
-            showBottomSheet((currency, type) -> {
-                onChooseCurrency(currency, type);
-                InteractionFeedbackManager.perform(rlFromUnit, InteractionFeedbackManager.Type.ACTION);
-            }, "FROM");
+            showCurrencyPicker(true);
             InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
         } else if (id == R.id.toUnit) {
-            showBottomSheet((currency, type) -> {
-                onChooseCurrency(currency, type);
-                InteractionFeedbackManager.perform(rlToUnit, InteractionFeedbackManager.Type.ACTION);
-            }, "TO");
+            showCurrencyPicker(false);
             InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
         } else if (id == R.id.reverse) {
             int tempFromIndex = prefs.getFromCurrencyIndex();
@@ -190,7 +202,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         } else if (id == R.id.backspace) {
             if (previous.isEmpty() || previous.equals("0")) return;
             String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);
-            if (substr.isEmpty()) substr = "0";
             inputValue.setText(substr);
             inputValue.setSelection(inputValue.getText().length());
         } else if (id == R.id.dot) {
@@ -202,7 +213,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             inputValue.setText(previous.startsWith("-") ? previous.substring(1) : "-" + previous);
             inputValue.setSelection(inputValue.length());
         } else if (id == R.id.ac) {
-            inputValue.setText("0");
+            inputValue.setText("");
         } else if (id == R.id.zero) {
             String currentInput1 = inputValue.getText().toString();
             if (!currentInput1.equals("0")) inputValue.append("0");
@@ -247,6 +258,12 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     }
 
     public void convertAndDisplay(String inStr) {
+
+        if (inStr.isEmpty() || inStr.equals("-")) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
 
         String inCurrency = fromCurrencyISO.getText().toString();
         String outCurrency = toCurrencyISO.getText().toString();
@@ -500,10 +517,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         refresh.clearAnimation();
         super.onDestroyView();
     }
-    @Override
     public void onChooseCurrency(Currency c, String type) {
         //Log.d("SHRIKI","Clicked currency in frag -> " + c.getCountry() + " Type: " + type);
-        hideBottomSheet();
         String name = c.getCurrencyName();
         String symbol = c.getCurrencySymbol();
         String displayName = (symbol != null && !symbol.isEmpty()) ? String.format("%s (%s)", name, symbol) : name;

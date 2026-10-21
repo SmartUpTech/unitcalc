@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:minHeight="@dimen/converter_picker_row_height" android:gravity="center_vertical"
+    android:orientation="horizontal" android:padding="@dimen/converter_spacing">
+    <com.google.android.material.imageview.ShapeableImageView android:id="@+id/converter_picker_flag"
+        android:layout_width="@dimen/converter_picker_flag_size" android:layout_height="@dimen/converter_picker_flag_size"
+        android:layout_marginEnd="@dimen/converter_spacing" android:scaleType="centerCrop"
+        android:importantForAccessibility="no" app:shapeAppearanceOverlay="@style/ConverterPickerFlagShape"/>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:orientation="vertical" android:importantForAccessibility="noHideDescendants">
+        <TextView android:id="@+id/converter_picker_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fontFamily="@font/app_text" android:textSize="@dimen/converter_picker_item_size"/>
+        <TextView android:id="@+id/converter_picker_detail" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fontFamily="@font/app_text" android:textSize="@dimen/converter_picker_detail_size"/>
+    </LinearLayout>
+    <ImageView android:id="@+id/converter_picker_check"
+        android:layout_width="@dimen/converter_picker_icon_size" android:layout_height="@dimen/converter_picker_icon_size"
+        android:layout_marginStart="@dimen/converter_spacing" android:src="@drawable/ic_theme_check"
+        android:importantForAccessibility="no"/>
+</LinearLayout>

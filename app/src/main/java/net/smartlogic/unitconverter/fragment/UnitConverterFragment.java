@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
+import net.smartlogic.unitconverter.widget.ConverterPickerSpinner;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.Preferences;
@@ -45,6 +46,7 @@ import net.smartlogic.unitconverter.utils.NumberUtils;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.ArrayList;
 
 public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
@@ -128,6 +130,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
+        ((ConverterPickerSpinner) fromUnit).setPickerClick(() -> showUnitPicker(true));
+        ((ConverterPickerSpinner) toUnit).setPickerClick(() -> showUnitPicker(false));
         view.findViewById(R.id.from_selector).setOnClickListener(v -> fromUnit.performClick());
         view.findViewById(R.id.to_selector).setOnClickListener(v -> toUnit.performClick());
         view.findViewById(R.id.ac).setOnClickListener(this);
@@ -207,7 +211,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 toUnit.setSelection(fromPos);
             } else if (id == R.id.ac) {
                 inputValue.setText("");
-                outputValue.setText("0");
+                outputValue.setText("");
                 convertAndDisplay("");
             } else if (id == R.id.backspace) {
                 if (previous.isEmpty()) return;
@@ -385,9 +389,15 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + context.getString(from.getLabelResource()) + " to " + context.getString(to.getLabelResource()));
 
+        if (in.isEmpty() || in.equals("-")) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
         double input;
         try { input = NumberUtils.parseDouble(in); }
         catch (NumberFormatException invalid) {
+            outputValue.setText("");
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
             return;
         }
@@ -450,15 +460,6 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         fromUnit.setAdapter(unitAdapter);
         toUnit.setAdapter(unitAdapter);
-        View.OnTouchListener selectionFeedback = (selector, event) -> {
-            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                InteractionFeedbackManager.perform(selector, InteractionFeedbackManager.Type.ACTION);
-            }
-            return false;
-        };
-        fromUnit.setOnTouchListener(selectionFeedback);
-        toUnit.setOnTouchListener(selectionFeedback);
-
         fromUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -467,6 +468,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastFromConversion(position);
+                parent.setContentDescription(getString(R.string.converter_picker_source_unit,
+                        getString(selectedConversion.getUnits().get(position).getLabelResource())));
             }
 
             @Override
@@ -483,6 +486,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastToConversion(position);
+                parent.setContentDescription(getString(R.string.converter_picker_destination_unit,
+                        getString(selectedConversion.getUnits().get(position).getLabelResource())));
             }
 
             @Override
@@ -500,6 +505,37 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             return selectedConversion.getId();
         }
         return mPrefs != null ? mPrefs.getLastConversion() : Conversion.LENGTH;
+    }
+
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        super.onViewCreated(view, state);
+        getChildFragmentManager().setFragmentResultListener(ConverterPickerDialogFragment.RESULT_KEY,
+                getViewLifecycleOwner(), (key, result) -> {
+                    if (result.getInt(ConverterPickerDialogFragment.GROUP) != getSelectedCategoryId()) return;
+                    int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
+                    if (index < 0 || index >= selectedConversion.getUnits().size()) return;
+                    Spinner target = result.getBoolean(ConverterPickerDialogFragment.SOURCE) ? fromUnit : toUnit;
+                    target.setSelection(index);
+                });
+    }
+
+    private void showUnitPicker(boolean source) {
+        if (selectedConversion == null) return;
+        ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
+        for (Unit unit : selectedConversion.getUnits()) {
+            String name = getString(unit.getLabelResource());
+            String symbol = unit.getSymbol();
+            labels.add(symbol == null || symbol.isEmpty() ? name
+                    : getString(R.string.converter_picker_unit_label, name, symbol));
+            details.add("");
+            keywords.add(symbol == null ? "" : symbol);
+        }
+        String title = getString(source ? R.string.converter_picker_from_title : R.string.converter_picker_to_title,
+                getString(selectedConversion.getLabelResource()));
+        Spinner target = source ? fromUnit : toUnit;
+        InteractionFeedbackManager.perform(target, InteractionFeedbackManager.Type.ACTION);
+        ConverterPickerDialogFragment.newInstance(title, source, getSelectedCategoryId(),
+                target.getSelectedItemPosition(), labels, details, keywords, null).showFor(this);
     }
 
     private void showCategoryPicker() {

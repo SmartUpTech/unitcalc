@@ -1,4 +1,5 @@
 <resources>
+    <fraction name="converter_selector_screen_width">25%</fraction>
     <integer name="value_text_min_sp">8</integer>
     <integer name="value_text_step_sp">2</integer>
     <dimen name="value_text_min_size">8sp</dimen>

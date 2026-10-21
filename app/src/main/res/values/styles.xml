@@ -461,7 +461,7 @@
         <item name="fontFamily">@font/app_text</item>
         <item name="android:textSize">@dimen/converter_value_text_size</item>
         <item name="android:textColor">@color/screen_result_text</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:minHeight">@dimen/converter_touch_target</item>
         <item name="android:padding">0dp</item>

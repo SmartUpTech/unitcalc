@@ -1,0 +1,31 @@
+<resources>
+    <string name="converter_picker_from_title">%1$s - Select From Value</string>
+    <string name="converter_picker_to_title">%1$s - Select To Value</string>
+    <string name="converter_picker_search_units">Search units</string>
+    <string name="converter_picker_search_currencies">Search currencies</string>
+    <string name="converter_picker_close">Close picker</string>
+    <string name="converter_picker_empty">No matching values. Try another name or symbol.</string>
+    <string name="converter_picker_selected">%1$s, selected</string>
+    <string name="converter_picker_unit_label">%1$s (%2$s)</string>
+    <string name="converter_picker_source_unit">%1$s, select source unit</string>
+    <string name="converter_picker_destination_unit">%1$s, select destination unit</string>
+    <dimen name="converter_picker_max_width">480dp</dimen>
+    <dimen name="converter_picker_max_height">640dp</dimen>
+    <dimen name="converter_picker_margin">20dp</dimen>
+    <dimen name="converter_picker_corner">8dp</dimen>
+    <dimen name="converter_picker_title_size">20sp</dimen>
+    <dimen name="converter_picker_item_size">16sp</dimen>
+    <dimen name="converter_picker_detail_size">12sp</dimen>
+    <dimen name="converter_picker_hint_size">10sp</dimen>
+    <dimen name="converter_picker_flag_size">32dp</dimen>
+    <dimen name="converter_picker_icon_size">24dp</dimen>
+    <dimen name="converter_picker_row_height">56dp</dimen>
+    <fraction name="converter_picker_height_fraction">75%</fraction>
+    <integer name="converter_picker_selected_alpha">24</integer>
+    <style name="ConverterPickerFlagShape" parent="RoundedCorners">
+        <item name="cornerSize">@dimen/converter_picker_corner</item>
+    </style>
+    <style name="ConverterPickerHint" parent="TextAppearance.Graphy.Caption">
+        <item name="android:textSize">@dimen/converter_picker_hint_size</item>
+    </style>
+</resources>

@@ -24,6 +24,8 @@ import java.util.List;
  */
 public final class CalculationLayout extends LinearLayout {
     private int viewportHeight;
+    private int viewportWidth;
+    int getViewportWidth() { return viewportWidth; }
     private ViewGroup keypad;
     private View controls;
     private TextView resultDisplay;
@@ -87,6 +89,7 @@ public final class CalculationLayout extends LinearLayout {
     }
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        viewportWidth = MeasureSpec.getSize(widthMeasureSpec);
         if (keypad == null || viewportHeight == 0) {
             fitsViewport = false;
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);

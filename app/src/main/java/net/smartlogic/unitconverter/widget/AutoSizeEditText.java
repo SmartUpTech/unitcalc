@@ -13,6 +13,7 @@ import net.smartlogic.unitconverter.R;
 /** Single-line amount editor; refits from its styled maximum on every measurement. */
 public final class AutoSizeEditText extends AppCompatEditText {
     private final float maximumSp;
+    private final int styledMinimumHeight;
 
     public AutoSizeEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -20,6 +21,7 @@ public final class AutoSizeEditText extends AppCompatEditText {
                 ? TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_SP, getTextSize(),
                         getResources().getDisplayMetrics())
                 : getTextSize() / getResources().getDisplayMetrics().scaledDensity;
+        styledMinimumHeight = getMinimumHeight();
     }
 
     @Override protected void onTextChanged(CharSequence text, int start, int before, int count) {
@@ -28,12 +30,22 @@ public final class AutoSizeEditText extends AppCompatEditText {
     }
 
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
+        // The row's geometry belongs to the maximum text role, not the current
+        // fitted size. Recompute from the current typeface/scaling and padding so
+        // resizing, deleting and clearing cannot pull the keypad upward.
+        TextPaint probe = new TextPaint(getPaint());
+        probe.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, maximumSp,
+                getResources().getDisplayMetrics()));
+        android.graphics.Paint.FontMetricsInt metrics = probe.getFontMetricsInt();
+        int lineHeight = getIncludeFontPadding() ? metrics.bottom - metrics.top
+                : metrics.descent - metrics.ascent;
+        setMinimumHeight(Math.max(styledMinimumHeight,
+                lineHeight + getCompoundPaddingTop() + getCompoundPaddingBottom()));
         super.onMeasure(widthSpec, heightSpec);
         int width = getMeasuredWidth() - getCompoundPaddingLeft() - getCompoundPaddingRight();
         if (width <= 0) return;
         float minimum = getResources().getInteger(R.integer.value_text_min_sp);
         float step = getResources().getInteger(R.integer.value_text_step_sp);
-        TextPaint probe = new TextPaint(getPaint());
         CharSequence text = getText();
         if (getTransformationMethod() != null) {
             text = getTransformationMethod().getTransformation(text, this);
@@ -42,7 +54,8 @@ public final class AutoSizeEditText extends AppCompatEditText {
         while (true) {
             probe.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size,
                     getResources().getDisplayMetrics()));
-            if (size <= minimum || probe.measureText(text, 0, text.length()) <= width) break;
+            boolean fits = probe.measureText(text, 0, text.length()) <= width;
+            if (size <= minimum || fits) break;
             size = Math.max(minimum, size - step);
         }
         if (Math.abs(getTextSize() - probe.getTextSize()) > 0.01f) {

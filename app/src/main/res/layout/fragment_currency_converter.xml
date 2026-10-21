@@ -66,12 +66,11 @@
                             style="@style/ConverterValue"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_input_amount"
+                            android:contentDescription="@string/converter_input_amount" android:hint="@string/zero"
                             android:maxLength="12"
-                            android:text="@string/zero"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="start|center_vertical" />
+                            android:gravity="right|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -118,12 +117,12 @@
                                     android:orientation="horizontal"
                                     android:gravity="center_vertical"
                                     android:layout_centerVertical="true">
-                                    <TextView
+                                    <net.smartlogic.unitconverter.widget.AutoSizeValueTextView
                                         android:id="@+id/fromCurrencyISO"
                                         style="@style/ConverterSelectorText"
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="0dp" android:layout_weight="1"
                                         android:layout_height="wrap_content"
-                                        android:singleLine="true" />
+                                        android:singleLine="false" android:maxLines="1" android:autoSizeTextType="uniform" android:autoSizeMinTextSize="@dimen/value_text_min_size" android:autoSizeMaxTextSize="@dimen/converter_unit_text_size" android:autoSizeStepGranularity="@dimen/value_text_size_step" />
                                     <TextView
                                         style="@style/ConverterLabel"
                                         android:layout_width="wrap_content"
@@ -180,10 +179,9 @@
                             android:contentDescription="@string/converter_output_amount"
                             android:focusable="false"
                             android:textIsSelectable="true"
-                            android:text="@string/zero"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="start|center_vertical" />
+                            android:gravity="right|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -230,12 +228,12 @@
                                     android:orientation="horizontal"
                                     android:gravity="center_vertical"
                                     android:layout_centerVertical="true">
-                                    <TextView
+                                    <net.smartlogic.unitconverter.widget.AutoSizeValueTextView
                                         android:id="@+id/toCurrencyISO"
                                         style="@style/ConverterSelectorText"
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="0dp" android:layout_weight="1"
                                         android:layout_height="wrap_content"
-                                        android:singleLine="true" />
+                                        android:singleLine="false" android:maxLines="1" android:autoSizeTextType="uniform" android:autoSizeMinTextSize="@dimen/value_text_min_size" android:autoSizeMaxTextSize="@dimen/converter_unit_text_size" android:autoSizeStepGranularity="@dimen/value_text_size_step" />
                                     <TextView
                                         style="@style/ConverterLabel"
                                         android:layout_width="wrap_content"

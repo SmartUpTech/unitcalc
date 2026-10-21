@@ -78,11 +78,11 @@
                             style="@style/ConverterValue"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_input_amount"
+                            android:contentDescription="@string/converter_input_amount" android:hint="@string/zero"
                             android:maxLength="12"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="start|center_vertical" />
+                            android:gravity="right|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                                 android:id="@+id/from_selector"
                                 android:clickable="true"
                                 android:focusable="true">
-                                <Spinner
+                                <net.smartlogic.unitconverter.widget.ConverterPickerSpinner
                                     android:id="@+id/fromUnit"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                             android:textIsSelectable="true"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="start|center_vertical" />
+                            android:gravity="right|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -187,7 +187,7 @@
                                 android:id="@+id/to_selector"
                                 android:clickable="true"
                                 android:focusable="true">
-                                <Spinner
+                                <net.smartlogic.unitconverter.widget.ConverterPickerSpinner
                                     android:id="@+id/toUnit"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"

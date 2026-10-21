@@ -19,6 +19,21 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class AutoSizeEditTextTest {
+    @Test public void selectedUnitShrinksToEightBeforeWrappingAndRecovers() {
+        UnitSelectionTextView view = new UnitSelectionTextView(new ContextThemeWrapper(
+                RuntimeEnvironment.getApplication(), R.style.AppTheme), null);
+        view.setText("12345678901234567890");
+        measure(view, 100);
+        assertEquals(1, view.getMaxLines());
+        assertTrue(view.getTextSize() < 14f);
+        measure(view, 20);
+        assertEquals(8f, view.getTextSize(), 0.1f);
+        assertEquals(2, view.getMaxLines());
+        measure(view, 1000);
+        assertEquals(14f, view.getTextSize(), 0.1f);
+        assertEquals(1, view.getMaxLines());
+    }
+
     @Test public void calculatorDisplaysShrinkAndGrow() {
         View root = LayoutInflater.from(new ContextThemeWrapper(RuntimeEnvironment.getApplication(),
                 R.style.AppTheme)).inflate(R.layout.pane_calculator_calculate, null);
