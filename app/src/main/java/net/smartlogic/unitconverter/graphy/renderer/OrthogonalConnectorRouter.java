@@ -166,21 +166,16 @@ final class OrthogonalConnectorRouter {
 
     @NonNull
     private PointF portPoint(@NonNull RectF box, @NonNull Port port) {
-        return portPoint(box, port, 0f);
-    }
-
-    @NonNull
-    private PointF portPoint(@NonNull RectF box, @NonNull Port port, float outset) {
         switch (port) {
             case TOP:
-                return new PointF(box.centerX(), box.top - outset);
+                return new PointF(box.centerX(), box.top);
             case BOTTOM:
-                return new PointF(box.centerX(), box.bottom + outset);
+                return new PointF(box.centerX(), box.bottom);
             case LEFT:
-                return new PointF(box.left - outset, box.centerY());
+                return new PointF(box.left, box.centerY());
             case RIGHT:
             default:
-                return new PointF(box.right + outset, box.centerY());
+                return new PointF(box.right, box.centerY());
         }
     }
 
@@ -193,8 +188,9 @@ final class OrthogonalConnectorRouter {
                                     @NonNull Port startPort,
                                     @NonNull RectF to,
                                     @NonNull Port endPort) {
-        PointF start = portPoint(from, startPort, clearance);
-        PointF end = portPoint(to, endPort, clearance);
+        // Clearance is for bends/obstacles, not a gap at either node's border.
+        PointF start = portPoint(from, startPort);
+        PointF end = portPoint(to, endPort);
         List<PointF> points = new ArrayList<>();
         points.add(start);
 
@@ -251,8 +247,8 @@ final class OrthogonalConnectorRouter {
         }
         laneX = Math.max(minX, Math.min(maxX, laneX));
 
-        PointF start = portPoint(from, goLeft ? Port.LEFT : Port.RIGHT, clearance);
-        PointF end = portPoint(to, goLeft ? Port.LEFT : Port.RIGHT, clearance);
+        PointF start = portPoint(from, goLeft ? Port.LEFT : Port.RIGHT);
+        PointF end = portPoint(to, goLeft ? Port.LEFT : Port.RIGHT);
 
         List<PointF> points = new ArrayList<>();
         points.add(start);

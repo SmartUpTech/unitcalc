@@ -50,6 +50,17 @@ public class CalculationLayoutTest {
                 measure(currency, size[0], size[1]);
                 assertKeys(unit, true);
                 assertKeys(currency, true);
+                for (View converter : new View[]{unit, currency}) {
+                    ViewGroup root = (ViewGroup) converter;
+                    assertEquals(View.GONE, converter.findViewById(R.id.converter_from_label).getVisibility());
+                    assertEquals(View.GONE, converter.findViewById(R.id.converter_to_label).getVisibility());
+                    assertTrue(bounds(root, converter.findViewById(R.id.input)).right
+                            <= bounds(root, converter.findViewById(R.id.fromUnit)).left);
+                    assertTrue(bounds(root, converter.findViewById(R.id.output)).right
+                            <= bounds(root, converter.findViewById(R.id.toUnit)).left);
+                    assertTrue(bounds(root, converter.findViewById(R.id.fromUnit)).right
+                            <= bounds(root, converter.findViewById(R.id.reverse)).left);
+                }
                 assertEquals("keypad parity " + size[0] + "x" + size[1] + " scale=" + scale,
                         bounds((ViewGroup) unit, unit.findViewById(R.id.keypad)),
                         bounds((ViewGroup) currency, currency.findViewById(R.id.keypad)));

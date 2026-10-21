@@ -37,7 +37,12 @@ record GraphyNodeContent(StaticLayout caption, StaticLayout value, float width, 
         StaticLayout value = textLayout(text, valuePaint, textWidth);
         float textHeight = value.getHeight() + (label.isEmpty() ? 0 : caption.getHeight() + padding / 2);
         float height = Math.max(compact ? theme.getOperationMarkerSize() : theme.getNodeMinHeight(),
-                textHeight + padding * 2);
+                textHeight + theme.getNodeVerticalPadding() * 2);
+        if (compact) {
+            // Large text grows the circle rather than stretching it into an oval.
+            width = Math.min(maxWidth, Math.max(width, height));
+            height = Math.max(height, width);
+        }
         return new GraphyNodeContent(caption, value, width, height, padding, compact);
     }
 

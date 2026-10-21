@@ -222,7 +222,8 @@ public final class CalculationLayout extends LinearLayout {
             for (int i = 0; i < section.getChildCount(); i++) {
                 LayoutParams params = (LayoutParams) section.getChildAt(i).getLayoutParams();
                 params.width = inline ? 0 : LayoutParams.MATCH_PARENT;
-                params.weight = inline ? (i == 0 ? 1.25f : 1f) : 0;
+                int id = section.getChildAt(i).getId();
+                params.weight = inline ? (id == R.id.input || id == R.id.output ? 1f : 1.25f) : 0;
             }
         }
     }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="graphy_export_paper">#FFFFFF</color>
+    <dimen name="graphy_export_margin">24dp</dimen>
+    <dimen name="graphy_export_gap">24dp</dimen>
+    <dimen name="graphy_export_title_text">20sp</dimen>
+    <dimen name="graphy_export_result_text">24sp</dimen>
+    <dimen name="graphy_export_legend_symbol">18dp</dimen>
+    <dimen name="graphy_export_watermark_text">24sp</dimen>
+    <integer name="graphy_export_watermark_alpha">32</integer>
+    <integer name="graphy_export_png_scale">2</integer>
+    <integer name="graphy_export_png_max_pixels">16000000</integer>
+    <integer name="graphy_export_png_max_edge">16384</integer>
+    <integer name="graphy_export_cache_hours">24</integer>
+</resources>

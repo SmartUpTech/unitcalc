@@ -1,0 +1,11 @@
+<resources>
+    <integer name="value_text_min_sp">8</integer>
+    <integer name="value_text_step_sp">2</integer>
+    <dimen name="value_text_min_size">8sp</dimen>
+    <dimen name="value_text_size_step">2sp</dimen>
+    <!-- Expression maximum is 21sp: descend by 2sp, clamping the last step to 8sp. -->
+    <array name="expression_text_sizes">
+        <item>8sp</item><item>9sp</item><item>11sp</item><item>13sp</item>
+        <item>15sp</item><item>17sp</item><item>19sp</item><item>@dimen/h2</item>
+    </array>
+</resources>

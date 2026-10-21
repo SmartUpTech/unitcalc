@@ -61,6 +61,17 @@
                         app:layout_constraintTop_toTopOf="parent"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/converter_row_height">
+                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                            android:id="@+id/input"
+                            style="@style/ConverterValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_input_amount"
+                            android:maxLength="12"
+                            android:text="@string/zero"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/converter_spacing"
+                            android:gravity="start|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -70,6 +81,7 @@
                             <TextView
                                 style="@style/ConverterLabel"
                                 android:id="@+id/converter_from_label"
+                                android:visibility="gone"
                                 android:layout_width="@dimen/converter_label_width"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/converter_spacing"
@@ -139,17 +151,6 @@
                                     android:contentDescription="@null" />
                             </RelativeLayout>
                         </LinearLayout>
-                        <EditText
-                            android:id="@+id/input"
-                            style="@style/ConverterValue"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_input_amount"
-                            android:maxLength="12"
-                            android:text="@string/zero"
-                            android:layout_weight="1"
-                            android:layout_marginStart="@dimen/converter_spacing"
-                            android:gravity="end|center_vertical" />
                     </net.smartlogic.unitconverter.widget.ConverterValueRow>
                     <include
                         layout="@layout/converter_swap"
@@ -171,6 +172,18 @@
                         app:layout_constraintTop_toBottomOf="@id/converter_source_section"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/converter_row_height">
+                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                            android:id="@+id/output"
+                            style="@style/ConverterValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_output_amount"
+                            android:focusable="false"
+                            android:textIsSelectable="true"
+                            android:text="@string/zero"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/converter_spacing"
+                            android:gravity="start|center_vertical" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -180,6 +193,7 @@
                             <TextView
                                 style="@style/ConverterLabel"
                                 android:id="@+id/converter_to_label"
+                                android:visibility="gone"
                                 android:layout_width="@dimen/converter_label_width"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/converter_spacing"
@@ -249,18 +263,6 @@
                                     android:contentDescription="@null" />
                             </RelativeLayout>
                         </LinearLayout>
-                        <EditText
-                            android:id="@+id/output"
-                            style="@style/ConverterValue"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_output_amount"
-                            android:focusable="false"
-                            android:textIsSelectable="true"
-                            android:text="@string/zero"
-                            android:layout_weight="1"
-                            android:layout_marginStart="@dimen/converter_spacing"
-                            android:gravity="end|center_vertical" />
                     </net.smartlogic.unitconverter.widget.ConverterValueRow>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView

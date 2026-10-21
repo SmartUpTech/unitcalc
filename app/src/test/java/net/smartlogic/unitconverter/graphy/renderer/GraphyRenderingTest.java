@@ -63,7 +63,7 @@ public class GraphyRenderingTest {
     public void sharedNodesCanBeMeasuredAtMinimumSupportedApi() {
         var layout = new GraphLayoutEngine().layout(linear("5 km", "3.106855 mi"),
                 new GraphyViewTheme(RuntimeEnvironment.getApplication()), 320);
-        assertEquals(4, layout.nodeBounds().size());
+        assertTrue(layout.nodeBounds().keySet().containsAll(List.of("source", "relationship", "operation", "target")));
         assertTrue(layout.contentHeight() > 0);
     }
     @Test public void graphFitsNarrowWidthWithoutShrinkingOrClippingText() {
@@ -72,11 +72,11 @@ public class GraphyRenderingTest {
                 "0.000000123 international nautical miles");
         GraphyViewTheme theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
         var layout = new GraphLayoutEngine().layout(graph, theme, 240);
-        assertEquals(graph.getNodes().size(), layout.nodeBounds().size());
+        assertTrue(layout.nodeBounds().keySet().containsAll(graph.getNodes().stream().map(GraphyNode::id).toList()));
         for (var entry : layout.nodeBounds().entrySet()) {
             var box = entry.getValue();
             assertTrue(box.x() >= 0);
-            assertTrue(box.x() + box.width() <= 240);
+            assertTrue(box.x() + box.width() <= layout.contentWidth());
             assertTrue(box.height() >= theme.getNodeMinHeight());
             var text = layout.content().get(entry.getKey());
             assertTrue(text.value().getPaint().getTextSize() >= theme.getValueTextSize());
@@ -84,6 +84,49 @@ public class GraphyRenderingTest {
         assertTrue(layout.content().get("source").value().getLineCount() > 1);
         assertNoOverlaps(layout);
     }
+    @Test public void compactShapesRetainSeparateAccessibleTouchTargets() {
+        var context = RuntimeEnvironment.getApplication();
+        var theme = new GraphyViewTheme(context);
+        var graph = expression("1+2", "3");
+        var layout = new GraphLayoutEngine().layout(graph, theme, 320);
+        var view = new FlowchartGraphView(context);
+        view.setGraph(graph, theme);
+        view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 320, view.getMeasuredHeight());
+        var provider = view.getAccessibilityNodeProvider();
+        java.util.List<android.graphics.Rect> targets = new java.util.ArrayList<>();
+        for (int i = 0; i < layout.presentation().getNodes().size(); i++) {
+            var node = layout.presentation().getNodes().get(i);
+            var visual = layout.nodeBounds().get(node.id());
+            var target = new android.graphics.Rect();
+            provider.createAccessibilityNodeInfo(i).getBoundsInParent(target);
+            assertTrue(target.width() >= theme.getTouchTarget());
+            assertTrue(target.height() >= theme.getTouchTarget());
+            assertTrue(target.top >= 0 && target.bottom <= view.getMeasuredHeight());
+            for (var other : targets) assertFalse(android.graphics.Rect.intersects(other, target));
+            targets.add(target);
+            assertTrue("Default cards should be visibly compact", visual.height() < theme.getTouchTarget());
+            if (node.type() == GraphyNodeType.OPERATION) {
+                assertTrue(visual.width() >= theme.getOperationMarkerSize());
+                assertTrue(visual.width() < theme.getTouchTarget());
+                assertEquals(visual.width(), visual.height(), 0.01f);
+                assertTrue(theme.getOperationTextSize() > theme.getValueTextSize());
+                GraphyNode[] selected = new GraphyNode[1];
+                view.setOnNodeClickListener(clicked -> selected[0] = clicked);
+                float x = target.centerX(), y = target.top + 1;
+                assertTrue(y < visual.y());
+                for (int action : new int[]{android.view.MotionEvent.ACTION_DOWN, android.view.MotionEvent.ACTION_UP}) {
+                    var event = android.view.MotionEvent.obtain(0, 0, action, x, y, 0);
+                    view.onTouchEvent(event);
+                    event.recycle();
+                }
+                assertNotNull(selected[0]);
+                assertEquals(node.id(), selected[0].id());
+            }
+        }
+    }
+
     @Test public void multiStepInputsAppearNearTheirConsumers() {
         var graph = expression("(500+600*6%)/2+1250", "1,518");
         var layout = new GraphLayoutEngine().layout(graph, new GraphyViewTheme(RuntimeEnvironment.getApplication()), 360);
@@ -136,6 +179,129 @@ public class GraphyRenderingTest {
         assertTrue(layout.nodeBounds().get(left.id()).x() < layout.nodeBounds().get(right.id()).x());
     }
 
+    @Test public void twoShortIndependentCalculationsFitWithoutHorizontalOverflow() {
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var layout = new GraphLayoutEngine().layout(expression("(12+8)*(9-4)", "100"), theme, 320);
+        assertEquals(320, layout.contentWidth());
+        assertEquals(List.of(2, 1), layout.stages().stream().map(GraphLayoutEngine.StageMarker::calculationCount).toList());
+        assertNoOverlaps(layout);
+    }
+
+    @Test public void declaredOperandEdgesDetermineOrderEvenWhenNodeListIsReversed() {
+        var original = expression("20-5", "15");
+        var nodes = new java.util.ArrayList<>(original.getNodes());
+        java.util.Collections.reverse(nodes);
+        var graph = GraphyOutput.create("test", "20-5", "15", nodes, original.getConnections(), null, null);
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var layout = new GraphLayoutEngine().layout(graph, theme, 320);
+        var left = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.INPUT && n.displayValue().equals("20")).findFirst().orElseThrow();
+        var right = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.INPUT && n.displayValue().equals("5")).findFirst().orElseThrow();
+        assertTrue(layout.nodeBounds().get(left.id()).x() < layout.nodeBounds().get(right.id()).x());
+    }
+
+    @Test public void reportedExpressionUsesThreeParallelStagesWithoutValueCopies() {
+        var graph = expression("633-9-9+6*9/2", "642");
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var layout = new GraphLayoutEngine().layout(graph, theme, 360);
+        assertEquals(List.of(2, 2, 1), layout.stages().stream().map(GraphLayoutEngine.StageMarker::calculationCount).toList());
+        assertEquals(1, layout.presentation().getNodes().stream().filter(n -> n.displayValue().equals("615")).count());
+        assertEquals(graph.getNodes().size(), layout.presentation().getNodes().size());
+        assertEquals(graph.getConnections(), layout.presentation().getConnections());
+        for (var edge : graph.getConnections()) {
+            var from = layout.nodeBounds().get(edge.fromNodeId());
+            var to = layout.nodeBounds().get(edge.toNodeId());
+            assertTrue(to.y() > from.y() + from.height());
+        }
+        assertEquals("642", graph.getResult());
+        assertNoOverlaps(layout);
+    }
+
+    @Test public void complexStagesFoldWithoutLosingBoundaryOutputsOrConfusingEqualValues() {
+        var graph = expression("((12+8)*(9-4)+(18/3-2))/(7-3)", "26");
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var expanded = new GraphLayoutEngine().layout(graph, theme, 320);
+        assertEquals(List.of(4, 2, 1, 1), expanded.stages().stream().map(GraphLayoutEngine.StageMarker::calculationCount).toList());
+        assertTrue("Four independent calculations need horizontal room", expanded.contentWidth() > 320);
+        var fours = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.DERIVED && n.displayValue().equals("4")).toList();
+        assertEquals(2, fours.size());
+        assertNotEquals(fours.get(0).id(), fours.get(1).id());
+        for (int mask = 0; mask < 16; mask++) {
+            java.util.Set<Integer> collapsed = new java.util.HashSet<>();
+            for (int stage = 1; stage <= 4; stage++) if ((mask & (1 << (stage - 1))) != 0) collapsed.add(stage);
+            var folded = new GraphLayoutEngine().layout(graph, theme, 320, collapsed);
+            assertEquals(4, folded.stages().size());
+            assertEquals(folded.presentation().getNodes().size(), GraphyTopology.orderedNodes(folded.presentation()).size());
+            assertEquals("26", folded.presentation().getResult());
+            for (var four : fours) assertTrue(folded.nodeBounds().containsKey(four.id()));
+            for (var node : folded.presentation().getNodes()) assertSame(node, folded.originals().get(node.id()));
+            assertNoOverlaps(folded);
+        }
+        var firstFolded = new GraphLayoutEngine().layout(graph, theme, 320, java.util.Set.of(1));
+        assertTrue(firstFolded.contentHeight() < expanded.contentHeight());
+        assertTrue(firstFolded.contentWidth() < expanded.contentWidth());
+        assertTrue(firstFolded.stages().get(0).collapsed());
+    }
+
+    @Test public void foldingLaterStageContractsEdgesFromSharedPreviousResults() {
+        var graph = expression("20-5-3", "12");
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var expanded = new GraphLayoutEngine().layout(graph, theme, 320);
+        var folded = new GraphLayoutEngine().layout(graph, theme, 320, java.util.Set.of(2));
+        var fifteen = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.DERIVED && n.displayValue().equals("15")).findFirst().orElseThrow();
+        var result = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.RESULT).findFirst().orElseThrow();
+        assertEquals(1, expanded.presentation().getNodes().stream().filter(n -> n.id().equals(fifteen.id())).count());
+        assertTrue(folded.presentation().getConnections().stream().anyMatch(e -> e.fromNodeId().equals(fifteen.id()) && e.toNodeId().equals(result.id())));
+        assertEquals(expanded.stages().get(1).number(), folded.stages().get(1).number());
+        assertTrue(folded.contentHeight() < expanded.contentHeight());
+    }
+
+    @Config(sdk = 26, application = Application.class)
+    @Test public void foldControlsHaveAccessibleActionsAndKeepOriginalResultDetails() {
+        var context = RuntimeEnvironment.getApplication();
+        var graph = expression("20-5-3", "12");
+        var theme = new GraphyViewTheme(context);
+        var view = new FlowchartGraphView(context);
+        view.setGraph(graph, theme);
+        view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 320, view.getMeasuredHeight());
+        var provider = view.getAccessibilityNodeProvider();
+        int foldId = graph.getNodes().size();
+        var control = provider.createAccessibilityNodeInfo(foldId);
+        assertTrue(control.getContentDescription().toString().startsWith("Collapse stage 1"));
+        var rect = new android.graphics.Rect();
+        control.getBoundsInParent(rect);
+        assertTrue(rect.width() >= theme.getTouchTarget() && rect.height() >= theme.getTouchTarget());
+        assertTrue(provider.performAction(foldId, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_COLLAPSE, null));
+        assertEquals(java.util.Set.of(1), view.getCollapsedStages());
+        var folded = new GraphLayoutEngine().layout(graph, theme, 320, java.util.Set.of(1));
+        int newId = folded.presentation().getNodes().size();
+        assertTrue(provider.createAccessibilityNodeInfo(newId).getContentDescription().toString().startsWith("Expand stage 1"));
+        assertTrue(provider.performAction(newId, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_EXPAND, null));
+        assertTrue(view.getCollapsedStages().isEmpty());
+    }
+
+    @Test public void wrappedRightOperandDoesNotReverseAccessibilityReadingOrder() {
+        RuntimeEnvironment.setFontScale(2f);
+        var graph = GraphyOutput.create("test", "", "answer", List.of(
+                new GraphyNode("left", GraphyNodeType.INPUT, "1", "1", "operand"),
+                new GraphyNode("right", GraphyNodeType.INPUT, "123456789012345678901234567890",
+                        "123456789012345678901234567890", "operand"),
+                new GraphyNode("subtract", GraphyNodeType.OPERATION, "-", "-", "subtraction"),
+                new GraphyNode("result", GraphyNodeType.RESULT, "answer", "answer", "result")),
+                List.of(new GraphyConnection("left", "subtract", null),
+                        new GraphyConnection("right", "subtract", null),
+                        new GraphyConnection("subtract", "result", null)), null, null);
+        var context = RuntimeEnvironment.getApplication();
+        var view = new FlowchartGraphView(context);
+        view.setMaxWidth(240);
+        view.setGraph(graph, new GraphyViewTheme(context));
+        view.measure(View.MeasureSpec.makeMeasureSpec(240, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 240, view.getMeasuredHeight());
+        assertEquals("Input: 1", view.getAccessibilityNodeProvider().createAccessibilityNodeInfo(0)
+                .getContentDescription().toString());
+    }
+
     @Test public void nativeCanvasCannotEraseSiblingContentOutsideItsBounds() {
         var context = RuntimeEnvironment.getApplication();
         var view = new FlowchartGraphView(context);
@@ -151,6 +317,34 @@ public class GraphyRenderingTest {
         view.draw(canvas);
         assertEquals("Compose header must survive native graph drawing", android.graphics.Color.MAGENTA, bitmap.getPixel(30, 20));
         assertEquals("Right sibling must survive", android.graphics.Color.MAGENTA, bitmap.getPixel(300, 80));
+        bitmap.recycle();
+    }
+
+    @Test public void connectorHasNoBlankGapAtSourceArrowBaseOrDestination() {
+        var context = RuntimeEnvironment.getApplication();
+        var graph = expression("1+2", "3");
+        var theme = new GraphyViewTheme(context);
+        var layout = new GraphLayoutEngine().layout(graph, theme, 320);
+        var operation = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.OPERATION).findFirst().orElseThrow();
+        var result = graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.RESULT).findFirst().orElseThrow();
+        var from = layout.nodeBounds().get(operation.id());
+        var to = layout.nodeBounds().get(result.id());
+        var view = new FlowchartGraphView(context);
+        view.setMaxWidth(320);
+        view.setGraph(graph, theme);
+        view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 320, view.getMeasuredHeight());
+        var bitmap = Bitmap.createBitmap(320, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        view.draw(new Canvas(bitmap));
+        int center = Math.round(from.x() + from.width() / 2);
+        for (int y = (int) Math.ceil(from.y() + from.height()); y < to.y(); y++) {
+            boolean ink = false;
+            for (int x = center - 1; x <= center + 1; x++) {
+                ink |= bitmap.getPixel(x, y) != theme.getBackgroundColor();
+            }
+            assertTrue("Disconnected connector at row " + y, ink);
+        }
         bitmap.recycle();
     }
 
@@ -192,7 +386,7 @@ public class GraphyRenderingTest {
                 new GraphyConnection("input", "a", null), new GraphyConnection("input", "b", null),
                 new GraphyConnection("a", "result", null), new GraphyConnection("b", "result", null)), null, null);
         var layout = new GraphLayoutEngine().layout(graph, new GraphyViewTheme(RuntimeEnvironment.getApplication()), 240);
-        assertEquals(4, layout.nodeBounds().size());
+        assertTrue(layout.nodeBounds().keySet().containsAll(List.of("input", "a", "b", "result")));
         assertNoOverlaps(layout);
         assertTrue(layout.nodeBounds().get("result").y() > layout.nodeBounds().get("b").y());
     }
@@ -215,9 +409,13 @@ public class GraphyRenderingTest {
         var source = provider.createAccessibilityNodeInfo(0);
         assertTrue(source.getContentDescription().toString().contains("Input"));
         assertTrue(source.getContentDescription().toString().contains("5 km"));
-        var result = provider.createAccessibilityNodeInfo(3);
+        var layout = new GraphLayoutEngine().layout(linear("5 km", "3.106855 mi"), new GraphyViewTheme(activity), 320);
+        var visualOrder = layout.presentation().getNodes();
+        int resultId = java.util.stream.IntStream.range(0, visualOrder.size())
+                .filter(i -> visualOrder.get(i).id().equals("target")).findFirst().orElseThrow();
+        var result = provider.createAccessibilityNodeInfo(resultId);
         assertTrue(result.getContentDescription().toString().contains("Uses"));
-        assertTrue(provider.performAction(3, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_CLICK, null));
+        assertTrue(provider.performAction(resultId, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_CLICK, null));
         assertNotNull(selected[0]);
         assertEquals("target", selected[0].id());
         controller.pause().stop().destroy();
@@ -259,8 +457,11 @@ public class GraphyRenderingTest {
         var context = RuntimeEnvironment.getApplication();
         var conversions = Conversions.getInstance();
         Map<String, GraphyOutput> examples = new LinkedHashMap<>();
+        examples.put("very-complex", expression("((12+8)*(9-4)+(18/3-2))/(7-3)", "26"));
+        examples.put("simple-chain", expression("20-5-3", "12"));
         examples.put("percentage", expression("600*6%", "36"));
         examples.put("multi-step", expression("(500+600*6%)/2+1250", "1,518"));
+        examples.put("reported-expression", expression("633-9-9+6*9/2", "642"));
         examples.put("length", linear("5 km", "3.106855 mi"));
         var temperatures = conversions.getById(Conversion.TEMPERATURE).getUnits();
         Unit c = temperatures.stream().filter(u -> u.getId() == Unit.CELSIUS).findFirst().orElseThrow();
@@ -282,11 +483,11 @@ public class GraphyRenderingTest {
                 FlowchartGraphView view = new FlowchartGraphView(context);
                 view.setMaxWidth(360);
                 view.setGraph(example.getValue(), new GraphyViewTheme(context));
-                view.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
                 assertTrue(view.getMeasuredHeight() > 0);
-                view.layout(0, 0, 360, view.getMeasuredHeight());
-                Bitmap bitmap = Bitmap.createBitmap(360, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+                view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+                Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
                 view.draw(new Canvas(bitmap));
                 try (var stream = new FileOutputStream(new File(directory, theme.id() + "-" + example.getKey() + ".png"))) {
                     assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream));

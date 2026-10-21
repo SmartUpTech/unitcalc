@@ -20,15 +20,14 @@ public final class ConverterValueRow extends LinearLayout {
         }
         if (owner != null) {
             int available = MeasureSpec.getSize(widthSpec) - getPaddingLeft() - getPaddingRight();
-            LayoutParams picker = (LayoutParams) getChildAt(0).getLayoutParams();
-            LayoutParams amount = (LayoutParams) getChildAt(1).getLayoutParams();
-            int label = dimension(R.dimen.converter_label_width) + dimension(R.dimen.converter_spacing);
-            int pickerMinimum = label + dimension(R.dimen.converter_touch_target)
+            LayoutParams amount = (LayoutParams) getChildAt(0).getLayoutParams();
+            LayoutParams picker = (LayoutParams) getChildAt(1).getLayoutParams();
+            int pickerMinimum = dimension(R.dimen.converter_touch_target)
                     + dimension(R.dimen.converter_chevron_size) + 2 * dimension(R.dimen.converter_spacing);
             TextView iso = owner.findViewById(R.id.fromCurrencyISO);
             if (iso != null) {
                 TextView toIso = owner.findViewById(R.id.toCurrencyISO);
-                pickerMinimum = label + dimension(R.dimen.converter_flag_height)
+                pickerMinimum = dimension(R.dimen.converter_flag_height)
                         + (int) Math.ceil(Math.max(textWidth(iso), textWidth(toIso)))
                         + dimension(R.dimen.converter_chevron_size) + 4 * dimension(R.dimen.converter_spacing);
             }

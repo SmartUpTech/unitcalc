@@ -23,25 +23,28 @@
                 android:paddingHorizontal="@dimen/converter_card_margin"
                 android:paddingTop="@dimen/converter_spacing"
                 android:paddingBottom="@dimen/converter_spacing">
-                <TextView
+                <net.smartlogic.unitconverter.widget.AutoSizeValueTextView
                     android:id="@+id/expression"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizePresetSizes="@array/expression_text_sizes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="none"
                     android:fontFamily="@font/app_text"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
+                    android:scrollHorizontally="false"
+                    android:singleLine="false"
                     android:textColor="@color/semantic_number"
                     android:textSize="@dimen/h2"/>
-                <TextView
+                <net.smartlogic.unitconverter.widget.AutoSizeValueTextView
                     android:id="@+id/result"
                     style="@style/ResultDisplay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:autoSizeMaxTextSize="@dimen/resultDisplaySize"
-                    android:autoSizeMinTextSize="28sp"
+                    android:autoSizeMinTextSize="@dimen/value_text_min_size"
+                    android:autoSizeStepGranularity="@dimen/value_text_size_step"
                     android:autoSizeTextType="uniform"
                     android:gravity="center"
                     android:maxLines="1"

@@ -76,15 +76,15 @@ public class OrthogonalConnectorRouterTest {
         assertTrue(maxX(from15) <= innerRight + 1f);
 
         assertEquals(bounds.get("in6").centerX(), leftIn.get(0).x, 1f);
-        assertTrue(leftIn.get(0).y > bounds.get("in6").bottom);
+        assertEquals(bounds.get("in6").bottom, leftIn.get(0).y, 0.01f);
         assertEquals(bounds.get("mulL").centerX(), last(leftIn).x, 1f);
-        assertTrue(last(leftIn).y < bounds.get("mulL").top);
+        assertEquals(bounds.get("mulL").top, last(leftIn).y, 0.01f);
 
         PointF addTop = last(from54);
         assertEquals(bounds.get("add").centerX(), addTop.x, 1f);
-        assertTrue(addTop.y < bounds.get("add").top);
+        assertEquals(bounds.get("add").top, addTop.y, 0.01f);
         assertEquals(bounds.get("add").centerX(), last(from15).x, 1f);
-        assertTrue(last(from15).y < bounds.get("add").top);
+        assertEquals(bounds.get("add").top, last(from15).y, 0.01f);
     }
 
     @Test
@@ -106,8 +106,8 @@ public class OrthogonalConnectorRouterTest {
         assertEquals("straight drop should not jog", 2, path.size());
         assertEquals(path.get(0).x, path.get(1).x, 0.1f);
         assertEquals(bounds.get("eight").centerX(), path.get(0).x, 0.1f);
-        assertTrue(path.get(0).y > bounds.get("eight").bottom);
-        assertTrue(last(path).y < bounds.get("add").top);
+        assertEquals(bounds.get("eight").bottom, path.get(0).y, 0.01f);
+        assertEquals(bounds.get("add").top, last(path).y, 0.01f);
     }
 
     @Test
@@ -158,18 +158,18 @@ public class OrthogonalConnectorRouterTest {
         obstacleLeft.union(bounds.get("in5"));
         assertTrue(minX(bypassLeft) < obstacleLeft.left);
         PointF leftTip = last(bypassLeft);
-        assertEquals(bounds.get("add").left - 8f, leftTip.x, 1f);
+        assertEquals(bounds.get("add").left, leftTip.x, 1f);
         assertEquals(bounds.get("add").centerY(), leftTip.y, 1f);
 
         PointF fifteenTip = last(lowerLeft);
         assertEquals(bounds.get("add").centerX(), fifteenTip.x, 1f);
-        assertEquals(bounds.get("add").top - 8f, fifteenTip.y, 1f);
+        assertEquals(bounds.get("add").top, fifteenTip.y, 1f);
 
         RectF obstacleRight = new RectF(bounds.get("in6"));
         obstacleRight.union(bounds.get("in5r"));
         assertTrue(maxX(bypassRight) > obstacleRight.right);
         PointF rightTip = last(bypassRight);
-        assertEquals(bounds.get("mulFinal").right + 8f, rightTip.x, 1f);
+        assertEquals(bounds.get("mulFinal").right, rightTip.x, 1f);
         assertEquals(bounds.get("mulFinal").centerY(), rightTip.y, 1f);
     }
 
@@ -223,7 +223,7 @@ public class OrthogonalConnectorRouterTest {
 
         assertTrue(maxX(companion) > stack.right);
         PointF tip = last(companion);
-        assertEquals(bounds.get("sub").right + 8f, tip.x, 1f);
+        assertEquals(bounds.get("sub").right, tip.x, 1f);
         assertEquals(bounds.get("sub").centerY(), tip.y, 1f);
 
         List<PointF> nested = router.route("outer", "rootMul");
@@ -231,7 +231,7 @@ public class OrthogonalConnectorRouterTest {
         assertTrue("nested bypass should sit farther out than the inner companion lane",
                 maxX(nested) > maxX(companion));
         assertTrue(maxX(nested) > stack.right);
-        assertEquals(bounds.get("rootMul").right + 8f, last(nested).x, 1f);
+        assertEquals(bounds.get("rootMul").right, last(nested).x, 1f);
     }
 
     private static OrthogonalConnectorRouter router(List<GraphyNode> nodes,

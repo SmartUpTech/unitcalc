@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -63,14 +68,21 @@ fun GraphyPanel(
             .padding(spacing.sm),
     ) {
         val graphWidth = constraints.maxWidth
-        // Graphy alone may grow vertically. Reset a previous graph's scroll on new output.
-        key(output) {
-            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)) {
+        val download = rememberGraphyDownload(output, (graphWidth / LocalDensity.current.density).toInt())
+        // The user permits both scroll axes for Graphy only. New output resets exploration.
+        key(output?.calculatorId, output?.expression, output?.result) {
+            var collapsedStages by rememberSaveable(output?.calculatorId, output?.expression, output?.result) {
+                mutableStateOf<List<Int>>(emptyList())
+            }
+            val horizontalScroll = rememberScrollState()
+            val verticalScroll = rememberScrollState()
+            Column(Modifier.fillMaxWidth().verticalScroll(verticalScroll).heightIn(min = maxHeight)) {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text(text = output?.metadata?.get(GraphyOutput.METADATA_CONTEXT) as? String ?: "",
                         style = MaterialTheme.typography.bodyLarge,
                         color = semanticColors.primaryText, modifier = Modifier.weight(1f))
                     GraphyHeader(onInfoClick = { showLegend = true })
+                    GraphyDownloadButton(download)
                 }
                 if (output == null || output.isEmpty) {
                     Text(stringResource(R.string.graphy_unavailable), color = semanticColors.secondaryText)
@@ -82,8 +94,12 @@ fun GraphyPanel(
                     // Only empty space is weighted: short graphs center, long graphs keep
                     // their intrinsic height and every node remains vertically reachable.
                     Spacer(Modifier.weight(1f))
-                    GraphyFlowchartHost(output, viewTheme, graphWidth, { selectedNode = it },
-                        modifier = Modifier.fillMaxWidth())
+                    Box(Modifier.fillMaxWidth().horizontalScroll(horizontalScroll)) {
+                        GraphyFlowchartHost(output, viewTheme, graphWidth, { selectedNode = it },
+                            collapsedStages.toSet(), { collapsedStages = it.sorted() }, { horizontalScroll.value },
+                            { dx, dy -> horizontalScroll.dispatchRawDelta(dx); verticalScroll.dispatchRawDelta(dy) },
+                            modifier = Modifier.wrapContentWidth(unbounded = true))
+                    }
                     Spacer(Modifier.weight(1f))
                 }
             }
@@ -204,6 +220,10 @@ private fun GraphyFlowchartHost(
     viewTheme: GraphyViewTheme,
     maxWidth: Int,
     onNodeSelected: (GraphyNode) -> Unit,
+    collapsedStages: Set<Int>,
+    onStagesChanged: (Set<Int>) -> Unit,
+    horizontalOffset: () -> Int,
+    onPan: (Float, Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = GraphyThemeTokens.semanticColors
@@ -212,12 +232,16 @@ private fun GraphyFlowchartHost(
         modifier = modifier,
         factory = { context -> FlowchartGraphView(context) },
         onReset = null,
-        onRelease = { it.setOnNodeClickListener(null) },
+        onRelease = { it.setOnNodeClickListener(null); it.setOnStageToggleListener(null); it.setOnPanListener(null) },
         update = { graphView ->
             graphView.setOnNodeClickListener { onNodeSelected(it) }
+            graphView.setOnStageToggleListener { onStagesChanged(it) }
+            graphView.setOnPanListener { dx, dy -> onPan(dx, dy) }
             graphView.setMaxWidth(maxWidth)
             graphView.setBackgroundColor(colors.background.toArgb())
             graphView.setGraph(output, viewTheme, configuration)
+            graphView.setCollapsedStages(collapsedStages)
+            graphView.setHorizontalViewportOffset(horizontalOffset())
         },
     )
 }

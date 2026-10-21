@@ -438,6 +438,7 @@
     <string name="graphy_role_explanation">Explanation</string>
     <string name="graphy_node_accessibility">%1$s: %2$s</string>
     <string name="graphy_dependency">Uses %1$s</string>
+    <string name="graphy_reused_value">Reused value</string>
     <string name="graphy_info_symbol">ⓘ</string>
     <string name="graphy_relationship">Conversion relationship</string>
     <string name="graphy_exchange_rate">Exchange rate</string>
@@ -459,4 +460,20 @@
     <string name="currency_cached_at">Last refreshed at: %1$s</string>
     <string name="currency_stale_at">Last refreshed at: %1$s (stale)</string>
     <string name="converter_exchange_rate">Exchange rate</string>
+    <string name="graphy_expand_stage">Expand stage %1$d, %2$s</string>
+    <string name="graphy_collapse_stage">Collapse stage %1$d, %2$s</string>
+    <string name="graphy_stage_collapsed">Collapsed</string>
+    <string name="graphy_stage_expanded">Expanded</string>
+    <plurals name="graphy_stage_calculations">
+        <item quantity="one">%d calculation</item>
+        <item quantity="other">%d calculations</item>
+    </plurals>
+    <string name="graphy_download">Download graph</string>
+    <string name="graphy_export_pdf">PDF</string>
+    <string name="graphy_export_png">PNG</string>
+    <string name="graphy_export_preparing">Preparing graph download</string>
+    <string name="graphy_export_saved">Graph saved</string>
+    <string name="graphy_export_failed">Could not save the graph. Please try again.</string>
+    <string name="graphy_export_png_too_large">This graph is too large for PNG. Please download it as PDF.</string>
+    <string name="graphy_export_result">= %1$s</string>
 </resources>

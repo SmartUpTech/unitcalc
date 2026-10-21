@@ -45,7 +45,7 @@ class GraphyPanelUiTest {
     private fun expression(text: String, result: String) = GraphyBridge().build(
         CalculationSnapshot.create("basic", text, text, result, ExpressionEvaluator.evaluate(text)))
 
-    @Test fun longGraphsRemainFullHeightAndScrollOnlyVerticallyInLightDarkAndLargeText() {
+    @Test fun graphsAllowBothAxesAndResetExplorationInLightDarkAndLargeText() {
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit()
             .putInt(Preferences.PREFS_THEME_USAGE_DAYS, Int.MAX_VALUE).commit()
@@ -72,13 +72,44 @@ class GraphyPanelUiTest {
                     val scroller = nodes.single { it.config.contains(SemanticsProperties.VerticalScrollAxisRange) }
                     val range = scroller.config[SemanticsProperties.VerticalScrollAxisRange]
                     assertTrue("Long graph must remain reachable", range.maxValue() > 0)
-                    assertFalse(nodes.any { it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) })
+                    // Folding survives reconstruction of an equivalent semantic output.
+                    val initialGraph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
+                    val firstFoldId = output.value.nodes.size
+                    assertTrue(initialGraph.accessibilityNodeProvider.performAction(firstFoldId,
+                        android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK, null))
+                    settle()
+                    assertEquals(setOf(1), initialGraph.collapsedStages)
+                    output.value = expression("((12+8)*3-15)/5+7", "16")
+                    measure()
+                    val retainedGraph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
+                    assertEquals(setOf(1), retainedGraph.collapsedStages)
+                    val horizontal = nodes.single { it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) }
+                    assertTrue(horizontal.config[SemanticsProperties.HorizontalScrollAxisRange].maxValue() >= 0)
                     val graph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
                     assertTrue(graph.measuredHeight > 400)
-                    assertTrue(graph.measuredWidth <= 320)
-                    assertTrue(scroller.config[SemanticsActions.ScrollBy].action!!.invoke(0f, 10000f))
+                    assertTrue(graph.measuredWidth >= 280)
+                    // Independent branches require horizontal exploration at this viewport.
+                    output.value = expression("((12+8)*(9-4)+(18/3-2))/(7-3)", "26")
+                    measure()
+                    val wideScroller = nodes(view).single { it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) }
+                    val wideRange = wideScroller.config[SemanticsProperties.HorizontalScrollAxisRange]
+                    assertTrue(wideRange.maxValue() > 0)
+                    // Real native pointer movement must pan, not just semantic ScrollBy.
+                    val wideGraph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
+                    val now = android.os.SystemClock.uptimeMillis()
+                    for ((action, x, offset) in listOf(Triple(android.view.MotionEvent.ACTION_DOWN, 260f, 0L),
+                        Triple(android.view.MotionEvent.ACTION_MOVE, 40f, 400L),
+                        Triple(android.view.MotionEvent.ACTION_UP, 40f, 450L))) {
+                        val event = android.view.MotionEvent.obtain(now, now + offset, action, x, 80f, 0)
+                        assertTrue(wideGraph.onTouchEvent(event))
+                        event.recycle()
+                    }
                     settle()
-                    assertTrue(range.value() > 0)
+                    assertTrue("Pointer drag must move the graph", wideRange.value() > 0)
+                    val currentVertical = nodes(view).single { it.config.contains(SemanticsProperties.VerticalScrollAxisRange) }
+                    assertTrue(currentVertical.config[SemanticsActions.ScrollBy].action!!.invoke(0f, 10000f))
+                    settle()
+                    assertTrue(currentVertical.config[SemanticsProperties.VerticalScrollAxisRange].value() > 0)
                     val directory = File("build/reports/graphy-panel").apply { mkdirs() }
                     val bitmap = Bitmap.createBitmap(320, 400, Bitmap.Config.ARGB_8888)
                     view.draw(Canvas(bitmap))
@@ -92,6 +123,9 @@ class GraphyPanelUiTest {
                     val newRange = nodes(view).single { it.config.contains(SemanticsProperties.VerticalScrollAxisRange) }
                         .config[SemanticsProperties.VerticalScrollAxisRange]
                     assertEquals(0f, newRange.value(), 0f)
+                    val newHorizontal = nodes(view).single { it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) }
+                        .config[SemanticsProperties.HorizontalScrollAxisRange]
+                    assertEquals(0f, newHorizontal.value(), 0f)
                     val visibleCopy = nodes(view).flatMap { it.config.getOrNull(SemanticsProperties.Text) ?: emptyList() }
                         .joinToString { it.text }
                     assertFalse(visibleCopy.contains("How this answer was calculated"))
