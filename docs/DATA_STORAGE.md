@@ -13,6 +13,8 @@ description: Details of the application's persistence layers including SQLite an
 ## SHAREDPREFERENCES (Preferences)
 - **Usage**: App settings, last used states, and cached currency data.
 - **Keys**: `selected_theme`, `number_decimals`, `last_conversion`, `currency_data`.
+- **Currency cache**: `CurrencyRateStore` stores Frankfurter v2 USD-based rates, provider, per-quote observation dates and `fetchedAt` in `currency_data`. The payload and `currency_last_update` are written in one preference batch only after validation.
+- **Currency refresh**: Automatic fetches use a 12-hour interval; manual refresh bypasses it. Failed fetches preserve the last valid cache and timestamp. Legacy `data`/`rates` caches remain readable offline and migrate after a successful fetch. Unsupported currencies have no fabricated rate.
 - **Optimization**: Batch multiple updates using `apply()` instead of `commit()`.
 
 ## DATA INTEGRITY

@@ -35,7 +35,7 @@ public final class ThemeApplier {
     };
     private static final int[] ICON_IDS = {
             R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
-            R.id.btn_clear_history, R.id.share, R.id.refresh, R.id.catalog_icon,
+            R.id.btn_clear_history, R.id.refresh, R.id.catalog_icon,
             R.id.btn_favorite, R.id.category_icon, R.id.fromChevron,
             R.id.toChevron, R.id.category_chevron
     };
@@ -45,7 +45,7 @@ public final class ThemeApplier {
             R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
-            R.id.category_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
+            R.id.category_title, R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
@@ -144,13 +144,21 @@ public final class ThemeApplier {
             view.setBackgroundColor(withAlpha(theme.functions(), 0x33));
         }
         if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
-                && view instanceof com.google.android.material.button.MaterialButton button) {
+                && view instanceof com.google.android.material.chip.Chip chip) {
             int[][] states = {{android.R.attr.state_checked}, {}};
-            button.setTextColor(new ColorStateList(states,
+            chip.setTextColor(new ColorStateList(states,
                     new int[]{theme.mainText(), theme.functions()}));
-            button.setBackgroundTintList(new ColorStateList(states,
-                    new int[]{withAlpha(theme.functions(), 0x26), Color.TRANSPARENT}));
-            button.setStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x55)));
+            chip.setChipBackgroundColor(new ColorStateList(states,
+                    new int[]{androidx.core.graphics.ColorUtils.compositeColors(
+                            withAlpha(theme.functions(), 0x26), theme.background()), theme.background()}));
+            chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x88)));
+        }
+        if ("converter_selector".equals(view.getTag())) {
+            GradientDrawable outline = roundedFill(Color.TRANSPARENT,
+                    view.getResources().getDimension(R.dimen.converter_selector_radius));
+            outline.setStroke(view.getResources().getDimensionPixelSize(R.dimen.converter_divider_height),
+                    withAlpha(theme.functions(), 0x88));
+            view.setBackground(outline);
         }
 
         boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;

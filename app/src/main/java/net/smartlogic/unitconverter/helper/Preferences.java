@@ -189,6 +189,11 @@ public class Preferences {
         mPrefs.edit().putString(PREFS_CURR_DATA, response).apply();
     }
 
+    public void setCurrencySnapshot(String response, long fetchedAt) {
+        mPrefs.edit().putString(PREFS_CURR_DATA, response)
+                .putLong(PREFS_CURR_LAST_UPDT, fetchedAt).apply();
+    }
+
     public String getCurrencyResponse() {
         return mPrefs.getString(PREFS_CURR_DATA, "");
     }

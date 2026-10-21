@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -37,33 +39,26 @@ import net.smartlogic.unitconverter.fragment.BottomSheetCurrencyDialogFragment.O
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.HttpHandler;
+import net.smartlogic.unitconverter.helper.CurrencyRateStore;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
-import net.smartlogic.unitconverter.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 public class CurrencyConverterFragment extends Fragment implements OnClickListener, OnLongClickListener, OnChooseCurrencyListener {
 
-    private static final String exchangeUrl1 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl1Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_1; // info-smartupapps
-    private static final String exchangeUrl2 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl2Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_2; // smartlogic
-    private static final String exchangeUrl3 = "https://api.freecurrencyapi.com/v1/latest";
-    private static final String exchangeUrl3Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_3; // mlc
-    private static final String exchangeUrl4 = "";
-    private static final String exchangeUrl4Key1 = net.smartlogic.unitconverter.BuildConfig.CURRENCY_RATE_KEY_4;
+    private static final ExecutorService RATE_EXECUTOR = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean refreshing;
+    private int viewGeneration;
+    private CurrencyRateStore.Snapshot rateSnapshot;
 
     private EditText inputValue, outputValue;
     private TextView inputSymbol, outputSymbol;
@@ -77,7 +72,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private RelativeLayout rlFromUnit, rlToUnit;
     private ArrayList<Currency> currencies;
     private BottomSheetCurrencyDialogFragment bottomSheetCurrencyDialogFragment;
-    private Utils utils;
 
     public CurrencyConverterFragment() {
         // Required empty public constructor
@@ -205,7 +199,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             else inputValue.append(".");
             inputValue.setSelection(inputValue.getText().length());
         } else if (id == R.id.minus) {
-                // Do nothing
+            inputValue.setText(previous.startsWith("-") ? previous.substring(1) : "-" + previous);
+            inputValue.setSelection(inputValue.length());
         } else if (id == R.id.ac) {
             inputValue.setText("0");
         } else if (id == R.id.zero) {
@@ -231,19 +226,6 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             } catch (Exception e) {
                 Toast.makeText(context, R.string.toast_unable_to_copy, Toast.LENGTH_SHORT).show();
             }
-        } else if (id == R.id.share) {
-            String shareBody;
-            if (inputValue.getText().toString().isEmpty() || outputValue.getText().toString().isEmpty() || inputValue.getText().toString().equals("0") || outputValue.getText().toString().equals("0")) {
-                shareBody = getString(R.string.note_share_body) + getString(R.string.url_app_short_link);
-            } else {
-                shareBody = String.format("%s %s (%s) = %s %s (%s)", inputValue.getText(), fromCurrency.getText(), fromCurrencyISO.getText(), outputValue.getText(), toCurrency.getText(), toCurrencyISO.getText());
-            }
-
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.brand_name));
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
         } else if (id == R.id.refresh) {//Log.d("SHRIKI","Refreshing currency rates");
             refreshCurrencyRates(true);
         } else {
@@ -275,6 +257,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             Float in;
             try { in = NumberUtils.parseFloat(inStr); }
             catch (NumberFormatException invalid) {
+                outputValue.setText("");
                 if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
                 return;
             }
@@ -289,8 +272,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             String formattedOut = format.format(out);
             outputValue.setText(formattedOut);
             updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate, in, out);
-        } else if (getParentFragment() instanceof ConverterFragment) {
-            ((ConverterFragment) getParentFragment()).clearConversionGraphy();
+        } else {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
         }
     }
 
@@ -303,7 +287,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         }
         GraphyOutput output = ConversionGraphAdapter.currency(requireContext(), input, result, rate,
                 inStr + " " + inCurrency, formattedOut + " " + outCurrency,
-                inCurrency, outCurrency, prefs.getCurrencyLastUpdateDate());
+                inCurrency, outCurrency, rateSnapshot == null ? 0 : rateSnapshot.fetchedAt);
         converter.updateConversionGraphy(output, output.getExpression());
     }
 
@@ -323,10 +307,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         ImageButton reverse = view.findViewById(R.id.reverse);
         ImageButton backspace = view.findViewById(R.id.backspace);
         ImageButton copy = view.findViewById(R.id.copy);
-        ImageButton share = view.findViewById(R.id.share);
         refresh = view.findViewById(R.id.refresh);
 
-        //Button subtract = view.findViewById(R.id.minus);
+        Button subtract = view.findViewById(R.id.minus);
         Button ac = view.findViewById(R.id.ac);
         ac.setVisibility(View.VISIBLE);
         Button dot = view.findViewById(R.id.dot);
@@ -342,7 +325,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         rlToUnit = view.findViewById(R.id.toUnit);
         for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
-                R.id.dot, R.id.reverse, R.id.backspace, R.id.ac, R.id.refresh,
+                R.id.dot, R.id.minus, R.id.reverse, R.id.backspace, R.id.ac, R.id.refresh,
                 R.id.fromUnit, R.id.toUnit}) {
             InteractionFeedbackManager.configure(view.findViewById(id));
         }
@@ -371,14 +354,13 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         eight.setOnClickListener(this);
         nine.setOnClickListener(this);
         zero.setOnClickListener(this);
-//        subtract.setOnClickListener(this);
+        subtract.setOnClickListener(this);
         dot.setOnClickListener(this);
         double_zero.setOnClickListener(this);
         reverse.setOnClickListener(this);
         backspace.setOnClickListener(this);
         ac.setOnClickListener(this);
         copy.setOnClickListener(this);
-        share.setOnClickListener(this);
         refresh.setOnClickListener(this);
 
         rlFromUnit.setOnClickListener(this);
@@ -389,7 +371,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         inputValue.setShowSoftInputOnFocus(false);
 
-        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+                | InputType.TYPE_NUMBER_FLAG_SIGNED);
 
         outputValue.setOnLongClickListener(this);
 
@@ -406,16 +389,19 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         initUILayout(view);
 
         prefs = Preferences.getInstance(context);
-        utils = new Utils();
+        viewGeneration++;
+        refreshing = false;
 
         currencyRates = new HashMap<>();
+        rateSnapshot = CurrencyRateStore.readCache(prefs.getCurrencyResponse(), prefs.getCurrencyLastUpdateDate());
+        if (rateSnapshot != null) currencyRates.putAll(rateSnapshot.rates);
 
         onChooseCurrency(currencies.get(prefs.getFromCurrencyIndex()), "FROM");
         onChooseCurrency(currencies.get(prefs.getToCurrencyIndex()), "TO");
         refreshCurrencyRates(false);
         displayRates();
 
-        lastRefreshTime.setText(AppConst.simpleDateFormat.format(prefs.getCurrencyLastUpdateDate()));
+        updateRateStatus();
 
         TextWatcher inputTextWatcher = new TextWatcher() {
             @Override
@@ -460,53 +446,60 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     }
 
     public void refreshCurrencyRates(boolean forceRefresh) {
-
-        if (utils.isNetworkAvailable(context)) {
-            startAnimationImageView(refresh);
-            Executors.newSingleThreadExecutor().execute(() -> {
-                fetchCurrencyData(forceRefresh);
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        if (isAdded()) {
-                            lastRefreshTime.setText(AppConst.simpleDateFormat.format(prefs.getCurrencyLastUpdateDate()));
-                            refresh.setAnimation(null);
-                            displayRates();
-                        }
-                    });
-                }
-            });
-        } else {
-            if (forceRefresh)
-                Toast.makeText(context, "No Internet connectivity.", Toast.LENGTH_SHORT).show();
-
-            String last_response = prefs.getCurrencyResponse();
-
-            if (!last_response.isEmpty()) {
-                try {
-                    JSONObject root = new JSONObject(last_response);
-                    JSONObject json = root.has("data") ? root.optJSONObject("data") : root.optJSONObject("rates");
-
-                    if (json != null) {
-                        Iterator<String> iter = json.keys();
-                        while (iter.hasNext()) {
-                            String key = iter.next();
-                            try {
-                                float rate = NumberUtils.parseFloat(json.get(key).toString());
-                                currencyRates.put(key, rate);
-                            } catch (JSONException ignored) {
-                            }
-                        }
-                    }
-                    displayRates();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    displayRates();
-                }
-            }
+        if (refreshing) return;
+        if (!forceRefresh && rateSnapshot != null && "Frankfurter".equals(rateSnapshot.provider)
+                && rateSnapshot.isFresh(System.currentTimeMillis())) {
+            updateRateStatus();
+            return;
         }
-
+        refreshing = true;
+        final int generation = viewGeneration;
+        final Preferences storage = prefs;
+        startAnimationImageView(refresh);
+        RATE_EXECUTOR.execute(() -> {
+            CurrencyRateStore.Snapshot result = null;
+            try {
+                result = CurrencyRateStore.refresh(storage, forceRefresh, System.currentTimeMillis(),
+                        () -> new HttpHandler().makeServiceCall(CurrencyRateStore.ENDPOINT));
+            } catch (Exception failure) {
+                Log.w("CurrencyRates", "Refresh failed: " + failure.getClass().getSimpleName());
+            }
+            final CurrencyRateStore.Snapshot loaded = result;
+            mainHandler.post(() -> {
+                if (generation != viewGeneration || getView() == null) return;
+                refreshing = false;
+                refresh.clearAnimation();
+                if (loaded != null) {
+                    rateSnapshot = loaded;
+                    currencyRates.clear();
+                    currencyRates.putAll(loaded.rates);
+                } else {
+                    Toast.makeText(requireContext(), R.string.currency_refresh_failed, Toast.LENGTH_SHORT).show();
+                }
+                updateRateStatus();
+                displayRates();
+                convertAndDisplay(inputValue.getText().toString());
+            });
+        });
     }
 
+    private void updateRateStatus() {
+        if (rateSnapshot == null) {
+            lastRefreshTime.setText(R.string.currency_unavailable);
+        } else {
+            lastRefreshTime.setText(getString(rateSnapshot.isFresh(System.currentTimeMillis())
+                            ? R.string.currency_cached_at : R.string.currency_stale_at,
+                    AppConst.simpleDateFormat.format(rateSnapshot.fetchedAt)));
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        viewGeneration++;
+        refreshing = false;
+        refresh.clearAnimation();
+        super.onDestroyView();
+    }
     @Override
     public void onChooseCurrency(Currency c, String type) {
         //Log.d("SHRIKI","Clicked currency in frag -> " + c.getCountry() + " Type: " + type);
@@ -547,83 +540,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             txtRate.setText(String.format("1 %s = %.4f %s", inCurrency, rate, outCurrency));
             txtRate.setVisibility(View.VISIBLE);
         } else {
-            txtRate.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public String getAndValidateResponse(String url, String access_key) {
-        String response;
-        if (access_key != null && !access_key.isEmpty()) {
-            url = url + "?apikey=" + access_key;
-        }
-
-        //Log.d("SHRIKI", "URL inside getAndValidateResponse:" + url);
-
-        HttpHandler handle = new HttpHandler();
-        response = handle.makeServiceCall(url);
-        //Log.d("SHRIKI", "Response inside getAndValidateResponse:" + response);
-
-        try {
-            new JSONObject(response).getJSONObject("data");
-        } catch (Exception e) {
-            //Log.d("SHRIKI", "Exception: " + e.getMessage());
-            return null;
-        }
-        return response;
-    }
-
-    public void fetchCurrencyData(boolean forced) {
-        Calendar calNow = Calendar.getInstance();
-        long current_time = calNow.getTimeInMillis();
-        String last_response = prefs.getCurrencyResponse();
-        String response;
-
-        long last_refresh_time = prefs.getCurrencyLastUpdateDate();
-        int hours_since_refresh = (int) (current_time - last_refresh_time) / (1000 * 60);
-        //hours_since_refresh = 20;
-
-        //Log.d("SHRIKI","current_time & last_refresh_time " + current_time + " " + last_refresh_time);
-        //Log.d("SHRIKI","Hours since last refresh:" + hours_since_refresh);
-
-        // Refresh data only when it is older than 12 hours and stored response is not empty
-        // Or when forced flag is true
-        if ((hours_since_refresh > 12 || last_response.isEmpty()) || forced) {
-
-            response = getAndValidateResponse(exchangeUrl1, exchangeUrl1Key1);
-            if (response == null) {
-                response = getAndValidateResponse(exchangeUrl2, exchangeUrl2Key1);
-            }
-            if (response == null) {
-                response = getAndValidateResponse(exchangeUrl3, exchangeUrl3Key1);
-            }
-            if (response == null) {
-                response = getAndValidateResponse(exchangeUrl4, exchangeUrl4Key1);
-            }
-
-            prefs.setCurrencyLastUpdateDate(current_time);
-            prefs.setCurrencyResponse(response);
-
-        } else {
-            response = last_response;
-        }
-
-        try {
-            JSONObject root = new JSONObject(response);
-            JSONObject json = root.has("data") ? root.optJSONObject("data") : root.optJSONObject("rates");
-
-            if (json != null) {
-                Iterator<String> iter = json.keys();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    try {
-                        float rate = NumberUtils.parseFloat(json.get(key).toString());
-                        currencyRates.put(key, rate);
-                    } catch (JSONException ignored) {
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            txtRate.setText(R.string.currency_unavailable);
+            txtRate.setVisibility(View.VISIBLE);
         }
     }
 

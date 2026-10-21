@@ -457,4 +457,9 @@
     <string name="graphy_offset_formula">(%1$s) %2$s %3$s</string>
     <string name="graphy_node_hint">Tap a node for details</string>
     <string name="graphy_unavailable">A Graphy explanation is unavailable for the current values.</string>
+    <string name="currency_unavailable">Rate unavailable</string>
+    <string name="currency_refresh_failed">Could not refresh rates.</string>
+    <string name="currency_cached_at">Last refreshed at: %1$s</string>
+    <string name="currency_stale_at">Last refreshed at: %1$s (stale)</string>
+    <string name="converter_exchange_rate">Exchange rate</string>
 </resources>

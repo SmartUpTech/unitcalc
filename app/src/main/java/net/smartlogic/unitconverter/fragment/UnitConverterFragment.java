@@ -128,9 +128,12 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
+        view.findViewById(R.id.from_selector).setOnClickListener(v -> fromUnit.performClick());
+        view.findViewById(R.id.to_selector).setOnClickListener(v -> toUnit.performClick());
+        view.findViewById(R.id.ac).setOnClickListener(this);
         for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
-                R.id.dot, R.id.minus, R.id.reverse, R.id.backspace,
+                R.id.dot, R.id.minus, R.id.ac, R.id.reverse, R.id.backspace,
                 R.id.fromUnit, R.id.toUnit, R.id.category_selector}) {
             InteractionFeedbackManager.configure(view.findViewById(id));
         }
@@ -202,6 +205,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 int toPos = toUnit.getSelectedItemPosition();
                 fromUnit.setSelection(toPos);
                 toUnit.setSelection(fromPos);
+            } else if (id == R.id.ac) {
+                inputValue.setText("");
+                outputValue.setText("0");
+                convertAndDisplay("");
             } else if (id == R.id.backspace) {
                 if (previous.isEmpty()) return;
                 String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.google.android.material.theme.MaterialComponentsViewInflater;
@@ -17,6 +18,9 @@ import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.CalculatorThemes;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.utils.Conversions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +28,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
+import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
 /** Real Android measurements of inflated production layouts, after persistent chrome. */
@@ -34,12 +39,40 @@ public class CalculationLayoutTest {
     private static final int[] SCREENS = {R.layout.pane_calculator_calculate,
             R.layout.fragment_unit_converter, R.layout.fragment_currency_converter};
 
+    @Test public void convertersKeepKeypadGeometryStableAcrossModes() {
+        for (float scale : new float[]{1f, 1.3f}) {
+            for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}}) {
+                View unit = inflate(R.layout.fragment_unit_converter, scale);
+                View currency = inflate(R.layout.fragment_currency_converter, scale);
+                ((TextView) currency.findViewById(R.id.txtLastUpdateTime)).setText(
+                        currency.getContext().getString(R.string.currency_cached_at, "21-Oct 09:45 AM"));
+                measure(unit, size[0], size[1]);
+                measure(currency, size[0], size[1]);
+                assertKeys(unit, true);
+                assertKeys(currency, true);
+                assertEquals("keypad parity " + size[0] + "x" + size[1] + " scale=" + scale,
+                        bounds((ViewGroup) unit, unit.findViewById(R.id.keypad)),
+                        bounds((ViewGroup) currency, currency.findViewById(R.id.keypad)));
+                for (int id : new int[]{R.id.seven, R.id.nine, R.id.ac, R.id.zero, R.id.minus}) {
+                    assertEquals(bounds((ViewGroup) unit, unit.findViewById(id)),
+                            bounds((ViewGroup) currency, currency.findViewById(id)));
+                }
+                ViewGroup keypad = unit.findViewById(R.id.keypad);
+                for (int row = 0; row < keypad.getChildCount(); row++) {
+                    assertEquals(4, ((ViewGroup) keypad.getChildAt(row)).getChildCount());
+                }
+                assertEquals(unit.findViewById(R.id.nine).getParent(), unit.findViewById(R.id.ac).getParent());
+            }
+        }
+    }
+
     @Test public void normalWorkspacesKeepEveryPrimaryControlVisible() {
         for (int layout : SCREENS) {
             for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}, {600, 340}, {840, 700}}) {
                 View root = inflate(layout, 1f);
                 measure(root, size[0], size[1]);
                 CalculationViewport viewport = viewport(root);
+                assertEquals(label(layout, size), View.VISIBLE, viewport.getChildAt(0).getVisibility());
                 assertFalse(label(layout, size), viewport.canScrollVertically(1));
                 assertFalse(viewport.canScrollVertically(-1));
                 assertKeys(root, true);
@@ -49,6 +82,47 @@ public class CalculationLayoutTest {
                     if (control != null) assertInside((ViewGroup) root, control);
                 }
             }
+        }
+    }
+
+    @Test public void enlargedUnitResultUsesAvailableWidthWithoutChangingTypography() {
+        View root = inflate(R.layout.fragment_unit_converter, 1.3f);
+        TextView input = root.findViewById(R.id.input);
+        TextView output = root.findViewById(R.id.output);
+        float originalSize = output.getTextSize();
+        input.setText("12");
+        output.setText("7.45645");
+        measure(root, 360, 460);
+        assertKeys(root, true);
+        assertEquals(originalSize, output.getTextSize(), 0f);
+        assertTrue("result should fit without horizontal clipping", output.getPaint().measureText(
+                output.getText().toString()) <= output.getWidth() - output.getCompoundPaddingLeft()
+                - output.getCompoundPaddingRight());
+        assertEquals(input.getWidth(), output.getWidth());
+    }
+
+    @Test public void currencyCacheAndUnavailableLabelsFitConstrainedWorkspace() {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            for (CalculatorTheme theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    for (int status : new int[]{R.string.currency_cached_at, R.string.currency_stale_at}) {
+                        View root = inflate(R.layout.fragment_currency_converter, scale);
+                        ((TextView) root.findViewById(R.id.txtLastUpdateTime)).setText(
+                                root.getContext().getString(status, "21-Oct 12:03 AM"));
+                        ((TextView) root.findViewById(R.id.txtRate)).setText(R.string.currency_unavailable);
+                        measure(root, 360, 600);
+                        assertFalse(viewport(root).canScrollVertically(1));
+                        assertKeys(root, true);
+                        assertInside((ViewGroup) root, root.findViewById(R.id.txtLastUpdateTime));
+                        assertInside((ViewGroup) root, root.findViewById(R.id.txtRate));
+                        assertEquals(theme.mainText(), ((TextView) root.findViewById(R.id.txtRate)).getCurrentTextColor());
+                    }
+                }
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
         }
     }
 
@@ -94,9 +168,44 @@ public class CalculationLayoutTest {
                     {840, 700}, {600, 340}, {360, 460}}) {
                 measure(root, size[0], size[1]);
                 assertFalse(label(layout, size), viewport(root).canScrollVertically(1));
+                assertEquals(label(layout, size), View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
                 assertKeys(root, true);
             }
         }
+    }
+
+    @Test public void calculatorKeepsStackedDisplayAndRestoresResultSizeWithoutLosingValues() {
+        View root = inflate(R.layout.pane_calculator_calculate, 1f);
+        TextView expression = root.findViewById(R.id.expression);
+        TextView result = root.findViewById(R.id.result);
+        expression.setText("125 × 8");
+        result.setText("1000");
+        LinearLayout display = root.findViewById(R.id.display_values);
+        measure(root, 320, 400);
+        assertKeys(root, true);
+        assertEquals(LinearLayout.VERTICAL, display.getOrientation());
+        assertInside((ViewGroup) root, expression);
+        assertInside((ViewGroup) root, result);
+        assertFalse(Rect.intersects(bounds((ViewGroup) root, expression), bounds((ViewGroup) root, result)));
+        assertTrue(bounds((ViewGroup) root, expression).bottom <= bounds((ViewGroup) root, result).top);
+        assertTrue(result.getTextSize() >= result.getAutoSizeMinTextSize());
+        int compactHeight = result.getHeight();
+        measure(root, 360, 700);
+        assertKeys(root, true);
+        assertEquals(LinearLayout.VERTICAL, display.getOrientation());
+        assertTrue(result.getHeight() > compactHeight);
+        assertEquals(result.getAutoSizeMaxTextSize(), result.getTextSize(), 1f);
+        assertEquals("125 × 8", expression.getText().toString());
+        assertEquals("1000", result.getText().toString());
+    }
+
+    @Test public void currencyFitsActualDeviceViewportAtLargerDisplayDensity() {
+        View root = inflate(R.layout.fragment_currency_converter, 1f, 520);
+        measure(root, 1080, 1185); // Mi A2 workspace after system and app chrome at 520dpi.
+        assertKeys(root, true);
+        assertInside((ViewGroup) root, root.findViewById(R.id.input));
+        assertInside((ViewGroup) root, root.findViewById(R.id.output));
+        assertInside((ViewGroup) root, root.findViewById(R.id.txtLastUpdateTime));
     }
 
     @Test public void longScaledLabelsDoNotCollapseUnitSelectorTouchTargets() {
@@ -160,9 +269,14 @@ public class CalculationLayoutTest {
     }
 
     private View inflate(int layout, float scale) {
+        return inflate(layout, scale, 0);
+    }
+
+    private View inflate(int layout, float scale, int density) {
         Context app = RuntimeEnvironment.getApplication();
         Configuration config = new Configuration(app.getResources().getConfiguration());
         config.fontScale = scale;
+        if (density > 0) config.densityDpi = density;
         Context context = new ContextThemeWrapper(app.createConfigurationContext(config), R.style.AppTheme);
         LayoutInflater inflater = LayoutInflater.from(context).cloneInContext(context);
         MaterialComponentsViewInflater widgets = new MaterialComponentsViewInflater();
@@ -218,7 +332,10 @@ public class CalculationLayoutTest {
     }
 
     private void assertKeys(View root, boolean inside) {
-        assertEquals("workspace must be operable, not the insufficient-space message",
+        assertEquals("workspace must be operable at " + root.getWidth() + "x" + root.getHeight()
+                        + " scale=" + root.getResources().getConfiguration().fontScale
+                        + " controls=" + root.findViewById(R.id.calculation_controls).getMeasuredHeight()
+                        + " keypad=" + root.findViewById(R.id.keypad).getMeasuredHeight(),
                 View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
         ViewGroup keys = root.findViewById(R.id.keypad);
         assertKeyChildren((ViewGroup) root, keys, inside);
@@ -227,8 +344,9 @@ public class CalculationLayoutTest {
     private void assertKeyChildren(ViewGroup root, View view, boolean inside) {
         if (view.getVisibility() == View.GONE) return;
         if (view instanceof android.widget.Button || view instanceof android.widget.ImageButton) {
-            assertTrue("key height " + view.getId() + ": " + view.getHeight(), view.getHeight() >= 48);
-            assertTrue("key width " + view.getId(), view.getWidth() >= 48);
+            int minimum = root.getResources().getDimensionPixelSize(R.dimen.converter_touch_target);
+            assertTrue("key height " + view.getId() + ": " + view.getHeight(), view.getHeight() >= minimum);
+            assertTrue("key width " + view.getId(), view.getWidth() >= minimum);
             if (inside) assertInside(root, view);
         }
         if (view instanceof ViewGroup) {
@@ -250,5 +368,8 @@ public class CalculationLayoutTest {
         return bounds;
     }
 
-    private String label(int layout, int[] size) { return layout + " at " + size[0] + "x" + size[1]; }
+    private String label(int layout, int[] size) {
+        return RuntimeEnvironment.getApplication().getResources().getResourceEntryName(layout)
+                + " at " + size[0] + "x" + size[1];
+    }
 }

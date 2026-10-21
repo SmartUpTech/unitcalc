@@ -25,6 +25,7 @@ public final class CalculationLayout extends LinearLayout {
     private int viewportHeight;
     private ViewGroup keypad;
     private View controls;
+    private TextView resultDisplay;
     private boolean sideBySide;
     private boolean fitsViewport;
     private final List<Spacing> spacing = new ArrayList<>();
@@ -58,11 +59,16 @@ public final class CalculationLayout extends LinearLayout {
         super.onFinishInflate();
         keypad = findViewById(R.id.keypad);
         controls = findViewById(R.id.calculation_controls);
+        resultDisplay = findViewById(R.id.result);
         collect(this);
     }
 
     private void collect(View view) {
-        if (view == keypad) return;
+        if (view == keypad) {
+            // Outer keypad whitespace may compact; key padding and touch targets may not.
+            spacing.add(new Spacing(view));
+            return;
+        }
         // Compact structural whitespace, never drawable/text padding inside controls.
         if (view == this || view == controls || view.getId() == R.id.converter_card
                 || view.getId() == R.id.category_selector || view.getId() == R.id.display_values) {
@@ -87,6 +93,13 @@ public final class CalculationLayout extends LinearLayout {
         }
         int minimumRow = Math.max(dimension(R.dimen.converter_touch_target), textHeight(keypad));
         int preferredRow = Math.max(dimension(R.dimen.converter_key_min_height), minimumRow);
+        int minimumResultHeight = 0;
+        if (resultDisplay != null && resultDisplay.getAutoSizeTextType() == TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM) {
+            // Start every probe at the existing maximum font's line height, even after
+            // a previous compact layout autosized its text. This makes resizing reversible.
+            minimumResultHeight = resultLineHeight(resultDisplay.getAutoSizeMinTextSize());
+            setResultHeight(resultLineHeight(resultDisplay.getAutoSizeMaxTextSize()));
+        }
         arrangePanes(false);
         configure(false, false);
         int needed = measureRequired(widthMeasureSpec, preferredRow);
@@ -104,18 +117,40 @@ public final class CalculationLayout extends LinearLayout {
             needed = measureRequired(widthMeasureSpec, preferredRow);
         }
         if (needed > viewportHeight) needed = measureRequired(widthMeasureSpec, minimumRow);
-        fitsViewport = needed <= viewportHeight;
-
+        if (needed > viewportHeight && controls instanceof ConverterControlsLayout converter && !sideBySide) {
+            converter.setCompactHeading(true);
+            needed = measureRequired(widthMeasureSpec, minimumRow);
+        }
+        if (needed > viewportHeight && minimumResultHeight > 0 && !sideBySide) {
+            int available = resultDisplay.getMeasuredHeight() - (needed - viewportHeight);
+            if (available >= minimumResultHeight) {
+                // Keep expression above result. Bound only the result's height so its
+                // existing XML autosizing range can fit without changing font limits.
+                setResultHeight(available);
+                needed = measureRequired(widthMeasureSpec, minimumRow);
+            }
+        }
         // The keypad's measured minimum is preserved; weight only distributes spare space.
         LayoutParams keys = (LayoutParams) keypad.getLayoutParams();
         keys.weight = 1;
         if (sideBySide) keys.height = LayoutParams.MATCH_PARENT;
+        // Probes reuse measure specs with different weights. Invalidate descendant
+        // caches so final bounds include the real weighted key sizes before layout.
+        forceMeasure(controls);
+        forceMeasure(keypad);
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(
                 viewportHeight, MeasureSpec.EXACTLY));
-        fitsViewport = fitsViewport && keysFitWidth(keypad);
+        LayoutParams header = (LayoutParams) controls.getLayoutParams();
+        int headerHeight = controls.getMeasuredHeight() + header.topMargin + header.bottomMargin;
+        int keypadHeight = keypad.getMeasuredHeight() + keys.topMargin + keys.bottomMargin;
+        int occupied = getPaddingTop() + getPaddingBottom()
+                + (sideBySide ? Math.max(headerHeight, keypadHeight) : headerHeight + keypadHeight);
+        // Intrinsic probes choose the arrangement; final allocated bounds decide fit.
+        // Validate real key heights too, so weight cannot conceal undersized rows.
+        fitsViewport = occupied <= viewportHeight && keysFitBounds(keypad);
     }
 
-    private boolean keysFitWidth(View view) {
+    private boolean keysFitBounds(View view) {
         if (view.getVisibility() == GONE) return true;
         if (view instanceof Button || view instanceof ImageButton) {
             int minimum = dimension(R.dimen.converter_touch_target);
@@ -125,12 +160,13 @@ public final class CalculationLayout extends LinearLayout {
                         text.getText().toString())) + text.getCompoundPaddingLeft()
                         + text.getCompoundPaddingRight());
             }
-            return view.getMeasuredWidth() >= minimum;
+            return view.getMeasuredWidth() >= minimum && view.getMeasuredHeight()
+                    >= Math.max(dimension(R.dimen.converter_touch_target), textHeight(view));
         }
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {
-                if (!keysFitWidth(group.getChildAt(i))) return false;
+                if (!keysFitBounds(group.getChildAt(i))) return false;
             }
         }
         return true;
@@ -142,7 +178,14 @@ public final class CalculationLayout extends LinearLayout {
         keys.height = keypad.getChildCount() * rowHeight
                 + keypad.getPaddingTop() + keypad.getPaddingBottom();
         super.onMeasure(widthSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        return getMeasuredHeight();
+        // Weighted horizontal probes may retain spare height from a preceding layout.
+        // Required height is the measured controls plus the requested minimum rows,
+        // not any spare space that LinearLayout distributed during that probe.
+        LayoutParams header = (LayoutParams) controls.getLayoutParams();
+        int headerHeight = controls.getMeasuredHeight() + header.topMargin + header.bottomMargin;
+        int keypadHeight = keys.height + keys.topMargin + keys.bottomMargin;
+        return getPaddingTop() + getPaddingBottom()
+                + (sideBySide ? Math.max(headerHeight, keypadHeight) : headerHeight + keypadHeight);
     }
 
     private void arrangePanes(boolean horizontal) {
@@ -156,6 +199,10 @@ public final class CalculationLayout extends LinearLayout {
     }
 
     private void configure(boolean compact, boolean inline) {
+        if (controls instanceof ConverterControlsLayout converter) converter.setCompactHeading(false);
+        // Both converter modes use the same inline rows and header allocation.
+        // This keeps their shared keypad stationary when switching modes.
+        if (!sections.isEmpty()) inline = true;
         for (Spacing item : spacing) item.apply(compact);
         // ISO codes still identify selected currencies; full names remain in their pickers
         // and the existing selector content descriptions. Keep flags at icon size.
@@ -171,7 +218,7 @@ public final class CalculationLayout extends LinearLayout {
             for (int i = 0; i < section.getChildCount(); i++) {
                 LayoutParams params = (LayoutParams) section.getChildAt(i).getLayoutParams();
                 params.width = inline ? 0 : LayoutParams.MATCH_PARENT;
-                params.weight = inline ? 1 : 0;
+                params.weight = inline ? (i == 0 ? 1.25f : 1f) : 0;
             }
         }
     }
@@ -202,6 +249,31 @@ public final class CalculationLayout extends LinearLayout {
     }
 
     private int dimension(int resource) { return getResources().getDimensionPixelSize(resource); }
+
+    private void forceMeasure(View view) {
+        view.forceLayout();
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) forceMeasure(group.getChildAt(i));
+        }
+    }
+
+    private void setResultHeight(int height) {
+        ViewGroup.LayoutParams params = resultDisplay.getLayoutParams();
+        if (params.height != height) {
+            params.height = height;
+            resultDisplay.forceLayout();
+        }
+    }
+
+    private int resultLineHeight(int textSize) {
+        Paint paint = new Paint(resultDisplay.getPaint());
+        paint.setTextSize(textSize);
+        Paint.FontMetricsInt metrics = paint.getFontMetricsInt();
+        int line = resultDisplay.getIncludeFontPadding()
+                ? metrics.bottom - metrics.top : metrics.descent - metrics.ascent;
+        return line + resultDisplay.getCompoundPaddingTop() + resultDisplay.getCompoundPaddingBottom();
+    }
 
     private int textHeight(View view) {
         int height = 0;

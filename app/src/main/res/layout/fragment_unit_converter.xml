@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/converter_spacing">
-            <LinearLayout
+            <net.smartlogic.unitconverter.widget.ConverterControlsLayout
                 android:id="@+id/calculation_controls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                         android:layout_width="@dimen/converter_flag_width"
                         android:layout_height="@dimen/converter_flag_width"
                         android:padding="@dimen/converter_small_spacing"
-                        android:importantForAccessibility="no"/>
+                        android:importantForAccessibility="no" />
                     <TextView
                         android:id="@+id/category_title"
                         style="@style/ConverterSelectorText"
@@ -47,13 +47,13 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/converter_spacing"
                         android:singleLine="true"
-                        android:ellipsize="end"/>
+                        android:ellipsize="end" />
                     <ImageView
                         android:id="@+id/category_chevron"
                         android:layout_width="@dimen/converter_chevron_size"
                         android:layout_height="@dimen/converter_chevron_size"
                         android:src="@drawable/ic_chevron_down"
-                        android:importantForAccessibility="no"/>
+                        android:importantForAccessibility="no" />
                 </LinearLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/converter_card"
@@ -61,35 +61,44 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/converter_card_margin"
                     android:paddingVertical="@dimen/converter_spacing">
-                    <LinearLayout
+                    <net.smartlogic.unitconverter.widget.ConverterValueRow
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
+                        android:orientation="horizontal"
                         android:paddingHorizontal="0dp"
                         android:id="@+id/converter_source_section"
                         android:tag="calculation_section"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/reverse_container"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_row_height">
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:layout_weight="1.25">
                             <TextView
                                 style="@style/ConverterLabel"
                                 android:id="@+id/converter_from_label"
-                                android:layout_width="wrap_content"
+                                android:layout_width="@dimen/converter_label_width"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/converter_spacing"
                                 android:labelFor="@id/fromUnit"
-                                android:text="@string/str_from"/>
+                                android:text="@string/str_from" />
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:tag="converter_selector"
+                                android:paddingHorizontal="@dimen/converter_spacing"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:id="@+id/from_selector"
+                                android:clickable="true"
+                                android:focusable="true">
                                 <Spinner
                                     android:id="@+id/fromUnit"
                                     android:layout_width="0dp"
@@ -98,23 +107,27 @@
                                     android:minHeight="@dimen/converter_touch_target"
                                     android:background="@null"
                                     android:dropDownWidth="match_parent"
-                                    android:spinnerMode="dropdown"/>
+                                    android:spinnerMode="dropdown" />
                                 <ImageView
+                                    android:id="@+id/fromChevron"
                                     android:layout_width="@dimen/converter_chevron_size"
                                     android:layout_height="@dimen/converter_chevron_size"
                                     android:src="@drawable/ic_chevron_down"
                                     android:importantForAccessibility="no"
-                                    android:contentDescription="@null"/>
+                                    android:contentDescription="@null" />
                             </LinearLayout>
                         </LinearLayout>
                         <EditText
                             android:id="@+id/input"
                             style="@style/ConverterValue"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@string/converter_input_amount"
-                            android:maxLength="12"/>
-                    </LinearLayout>
+                            android:maxLength="12"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/converter_spacing"
+                            android:gravity="end|center_vertical" />
+                    </net.smartlogic.unitconverter.widget.ConverterValueRow>
                     <include
                         layout="@layout/converter_swap"
                         android:id="@+id/reverse_container"
@@ -122,36 +135,45 @@
                         android:layout_height="@dimen/converter_touch_target"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-                    <LinearLayout
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                    <net.smartlogic.unitconverter.widget.ConverterValueRow
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
+                        android:orientation="horizontal"
                         android:paddingHorizontal="0dp"
                         android:id="@+id/converter_target_section"
                         android:tag="calculation_section"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/reverse_container"
-                        app:layout_constraintTop_toBottomOf="@id/converter_source_section">
+                        app:layout_constraintTop_toBottomOf="@id/converter_source_section"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_row_height">
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:layout_weight="1.25">
                             <TextView
                                 style="@style/ConverterLabel"
                                 android:id="@+id/converter_to_label"
-                                android:layout_width="wrap_content"
+                                android:layout_width="@dimen/converter_label_width"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/converter_spacing"
                                 android:labelFor="@id/toUnit"
-                                android:text="@string/str_to"/>
+                                android:text="@string/str_to" />
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:tag="converter_selector"
+                                android:paddingHorizontal="@dimen/converter_spacing"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:id="@+id/to_selector"
+                                android:clickable="true"
+                                android:focusable="true">
                                 <Spinner
                                     android:id="@+id/toUnit"
                                     android:layout_width="0dp"
@@ -160,49 +182,55 @@
                                     android:minHeight="@dimen/converter_touch_target"
                                     android:background="@null"
                                     android:dropDownWidth="match_parent"
-                                    android:spinnerMode="dropdown"/>
+                                    android:spinnerMode="dropdown" />
                                 <ImageView
+                                    android:id="@+id/toChevron"
                                     android:layout_width="@dimen/converter_chevron_size"
                                     android:layout_height="@dimen/converter_chevron_size"
                                     android:src="@drawable/ic_chevron_down"
                                     android:importantForAccessibility="no"
-                                    android:contentDescription="@null"/>
+                                    android:contentDescription="@null" />
                             </LinearLayout>
                         </LinearLayout>
                         <EditText
                             android:id="@+id/output"
                             style="@style/ConverterValue"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@string/converter_output_amount"
                             android:focusable="false"
-                            android:textIsSelectable="true"/>
-                    </LinearLayout>
+                            android:textIsSelectable="true"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/converter_spacing"
+                            android:gravity="end|center_vertical" />
+                    </net.smartlogic.unitconverter.widget.ConverterValueRow>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:id="@+id/inputSymbol"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
                 <TextView
                     android:id="@+id/outputSymbol"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
                 <TextView
                     android:id="@+id/unit_rate"
                     style="@style/ConverterLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/converter_card_margin"
-                    android:layout_marginBottom="@dimen/converter_spacing"/>
-            </LinearLayout>
+                    android:minHeight="@dimen/converter_metadata_height"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/converter_unit_text_size" />
+            </net.smartlogic.unitconverter.widget.ConverterControlsLayout>
             <include
                 layout="@layout/converter_keypad"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:id="@+id/keypad"/>
+                android:id="@+id/keypad" />
         </net.smartlogic.unitconverter.widget.CalculationLayout>
     </net.smartlogic.unitconverter.widget.CalculationViewport>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

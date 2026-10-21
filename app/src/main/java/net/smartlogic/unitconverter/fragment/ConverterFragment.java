@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
@@ -52,7 +52,7 @@ public class ConverterFragment extends Fragment {
             R.string.graphy
     };
 
-    private MaterialButtonToggleGroup modeToggle;
+    private ChipGroup modeToggle;
     private UnitConverterFragment unitFragment;
     private CurrencyConverterFragment currencyFragment;
     private Fragment activeChild;
@@ -193,10 +193,9 @@ public class ConverterFragment extends Fragment {
         }
 
         modeToggle = pageView.findViewById(R.id.converter_mode_toggle);
-        modeToggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) {
-                return;
-            }
+        modeToggle.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            int checkedId = checkedIds.get(0);
             if (checkedId == R.id.btn_currency_mode) {
                 showConverterTab(TAB_CURRENCY);
             } else {
@@ -429,7 +428,11 @@ public class ConverterFragment extends Fragment {
             currencyFragment = CurrencyConverterFragment.newInstance();
             transaction.add(R.id.converter_container, currencyFragment, TAG_CURRENCY);
         }
+        Fragment initial = AppConst.CONVERTER_TAB == TAB_CURRENCY ? currencyFragment : unitFragment;
+        transaction.hide(initial == unitFragment ? currencyFragment : unitFragment);
+        transaction.show(initial);
         transaction.commitNow();
+        activeChild = initial;
         childFragmentsInitialized = true;
     }
 
