@@ -44,7 +44,7 @@ public class CurrencyConverterFragmentTest {
         ((EditText) unit.requireView().findViewById(R.id.input)).setText("12");
         unit.requireView().findViewById(R.id.ac).performClick();
         assertEquals("", ((EditText) unit.requireView().findViewById(R.id.input)).getText().toString());
-        assertEquals("0", ((EditText) unit.requireView().findViewById(R.id.output)).getText().toString());
+        assertEquals("", ((EditText) unit.requireView().findViewById(R.id.output)).getText().toString());
         ReflectionHelpers.callInstanceMethod(fragment, "showConverterTab",
                 ReflectionHelpers.ClassParameter.from(int.class, ConverterFragment.TAB_CURRENCY));
         fragment.getChildFragmentManager().executePendingTransactions();
@@ -80,8 +80,8 @@ public class CurrencyConverterFragmentTest {
         fragment.requireView().findViewById(R.id.minus).performClick();
         assertEquals("160", output.getText().toString());
         fragment.requireView().findViewById(R.id.ac).performClick();
-        assertEquals("0", input.getText().toString());
-        assertEquals("0", output.getText().toString());
+        assertEquals("", input.getText().toString());
+        assertEquals("", output.getText().toString());
         input.setText("2");
         ArrayList<Currency> currencies = ReflectionHelpers.getField(fragment, "currencies");
         fragment.onChooseCurrency(currencies.get(5), "TO"); // HRK has no current rate.

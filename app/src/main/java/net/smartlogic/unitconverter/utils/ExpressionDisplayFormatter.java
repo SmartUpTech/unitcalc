@@ -60,7 +60,8 @@ public final class ExpressionDisplayFormatter {
         PERCENT,
         POWER,
         SQRT_SIMPLE,
-        SQRT_GROUP
+        SQRT_GROUP,
+        SQRT_OPEN
     }
 
     private record Token(TokenKind kind, String value, List<Token> children) {
@@ -106,6 +107,15 @@ public final class ExpressionDisplayFormatter {
             return new FormattedExpression(new ArrayList<>(), "");
         }
 
+        int depth = 0;
+        for (int i = 0; i < rawExpression.length(); i++) {
+            if ((rawExpression.charAt(i) == '(' && ++depth > 32) || rawExpression.length() > 1024) {
+                List<DisplaySegment> fallback = new ArrayList<>();
+                fallback.add(new DisplaySegment(rawExpression, SemanticRole.NUMBER));
+                return new FormattedExpression(fallback, rawExpression);
+            }
+            if (rawExpression.charAt(i) == ')') depth--;
+        }
         List<Token> tokens = tokenize(rawExpression);
         NumberFormatter numberFormatter = new NumberFormatter(
                 decimalSeparator,
@@ -162,14 +172,18 @@ public final class ExpressionDisplayFormatter {
         while (index < expression.length()) {
             if (expression.startsWith("sqrt(", index)) {
                 int closeIndex = findMatchingCloseParen(expression, index + 4);
-                String inner = expression.substring(index + 5, closeIndex);
+                boolean closed = closeIndex >= 0;
+                int innerEnd = closed ? closeIndex : expression.length();
+                String inner = expression.substring(index + 5, innerEnd);
                 List<Token> innerTokens = tokenize(inner);
-                if (innerTokens.size() == 1 && innerTokens.get(0).kind == TokenKind.NUMBER) {
+                if (!closed) {
+                    tokens.add(new Token(TokenKind.SQRT_OPEN, "", innerTokens));
+                } else if (innerTokens.size() == 1 && innerTokens.get(0).kind == TokenKind.NUMBER) {
                     tokens.add(new Token(TokenKind.SQRT_SIMPLE, innerTokens.get(0).value));
                 } else {
                     tokens.add(new Token(TokenKind.SQRT_GROUP, "", innerTokens));
                 }
-                index = closeIndex + 1;
+                index = closed ? closeIndex + 1 : expression.length();
                 continue;
             }
 
@@ -301,12 +315,13 @@ public final class ExpressionDisplayFormatter {
                 ));
                 break;
             case SQRT_GROUP:
+            case SQRT_OPEN:
                 if (needsSpaceBefore(previous, token)) {
                     out.add(new DisplaySegment(" ", SemanticRole.NUMBER));
                 }
                 out.add(new DisplaySegment("√(", SemanticRole.FUNCTION));
                 buildDisplaySegments(token.children, numberFormatter, out, false);
-                out.add(new DisplaySegment(")", SemanticRole.FUNCTION));
+                if (token.kind != TokenKind.SQRT_OPEN) out.add(new DisplaySegment(")", SemanticRole.FUNCTION));
                 break;
             default:
                 break;
@@ -326,6 +341,7 @@ public final class ExpressionDisplayFormatter {
                         || previous.kind == TokenKind.PERCENT;
             case SQRT_SIMPLE:
             case SQRT_GROUP:
+            case SQRT_OPEN:
                 return previous.kind == TokenKind.NUMBER
                         || previous.kind == TokenKind.CLOSE_PAREN
                         || previous.kind == TokenKind.PERCENT;
@@ -365,22 +381,12 @@ public final class ExpressionDisplayFormatter {
     }
 
     private static int findMatchingCloseParen(@NonNull String expression, int openParenIndex) {
-        int depth = 1;
-        int index = openParenIndex + 1;
-        while (index < expression.length() && depth > 0) {
-            if (expression.startsWith("sqrt(", index)) {
-                index = findMatchingCloseParen(expression, index + 4) + 1;
-                continue;
-            }
-            char current = expression.charAt(index);
-            if (current == '(') {
-                depth++;
-            } else if (current == ')') {
-                depth--;
-            }
-            index++;
+        int depth = 0;
+        for (int i = openParenIndex; i < expression.length(); i++) {
+            if (expression.charAt(i) == '(') depth++;
+            else if (expression.charAt(i) == ')' && --depth == 0) return i;
         }
-        return index - 1;
+        return -1;
     }
 
     private static char firstChar(@NonNull String value, char fallback) {
@@ -407,8 +413,17 @@ public final class ExpressionDisplayFormatter {
         @NonNull
         String format(@NonNull String rawNumber) {
             try {
-                double value = Double.parseDouble(rawNumber.replace(',', '.'));
-                return decimalFormat.format(value);
+                // Input is editable data: preserve every typed decimal and trailing dot/zero.
+                // The decimal preference applies to results, never to the entered operand.
+                boolean negative = rawNumber.startsWith("-");
+                String digits = negative ? rawNumber.substring(1) : rawNumber;
+                int dot = digits.indexOf('.');
+                String integer = dot >= 0 ? digits.substring(0, dot) : digits;
+                if (integer.isEmpty()) integer = "0";
+                String formatted = decimalFormat.format(new java.math.BigDecimal(integer));
+                if (dot >= 0) formatted += decimalFormat.getDecimalFormatSymbols().getDecimalSeparator()
+                        + digits.substring(dot + 1);
+                return (negative ? "-" : "") + formatted;
             } catch (NumberFormatException ignored) {
                 return rawNumber;
             }

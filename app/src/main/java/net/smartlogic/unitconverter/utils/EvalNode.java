@@ -3,6 +3,7 @@ package net.smartlogic.unitconverter.utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +29,33 @@ public final class EvalNode {
 
     private final Kind kind;
     private final double value;
+    private final BigDecimal decimalValue;
     private final String label;
     private final List<EvalNode> children;
 
     private EvalNode(Kind kind, double value, String label, List<EvalNode> children) {
+        this(kind, Double.isFinite(value) ? BigDecimal.valueOf(value) : null, label, children);
+    }
+
+    private EvalNode(Kind kind, BigDecimal value, String label, List<EvalNode> children) {
         this.kind = kind;
-        this.value = value;
+        this.decimalValue = value;
+        this.value = value == null ? Double.NaN : value.doubleValue();
         this.label = label;
         this.children = children == null ? Collections.emptyList() : new ArrayList<>(children);
+    }
+
+    public static EvalNode decimalNumber(BigDecimal value, String label) {
+        return new EvalNode(Kind.NUMBER, DecimalMath.checked(value), label, Collections.emptyList());
+    }
+
+    public static EvalNode decimalOperation(Kind kind, BigDecimal value, String label, EvalNode... children) {
+        return new EvalNode(kind, DecimalMath.checked(value), label, java.util.Arrays.asList(children));
+    }
+
+    public BigDecimal getDecimalValue() {
+        if (decimalValue == null) throw new ArithmeticException("Invalid operand");
+        return decimalValue;
     }
 
     public static EvalNode number(double value, String label) {
@@ -82,6 +102,6 @@ public final class EvalNode {
     }
 
     public boolean isValid() {
-        return !Double.isNaN(value) && !Double.isInfinite(value);
+        return decimalValue != null && Double.isFinite(value);
     }
 }

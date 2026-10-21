@@ -223,11 +223,11 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                     inputValue.setText("0.");
                 else if (inputValue.getText().toString().equals("-"))
                     inputValue.append("0.");
-                else
+                else if (!previous.contains("."))
                     inputValue.append(".");
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.minus) {
-                inputValue.append("-");
+                inputValue.setText(previous.startsWith("-") ? previous.substring(1) : "-" + previous);
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.zero) {
                 String currentInput1 = inputValue.getText().toString();
@@ -315,6 +315,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     }
 
     public String applyFormatting(double res) {
+        return Double.isFinite(res) ? applyFormatting(java.math.BigDecimal.valueOf(res)) : "";
+    }
+
+    public String applyFormatting(java.math.BigDecimal res) {
         String s;
         try {
             s = getDecimalFormat().format(res);
@@ -394,13 +398,14 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
             return;
         }
-        double input;
-        try { input = NumberUtils.parseDouble(in); }
-        catch (NumberFormatException invalid) {
+        java.math.BigDecimal decimalInput;
+        try { decimalInput = NumberUtils.parseDecimal(in); }
+        catch (IllegalArgumentException | ArithmeticException invalid) {
             outputValue.setText("");
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
             return;
         }
+        double input = decimalInput.doubleValue();
         if (!Double.isFinite(input)) {
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
             return;
@@ -415,17 +420,25 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         if (toSym == null || toSym.isEmpty()) toSym = String.valueOf(to.getId());
         outputSymbol.setText(toSym);
 
-        if (selectedConversion.getId() == Conversion.TEMPERATURE) {
-            result = conversions.convertTemperatureValue(input,from, to);
-            result = in.isEmpty() ? 0 : result;
+        String finalStr;
+        try {
+            java.math.BigDecimal decimalResult;
+            if (selectedConversion.getId() == Conversion.TEMPERATURE) {
+                result = conversions.convertTemperatureValue(input, from, to);
+                if (!Double.isFinite(result)) throw new ArithmeticException("Invalid temperature");
+                decimalResult = java.math.BigDecimal.valueOf(result);
+            } else if (selectedConversion.getId() == Conversion.FUEL) {
+                decimalResult = conversions.convertFuelValue(decimalInput, from, to);
+            } else {
+                decimalResult = conversions.convert(decimalInput, from, to);
+            }
+            result = decimalResult.doubleValue();
+            finalStr = applyFormatting(decimalResult);
+        } catch (ArithmeticException invalid) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
         }
-        else if (selectedConversion.getId() == Conversion.FUEL) {
-            result = conversions.convertFuelValue(input,from, to);
-        }
-        else
-            result = conversions.convert(input,from, to);
-
-        String finalStr = applyFormatting(result);
 
         outputValue.setText(finalStr);
         updateParentGraphy(in, from, to, fromSym, toSym, finalStr, result);

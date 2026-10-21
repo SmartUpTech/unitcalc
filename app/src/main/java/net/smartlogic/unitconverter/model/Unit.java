@@ -1,5 +1,8 @@
 package net.smartlogic.unitconverter.model;
 
+import java.math.BigDecimal;
+import net.smartlogic.unitconverter.utils.DecimalMath;
+
 public class Unit {
 
     public static final int SQ_KILOMETRES = 0;
@@ -193,6 +196,8 @@ public class Unit {
     private final double conversionToBase;
     private final double conversionFromBase;
     private final String symbol;
+    private final BigDecimal baseNumerator;
+    private final BigDecimal baseDenominator;
 
     /**
      * Create a unit object
@@ -209,7 +214,31 @@ public class Unit {
         this.conversionToBase = conversionToBase;
         this.conversionFromBase = conversionFromBase;
         this.symbol = symbol;
+        this.baseNumerator = BigDecimal.valueOf(conversionToBase);
+        this.baseDenominator = BigDecimal.ONE;
     }
+
+    /** Canonical base-unit definition; inverse factors are derived, never stored independently. */
+    public Unit(int id, int labelResource, String numerator, String symbol) {
+        this(id, labelResource, numerator, "1", symbol);
+    }
+
+    public Unit(int id, int labelResource, String numerator, String denominator, String symbol) {
+        this.id = id;
+        this.labelResource = labelResource;
+        this.baseNumerator = new BigDecimal(numerator);
+        this.baseDenominator = new BigDecimal(denominator);
+        if (baseNumerator.signum() <= 0 || baseDenominator.signum() <= 0) {
+            throw new IllegalArgumentException("Unit factors must be positive");
+        }
+        this.conversionToBase = baseNumerator.divide(baseDenominator, DecimalMath.CONTEXT).doubleValue();
+        this.conversionFromBase = baseDenominator.divide(baseNumerator, DecimalMath.CONTEXT).doubleValue();
+        this.symbol = symbol;
+    }
+
+    public BigDecimal getBaseNumerator() { return baseNumerator; }
+    public BigDecimal getBaseDenominator() { return baseDenominator; }
+
 
     public int getId() {
         return id;
