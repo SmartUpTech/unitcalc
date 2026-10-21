@@ -26,12 +26,33 @@ result emphasis, selection/focus and connectors. `GraphyPanel` owns the common
 Compose node-detail dialog; the Canvas View dispatches node selection. There is one
 result node; do not add a second result card above the graph.
 
+Inputs/constants have quiet solid outlines. Derived values have a single dashed
+outline and light semantic fill; do not print a generic Intermediate label inside.
+Only final-result values are bold. Generic role captions are reserved for node
+details and accessibility; meaningful captions such as Exchange rate remain visible.
+Node widths are bounded by shared resources and long text wraps without reducing
+font sizes. Role colors, border contrast and dash tokens are shared with the guide.
+Native drawing is bounded to the View so it cannot erase surrounding Compose UI.
+
 `GraphyTopology` validates ids/edges/cycles and orders dependencies.
 `GraphLayoutEngine` places dependency layers with responsive rows; it has no screen,
 calculator, conversion-category or operator-specific layout branches. Linear,
 merge, branch and multi-stage definitions use the same rules. Long values wrap
 and increase height; the graph does not shrink fonts or require horizontal scrolling.
 `OrthogonalConnectorRouter` remains the shared routing implementation.
+
+The layout keeps operands in declared connection order within a dependency layer,
+including a derived left operand and a later input. It never changes calculation
+values or graph dependencies. Short diagrams center in spare vertical space; only
+spacers carry weight, never the intrinsic-height graph.
+
+The user explicitly authorized vertical scrolling for Graphy on 2026-10-21, as an
+exception to the general single-screen tool rule. Graphy stays within the available
+width and grows downward only. Long expressions and large text remain vertically
+reachable; calculator/converter input screens retain the non-scrolling requirement.
+New graph output resets the previous scroll offset. The panel shows optional
+`METADATA_CONTEXT` content, the graph and important notices, with explanations and
+the node guide available through the information button instead of permanent prose.
 
 ## Transformations and accuracy
 
@@ -56,6 +77,13 @@ Important supporting context uses `GraphyOutput.METADATA_NOTICE` (localized pros
 and remains visible at first glance, including currency cache age.
 Invalid/non-finite snapshots and malformed graphs produce an empty standard state;
 invalid updates clear prior graph content.
+
+Empty Graphy workspace pages remain disabled. The shared `WorkspaceTabController`
+coalesces rejected tap/swipe selections and restores the last enabled page after
+TabLayoutMediator's current dispatch finishes. It also reconciles the highlighted
+tab when scrolling settles, and cancels pending recovery/listeners on detach.
+Never synchronously select another page inside a rejected page callback: the
+mediator can recursively select the rejected page and overflow the stack.
 
 ## Design system, exploration and accessibility
 

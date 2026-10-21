@@ -1,5 +1,6 @@
 package net.smartlogic.unitconverter.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -172,6 +173,9 @@ public final class CalculationLayout extends LinearLayout {
         return true;
     }
 
+    // Called only during onMeasure: probe LinearLayout's intrinsic size directly.
+    // View.measure() would re-enter this override and restart viewport negotiation.
+    @SuppressLint("WrongCall")
     private int measureRequired(int widthSpec, int rowHeight) {
         LayoutParams keys = (LayoutParams) keypad.getLayoutParams();
         keys.weight = sideBySide ? 1 : 0;

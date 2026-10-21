@@ -92,6 +92,97 @@ public class GraphyRenderingTest {
         assertTrue(layout.nodeBounds().get(late).y() > layout.nodeBounds().get(early).y());
         assertNoOverlaps(layout);
     }
+
+    @Test public void onlyFinalResultIsBoldAndGenericRolesDoNotConsumeCardSpace() {
+        var graph = expression("(12+8)*3-15", "45");
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var layout = new GraphLayoutEngine().layout(graph, theme, 320);
+        for (var node : graph.getNodes()) {
+            var content = layout.content().get(node.id());
+            assertEquals(node.type() == GraphyNodeType.RESULT, content.value().getPaint().getTypeface().isBold());
+            assertEquals("Role belongs in details/accessibility, not a repeated canvas caption",
+                    "", content.caption().getText().toString());
+            assertTrue(content.width() <= theme.getNodeMaxWidth());
+            assertTrue(content.height() >= theme.getNodeMinHeight());
+        }
+        assertEquals("45", graph.getResult());
+        assertTrue(graph.getNodes().stream().anyMatch(n -> n.type() == GraphyNodeType.DERIVED && n.displayValue().equals("20")));
+        assertTrue(graph.getNodes().stream().anyMatch(n -> n.type() == GraphyNodeType.DERIVED && n.displayValue().equals("60")));
+        assertEquals("(12+8)*3-15", graph.getMetadata().get(GraphyOutput.METADATA_CONTEXT));
+        var genericDerived = new GraphyNode("derived", GraphyNodeType.DERIVED,
+                theme.nodeRole(GraphyNodeType.DERIVED), "20", "derived");
+        assertEquals("", GraphyNodeContent.measure(genericDerived, theme, 320).caption().getText().toString());
+    }
+
+    @Test public void longerGraphsGrowDownwardAndKeepMeaningfulCaptionsAndWrappedValues() {
+        var theme = new GraphyViewTheme(RuntimeEnvironment.getApplication());
+        var shortGraph = new GraphLayoutEngine().layout(expression("12+8", "20"), theme, 240);
+        var longGraph = new GraphLayoutEngine().layout(expression("((12+8)*3-15)/5+7", "16"), theme, 240);
+        assertEquals(shortGraph.contentWidth(), longGraph.contentWidth());
+        assertTrue(longGraph.contentHeight() > shortGraph.contentHeight());
+        assertNoOverlaps(longGraph);
+        var conversion = new GraphLayoutEngine().layout(linear("5 km", "3.106855 mi"), theme, 240);
+        assertEquals("Conversion relationship", conversion.content().get("relationship").caption().getText().toString());
+        assertEquals("", conversion.content().get("source").caption().getText().toString());
+        assertEquals("", conversion.content().get("target").caption().getText().toString());
+    }
+
+    @Test public void nonCommutativeOperandsKeepTheirDeclaredLeftToRightOrder() {
+        var graph = expression("(12+8)*3-15", "45");
+        var layout = new GraphLayoutEngine().layout(graph, new GraphyViewTheme(RuntimeEnvironment.getApplication()), 320);
+        var left = graph.getNodes().stream().filter(n -> n.displayValue().equals("60")).findFirst().orElseThrow();
+        var right = graph.getNodes().stream().filter(n -> n.displayValue().equals("15")).findFirst().orElseThrow();
+        assertEquals(layout.nodeBounds().get(left.id()).y(), layout.nodeBounds().get(right.id()).y(), 0f);
+        assertTrue(layout.nodeBounds().get(left.id()).x() < layout.nodeBounds().get(right.id()).x());
+    }
+
+    @Test public void nativeCanvasCannotEraseSiblingContentOutsideItsBounds() {
+        var context = RuntimeEnvironment.getApplication();
+        var view = new FlowchartGraphView(context);
+        view.setMaxWidth(240);
+        view.setGraph(expression("2", "2"), new GraphyViewTheme(context));
+        view.measure(View.MeasureSpec.makeMeasureSpec(240, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 240, view.getMeasuredHeight());
+        var bitmap = Bitmap.createBitmap(320, view.getMeasuredHeight() + 100, Bitmap.Config.ARGB_8888);
+        bitmap.eraseColor(android.graphics.Color.MAGENTA);
+        var canvas = new Canvas(bitmap);
+        canvas.translate(20, 60);
+        view.draw(canvas);
+        assertEquals("Compose header must survive native graph drawing", android.graphics.Color.MAGENTA, bitmap.getPixel(30, 20));
+        assertEquals("Right sibling must survive", android.graphics.Color.MAGENTA, bitmap.getPixel(300, 80));
+        bitmap.recycle();
+    }
+
+    @Test public void intermediateBorderIsActuallyDashedAndNextInputBorderRemainsSolid() {
+        var context = RuntimeEnvironment.getApplication();
+        ThemeManager.select(context, CalculatorThemes.DEFAULT_ID);
+        var graph = expression("(12+8)*3-15", "45");
+        var theme = new GraphyViewTheme(context);
+        var layout = new GraphLayoutEngine().layout(graph, theme, 320);
+        var view = new FlowchartGraphView(context);
+        view.setMaxWidth(320);
+        view.setGraph(graph, theme);
+        view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, 320, view.getMeasuredHeight());
+        var bitmap = Bitmap.createBitmap(320, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        view.draw(new Canvas(bitmap));
+        for (var node : graph.getNodes()) {
+            if (node.type() != GraphyNodeType.INPUT && node.type() != GraphyNodeType.DERIVED) continue;
+            var box = layout.nodeBounds().get(node.id());
+            int ink = 0, gaps = 0;
+            int y = (int) box.y();
+            int margin = (int) Math.ceil(theme.getNodeCornerRadius() + theme.getNodeBorderStroke());
+            for (int x = (int) box.x() + margin; x < box.x() + box.width() - margin; x++) {
+                if (bitmap.getPixel(x, y) == theme.nodeBorder(node.type())) ink++; else gaps++;
+            }
+            assertTrue("Border is visible for " + node.id(), ink > 0);
+            if (node.type() == GraphyNodeType.DERIVED) assertTrue("Intermediate border has gaps", gaps > 0);
+            else assertEquals("Dash effect must not leak to input borders", 0, gaps);
+        }
+        bitmap.recycle();
+    }
     @Test public void branchingLayoutIncludesEveryNodeWithoutOverlaps() {
         var graph = GraphyOutput.create("test", "", "result", List.of(
                 new GraphyNode("input", GraphyNodeType.INPUT, "input", "5", "input"),

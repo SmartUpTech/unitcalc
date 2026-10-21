@@ -1,15 +1,17 @@
 package net.smartlogic.unitconverter.graphy.compose.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -21,11 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.key
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -34,9 +41,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.graphy.model.GraphyNode
+import net.smartlogic.unitconverter.graphy.model.GraphyNodeType
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartGraphView
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme
+import net.smartlogic.unitconverter.graphy.theme.GraphySemanticStyle
 
 @Composable
 fun GraphyPanel(
@@ -49,41 +58,40 @@ fun GraphyPanel(
     var showLegend by remember { mutableStateOf(false) }
     var selectedNode by remember(output) { mutableStateOf<GraphyNode?>(null) }
 
-    Column(
+    BoxWithConstraints(
         modifier = modifier.fillMaxSize().background(semanticColors.background)
             .padding(spacing.sm),
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(R.string.graphy_explanation_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = semanticColors.primaryText, modifier = Modifier.weight(1f))
-            GraphyHeader(onInfoClick = { showLegend = true })
-        }
-        Text(stringResource(R.string.graphy_node_hint), style = MaterialTheme.typography.bodySmall,
-            color = semanticColors.secondaryText, modifier = Modifier.padding(bottom = spacing.sm))
-        if (output == null || output.isEmpty) {
-            Text(stringResource(R.string.graphy_unavailable), color = semanticColors.secondaryText)
-        } else {
-            (output.metadata[GraphyOutput.METADATA_NOTICE] as? String)?.let { notice ->
-                Text(notice, style = MaterialTheme.typography.bodySmall,
-                    color = semanticColors.secondaryText, modifier = Modifier.padding(bottom = spacing.sm))
-            }
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxWidth().weight(1f)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                val graphWidth = constraints.maxWidth
-                Column {
+        val graphWidth = constraints.maxWidth
+        // Graphy alone may grow vertically. Reset a previous graph's scroll on new output.
+        key(output) {
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)) {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = output?.metadata?.get(GraphyOutput.METADATA_CONTEXT) as? String ?: "",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = semanticColors.primaryText, modifier = Modifier.weight(1f))
+                    GraphyHeader(onInfoClick = { showLegend = true })
+                }
+                if (output == null || output.isEmpty) {
+                    Text(stringResource(R.string.graphy_unavailable), color = semanticColors.secondaryText)
+                } else {
+                    (output.metadata[GraphyOutput.METADATA_NOTICE] as? String)?.let { notice ->
+                        Text(notice, style = MaterialTheme.typography.bodySmall,
+                            color = semanticColors.secondaryText, modifier = Modifier.padding(bottom = spacing.sm))
+                    }
+                    // Only empty space is weighted: short graphs center, long graphs keep
+                    // their intrinsic height and every node remains vertically reachable.
+                    Spacer(Modifier.weight(1f))
                     GraphyFlowchartHost(output, viewTheme, graphWidth, { selectedNode = it },
                         modifier = Modifier.fillMaxWidth())
-                    GraphyExplanation(output)
+                    Spacer(Modifier.weight(1f))
                 }
             }
         }
     }
 
     if (showLegend) {
-        GraphyLegendDialog(onDismiss = { showLegend = false })
+        GraphyLegendDialog(output, viewTheme, onDismiss = { showLegend = false })
     }
     selectedNode?.let { node ->
         if (output != null) GraphyNodeDetails(node, output, viewTheme) { selectedNode = null }
@@ -127,23 +135,7 @@ private fun GraphyHeader(
 }
 
 @Composable
-private fun GraphyExplanation(output: GraphyOutput) {
-    val spacing = GraphyThemeTokens.spacing
-    var expanded by remember(output) { mutableStateOf(false) }
-    val explanation = output.explanationTemplate ?: return
-    Column(modifier = Modifier.padding(vertical = spacing.sm)) {
-        TextButton(onClick = { expanded = !expanded }) {
-            Text(stringResource(if (expanded) R.string.graphy_hide_details else R.string.graphy_show_details))
-        }
-        if (expanded) Text(text = explanation, style = MaterialTheme.typography.bodyMedium,
-            color = GraphyThemeTokens.semanticColors.secondaryText)
-    }
-}
-
-@Composable
-private fun GraphyLegendDialog(onDismiss: () -> Unit) {
-    val semanticColors = GraphyThemeTokens.semanticColors
-
+private fun GraphyLegendDialog(output: GraphyOutput?, viewTheme: GraphyViewTheme, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -153,12 +145,15 @@ private fun GraphyLegendDialog(onDismiss: () -> Unit) {
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(GraphyThemeTokens.spacing.sm)) {
-                LegendRow(color = semanticColors.input, label = stringResource(R.string.graphy_legend_input))
-                LegendRow(color = semanticColors.constant, label = stringResource(R.string.graphy_legend_constant))
-                LegendRow(color = semanticColors.operation, label = stringResource(R.string.graphy_legend_operator))
-                LegendRow(color = semanticColors.derived, label = stringResource(R.string.graphy_legend_result))
-                LegendRow(color = semanticColors.resultFill, label = stringResource(R.string.graphy_legend_final))
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(GraphyThemeTokens.spacing.sm)) {
+                output?.explanationTemplate?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                Text(stringResource(R.string.graphy_node_hint), style = MaterialTheme.typography.bodyMedium)
+                LegendRow(GraphyNodeType.INPUT, viewTheme, stringResource(R.string.graphy_legend_input))
+                LegendRow(GraphyNodeType.CONSTANT, viewTheme, stringResource(R.string.graphy_legend_constant))
+                LegendRow(GraphyNodeType.OPERATION, viewTheme, stringResource(R.string.graphy_legend_operator))
+                LegendRow(GraphyNodeType.DERIVED, viewTheme, stringResource(R.string.graphy_legend_result))
+                LegendRow(GraphyNodeType.RESULT, viewTheme, stringResource(R.string.graphy_legend_final))
             }
         },
         confirmButton = {
@@ -171,18 +166,30 @@ private fun GraphyLegendDialog(onDismiss: () -> Unit) {
 
 @Composable
 private fun LegendRow(
-    color: androidx.compose.ui.graphics.Color,
+    type: GraphyNodeType,
+    viewTheme: GraphyViewTheme,
     label: String,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(GraphyThemeTokens.spacing.sm),
     ) {
-        Box(
-            modifier = Modifier
-                .size(GraphyThemeTokens.spacing.md)
-                .background(color, shape = MaterialTheme.shapes.small),
-        )
+        // The guide uses the same semantic surfaces and dash tokens as the renderer.
+        val fill = Color(viewTheme.nodeFill(type))
+        val border = Color(viewTheme.nodeBorder(type))
+        val stroke = viewTheme.getNodeBorderStroke()
+        val dash = viewTheme.getNodeDashLength()
+        val gap = viewTheme.getNodeDashGap()
+        Canvas(Modifier.size(GraphyThemeTokens.spacing.lg, GraphyThemeTokens.spacing.md)) {
+            val radius = CornerRadius(if (type == GraphyNodeType.OPERATION) size.height / 2
+                else viewTheme.getNodeCornerRadius())
+            drawRoundRect(fill, cornerRadius = radius)
+            if (type != GraphyNodeType.RESULT) {
+                drawRoundRect(border, cornerRadius = radius, style = Stroke(stroke,
+                    pathEffect = if (GraphySemanticStyle.hasDashedBorder(type))
+                        PathEffect.dashPathEffect(floatArrayOf(dash, gap)) else null))
+            }
+        }
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,

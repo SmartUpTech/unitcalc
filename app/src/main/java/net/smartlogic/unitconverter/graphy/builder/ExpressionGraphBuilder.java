@@ -11,7 +11,6 @@ import net.smartlogic.unitconverter.utils.EvalNode;
 import net.smartlogic.unitconverter.utils.EvalTrace;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -64,7 +63,7 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
                 nodes,
                 connections,
                 explanation,
-                new HashMap<>()
+                java.util.Map.of(GraphyOutput.METADATA_CONTEXT, snapshot.getRawExpression())
         );
     }
 

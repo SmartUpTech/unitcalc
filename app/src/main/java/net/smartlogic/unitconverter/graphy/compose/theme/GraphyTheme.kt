@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import net.smartlogic.unitconverter.theme.ThemeManager
+import net.smartlogic.unitconverter.theme.AppTypography
 
 @Composable
 fun GraphyTheme(
@@ -40,7 +41,7 @@ fun GraphyTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = GraphyTypography,
+            typography = AppTypography,
             shapes = Shapes(small = shape, medium = shape, large = shape),
             content = content,
         )

@@ -56,6 +56,12 @@ public final class GraphyViewTheme {
         return dimen(R.dimen.graphy_node_min_height);
     }
 
+    public float getNodeMaxWidth() { return dimen(R.dimen.graphy_node_max_width); }
+    public float getNodeBorderStroke() { return dimen(R.dimen.graphy_node_border_stroke); }
+    public float getNodeFocusStroke() { return dimen(R.dimen.graphy_node_focus_stroke); }
+    public float getNodeDashLength() { return dimen(R.dimen.graphy_node_dash_length); }
+    public float getNodeDashGap() { return dimen(R.dimen.graphy_node_dash_gap); }
+
     public float getValueTextSize() {
         return dimen(R.dimen.graphy_value_text_size);
     }
@@ -84,6 +90,10 @@ public final class GraphyViewTheme {
         return GraphySemanticStyle.content(ThemeManager.get(), type);
     }
 
+    public int nodeBorder(GraphyNodeType type) {
+        return GraphySemanticStyle.border(ThemeManager.get(), type);
+    }
+
     public String nodeRole(GraphyNodeType type) {
         return context.getString(switch (type) {
             case INPUT -> R.string.graphy_role_input;
@@ -106,7 +116,7 @@ public final class GraphyViewTheme {
         return androidx.core.content.res.ResourcesCompat.getFont(context, R.font.app_text);
     }
 
-    public float getNodePadding() { return dimen(R.dimen.graphy_spacing_sm); }
+    public float getNodePadding() { return dimen(R.dimen.graphy_node_padding); }
     public float getLabelTextSize() { return dimen(R.dimen.graphy_label_text_size); }
     public float getConnectorClearance() { return dimen(R.dimen.graphy_connector_clearance); }
     public float getArrowSize() { return dimen(R.dimen.graphy_arrow_size); }

@@ -2,6 +2,7 @@ package net.smartlogic.unitconverter.graphy.renderer;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -44,6 +45,7 @@ public class FlowchartGraphView extends View {
     private final Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint connectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private DashPathEffect intermediateBorder;
 
     private final Map<String, RectF> nodeBounds = new HashMap<>();
     private final GraphLayoutEngine layoutEngine = new GraphLayoutEngine();
@@ -107,6 +109,8 @@ public class FlowchartGraphView extends View {
         this.output = output;
         orderedNodes = GraphyTopology.orderedNodes(output);
         this.theme = theme;
+        intermediateBorder = new DashPathEffect(
+                new float[]{theme.getNodeDashLength(), theme.getNodeDashGap()}, 0);
         layoutNodes();
         requestLayout();
         invalidate();
@@ -132,8 +136,12 @@ public class FlowchartGraphView extends View {
             return;
         }
 
-        canvas.drawColor(theme.getBackgroundColor());
         canvas.save();
+        // AndroidView does not automatically clip native drawing. A drawColor() can
+        // erase Compose siblings (the expression and guide) outside this View.
+        canvas.clipRect(0, 0, getWidth(), getHeight());
+        fillPaint.setColor(theme.getBackgroundColor());
+        canvas.drawRect(0, 0, getWidth(), getHeight(), fillPaint);
         drawConnectors(canvas);
         drawNodes(canvas);
         canvas.restore();
@@ -169,6 +177,7 @@ public class FlowchartGraphView extends View {
                 theme.getVerticalGap(),
                 contentWidth
         );
+        accessibility.invalidateRoot();
     }
 
     private void drawConnectors(@NonNull Canvas canvas) {
@@ -263,13 +272,27 @@ public class FlowchartGraphView extends View {
             float radius = node.type() == GraphyNodeType.OPERATION
                     ? bounds.height() / 2 : theme.getNodeCornerRadius();
             canvas.drawRoundRect(bounds, radius, radius, fillPaint);
+            // Role styling is shared by every builder, never inferred from numeric text.
+            strokePaint.setColor(theme.nodeBorder(node.type()));
+            strokePaint.setStrokeWidth(theme.getNodeBorderStroke());
+            strokePaint.setPathEffect(net.smartlogic.unitconverter.graphy.theme.GraphySemanticStyle
+                    .hasDashedBorder(node.type()) ? intermediateBorder : null);
+            if (node.type() != GraphyNodeType.RESULT) {
+                RectF border = new RectF(bounds);
+                float inset = theme.getNodeBorderStroke() / 2;
+                border.inset(inset, inset);
+                canvas.drawRoundRect(border, radius, radius, strokePaint);
+            }
+            strokePaint.setPathEffect(null);
             content.draw(canvas, bounds);
             if (node.id().equals(pressedNodeId)
                     || accessibility.getKeyboardFocusedVirtualViewId() == index
                     || accessibility.getAccessibilityFocusedVirtualViewId() == index) {
-                strokePaint.setColor(theme.getConnectorColor());
-                strokePaint.setStrokeWidth(theme.getConnectorStrokeWidth());
-                canvas.drawRoundRect(bounds, radius, radius, strokePaint);
+                strokePaint.setColor(theme.nodeContent(node.type()));
+                strokePaint.setStrokeWidth(theme.getNodeFocusStroke());
+                RectF focus = new RectF(bounds);
+                focus.inset(theme.getNodeFocusStroke() / 2, theme.getNodeFocusStroke() / 2);
+                canvas.drawRoundRect(focus, radius, radius, strokePaint);
             }
         }
     }

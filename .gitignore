@@ -14,6 +14,7 @@ app/release/
 local.properties
 keystore.properties
 captures/
+screenshots/
 .externalNativeBuild/
 .cxx/
 .navigation/

@@ -26,14 +26,16 @@ record GraphyNodeContent(StaticLayout caption, StaticLayout value, float width, 
         TextPaint captionPaint = new TextPaint(valuePaint);
         captionPaint.setTextSize(theme.getLabelTextSize());
         captionPaint.setTypeface(Typeface.create(theme.getTypeface(), Typeface.NORMAL));
-        String label = compact ? "" : theme.nodeCaption(node);
+        // Generic roles remain in TalkBack/details; the canvas only needs meaningful labels.
+        String label = operation || node.label().equals(node.displayValue())
+                || node.label().equals(theme.nodeRole(node.type())) ? "" : node.label();
         float natural = Math.max(valuePaint.measureText(text), captionPaint.measureText(label)) + padding * 2;
-        float width = Math.min(maxWidth, compact ? theme.getOperationMarkerSize()
+        float width = Math.min(Math.min(maxWidth, theme.getNodeMaxWidth()), compact ? theme.getOperationMarkerSize()
                 : Math.max(theme.getNodeMinWidth(), natural));
         int textWidth = Math.max(1, (int) (width - padding * 2));
         StaticLayout caption = textLayout(label, captionPaint, textWidth);
         StaticLayout value = textLayout(text, valuePaint, textWidth);
-        float textHeight = value.getHeight() + (compact ? 0 : caption.getHeight() + padding / 2);
+        float textHeight = value.getHeight() + (label.isEmpty() ? 0 : caption.getHeight() + padding / 2);
         float height = Math.max(compact ? theme.getOperationMarkerSize() : theme.getNodeMinHeight(),
                 textHeight + padding * 2);
         return new GraphyNodeContent(caption, value, width, height, padding, compact);
@@ -46,11 +48,12 @@ record GraphyNodeContent(StaticLayout caption, StaticLayout value, float width, 
     }
 
     void draw(android.graphics.Canvas canvas, android.graphics.RectF bounds) {
-        float textHeight = value.getHeight() + (compact ? 0 : caption.getHeight() + padding / 2);
+        boolean showCaption = caption.getText().length() > 0;
+        float textHeight = value.getHeight() + (showCaption ? caption.getHeight() + padding / 2 : 0);
         canvas.save();
         canvas.translate(bounds.left + (bounds.width() - value.getWidth()) / 2,
                 bounds.top + (bounds.height() - textHeight) / 2);
-        if (!compact) {
+        if (showCaption) {
             caption.draw(canvas);
             canvas.translate(0, caption.getHeight() + padding / 2);
         }

@@ -5,6 +5,18 @@
 - Propagation: Recursive ThemeApplier.apply(). Constraint: MaterialButtonToggleGroup buttons must keep background (don't set null). WindowChrome syncs status/nav bars.
 - Ext: Add to CalculatorThemes for auto-support.
 
+## Shared typography
+
+Oswald is the app font. XML Views and Canvas resolve `@font/app_text`, which
+contains the bundled regular (400) and bold (700) weights. Compose uses
+`theme/AppTypography.kt` (`AppFontFamily` and `AppTypography`) with those same
+bundled files. `GraphyTheme` supplies this complete Material type scale to every
+Compose host, including Settings and Timer. Define every text role, not only
+body text: app bars use `titleLarge` and dialogs use headline styles. The XML
+theme similarly maps all Material text appearances and sets both framework and
+AppCompat font-family attributes. Keep font sizes/weights semantic; do not fix
+individual screens with font overrides or recursive runtime typeface changes.
+
 ## Theme preferences and progression
 - Settings hosts a compact horizontal Compose swatch row in the existing XML screen, using GraphyTheme and CalculatorTheme tokens. Items share a fixed width and an equal height derived from the preview, status line and font-scaled two-line label slot. Check/lock icons sit above names; available unselected items have no icon. Theme names, plurals, states and dimensions are Android resources.
 - ThemeProgression is a pure domain policy. The first three catalog ranks are available by default; every three foreground usage days unlocks the next rank. Constants live in ThemeProgression. CalculatorTheme.unlockRank is permanent metadata: do not renumber/reuse ranks when reordering/removing cards; append new ranks for new themes. Removed ranks remain reserved, so removing a theme cannot change any remaining theme's earned threshold.

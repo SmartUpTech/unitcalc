@@ -41,6 +41,16 @@ final class GraphLayoutEngine {
             layers.computeIfAbsent(depth.get(node.id()), ignored -> new ArrayList<>()).add(node);
         }
         Map<String, LayoutBox> bounds = new LinkedHashMap<>();
+        // Preserve the definition's operand order, including a derived left operand
+        // beside a later input. Topological queue order alone can reverse subtraction.
+        Map<String, Integer> operandOrder = new LinkedHashMap<>();
+        for (int i = 0; i < output.getConnections().size(); i++) {
+            operandOrder.putIfAbsent(output.getConnections().get(i).fromNodeId(), i);
+        }
+        for (var layer : layers.values()) {
+            layer.sort(java.util.Comparator.comparingInt(node ->
+                    operandOrder.getOrDefault(node.id(), Integer.MAX_VALUE)));
+        }
         float y = theme.getNodePadding();
         // Layers are traversed by depth, independently of definition insertion order.
         int maxDepth = depth.values().stream().mapToInt(Integer::intValue).max().orElse(0);

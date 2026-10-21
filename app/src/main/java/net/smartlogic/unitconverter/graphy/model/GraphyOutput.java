@@ -15,6 +15,8 @@ import java.util.Map;
 public final class GraphyOutput {
 
     public static final String METADATA_NOTICE = "notice";
+    /** Optional human-readable context; separate from the graph's authoritative result. */
+    public static final String METADATA_CONTEXT = "context";
 
     private final String calculatorId;
     private final String expression;

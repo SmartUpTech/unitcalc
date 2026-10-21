@@ -19,6 +19,9 @@ public class GraphySemanticStyleTest {
                 assertTrue(theme.id() + ": " + type,
                         ColorUtils.calculateContrast(GraphySemanticStyle.content(theme, type),
                                 GraphySemanticStyle.fill(theme, type)) >= 4.5);
+                assertTrue(theme.id() + ": border " + type,
+                        ColorUtils.calculateContrast(GraphySemanticStyle.border(theme, type),
+                                GraphySemanticStyle.fill(theme, type)) >= 3);
             }
             assertTrue(ColorUtils.calculateContrast(GraphySemanticStyle.connector(theme), theme.background()) >= 3);
         }

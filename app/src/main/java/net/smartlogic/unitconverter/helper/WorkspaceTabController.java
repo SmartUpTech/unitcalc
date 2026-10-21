@@ -26,8 +26,44 @@ public final class WorkspaceTabController {
     private final TabLayout tabLayout;
     private final Callback callback;
     private final TabLayoutMediator mediator;
+    private final ViewPager2.OnPageChangeCallback pageCallback;
+    private final TabLayout.OnTabSelectedListener tabListener;
     private int lastValidPosition = 0;
     private boolean suppressPageCallback;
+    private boolean restorationPosted;
+    private boolean detached;
+    private final Runnable restoreSelection = this::restoreLastValidSelection;
+
+    private void restoreLastValidSelection() {
+        restorationPosted = false;
+        if (detached) return;
+        int current = pager.getCurrentItem();
+        if (callback.isTabEnabled(current) && tabLayout.getSelectedTabPosition() == current) {
+            // onPageScrolled can move the visual highlight without selecting a
+            // Tab object, even after a rejected swipe has restored the pager.
+            tabLayout.setScrollPosition(current, 0f, true);
+            return;
+        }
+        int fallback = lastValidPosition;
+        if (!callback.isTabEnabled(fallback)) {
+            fallback = -1;
+            for (int position = 0; position < tabLayout.getTabCount(); position++) {
+                if (callback.isTabEnabled(position)) { fallback = position; break; }
+            }
+        }
+        if (fallback < 0) return;
+        lastValidPosition = fallback;
+        suppressPageCallback = true;
+        try {
+            pager.setCurrentItem(fallback, false);
+            TabLayout.Tab tab = tabLayout.getTabAt(fallback);
+            if (tab != null && tabLayout.getSelectedTabPosition() != fallback) tab.select();
+            tabLayout.setScrollPosition(fallback, 0f, true);
+        } finally {
+            suppressPageCallback = false;
+        }
+        if (!detached) callback.onTabSelected(fallback);
+    }
 
     public WorkspaceTabController(@NonNull ViewPager2 pager,
                                   @NonNull TabLayout tabLayout,
@@ -39,7 +75,7 @@ public final class WorkspaceTabController {
 
         pager.setOffscreenPageLimit(tabTitleResIds.length - 1);
 
-        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        pageCallback = new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 if (suppressPageCallback) {
@@ -58,14 +94,12 @@ public final class WorkspaceTabController {
                 if (state != ViewPager2.SCROLL_STATE_IDLE || suppressPageCallback) {
                     return;
                 }
-                int current = pager.getCurrentItem();
-                if (!callback.isTabEnabled(current)) {
-                    revertToLastValidTab();
-                }
+                revertToLastValidTab();
             }
-        });
+        };
+        pager.registerOnPageChangeCallback(pageCallback);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabListener = new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int position = tab.getPosition();
@@ -81,7 +115,8 @@ public final class WorkspaceTabController {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
-        });
+        };
+        tabLayout.addOnTabSelectedListener(tabListener);
 
         mediator = new TabLayoutMediator(tabLayout, pager, (tab, position) ->
                 tab.setText(tabTitleResIds[position]));
@@ -89,6 +124,7 @@ public final class WorkspaceTabController {
     }
 
     public void selectTab(int position) {
+        if (detached || position < 0 || position >= tabLayout.getTabCount()) return;
         if (!callback.isTabEnabled(position)) {
             revertToLastValidTab();
             return;
@@ -105,20 +141,20 @@ public final class WorkspaceTabController {
     }
 
     public void detach() {
+        if (detached) return;
+        detached = true;
+        pager.removeCallbacks(restoreSelection);
+        restorationPosted = false;
         mediator.detach();
+        pager.unregisterOnPageChangeCallback(pageCallback);
+        tabLayout.removeOnTabSelectedListener(tabListener);
     }
 
     private void revertToLastValidTab() {
-        suppressPageCallback = true;
-        pager.setCurrentItem(lastValidPosition, false);
-        suppressPageCallback = false;
-        revertTabSelection();
-    }
-
-    private void revertTabSelection() {
-        TabLayout.Tab tab = tabLayout.getTabAt(lastValidPosition);
-        if (tab != null) {
-            tab.select();
-        }
+        // Mediator selection is still dispatching here. Restoring synchronously
+        // lets its remaining listeners select the rejected page again forever.
+        if (detached || restorationPosted) return;
+        restorationPosted = true;
+        pager.post(restoreSelection);
     }
 }

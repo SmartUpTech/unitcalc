@@ -9,10 +9,13 @@ import net.smartlogic.unitconverter.theme.CalculatorTheme;
 public final class GraphySemanticStyle {
     private GraphySemanticStyle() { }
 
+    public static boolean hasDashedBorder(GraphyNodeType type) {
+        return type == GraphyNodeType.DERIVED;
+    }
+
     public static int fill(CalculatorTheme theme, GraphyNodeType type) {
         return switch (type) {
-            case INPUT -> ColorUtils.blendARGB(theme.background(), theme.mainText(), 0.08f);
-            case CONSTANT -> ColorUtils.blendARGB(theme.background(), theme.functions(), 0.12f);
+            case INPUT, CONSTANT -> theme.background();
             case OPERATION -> ColorUtils.blendARGB(theme.background(), theme.operatorContentColor(), 0.08f);
             case DERIVED, DECISION -> ColorUtils.blendARGB(theme.background(), theme.functions(), 0.20f);
             case RESULT -> theme.equal();
@@ -24,6 +27,10 @@ public final class GraphySemanticStyle {
         int surface = fill(theme, type);
         int preferred = type == GraphyNodeType.RESULT ? theme.background() : theme.mainText();
         return readable(preferred, surface);
+    }
+
+    public static int border(CalculatorTheme theme, GraphyNodeType type) {
+        return readable(connector(theme), fill(theme, type));
     }
 
     /** Preserve a theme role when it has normal-text contrast; otherwise use readable ink. */

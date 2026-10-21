@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
@@ -62,6 +63,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private String activeCalculatorId = CalculatorCatalog.ID_BASIC;
     private Fragment timerFragment;
     private boolean timerVisible;
+    private final OnBackPressedCallback timerBackCallback = new OnBackPressedCallback(false) {
+        @Override public void handleOnBackPressed() { hideTimerScreen(true); }
+    };
+    private final OnBackPressedCallback drawerBackCallback = new OnBackPressedCallback(true) {
+        @Override public void handleOnBackPressed() { closeNavigationDrawerIfOpen(); }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +94,17 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         favoritesRepository = FavoritesRepository.getInstance(this);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override public void onDrawerOpened(@NonNull View drawerView) {
+                // Register when opened so the drawer takes precedence over fragment Back handlers.
+                drawerBackCallback.remove();
+                getOnBackPressedDispatcher().addCallback(MainActivity.this, drawerBackCallback);
+            }
+
+            @Override public void onDrawerClosed(@NonNull View drawerView) {
+                drawerBackCallback.remove();
+            }
+        });
         navigationView = findViewById(R.id.nav_view);
         setupDrawerMenu();
 
@@ -94,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         Preferences.getInstance(this).getPreferences().registerOnSharedPreferenceChangeListener(this);
 
         restoreFragmentsIfNeeded(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, timerBackCallback);
         setUpBottomNavigation();
         ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
         if (shouldOpenTimer(getIntent())) {
@@ -299,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (restoredTimer != null) {
             timerFragment = restoredTimer;
             timerVisible = !restoredTimer.isHidden();
+            timerBackCallback.setEnabled(timerVisible);
             if (timerVisible) {
                 activeFragment = restoredTimer;
             }
@@ -352,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             // Hide Timer and reveal the selected tab in one transaction.
             transaction.hide(timerFragment);
             timerVisible = false;
+            timerBackCallback.setEnabled(false);
         }
 
         if (fragment == null) {
@@ -484,6 +505,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         transaction.commit();
         timerVisible = true;
+        timerBackCallback.remove();
+        getOnBackPressedDispatcher().addCallback(this, timerBackCallback);
+        timerBackCallback.setEnabled(true);
         activeFragment = timerFragment;
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
@@ -504,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         transaction.commit();
         timerVisible = false;
+        timerBackCallback.setEnabled(false);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
@@ -612,19 +637,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
         super.onPostResume();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return;
-        }
-        if (timerVisible) {
-            hideTimerScreen(true);
-            return;
-        }
-        super.onBackPressed();
     }
 
     @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
