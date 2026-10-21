@@ -15,7 +15,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -94,6 +96,14 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), backCallback);
+        getViewLifecycleOwner().getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override public void onResume(@NonNull LifecycleOwner owner) {
+                // Fragment.onResume() runs before its Lifecycle emits ON_RESUME.
+                // Wait for the view event so the visibility guard can resume the
+                // initially paused WebView and allow its first visual frame.
+                updateVisibility();
+            }
+        });
         ThemeManager.addListener(themeListener);
         createWebView();
     }
@@ -285,11 +295,6 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         }
         documentGeneration++;
         showError(R.string.games_load_error);
-    }
-
-    @Override public void onResume() {
-        super.onResume();
-        updateVisibility();
     }
 
     @Override public void onPause() {

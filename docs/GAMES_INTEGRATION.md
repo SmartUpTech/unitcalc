@@ -47,6 +47,11 @@ favorite action. Native tab and trusted web route state are saved for recreation
   resume/reconfigure if host identity changed. Ordinary tab/ad return does not
   reconfigure unchanged state. A completion-map change alone does not restart the
   next puzzle: the web session already owns its immediate pending badges.
+- Resume visibility handling from the view lifecycle's `ON_RESUME` observer,
+  after the Fragment lifecycle has reached `RESUMED`. Calling the visibility
+  guard directly inside `Fragment.onResume()` leaves the first WebView paused:
+  the lifecycle event has not yet been dispatched, so initial rendering waits
+  until the native timeout while a later Retry appears to fix it.
 - Back closes an open native drawer first, then returns from a hashed web route
   to the landing page; landing Back delegates to the app's normal dispatcher.
 - Handle timeout, offline/main-document HTTP/SSL failure, renderer loss and
