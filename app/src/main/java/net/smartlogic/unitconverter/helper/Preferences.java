@@ -38,7 +38,7 @@ public class Preferences {
     private static Preferences mInstance;
     private final SharedPreferences mPrefs;
     private final Context mContext;
-    private final ThemeProgression themeProgression = new ThemeProgression(CalculatorThemes.unlockRanks());
+    private final ThemeProgression themeProgression = ThemeProgression.forCurrentBuild();
 
     public static synchronized Preferences getInstance(Context context) {
         if (mInstance == null) {

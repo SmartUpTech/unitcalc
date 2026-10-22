@@ -43,8 +43,10 @@ public class ThemePreferencesTest {
     @Test public void freshInstallationHasExactlyThreeSelectableThemes() {
         assertEquals(3, progression.getUnlockedThemeCount(preferences.getThemeProgression()));
         assertEquals(CalculatorThemes.DEFAULT_ID, preferences.getSelectedThemeId());
-        assertFalse(preferences.setSelectedThemeId(CalculatorThemes.GRAPHITE_BLACK.id()));
-        assertEquals(CalculatorThemes.DEFAULT_ID, preferences.getSelectedThemeId());
+        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG,
+                preferences.setSelectedThemeId(CalculatorThemes.GRAPHITE_BLACK.id()));
+        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG
+                ? CalculatorThemes.GRAPHITE_BLACK.id() : CalculatorThemes.DEFAULT_ID, preferences.getSelectedThemeId());
     }
 
     @Test public void selectionAndUsageSurviveRestoredPreferenceSnapshotAndReboot() {
@@ -119,7 +121,8 @@ public class ThemePreferencesTest {
         assertTrue(preferences.setSelectedThemeId(CalculatorThemes.GOLDEN_POPPY.id()));
         preferences.recordThemeUsage(DAY);
         assertEquals(CalculatorThemes.GOLDEN_POPPY.id(), preferences.getSelectedThemeId());
-        assertFalse(preferences.setSelectedThemeId(CalculatorThemes.BURGUNDY.id()));
+        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG,
+                preferences.setSelectedThemeId(CalculatorThemes.BURGUNDY.id()));
     }
 
     @Test public void unknownRemovedAndWrongTypeSelectedIdsFallBackSafely() {

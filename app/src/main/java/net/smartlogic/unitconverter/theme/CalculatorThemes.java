@@ -49,6 +49,7 @@ public final class CalculatorThemes {
             "golden_poppy", R.string.theme_golden_poppy, 10,
             ThemePalette.PALETTE_FCC200, ThemePalette.PALETTE_39372F, ThemePalette.PALETTE_706D62, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFF7D6);
 
+    // Permanent unlock order. Never sort by selection, availability or remaining days.
     private static final List<CalculatorTheme> ALL = Collections.unmodifiableList(Arrays.asList(
             PORCELAIN_WHITE,
             OYSTER_CREAM,

@@ -89,9 +89,15 @@ class ThemeSelectorUiTest {
             tap(CalculatorThemes.OYSTER_CREAM.nameRes())
             assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
             tap(CalculatorThemes.GRAPHITE_BLACK.nameRes())
-            assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
-            assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
-            assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
+            if (net.smartlogic.unitconverter.BuildConfig.DEBUG) {
+                assertEquals(CalculatorThemes.GRAPHITE_BLACK.id(), preferences.selectedThemeId)
+                assertTrue(model.uiState.value.cards.all { it.unlocked })
+                assertNull(model.uiState.value.lockedThemeNameRes)
+            } else {
+                assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
+                assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
+                assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
+            }
         }
     }
 

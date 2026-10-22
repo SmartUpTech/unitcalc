@@ -23,8 +23,10 @@ data class ThemeSelectorState(
 )
 
 /** One derived snapshot for the entire row. Cards never read preferences. */
-class ThemeSelectorViewModel(private val preferences: Preferences) : ViewModel() {
-    private val progression = ThemeProgression(CalculatorThemes.unlockRanks())
+class ThemeSelectorViewModel(
+    private val preferences: Preferences,
+    private val progression: ThemeProgression = ThemeProgression.forCurrentBuild(),
+) : ViewModel() {
     private var lockedThemeId: String? = null
     private val mutableState = MutableStateFlow(buildState())
     val uiState: StateFlow<ThemeSelectorState> = mutableState

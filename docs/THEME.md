@@ -27,3 +27,7 @@ individual screens with font overrides or recursive runtime typeface changes.
 - Unlocks never change selection. A locked tap shows its own derived remaining usage days in a dialog with singular/plural wording. The selector has no permanent progress/countdown text, including when all themes are available; usage continues to support future catalog additions.
 - ThemeSelectorViewModel publishes one immutable snapshot. The Compose row performs no preference reads or progression calculations, uses stable IDs, lifecycle-aware collection and saved lazy-list scroll state. ThemeManager/Preferences also reject locked or unknown selections.
 - ThemeSelectorUiTest measures native Compose bounds at phone/tablet widths and normal/large font sizes, checks accessible selection and locked taps, and verifies horizontal overflow plus visibility of the last selected theme. It renders the real SettingsActivity in light/dark themes; reviewed captures are in screenshots/theme-selector/. These are Robolectric native-rendered captures, not emulator/device screenshots; touch-gesture checks require a device/emulator.
+
+## Build variants
+- DEBUG builds enable every registered theme without changing earned usage days.
+- Release builds retain usage-based unlocking. Theme cards always keep their permanent unlock-rank sequence; selection and availability never reorder them.

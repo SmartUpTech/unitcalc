@@ -20,9 +20,19 @@ public final class ThemeProgression {
     }
 
     private final Map<String, Integer> unlockRanks;
+    private final boolean unlockAll;
 
     public ThemeProgression(Map<String, Integer> unlockRanks) {
+        this(unlockRanks, false);
+    }
+
+    public ThemeProgression(Map<String, Integer> unlockRanks, boolean unlockAll) {
         this.unlockRanks = Collections.unmodifiableMap(new HashMap<>(unlockRanks));
+        this.unlockAll = unlockAll;
+    }
+
+    public static ThemeProgression forCurrentBuild() {
+        return new ThemeProgression(CalculatorThemes.unlockRanks(), net.smartlogic.unitconverter.BuildConfig.DEBUG);
     }
 
     /** Preserve the legacy selection without inventing usage days or unlocking other themes. */
@@ -48,7 +58,7 @@ public final class ThemeProgression {
 
     public boolean isThemeUnlocked(String themeId, State state) {
         Integer rank = unlockRanks.get(themeId);
-        return rank != null && (themeId.equals(state.grandfatheredThemeId())
+        return rank != null && (unlockAll || themeId.equals(state.grandfatheredThemeId())
                 || rank <= DEFAULT_UNLOCKED_COUNT + (long) state.totalUsageDays() / DAYS_PER_UNLOCK);
     }
 

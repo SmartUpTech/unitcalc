@@ -23,7 +23,7 @@ class ThemeSelectorViewModelTest {
         preferences = Preferences.getInstance(RuntimeEnvironment.getApplication())
         preferences.preferences.edit().clear().commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
-        model = ThemeSelectorViewModel(preferences)
+        model = ThemeSelectorViewModel(preferences, ThemeProgression(CalculatorThemes.unlockRanks()))
         store = ViewModelStore().apply { put("theme", model) }
     }
 
@@ -92,6 +92,7 @@ class ThemeSelectorViewModelTest {
         assertEquals(CalculatorThemes.OYSTER_CREAM.id(), model.uiState.value.cards.single { it.selected }.theme.id())
         assertEquals(CalculatorThemes.OYSTER_CREAM.id(), ThemeManager.get().id())
         ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.GRAPHITE_BLACK.id())
-        assertEquals(CalculatorThemes.OYSTER_CREAM.id(), ThemeManager.get().id())
+        assertEquals(if (net.smartlogic.unitconverter.BuildConfig.DEBUG) CalculatorThemes.GRAPHITE_BLACK.id()
+            else CalculatorThemes.OYSTER_CREAM.id(), ThemeManager.get().id())
     }
 }

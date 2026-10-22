@@ -12,6 +12,23 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class ThemeProgressionTest {
+    @Test public void debugUnlocksAllKnownThemesWithoutChangingProgressOrReleasePolicy() {
+        ThemeProgression debug = new ThemeProgression(catalog(10), true);
+        assertEquals(10, debug.getUnlockedThemeCount(state(0)));
+        assertNull(debug.getNextLockedThemeId(state(0)));
+        assertEquals(0, debug.getDaysUntilUnlock("theme_10", state(0)));
+        assertFalse(debug.isThemeUnlocked("unknown", state(0)));
+        assertEquals(3, new ThemeProgression(catalog(10), false).getUnlockedThemeCount(state(0)));
+    }
+    @Test public void catalogKeepsPermanentUnlockSequence() {
+        assertEquals(java.util.List.of("porcelain_white", "oyster_cream", "titanium_gray",
+                "graphite_black", "purple_mountain_majesty", "glacier", "burgundy",
+                "sage_green", "burnt_orange", "golden_poppy"),
+                CalculatorThemes.all().stream().map(CalculatorTheme::id).toList());
+        for (int i = 0; i < CalculatorThemes.all().size(); i++) {
+            assertEquals(i + 1, CalculatorThemes.all().get(i).unlockRank());
+        }
+    }
     private static final LocalDate DAY = LocalDate.of(2026, 10, 4);
     private final ThemeProgression progression = new ThemeProgression(catalog(10));
 
