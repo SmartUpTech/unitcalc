@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_history"
+        android:icon="@drawable/ic_history" android:title="@string/history"
+        app:showAsAction="always" />
     <item android:id="@+id/menu_games_privacy"
         android:title="@string/games_privacy_options"
         android:visible="false" app:showAsAction="never" />
@@ -14,6 +17,7 @@
 
     <item
         android:id="@+id/menu_settings"
+        android:visible="false"
         android:icon="@drawable/ic_tune"
         android:orderInCategory="20"
         android:title="@string/title_activity_settings"
@@ -22,6 +26,7 @@
 
     <item
         android:id="@+id/menu_other_apps"
+        android:visible="false"
         android:orderInCategory="110"
         android:title="@string/menu_other_apps"
         app:showAsAction="never"/>

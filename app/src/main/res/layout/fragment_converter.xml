@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/chrome_surface"
-    android:orientation="vertical">
-
-    <include layout="@layout/workspace_tabs_pager" />
-
-    <!-- Dummy container to allow FragmentManager to restore nested fragments before ViewPager2 binds the page -->
-    <FrameLayout
-        android:id="@+id/converter_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/chrome_surface" android:orientation="vertical">
+    <include layout="@layout/pane_converter_convert" />
 </LinearLayout>

@@ -36,8 +36,8 @@ public final class ThemeApplier {
     private static final int[] ICON_IDS = {
             R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
             R.id.btn_clear_history, R.id.refresh, R.id.catalog_icon,
-            R.id.btn_favorite, R.id.category_icon, R.id.fromChevron,
-            R.id.toChevron, R.id.category_chevron
+            R.id.btn_favorite, R.id.fromChevron,
+            R.id.toChevron
     };
     private static final int[] MAIN_TEXT_IDS = {
             R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
@@ -45,7 +45,7 @@ public final class ThemeApplier {
             R.id.tv_history_result, R.id.textView,
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
-            R.id.category_title, R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
+            R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
@@ -152,6 +152,16 @@ public final class ThemeApplier {
                     new int[]{androidx.core.graphics.ColorUtils.compositeColors(
                             withAlpha(theme.functions(), 0x26), theme.background()), theme.background()}));
             chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x88)));
+        }
+        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
+                && view instanceof com.google.android.material.button.MaterialButton button) {
+            int[][] states = {{android.R.attr.state_checked}, {}};
+            button.setTextColor(new ColorStateList(states,
+                    new int[]{theme.mainText(), theme.functions()}));
+            button.setBackgroundTintList(new ColorStateList(states,
+                    new int[]{androidx.core.graphics.ColorUtils.compositeColors(
+                            withAlpha(theme.functions(), 0x26), theme.background()), theme.background()}));
+            button.setStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x88)));
         }
         if ("converter_selector".equals(view.getTag())) {
             GradientDrawable outline = roundedFill(Color.TRANSPARENT,

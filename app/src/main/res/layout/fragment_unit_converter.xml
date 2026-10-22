@@ -21,40 +21,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <LinearLayout
+                <com.google.android.material.tabs.TabLayout
                     android:id="@+id/category_selector"
+                    style="@style/WorkspaceTabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/converter_touch_target"
                     android:layout_marginHorizontal="@dimen/converter_card_margin"
                     android:layout_marginTop="@dimen/converter_spacing"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true">
-                    <ImageView
-                        android:id="@+id/category_icon"
-                        android:layout_width="@dimen/converter_flag_width"
-                        android:layout_height="@dimen/converter_flag_width"
-                        android:padding="@dimen/converter_small_spacing"
-                        android:importantForAccessibility="no" />
-                    <TextView
-                        android:id="@+id/category_title"
-                        style="@style/ConverterSelectorText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/converter_spacing"
-                        android:singleLine="true"
-                        android:ellipsize="end" />
-                    <ImageView
-                        android:id="@+id/category_chevron"
-                        android:layout_width="@dimen/converter_chevron_size"
-                        android:layout_height="@dimen/converter_chevron_size"
-                        android:src="@drawable/ic_chevron_down"
-                        android:importantForAccessibility="no" />
-                </LinearLayout>
+                    app:tabMinWidth="@dimen/converter_touch_target"
+                    app:tabTextAppearance="@style/ConverterCategoryText"
+                    app:tabMode="scrollable"
+                    app:tabGravity="start"
+                    app:tabInlineLabel="false"
+                    app:tabIndicatorHeight="@dimen/converter_category_indicator_height"
+                    app:tabIconTint="@null" />
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/converter_card"
                     android:layout_width="match_parent"

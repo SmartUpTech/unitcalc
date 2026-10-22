@@ -13,7 +13,6 @@ import net.smartlogic.unitconverter.R;
 public final class ConverterControlsLayout extends LinearLayout {
     private final Paint measurementPaint = new Paint();
     private boolean compactHeading;
-    private int headingHeight;
 
     public ConverterControlsLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,65 +33,26 @@ public final class ConverterControlsLayout extends LinearLayout {
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
         View header = getChildAt(0);
         View metadata = getChildAt(getChildCount() - 1);
-        // Both modes reserve the same font-aware two-line status slot. Wrapped
-        // timestamps must not move the keypad when switching converter modes.
+        // Both modes use identical font-aware heading/metadata allocations. Compact
+        // category tabs put icons beside labels instead of narrowing the strip.
+        if (header instanceof com.google.android.material.tabs.TabLayout tabs) {
+            tabs.setInlineLabel(compactHeading);
+        }
         Paint status = measurementPaint;
         status.set(rate().getPaint());
         Paint.FontMetricsInt metrics = status.getFontMetricsInt();
         metadata.setMinimumHeight(Math.max(getResources().getDimensionPixelSize(
                 R.dimen.converter_metadata_height), metrics.bottom - metrics.top
                 + metrics.descent - metrics.ascent));
-        if (!compactHeading) {
-            super.onMeasure(widthSpec, heightSpec);
-            return;
-        }
-        int width = MeasureSpec.getSize(widthSpec);
-        LayoutParams headerParams = (LayoutParams) header.getLayoutParams();
-        int available = Math.max(0, width - getPaddingLeft() - getPaddingRight()
-                - headerParams.leftMargin - headerParams.rightMargin);
-        int headerWidth = findViewById(R.id.refresh) == null ? available / 2
-                : getResources().getDimensionPixelSize(R.dimen.converter_touch_target);
-        header.measure(MeasureSpec.makeMeasureSpec(headerWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        metadata.measure(MeasureSpec.makeMeasureSpec(Math.max(0, available - headerWidth), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        headingHeight = Math.max(Math.max(header.getMeasuredHeight(), metadata.getMeasuredHeight()),
-                rate().getLineHeight() * 2);
-        View card = findViewById(R.id.converter_card);
-        measureChildWithMargins(card, widthSpec, 0,
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 0);
-        LayoutParams cardParams = (LayoutParams) card.getLayoutParams();
-        setMeasuredDimension(width, getPaddingTop() + getPaddingBottom() + headingHeight
-                + card.getMeasuredHeight() + cardParams.topMargin + cardParams.bottomMargin);
-    }
-
-    @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (!compactHeading) {
-            super.onLayout(changed, left, top, right, bottom);
-            return;
-        }
-        View header = getChildAt(0);
-        View metadata = getChildAt(getChildCount() - 1);
-        LayoutParams params = (LayoutParams) header.getLayoutParams();
-        int start = getPaddingLeft() + params.leftMargin;
-        int end = getWidth() - getPaddingRight() - params.rightMargin;
-        if (getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
-            layoutHeading(header, end - header.getMeasuredWidth());
-            layoutHeading(metadata, start);
-        } else {
-            layoutHeading(header, start);
-            layoutHeading(metadata, start + header.getMeasuredWidth());
-        }
-        View card = findViewById(R.id.converter_card);
-        LayoutParams cardParams = (LayoutParams) card.getLayoutParams();
-        int cardTop = getPaddingTop() + headingHeight + cardParams.topMargin;
-        card.layout(getPaddingLeft() + cardParams.leftMargin, cardTop,
-                getPaddingLeft() + cardParams.leftMargin + card.getMeasuredWidth(),
-                cardTop + card.getMeasuredHeight());
-    }
-
-    private void layoutHeading(View child, int left) {
-        int top = getPaddingTop() + (headingHeight - child.getMeasuredHeight()) / 2;
-        child.layout(left, top, left + child.getMeasuredWidth(), top + child.getMeasuredHeight());
+        status.setTextSize(getResources().getDimension(R.dimen.converter_category_text_size));
+        metrics = status.getFontMetricsInt();
+        int textHeight = metrics.bottom - metrics.top;
+        int padding = 2 * getResources().getDimensionPixelSize(R.dimen.converter_spacing);
+        int icon = getResources().getDimensionPixelSize(R.dimen.converter_flag_height);
+        int contentHeight = compactHeading ? Math.max(icon, textHeight) + padding
+                : icon + textHeight + padding + getResources().getDimensionPixelSize(R.dimen.converter_spacing);
+        header.setMinimumHeight(Math.max(contentHeight, getResources().getDimensionPixelSize(compactHeading
+                ? R.dimen.converter_touch_target : R.dimen.converter_category_header_height)));
+        super.onMeasure(widthSpec, heightSpec);
     }
 }

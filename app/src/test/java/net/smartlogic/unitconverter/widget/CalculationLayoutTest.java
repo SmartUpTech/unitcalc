@@ -383,7 +383,14 @@ public class CalculationLayoutTest {
         for (int id : new int[]{R.id.fromUnit, R.id.toUnit}) {
             ((Spinner) root.findViewById(id)).setAdapter(new UnitAdapter(root.getContext(), conversion.getUnits()));
         }
-        ((TextView) root.findViewById(R.id.category_title)).setText(conversion.getLabelResource());
+        com.google.android.material.tabs.TabLayout categories = root.findViewById(R.id.category_selector);
+        if (categories.getTabCount() == 0) {
+            for (int id : Conversions.getInstance().getCategoryIds()) {
+                Conversion item = Conversions.getInstance().getById(id);
+                categories.addTab(categories.newTab().setTag(id).setText(item.getLabelResource())
+                        .setIcon(item.getImageResource()), id == category);
+            }
+        }
         ((TextView) root.findViewById(R.id.unit_rate)).setText("1 m = 3.28084 ft");
         root.findViewById(R.id.minus).setVisibility(View.VISIBLE);
     }

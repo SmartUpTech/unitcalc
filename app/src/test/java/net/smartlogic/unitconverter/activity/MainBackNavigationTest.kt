@@ -6,6 +6,9 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import android.widget.PopupMenu
+import com.google.android.material.tabs.TabLayout
+import net.smartlogic.unitconverter.fragment.CalculatorFragment
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.app.AppConst
 import net.smartlogic.unitconverter.helper.Preferences
@@ -26,6 +29,67 @@ import java.time.Duration
 @Config(application = Application::class, sdk = [34])
 @LooperMode(LooperMode.Mode.PAUSED)
 class MainBackNavigationTest {
+    @Test fun rootBackRequiresSecondPressWithinTwoSeconds() {
+        val app = RuntimeEnvironment.getApplication()
+        Preferences.getInstance(app).preferences.edit().clear().commit()
+        ThemeManager.init(app)
+        AppConst.CURRENT_TAG = AppConst.TAG_CALC
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(2001))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1999))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertTrue(activity.isFinishing)
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
+    @Test fun hiddenCalculatorDoesNotConsumeConverterBackAndHistoryIsTheOnlyAction() {
+        val app = RuntimeEnvironment.getApplication()
+        Preferences.getInstance(app).preferences.edit().clear().commit()
+        ThemeManager.init(app)
+        AppConst.CURRENT_TAG = AppConst.TAG_CALC
+        RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            fun settle() = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(100))
+            settle()
+            val calculator = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_CALC) as CalculatorFragment
+            for (id in intArrayOf(R.id.one, R.id.plus, R.id.two, R.id.equal)) {
+                calculator.requireView().findViewById<View>(id).performClick()
+                settle()
+            }
+            val tabs = calculator.requireView().findViewById<TabLayout>(R.id.workspace_tabs)
+            tabs.getTabAt(1)!!.select()
+            settle()
+            assertEquals(1, tabs.selectedTabPosition)
+            activity.navigateToEntry(CalculatorCatalog.getById(CalculatorCatalog.ID_UNIT)!!)
+            settle()
+            assertTrue(calculator.isHidden)
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
+            // Root Back must not alter a hidden workspace's selected tab.
+            assertEquals(1, tabs.selectedTabPosition)
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertTrue(activity.isFinishing)
+            val menu = PopupMenu(activity, activity.findViewById<View>(android.R.id.content)).menu
+            activity.onCreateOptionsMenu(menu)
+            activity.onPrepareOptionsMenu(menu)
+            assertEquals(listOf(R.id.menu_history), (0 until menu.size())
+                .map { menu.getItem(it) }.filter { it.isVisible }.map { it.itemId })
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
     @Test fun drawerTakesPriorityThenTimerReturnsToWorkspace() {
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit().clear().commit()
@@ -67,6 +131,8 @@ class MainBackNavigationTest {
             activity.onBackPressedDispatcher.onBackPressed()
             assertEquals(1, workspaceBacks)
             workspace.remove()
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
             activity.onBackPressedDispatcher.onBackPressed()
             assertTrue(activity.isFinishing)
         } finally {

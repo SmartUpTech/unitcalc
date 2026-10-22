@@ -53,7 +53,7 @@ public class ConverterPickerDialogTest {
                 values("km", "mi", "m"), null);
     }
 
-    @Test public void angleAppearsInCategoryPickerAndAcceptsNegativeValues() {
+    @Test public void angleAppearsInCategoryStripAndAcceptsNegativeValues() {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Preferences prefs = Preferences.getInstance(controller.get());
             prefs.getPreferences().edit().putString(Preferences.PREFS_NUMBER_OF_DECIMALS, "8")
@@ -64,10 +64,15 @@ public class ConverterPickerDialogTest {
             UnitConverterFragment unit = new UnitConverterFragment();
             controller.get().getSupportFragmentManager().beginTransaction()
                     .add(android.R.id.content, unit, "unit").commitNow();
-            unit.requireView().findViewById(R.id.category_selector).performClick();
-            android.widget.PopupMenu popup = org.robolectric.shadows.ShadowPopupMenu.getLatestPopupMenu();
-            assertNotNull(popup.getMenu().findItem(Conversion.ANGLE));
-            popup.getMenu().performIdentifierAction(Conversion.ANGLE, 0);
+            com.google.android.material.tabs.TabLayout categories = unit.requireView().findViewById(R.id.category_selector);
+            assertEquals(com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE, categories.getTabMode());
+            com.google.android.material.tabs.TabLayout.Tab angle = null;
+            for (int i = 0; i < categories.getTabCount(); i++) {
+                com.google.android.material.tabs.TabLayout.Tab tab = categories.getTabAt(i);
+                if ((Integer) tab.getTag() == Conversion.ANGLE) angle = tab;
+            }
+            assertNotNull(angle);
+            angle.select();
             shadowOf(Looper.getMainLooper()).idle();
             assertEquals(Conversion.ANGLE, unit.getSelectedCategoryId());
             EditText input = unit.requireView().findViewById(R.id.input);
@@ -78,6 +83,62 @@ public class ConverterPickerDialogTest {
             shadowOf(Looper.getMainLooper()).idle();
             assertEquals("-0.5", ((EditText) unit.requireView().findViewById(R.id.output)).getText().toString());
             assertEquals(Conversion.ANGLE, prefs.getLastConversion());
+        }
+    }
+
+    @Test public void converterHasOneWorkspaceAndSwitchesModesWithoutLosingInput() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_UNIT;
+            ConverterFragment converter = new ConverterFragment();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, converter, "converter").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertNull(converter.requireView().findViewById(R.id.workspace_tabs));
+            assertNull(converter.requireView().findViewById(R.id.workspace_pager));
+            UnitConverterFragment unit = (UnitConverterFragment) converter.getChildFragmentManager()
+                    .findFragmentByTag("converter_unit");
+            Fragment currency = converter.getChildFragmentManager().findFragmentByTag("converter_currency");
+            EditText input = unit.requireView().findViewById(R.id.input);
+            input.setText("123");
+            converter.requireView().findViewById(R.id.btn_currency_mode).performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(unit.isHidden());
+            assertFalse(currency.isHidden());
+            converter.requireView().findViewById(R.id.btn_unit_mode).performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertFalse(unit.isHidden());
+            assertTrue(currency.isHidden());
+            assertEquals("123", input.getText().toString());
+            converter.openUnitCategory(Conversion.ANGLE);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(Conversion.ANGLE, unit.getSelectedCategoryId());
+        }
+    }
+
+    @Test public void converterRestoresSavedCurrencyModeAfterStaticStateIsReset() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_CURRENCY;
+            ConverterFragment converter = new ConverterFragment();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, converter, "converter").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            androidx.fragment.app.Fragment.SavedState saved = controller.get().getSupportFragmentManager()
+                    .saveFragmentInstanceState(converter);
+            controller.get().getSupportFragmentManager().beginTransaction().remove(converter).commitNow();
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_UNIT;
+            ConverterFragment restored = new ConverterFragment();
+            restored.setInitialSavedState(saved);
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, restored, "restored").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(ConverterFragment.TAB_CURRENCY, net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB);
+            assertFalse(restored.getChildFragmentManager().findFragmentByTag("converter_currency").isHidden());
+            com.google.android.material.button.MaterialButtonToggleGroup modes = restored.requireView()
+                    .findViewById(R.id.converter_mode_toggle);
+            assertEquals(R.id.btn_currency_mode, modes.getCheckedButtonId());
+            assertEquals(2, restored.getChildFragmentManager().getFragments().size());
+        } finally {
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_UNIT;
         }
     }
 
