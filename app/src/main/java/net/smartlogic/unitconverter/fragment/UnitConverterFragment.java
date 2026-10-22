@@ -158,12 +158,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         backspace.setOnClickListener(this);
         copy.setOnClickListener(this);
 
-        outputValue.setOnLongClickListener(this);
         backspace.setOnLongClickListener(this);
 
-        inputValue.requestFocus();
-
         inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setCursorVisible(false);
+        inputValue.setFocusable(false);
+        inputValue.setClickable(false);
+        inputValue.setLongClickable(false);
 
     }
 
@@ -593,6 +594,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 | ((categoryId == Conversion.TEMPERATURE || categoryId == Conversion.ANGLE)
                         ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
         inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setCursorVisible(false);
+        inputValue.setFocusable(false);
+        inputValue.setClickable(false);
+        inputValue.setLongClickable(false);
     }
 
     public void selectCategory(int categoryId) {

@@ -148,7 +148,7 @@
                             android:layout_height="wrap_content"
                             android:contentDescription="@string/converter_output_amount"
                             android:focusable="false"
-                            android:textIsSelectable="true"
+                            android:textIsSelectable="false"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
                             android:gravity="right|center_vertical" />

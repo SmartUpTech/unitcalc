@@ -102,8 +102,8 @@ private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
                 contentDescription = name
                 stateDescription = status
             },
-        color = if (card.selected) GraphyThemeTokens.semanticColors.surfaceElevated else MaterialTheme.colorScheme.surface,
-        contentColor = if (card.selected) GraphyThemeTokens.semanticColors.onConstant else MaterialTheme.colorScheme.onSurface,
+        color = Color(theme.background()),
+        contentColor = Color(theme.mainText()),
         shape = MaterialTheme.shapes.medium,
     ) {
         // One accessible choice; swatch, icon and visible label are decorative children.
@@ -133,7 +133,7 @@ private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
                     )
                 }
             }
-            Box(modifier = Modifier.fillMaxWidth().height(labelHeight), contentAlignment = Alignment.TopCenter) {
+            Box(modifier = Modifier.fillMaxWidth().height(labelHeight), contentAlignment = Alignment.Center) {
                 Text(
                     name,
                     style = MaterialTheme.typography.labelLarge,

@@ -449,15 +449,15 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         rlFromUnit.setOnClickListener(this);
         rlToUnit.setOnClickListener(this);
 
-        inputValue.requestFocus();
-        //inputValue.setTextIsSelectable(false);
-
         inputValue.setShowSoftInputOnFocus(false);
 
         inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
                 | InputType.TYPE_NUMBER_FLAG_SIGNED);
 
-        outputValue.setOnLongClickListener(this);
+        inputValue.setCursorVisible(false);
+        inputValue.setFocusable(false);
+        inputValue.setClickable(false);
+        inputValue.setLongClickable(false);
 
         //Vibrator vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         //AudioManager am = (AudioManager) context.getSystemService(AUDIO_SERVICE);

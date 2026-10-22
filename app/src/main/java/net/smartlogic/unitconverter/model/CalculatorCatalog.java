@@ -120,7 +120,7 @@ public final class CalculatorCatalog {
                 Destination.UNIT_CATEGORY, Conversion.TORQUE));
 
         List<Entry> converters = new ArrayList<>();
-        converters.add(register(entry(ID_UNIT, R.string.drawer_unit_converter, R.drawable.ic_unit_converter,
+        converters.add(register(entry(ID_UNIT, R.string.drawer_unit_converter, R.drawable.ic_converter,
                 Destination.UNIT_CONVERTER, -1)));
         converters.add(register(entry(ID_CURRENCY, R.string.currency_converter, R.drawable.ic_currency_converter,
                 Destination.CURRENCY, -1)));
@@ -135,7 +135,7 @@ public final class CalculatorCatalog {
         List<Entry> general = new ArrayList<>();
         general.add(register(entry("explore", R.string.nav_explore, R.drawable.ic_explore, Destination.EXPLORE, -1)));
         general.add(register(entry("favorites", R.string.nav_favorites, R.drawable.ic_favorite, Destination.FAVORITES, -1)));
-        general.add(register(entry("settings", R.string.title_activity_settings, R.drawable.ic_unit_converter,
+        general.add(register(entry("settings", R.string.title_activity_settings, R.drawable.ic_tune,
                 Destination.SETTINGS, -1)));
         general.add(register(entry("history", R.string.nav_history, R.drawable.ic_history, Destination.HISTORY, -1)));
         general.add(register(entry("rate", R.string.pref_rate_title, R.drawable.ic_explore, Destination.RATE_APP, -1)));
