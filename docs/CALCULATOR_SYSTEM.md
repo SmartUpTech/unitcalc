@@ -50,8 +50,9 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   `BigDecimal.sqrt` requires API 33, so production code must not call it directly.
 - Linear units use one canonical decimal or rational base definition. Cross-multiply before
   one DECIMAL128 division; do not maintain independently rounded reciprocal factors.
-- Keep the existing 365-day year / 12-month year, binary storage naming convention, and US vs
-  Imperial volume distinctions. This is duration conversion, not calendar-date arithmetic.
+- Keep the existing 365-day year / 12-month year and US vs Imperial volume distinctions.
+  Existing binary storage IDs/factors/positions are retained with corrected IEC names; decimal
+  SI units are appended as separate choices. This is duration conversion, not calendar-date arithmetic.
 - Corrected exact definitions include bit = 1/8388608 MB, cubic yard = 0.9144³ m³,
   US teaspoon = US gallon/768, tablespoon = US gallon/256, km/h = 5/18 m/s,
   m/min = 1/60 m/s, knot = 1852/3600 m/s, torr = 101325/760 Pa.
@@ -76,3 +77,49 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigDecimal.html
 - Android method availability:
   https://developer.android.com/reference/java/math/BigDecimal#sqrt(java.math.MathContext)
+
+
+## EXPANDED UNIT REGISTRY
+
+- Angle is category 15; currency remains 14. Category pickers iterate `Conversions.getCategoryIds()`
+  instead of assuming a contiguous range ending at Currency. CalculatorCatalog exposes Angle to
+  the existing navigation/favorites system; it uses the shared linear Graphy primitives.
+- Angle uses degrees as its base: 1 revolution = 360 degrees, 1 gradian = 0.9 degrees,
+  1 radian = 180/π degrees. The stored π has guard digits beyond DECIMAL128 precision.
+  Radian conversions are approximations; signed angles and multiple turns are not normalized.
+- Additional units are appended so persisted unit indices and category IDs keep their meanings.
+  Storage's existing binary values now show IEC labels/symbols (KiB through EiB, Kibit through
+  Eibit), and separate SI decimal choices (kB through EB, kbit through Ebit) are appended.
+- Land units explicitly identify their definitions. Guntha = 1/40 acre, cent = 1/100 acre;
+  Marla uses the 272.25 sq ft convention. Bigha variants are Assam (14400 sq ft), Rajasthan
+  pucca/Shahjahani Jarib (27225 sq ft), Rajasthan kaccha/Gantari Jarib (17424 sq ft).
+  These are named conventions, not universal state-wide/legal survey assumptions. Exact square-foot
+  definitions are converted using 1 ft² = 0.09290304 m², not rounded metric figures from source tables.
+- Mass adds metric quintal (100 kg), tola (180 grains) and troy ounce (480 grains).
+  One grain = 0.06479891 g; tola and troy ounce must not be confused with metric gold weights or
+  the existing avoirdupois ounce.
+- Volume adds µL, cL, dL and the 42-US-gallon oil barrel. The existing US barrel remains 31.5 gal
+  and is labelled as a beer barrel. Cooking adds a 250 mL metric cup, Australian 20 mL tablespoon,
+  metric 5 mL teaspoon and 15 mL tablespoon. These same variant objects also appear under Volume.
+- Imperial spoons use explicitly labelled volume conventions (teaspoon = 1/768 imperial gallon,
+  tablespoon = 1/256 imperial gallon). They are not modern UK metric spoons or universal historic
+  spoon sizes; no unqualified UK spoon definition is assumed. Existing US spoons/cup are labelled US.
+- Pressure adds mbar (100 Pa), conventional inHg (3386.389 Pa), conventional cmH₂O (98.0665 Pa)
+  and conventional inH₂O (249.08891 Pa). Temperature-specific manometer variants are not substituted.
+- Torque adds kgf·m (9.80665 N·m) and N·cm (0.01 N·m).
+
+### Added definition references (checked 2026-10-22)
+
+- IEC/SI data prefixes and 8 bits per byte: https://physics.nist.gov/cuu/Units/binary.html
+- Conventional pressure, mass, volume, angle and torque units:
+  https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9
+- Named land conventions (use exact stated imperial definitions, not rounded metric equivalents):
+  https://docs.apisetu.gov.in/document-central/mdds/Annexure.html
+- Assam bigha (14400 sq ft), Government of Assam PWD:
+  https://pwdroads.assam.gov.in/sites/default/files/swf_utility_folder/departments/pwd_lipl_in_oid_3/menu/document/rap17.pdf
+- Tola (180 grains), Maharashtra Gazetteer:
+  https://www.gazetteers.maharashtra.gov.in/cultural.maharashtra.gov.in/english/gazetteer/KOLABA/bank_wt_measures.html
+- Australian metric cooking measures, manufacturer measurement table:
+  https://www.breville.com/content/dam/breville/au/assets/miscellaneous/instruction-manual/mixers/BEM800-instruction-manual.pdf
+- Explicit Imperial spoon convention cross-check (converter owner's published definitions):
+  https://www.unitconverters.net/volume/teaspoon-uk-to-milliliter.htm

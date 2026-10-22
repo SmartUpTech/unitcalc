@@ -44,3 +44,21 @@
    unavailable-rate state. No stale selection may overwrite the current result.
 7. Test zero, negatives where supported, fractional values, tiny/large values, repeated decimal
    keys, clear/reset, copy/history restore and typing responsiveness with long expressions.
+
+
+## Angle and existing-category expansion follow-up
+
+- Added Angle (degree, radian, gradian, revolution) and the requested storage, mass, area,
+  volume, cooking, pressure and torque additions. Existing category IDs and unit positions remain
+  stable; storage labels now distinguish the existing binary definitions from appended decimal units.
+- Follow-up validation: 24 relevant JVM tests passed with the standalone JUnit 4.10/Hamcrest 1.3
+  fallback. Tests include every added definition, decimal/binary prefixes, named regional area
+  references, multi-turn/negative angles, radian tolerances, registry/catalog exposure, duplicate IDs
+  and all linear-category pair round trips across six inputs, including Angle.
+- Added an Android/Robolectric test for selecting Angle through the category popup, entering
+  -180 degrees and converting to -0.5 revolutions, plus Angle in Graphy factor tests.
+- The new drawable and string resources are XML-validated; source references and preserved unit
+  ordering were checked. The configured Gradle test/build/lint attempt is still blocked by the
+  Gradle 9.8.0 download restriction; Android UI/Graphy execution and visual checks remain pending.
+- Device review should include long regional/cooking labels, IEC vs decimal search results,
+  saved Angle selection across recreation, signed input, and shared Graphy explanations.

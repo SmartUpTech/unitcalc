@@ -50,6 +50,7 @@ public final class Conversions {
         getTimeConversions();
         getTorqueConversions();
         getVolumeConversions();
+        getAngleConversions();
     }
 
     /**
@@ -63,6 +64,13 @@ public final class Conversions {
     }
 
     
+    /** Category IDs come from the registry; currency has its own converter. */
+    public List<Integer> getCategoryIds() {
+        List<Integer> ids = new ArrayList<>(mConversions.keySet());
+        java.util.Collections.sort(ids);
+        return java.util.Collections.unmodifiableList(ids);
+    }
+
     private void addConversion(int id, Conversion conversion) {
         mConversions.put(id, conversion);
     }
@@ -81,6 +89,13 @@ public final class Conversions {
         units.add(new Unit(SQ_INCH, R.string.sq_inch, "0.00064516", "in²"));
         units.add(new Unit(ACRE, R.string.acre, "4046.8564224", "ac"));
         units.add(new Unit(SQ_DECIMETRE, R.string.sq_decimetre, "0.01", "dm²"));
+        units.add(new Unit(SQ_MILLIMETRE, R.string.sq_millimetre, "0.000001", "mm²"));
+        units.add(new Unit(GUNTHA, R.string.guntha, "4046.8564224", "40", "guntha"));
+        units.add(new Unit(CENT, R.string.cent, "4046.8564224", "100", "cent"));
+        units.add(new Unit(MARLA, R.string.marla, "25.29285264", "marla"));
+        units.add(new Unit(BIGHA_ASSAM, R.string.bigha_assam, "1337.803776", "bigha (Assam)"));
+        units.add(new Unit(BIGHA_RAJASTHAN_PUCCA, R.string.bigha_rajasthan_pucca, "2529.285264", "bigha (pucca)"));
+        units.add(new Unit(BIGHA_RAJASTHAN_KACCHA, R.string.bigha_rajasthan_kaccha, "1618.74256896", "bigha (kaccha)"));
         addConversion(Conversion.AREA, new Conversion(Conversion.AREA, R.string.area, R.drawable.ic_area, units));
     }
 
@@ -100,25 +115,43 @@ public final class Conversions {
         units.add(new Unit(GALLON_UK, R.string.gallon_uk, "0.00454609", "gal"));
         units.add(new Unit(MILLILITRE, R.string.millilitre, "0.000001", "ml"));
         units.add(new Unit(LITRE, R.string.litre, "0.001", "l"));
+        units.add(new Unit(METRIC_CUP, R.string.metric_cup, "0.00025", "cup (metric)"));
+        units.add(new Unit(TABLESPOON_AU, R.string.tablespoon_au, "0.00002", "tbsp (AU)"));
+        units.add(new Unit(TEASPOON_IMPERIAL, R.string.teaspoon_imperial, "0.00454609", "768", "tsp (Imp)"));
+        units.add(new Unit(TABLESPOON_IMPERIAL, R.string.tablespoon_imperial, "0.00454609", "256", "tbsp (Imp)"));
+        units.add(new Unit(TEASPOON_METRIC, R.string.teaspoon_metric, "0.000005", "tsp (metric)"));
+        units.add(new Unit(TABLESPOON_METRIC, R.string.tablespoon_metric, "0.000015", "tbsp (metric)"));
         addConversion(Conversion.COOKING, new Conversion(Conversion.COOKING, R.string.cooking, R.drawable.ic_cooking, units));
     }
     private void getStorageConversions() {
-        //Base Unit = megabyte
+        // Base unit = mebibyte. Legacy binary IDs keep their factors and positions.
         List<Unit> units = new ArrayList<>();
         units.add(new Unit(BIT, R.string.bit, "1", "8388608", "bit"));
         units.add(new Unit(BYTE, R.string.Byte, "0.00000095367431640625", "B"));
-        units.add(new Unit(KILOBIT, R.string.kilobit, "0.0001220703125", "kbit"));
-        units.add(new Unit(KILOBYTE, R.string.kilobyte, "0.0009765625", "kB"));
-        units.add(new Unit(MEGABIT, R.string.megabit, "0.125", "Mbit"));
-        units.add(new Unit(MEGABYTE, R.string.megabyte, "1.0", "MB"));
-        units.add(new Unit(GIGABIT, R.string.gigabit, "128.0", "Gbit"));
-        units.add(new Unit(GIGABYTE, R.string.gigabyte, "1024.0", "GB"));
-        units.add(new Unit(TERABIT, R.string.terabit, "131072.0", "Tbit"));
-        units.add(new Unit(TERABYTE, R.string.terabyte, "1048576.0", "TB"));
-        units.add(new Unit(PETABIT, R.string.petabit, "134217728.0", "Pbit"));
-        units.add(new Unit(PETABYTE, R.string.petabyte, "1073741824.0", "PB"));
-        units.add(new Unit(EXABIT, R.string.exabit, "137438953472.0", "Ebit"));
-        units.add(new Unit(EXABYTE, R.string.exabyte, "1099511627776.0", "EB"));
+        units.add(new Unit(KILOBIT, R.string.kibibit, "0.0001220703125", "Kibit"));
+        units.add(new Unit(KILOBYTE, R.string.kibibyte, "0.0009765625", "KiB"));
+        units.add(new Unit(MEGABIT, R.string.mebibit, "0.125", "Mibit"));
+        units.add(new Unit(MEGABYTE, R.string.mebibyte, "1.0", "MiB"));
+        units.add(new Unit(GIGABIT, R.string.gibibit, "128.0", "Gibit"));
+        units.add(new Unit(GIGABYTE, R.string.gibibyte, "1024.0", "GiB"));
+        units.add(new Unit(TERABIT, R.string.tebibit, "131072.0", "Tibit"));
+        units.add(new Unit(TERABYTE, R.string.tebibyte, "1048576.0", "TiB"));
+        units.add(new Unit(PETABIT, R.string.pebibit, "134217728.0", "Pibit"));
+        units.add(new Unit(PETABYTE, R.string.pebibyte, "1073741824.0", "PiB"));
+        units.add(new Unit(EXABIT, R.string.exbibit, "137438953472.0", "Eibit"));
+        units.add(new Unit(EXABYTE, R.string.exbibyte, "1099511627776.0", "EiB"));
+        units.add(new Unit(DECIMAL_KILOBIT, R.string.kilobit, "1000", "8388608", "kbit"));
+        units.add(new Unit(DECIMAL_KILOBYTE, R.string.kilobyte, "1000", "1048576", "kB"));
+        units.add(new Unit(DECIMAL_MEGABIT, R.string.megabit, "1000000", "8388608", "Mbit"));
+        units.add(new Unit(DECIMAL_MEGABYTE, R.string.megabyte, "1000000", "1048576", "MB"));
+        units.add(new Unit(DECIMAL_GIGABIT, R.string.gigabit, "1000000000", "8388608", "Gbit"));
+        units.add(new Unit(DECIMAL_GIGABYTE, R.string.gigabyte, "1000000000", "1048576", "GB"));
+        units.add(new Unit(DECIMAL_TERABIT, R.string.terabit, "1000000000000", "8388608", "Tbit"));
+        units.add(new Unit(DECIMAL_TERABYTE, R.string.terabyte, "1000000000000", "1048576", "TB"));
+        units.add(new Unit(DECIMAL_PETABIT, R.string.petabit, "1000000000000000", "8388608", "Pbit"));
+        units.add(new Unit(DECIMAL_PETABYTE, R.string.petabyte, "1000000000000000", "1048576", "PB"));
+        units.add(new Unit(DECIMAL_EXABIT, R.string.exabit, "1000000000000000000", "8388608", "Ebit"));
+        units.add(new Unit(DECIMAL_EXABYTE, R.string.exabyte, "1000000000000000000", "1048576", "EB"));
         addConversion(Conversion.STORAGE, new Conversion(Conversion.STORAGE, R.string.storage, R.drawable.ic_storage, units));
     }
 
@@ -192,6 +225,9 @@ public final class Conversions {
         units.add(new Unit(LONG_TON, R.string.long_ton, "1016.0469088", "ton"));
         units.add(new Unit(MICROGRAM, R.string.microgram, "0.000000001", "µg"));
         units.add(new Unit(CARAT, R.string.carat, "0.0002", "ct"));
+        units.add(new Unit(QUINTAL, R.string.quintal, "100", "q"));
+        units.add(new Unit(TOLA, R.string.tola, "0.0116638038", "tola"));
+        units.add(new Unit(TROY_OUNCE, R.string.troy_ounce, "0.0311034768", "oz t"));
         addConversion(Conversion.MASS, new Conversion(Conversion.MASS, R.string.mass, R.drawable.ic_mass, units));
     }
 
@@ -226,6 +262,10 @@ public final class Conversions {
         units.add(new Unit(MMHG, R.string.mmhg, "133.322387415", "mmHg"));
         units.add(new Unit(TORR, R.string.torr, "101325", "760", "Torr"));
         units.add(new Unit(HECTOPASCAL, R.string.hectopascal, "100.0", "hPa"));
+        units.add(new Unit(MILLIBAR, R.string.millibar, "100", "mbar"));
+        units.add(new Unit(INCH_MERCURY, R.string.inch_mercury, "3386.389", "inHg"));
+        units.add(new Unit(CM_WATER, R.string.cm_water, "98.0665", "cmH₂O"));
+        units.add(new Unit(INCH_WATER, R.string.inch_water, "249.08891", "inH₂O"));
         addConversion(Conversion.PRESSURE, new Conversion(Conversion.PRESSURE, R.string.pressure, R.drawable.ic_pressure, units));
     }
 
@@ -280,6 +320,8 @@ public final class Conversions {
         units.add(new Unit(N_M, R.string.n_m, "1.0", "N⋅m"));
         units.add(new Unit(FT_LBF, R.string.ft_lbF, "1.35581794833140040", "ft⋅lbf"));
         units.add(new Unit(IN_LBF, R.string.in_lbF, "0.11298482902761670", "in⋅lbf"));
+        units.add(new Unit(KGF_M, R.string.kgf_m, "9.80665", "kgf·m"));
+        units.add(new Unit(N_CM, R.string.n_cm, "0.01", "N·cm"));
         addConversion(Conversion.TORQUE, new Conversion(Conversion.TORQUE, R.string.torque, R.drawable.ic_torque, units));
     }
 
@@ -308,7 +350,24 @@ public final class Conversions {
         units.add(new Unit(CUBIC_YARD, R.string.cubic_yard, "0.764554857984", "yd³"));
         units.add(new Unit(CUBIC_MM, R.string.cubic_mm, "0.000000001", "mm³"));
         units.add(new Unit(CUBIC_KM, R.string.cubic_km, "1000000000.0", "km³"));
+        units.add(new Unit(MICROLITRE, R.string.microlitre, "0.000000001", "µL"));
+        units.add(new Unit(CENTILITRE, R.string.centilitre, "0.00001", "cL"));
+        units.add(new Unit(DECILITRE, R.string.decilitre, "0.0001", "dL"));
+        units.add(new Unit(OIL_BARREL_US, R.string.oil_barrel_us, "0.158987294928", "bbl (oil)"));
+        for (Unit unit : getById(Conversion.COOKING).getUnits()) {
+            if (unit.getId() >= METRIC_CUP && unit.getId() <= TABLESPOON_METRIC) units.add(unit);
+        }
         addConversion(Conversion.VOLUME, new Conversion(Conversion.VOLUME, R.string.volume, R.drawable.ic_volume, units));
+    }
+
+    private void getAngleConversions() {
+        // Base unit = degree. Rational turns/gradians are exact; radians use a guard-digit π.
+        List<Unit> units = new ArrayList<>();
+        units.add(new Unit(DEGREE, R.string.degree, "1", "°"));
+        units.add(new Unit(RADIAN, R.string.radian, "180", "3.141592653589793238462643383279502884197169399375105820974944592307816406", "rad"));
+        units.add(new Unit(GRADIAN, R.string.gradian, "0.9", "gon"));
+        units.add(new Unit(REVOLUTION, R.string.revolution, "360", "rev"));
+        addConversion(Conversion.ANGLE, new Conversion(Conversion.ANGLE, R.string.angle, R.drawable.ic_angle, units));
     }
 
     public double convertTemperatureValue(double value, Unit from, Unit to) {

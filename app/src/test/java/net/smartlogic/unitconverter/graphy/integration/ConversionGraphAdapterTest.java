@@ -64,7 +64,7 @@ public class ConversionGraphAdapterTest {
     @Test public void everyLinearCategoryUsesItsExistingFactorsIncludingReverse() {
         int[] categories = {Conversion.LENGTH, Conversion.MASS, Conversion.AREA, Conversion.VOLUME,
                 Conversion.SPEED, Conversion.TIME, Conversion.STORAGE, Conversion.COOKING,
-                Conversion.POWER, Conversion.PRESSURE, Conversion.ENERGY, Conversion.TORQUE};
+                Conversion.POWER, Conversion.PRESSURE, Conversion.ENERGY, Conversion.TORQUE, Conversion.ANGLE};
         for (int category : categories) {
             var units = conversions.getById(category).getUnits();
             Unit first = units.get(0), last = units.get(units.size() - 1);

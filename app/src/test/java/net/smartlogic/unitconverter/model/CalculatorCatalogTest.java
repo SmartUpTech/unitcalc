@@ -36,6 +36,11 @@ public class CalculatorCatalogTest {
     @Test
     public void unitCategoriesRemainAvailableForExploreAndFavorites() {
         assertNotNull(CalculatorCatalog.getById(CalculatorCatalog.unitId(Conversion.LENGTH)));
+        var angle = CalculatorCatalog.getById(CalculatorCatalog.unitId(Conversion.ANGLE));
+        assertNotNull(angle);
+        assertEquals(CalculatorCatalog.Destination.UNIT_CATEGORY, angle.destination);
+        assertEquals(Conversion.ANGLE, angle.unitCategoryId);
+        assertTrue(angle.isFavoriteEligible());
 
         boolean hasUnitCategory = false;
         for (CalculatorCatalog.Entry entry : CalculatorCatalog.getFavoriteEligibleEntries()) {

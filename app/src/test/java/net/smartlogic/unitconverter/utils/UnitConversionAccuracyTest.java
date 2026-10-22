@@ -39,7 +39,7 @@ public class UnitConversionAccuracyTest {
     }
 
     @Test public void everyLinearPairHasConsistentInverseAcrossMagnitudes() {
-        for (int category = 0; category <= 13; category++) {
+        for (int category : conversions.getCategoryIds()) {
             if (category == Conversion.TEMPERATURE || category == Conversion.FUEL) continue;
             for (Unit from : conversions.getById(category).getUnits()) {
                 for (Unit to : conversions.getById(category).getUnits()) {

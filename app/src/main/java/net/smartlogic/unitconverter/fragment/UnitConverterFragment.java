@@ -553,7 +553,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
     private void showCategoryPicker() {
         PopupMenu menu = new PopupMenu(requireContext(), categorySelector);
-        for (int categoryId = Conversion.LENGTH; categoryId < Conversion.CURRENCY; categoryId++) {
+        for (int categoryId : conversions.getCategoryIds()) {
             Conversion category = conversions.getById(categoryId);
             menu.getMenu().add(0, categoryId, categoryId, category.getLabelResource())
                     .setCheckable(true).setChecked(categoryId == getSelectedCategoryId());
@@ -577,7 +577,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
     private void updateInputType(int categoryId) {
         inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
-                | (categoryId == Conversion.TEMPERATURE ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
+                | ((categoryId == Conversion.TEMPERATURE || categoryId == Conversion.ANGLE)
+                        ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
         inputValue.setShowSoftInputOnFocus(false);
     }
 

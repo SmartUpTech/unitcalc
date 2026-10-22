@@ -53,6 +53,34 @@ public class ConverterPickerDialogTest {
                 values("km", "mi", "m"), null);
     }
 
+    @Test public void angleAppearsInCategoryPickerAndAcceptsNegativeValues() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            Preferences prefs = Preferences.getInstance(controller.get());
+            prefs.getPreferences().edit().putString(Preferences.PREFS_NUMBER_OF_DECIMALS, "8")
+                    .putString(Preferences.PREFS_DECIMAL_SEPARATOR, ".").commit();
+            prefs.setLastConversion(Conversion.LENGTH);
+            prefs.setLastFromConversion(0);
+            prefs.setLastToConversion(1);
+            UnitConverterFragment unit = new UnitConverterFragment();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, unit, "unit").commitNow();
+            unit.requireView().findViewById(R.id.category_selector).performClick();
+            android.widget.PopupMenu popup = org.robolectric.shadows.ShadowPopupMenu.getLatestPopupMenu();
+            assertNotNull(popup.getMenu().findItem(Conversion.ANGLE));
+            popup.getMenu().performIdentifierAction(Conversion.ANGLE, 0);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(Conversion.ANGLE, unit.getSelectedCategoryId());
+            EditText input = unit.requireView().findViewById(R.id.input);
+            input.setText("-180");
+            assertEquals("-180", input.getText().toString());
+            unit.requireView().findViewById(R.id.toUnit).performClick();
+            choose(unit, "Revolution", "Angle - Select To Value");
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("-0.5", ((EditText) unit.requireView().findViewById(R.id.output)).getText().toString());
+            assertEquals(Conversion.ANGLE, prefs.getLastConversion());
+        }
+    }
+
     @Test public void searchAndSelectionUseOriginalIndexAndNoResultsCanRecover() {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Fragment host = host(controller.get());
