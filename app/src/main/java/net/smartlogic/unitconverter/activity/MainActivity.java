@@ -504,6 +504,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void showTimerScreen() {
+        lastExitBackAt = -1L;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (timerFragment == null) {
             timerFragment = getSupportFragmentManager().findFragmentByTag(AppConst.TAG_TIMER);

@@ -115,6 +115,33 @@ public class ConverterPickerDialogTest {
         }
     }
 
+    @Test public void converterRestoresSavedCurrencyModeAfterStaticStateIsReset() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_CURRENCY;
+            ConverterFragment converter = new ConverterFragment();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, converter, "converter").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            androidx.fragment.app.Fragment.SavedState saved = controller.get().getSupportFragmentManager()
+                    .saveFragmentInstanceState(converter);
+            controller.get().getSupportFragmentManager().beginTransaction().remove(converter).commitNow();
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_UNIT;
+            ConverterFragment restored = new ConverterFragment();
+            restored.setInitialSavedState(saved);
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, restored, "restored").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(ConverterFragment.TAB_CURRENCY, net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB);
+            assertFalse(restored.getChildFragmentManager().findFragmentByTag("converter_currency").isHidden());
+            com.google.android.material.button.MaterialButtonToggleGroup modes = restored.requireView()
+                    .findViewById(R.id.converter_mode_toggle);
+            assertEquals(R.id.btn_currency_mode, modes.getCheckedButtonId());
+            assertEquals(2, restored.getChildFragmentManager().getFragments().size());
+        } finally {
+            net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_UNIT;
+        }
+    }
+
     @Test public void searchAndSelectionUseOriginalIndexAndNoResultsCanRecover() {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Fragment host = host(controller.get());

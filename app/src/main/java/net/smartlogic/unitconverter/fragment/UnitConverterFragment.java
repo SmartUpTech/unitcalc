@@ -17,8 +17,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import com.google.android.material.tabs.TabLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,6 +26,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;

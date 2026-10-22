@@ -135,6 +135,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), onBackPressedCallback);
+        updateWorkspaceBackCallback();
     }
 
     @Override
@@ -608,10 +609,20 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void applyWorkspaceTab(int position) {
+    @Override public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        updateWorkspaceBackCallback();
+    }
+
+    private void updateWorkspaceBackCallback() {
         if (onBackPressedCallback != null) {
-            onBackPressedCallback.setEnabled(position != 0);
+            onBackPressedCallback.setEnabled(!isHidden() && workspaceTabController != null
+                    && workspaceTabController.getCurrentTab() != 0);
         }
+    }
+
+    private void applyWorkspaceTab(int position) {
+        updateWorkspaceBackCallback();
         if (position == 1) {
             if (!hasGraphyContent()) {
                 selectWorkspaceTab(0);

@@ -186,6 +186,10 @@
         <item name="android:color">@color/transparent</item>
     </style>
 
+    <style name="ConverterCategoryText" parent="WorkspaceTabText">
+        <item name="android:textSize">@dimen/converter_category_text_size</item>
+    </style>
+
     <style name="ConverterModeSegment" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
