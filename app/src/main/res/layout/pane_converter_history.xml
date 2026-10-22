@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:padding="32dp"
+        android:padding="@dimen/converter_flag_width"
         android:text="@string/no_conversion_history"
         android:textColor="@color/screen_expression_text" />
 </FrameLayout>

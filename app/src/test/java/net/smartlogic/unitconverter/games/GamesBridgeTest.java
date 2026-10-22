@@ -58,4 +58,24 @@ public class GamesBridgeTest {
         assertNull(event.gameId());
         assertEquals("CATALOG_LOAD_FAILED", event.errorCode());
     }
+
+    @Test public void bonusRequestsRequireCurrentDateAndBaseRound() {
+        String request = "{\"type\":\"onBonusRequested\",\"bridgeVersion\":1,\"round\":0,\"date\":\"2026-10-06\"}";
+        assertNotNull(bridge.accept(request));
+        assertNull(bridge.accept(request.replace(DAY, "2026-10-05")));
+        assertNull(bridge.accept(request.replace("\"round\":0", "\"round\":\"0\"")));
+        bridge.configure(DAY, 1);
+        assertNull(bridge.accept(request));
+        assertNull(bridge.accept(FINISH));
+        assertNotNull(bridge.accept(START.replace("\"bridgeVersion\":1", "\"bridgeVersion\":1,\"round\":1")));
+        assertNotNull(bridge.accept(FINISH.replace("\"bridgeVersion\":1", "\"bridgeVersion\":1,\"round\":1")));
+    }
+
+    @Test public void sameRoundThemeRefreshPreservesActiveGame() {
+        assertNotNull(bridge.accept(START));
+        bridge.configure(DAY, 0);
+        assertNotNull(bridge.accept(FINISH));
+        bridge.configure(DAY, 0);
+        assertNull(bridge.accept(FINISH));
+    }
 }

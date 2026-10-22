@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.helper;
 
 import android.app.Activity;
+import java.lang.ref.WeakReference;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +28,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
     private static final boolean DEBUG_FLAG = false;
     private static boolean isShowingAd = false;
     private final UnitConverter myApplication;
-    private Activity currentActivity;
+    private WeakReference<Activity> currentActivity = new WeakReference<>(null);
     private boolean isFirstLaunch = true;
     private boolean preloadStarted = false;
 
@@ -50,12 +51,35 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
         AdMobManager.getInstance(myApplication).onSdkReady(this::startPreload);
     }
 
+    public static void invalidateInventory() {
+        if (mInstance == null) return;
+        if (mInstance.preloadStarted) AppOpenAdPreloader.destroy(mInstance.adUnit());
+        mInstance.preloadStarted = false;
+    }
+
+    public static void onConsentChanged() {
+        if (mInstance == null) return;
+        if (!AdMobManager.getInstance(mInstance.myApplication).canRequestAds()) {
+            if (mInstance.preloadStarted) AppOpenAdPreloader.destroy(mInstance.adUnit());
+            mInstance.preloadStarted = false;
+        } else {
+            AdMobManager.getInstance(mInstance.myApplication).onSdkReady(mInstance::startPreload);
+        }
+    }
+
+    private String adUnit() {
+        return BuildConfig.DEBUG ? "ca-app-pub-3940256099942544/9257395921"
+                : myApplication.getString(R.string.am_app_open_ad_unit);
+    }
+
     private void startPreload() {
-        if (preloadStarted) {
+        if (preloadStarted || !AdMobManager.getInstance(myApplication).isInitialized()
+                || AdMobManager.getInstance(myApplication).isConsentUpdating()
+                || !AdMobManager.getInstance(myApplication).canRequestAds()) {
             return;
         }
 
-        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
+        String adUnitId = adUnit();
         if (!AdMobManager.isValidAdUnitId(adUnitId)) {
             return;
         }
@@ -71,8 +95,9 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
     }
 
     public boolean isAdAvailable() {
-        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
-        return AdMobManager.isValidAdUnitId(adUnitId)
+        String adUnitId = adUnit();
+        return AdMobManager.getInstance(myApplication).isInitialized()
+                && AdMobManager.isValidAdUnitId(adUnitId)
                 && AppOpenAdPreloader.isAdAvailable(adUnitId);
     }
 
@@ -83,11 +108,18 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
             Log.d(TAG, "AdMob AppOpen showAdIfAvailable in AppOpenManager");
         }
 
-        if (isShowingAd || currentActivity == null || AdMobManager.isGamesAdShowing()) {
+        startPreload();
+        Activity activity = currentActivity.get();
+        if (!AdMobManager.getInstance(myApplication).isInitialized() || isShowingAd || activity == null || activity.isFinishing()
+                || activity.isDestroyed() || AdMobManager.isGamesAdShowing()
+                || !(activity instanceof net.smartlogic.unitconverter.activity.MainActivity mainActivity)
+                || mainActivity.isTimerScreenVisible()
+                || AdMobManager.getInstance(myApplication).isConsentUpdating()
+                || !AdMobManager.getInstance(myApplication).canRequestAds()) {
             return;
         }
 
-        String adUnitId = myApplication.getString(R.string.am_app_open_ad_unit);
+        String adUnitId = adUnit();
         if (!AdMobManager.isValidAdUnitId(adUnitId)) {
             return;
         }
@@ -137,7 +169,9 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
                 isShowingAd = true;
             }
         });
-        appOpenAd.show(currentActivity);
+        isShowingAd = true;
+        try { appOpenAd.show(activity); }
+        catch (RuntimeException error) { isShowingAd = false; }
     }
 
     @Override
@@ -146,12 +180,12 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
-        currentActivity = activity;
+        if (!isShowingAd && !AdMobManager.isGamesAdShowing()) currentActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
-        currentActivity = activity;
+        if (!isShowingAd && !AdMobManager.isGamesAdShowing()) currentActivity = new WeakReference<>(activity);
     }
 
     @Override
@@ -168,7 +202,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-        currentActivity = null;
+        if (currentActivity.get() == activity) currentActivity.clear();
     }
 
     @Override
@@ -182,6 +216,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
             return;
         }
 
+        AdMobManager.getInstance(myApplication).onSdkReady(this::startPreload);
         showAdIfAvailable();
     }
 }

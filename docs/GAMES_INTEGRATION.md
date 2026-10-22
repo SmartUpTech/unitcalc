@@ -5,9 +5,9 @@
 All feature classes live in `net.smartlogic.unitconverter.games`. `GamesFragment`
 owns the view lifecycle; `GamesWebView` owns transport/security; `GamesBridge`
 validates the shared v1 envelope; `GamesHostConfiguration` adapts the existing
-semantic theme; `GamesStateRepository` writes completion records; `GamesSession`
-contains process-memory-only ad bookkeeping. Ad thresholds remain in the existing
-`AdMobManager`, which owns the session instance. There is no native catalog,
+semantic theme; `GamesStateRepository` writes completion records and earned daily
+bonus entitlements. `AdMobManager` owns consent and rewarded inventory. The former
+`GamesSession` threshold policy is no longer connected to the app. There is no native catalog,
 game enum, game icon list, or game-specific bridge method.
 
 `GamesConfig.ENTRY_URL` is the only production entry definition. It currently
@@ -70,29 +70,36 @@ worker and `commit()` off the UI thread. Duplicate writes return DUPLICATE, and
 failed writes return FAILED and restore in-memory state for retry. Raw results,
 scores, user identifiers and ad counters are not persisted or uploaded.
 
-After a NEW durable completion, the existing Ad Manager increments its Games
-session count. The opportunities are exactly completion 3 and completion 8,
-with at most two reservations per process session. Ads are skipped if no ad is
-ready, consent is ineligible, another Games/app-open ad is showing, the Activity
-is unavailable, or the original completion break is no longer visible. Route,
-document and navigation generations reject stale opportunities, including
-leaving and revisiting the same URL. No delayed show/reward gate exists.
+As of 2026-10-22, completion thresholds no longer show ads. After finishing the
+free daily catalog, the shared website offers an explicit rewarded-ad action.
+Only the earned-reward callback unlocks the extra set; dismissal, no-fill,
+consent denial and show errors never unlock it. A failed/unavailable ad leaves
+the existing games usable and offers a later retry. The current hosted protocol
+supports one bonus set per day (`bonusRound` 0/1). Additional sets require a
+shared-platform protocol change.
 
-GMA Next-Gen interstitial is the appropriate non-rewarded format for these
-natural completion breaks. **The SDK/account controls the creative; Android
-cannot guarantee a video-only interstitial.** A separate Games preload slot
-preserves existing ad inventory/timing. Debug Games requests use Google's
-interstitial test ID. Release reuses `am_interstitial_ad_unit`, currently `XX`,
-so release Games ads remain disabled until the owner supplies a valid unit.
+`games_bonus_unlocks_v1` stores earned dates. `games_bonus_completions_v1`
+stores bonus completions separately from the original daily records. Writes are
+serialized off the UI thread. The native bridge validates the current date and
+round and rejects stale/duplicate completions. The website owns catalog-wide
+completion eligibility; Android does not duplicate the hosted catalog.
 
-The new Games preload/show path checks UMP `canRequestAds()`, updates consent
-when first entering Play, presents required forms only while Play is visible,
-and exposes required privacy choices in the existing native overflow menu.
-Changing those choices destroys Games inventory before reloading. Existing
-SDK initialization, app-open and other ad flows are not migrated; inspection
-found that the pre-existing app-wide UMP flow is absent. That existing privacy
-gap, account messages, audience classification and mediation settings require
-a separate app-wide review; this PR does not certify overall compliance.
+There are no banner or unsolicited interstitial requests. App-open and rewarded
+requests use Google demo units in `BuildConfig.DEBUG`; release uses the app-open
+unit and the owner-provided rewarded unit in `strings.xml`. UMP refreshes from
+MainActivity on launch, all inventory checks `canRequestAds()`, and required
+privacy choices are available from the main overflow menu. App-open ads are
+excluded while consent/rewarded UI is active or Timer is the current screen.
+Account message configuration, audience classification, mediation and Play
+Console declarations remain external release checks.
+
+API sources rechecked on 2026-10-22:
+- https://developers.google.com/admob/android/next-gen/rewarded
+- https://developers.google.com/admob/android/next-gen/test-ads
+- https://developers.google.com/admob/android/next-gen/app-open
+- https://developers.google.com/admob/android/next-gen/privacy
+
+Earlier integration evidence (historical; superseded ad behavior):
 
 Policy/API sources reviewed on 2026-10-06:
 - https://developers.google.com/admob/android/next-gen/interstitial

@@ -92,10 +92,10 @@ public class ExploreFragment extends Fragment {
             adapter.submit(allEntries);
             return;
         }
-        String lower = query.toLowerCase();
+        String lower = query.toLowerCase(java.util.Locale.getDefault());
         List<CalculatorCatalog.Entry> filtered = new ArrayList<>();
         for (CalculatorCatalog.Entry entry : allEntries) {
-            String title = getString(entry.titleRes).toLowerCase();
+            String title = getString(entry.titleRes).toLowerCase(java.util.Locale.getDefault());
             if (title.contains(lower)) {
                 filtered.add(entry);
             }

@@ -5,7 +5,7 @@
     android:background="@color/screen_background"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="@dimen/spacing_12dp">
 
     <TextView
         android:id="@+id/timer_widget_label"
@@ -20,9 +20,9 @@
         android:id="@+id/timer_widget_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/converter_small_spacing"
         android:fontFamily="@font/app_text"
-        android:text="0:00"
+        android:text="@string/timer_preview_time"
         android:textColor="@color/accent"
         android:textSize="24sp"
         android:textStyle="bold" />

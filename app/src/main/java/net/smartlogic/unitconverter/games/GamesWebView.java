@@ -155,11 +155,11 @@ public final class GamesWebView extends WebView {
     public void dispose() {
         disposed = true;
         stopLoading();
-        if (bridgeInstalled) {
+        if (bridgeInstalled && WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
             WebViewCompat.removeWebMessageListener(this, GamesConfig.BRIDGE_NAME);
             bridgeInstalled = false;
         }
-        setWebViewClient(new WebViewClient());
+        setWebViewClient(null);
         removeAllViews();
         destroy();
     }

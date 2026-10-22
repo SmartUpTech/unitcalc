@@ -34,7 +34,6 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Map;
-import java.util.Objects;
 
 public final class GamesFragment extends Fragment implements GamesWebView.Listener {
     private static final String SAVED_URL = "games_url";
@@ -61,6 +60,10 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
     private int documentGeneration;
     private int configurationGeneration;
     private int navigationGeneration;
+    private int configuredRound;
+    private boolean bonusRequestPending;
+    private boolean bonusRewardSaving;
+    private boolean bonusEligible;
     private boolean ready;
     private boolean failed;
     private String configured;
@@ -182,6 +185,9 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
             case "onReady":
                 if (!ready) { ready = true; configureIfChanged(); }
                 break;
+            case "onBonusRequested":
+                requestBonus(event.date());
+                break;
             case "onGameStarted":
             case "onGameExited":
                 navigationGeneration++;
@@ -214,16 +220,21 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         int request = ++configurationGeneration;
         GamesWebView target = webView;
         repository.execute(() -> {
-            Map<String, String> completions = repository.completionsFor(date);
+            int round = repository.bonusUnlocked(date) ? 1 : 0;
+            Map<String, String> completions = repository.completionsFor(date, round);
+            // The shared website owns the catalog and offers the button only after all games finish.
+            boolean eligible = round == 0 && !completions.isEmpty();
             main.post(() -> {
                 if (root == null || target != webView || page != documentGeneration
                         || request != configurationGeneration || !isPlayingSurfaceVisible() || failed) return;
-                JSONObject config = GamesHostConfiguration.create(requireContext(), date, zone, completions);
+                JSONObject config = GamesHostConfiguration.create(requireContext(), date, zone, completions, round, eligible);
                 if (!date.equals(LocalDate.now().toString()) || !zone.equals(ZoneId.systemDefault().getId())) {
                     configureIfChanged();
                     return;
                 }
-                bridge.configure(date);
+                bridge.configure(date, round);
+                configuredRound = round;
+                bonusEligible = eligible;
                 configuredDate = date;
                 target.configure(config, accepted -> {
                     if (root == null || failed || target != webView || page != documentGeneration || request != configurationGeneration) return;
@@ -243,36 +254,50 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
 
     private void saveCompletion(GamesBridge.Event event) {
         int page = documentGeneration;
-        int navigation = navigationGeneration;
         GamesWebView target = webView;
-        String completionUrl = target.getUrl();
+        int round = configuredRound;
         repository.execute(() -> {
-            GamesStateRepository.WriteResult result = repository.recordCompletion(event.gameId(), event.date());
+            GamesStateRepository.WriteResult result = repository.recordCompletion(event.gameId(), event.date(), round);
             main.post(() -> {
-                if (result == GamesStateRepository.WriteResult.NEW) {
-                    // Count the genuine finish even if the user navigated away while disk writing.
-                    // An unavailable/stale break is skipped, never shown later.
-                    AdMobManager ads = AdMobManager.getInstance(applicationContext);
-                    ads.onGamesCompletion(getActivity(), event.gameId(), event.date(),
-                            () -> root != null && target == webView && page == documentGeneration
-                                    && isPlayingSurfaceVisible() && !failed
-                                    && navigation == navigationGeneration
-                                    && event.date().equals(configuredDate)
-                                    && event.date().equals(LocalDate.now().toString())
-                                    && Objects.equals(completionUrl, target.getUrl()));
-                } else if (result == GamesStateRepository.WriteResult.FAILED
-                        && root != null && target == webView && page == documentGeneration) {
+                if (result != GamesStateRepository.WriteResult.FAILED) {
+                    if (root != null && target == webView && page == documentGeneration) {
+                        configured = null;
+                        configureIfChanged();
+                    }
+                } else if (root != null && target == webView && page == documentGeneration) {
                     showError(R.string.games_save_error);
                 }
             });
         });
     }
 
-    private android.content.Context applicationContext;
-
-    @Override public void onAttach(@NonNull android.content.Context context) {
-        super.onAttach(context);
-        applicationContext = context.getApplicationContext();
+    private void requestBonus(String date) {
+        if (bonusRequestPending || !bonusEligible || configuredRound != 0 || !isPlayingSurfaceVisible()
+                || !date.equals(LocalDate.now().toString())) return;
+        bonusRequestPending = true;
+        boolean shown = AdMobManager.getInstance(requireContext()).showNewSetAd(requireActivity(), () -> {
+            bonusRewardSaving = true;
+            repository.execute(() -> {
+                boolean saved = repository.unlockBonus(date);
+                main.post(() -> {
+                    bonusRequestPending = false;
+                    bonusRewardSaving = false;
+                    if (root == null) return;
+                    if (!saved) { showError(R.string.games_save_error); return; }
+                    configured = null;
+                    configureIfChanged();
+                });
+            });
+        }, () -> {
+            if (!bonusRewardSaving) bonusRequestPending = false;
+            if (root != null) { configured = null; configureIfChanged(); }
+        });
+        if (!shown) {
+            bonusRequestPending = false;
+            android.widget.Toast.makeText(requireContext(), R.string.games_ad_unavailable, android.widget.Toast.LENGTH_LONG).show();
+            configured = null;
+            configureIfChanged();
+        }
     }
 
     private boolean isPlayingSurfaceVisible() {
@@ -363,7 +388,6 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                             () -> { if (isAdded()) requireActivity().invalidateOptionsMenu(); });
                 } catch (RuntimeException | LinkageError error) {
                     Log.e("GamesFragment", "Unable to prepare games", error);
-                    showError(R.string.games_load_error);
                 }
             }
         } else setWebViewResumed(false);

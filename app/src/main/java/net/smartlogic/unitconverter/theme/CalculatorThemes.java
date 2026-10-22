@@ -1,6 +1,6 @@
 package net.smartlogic.unitconverter.theme;
 
-import android.graphics.Color;
+import net.smartlogic.unitconverter.theme.generated.ThemePalette;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,34 +20,34 @@ public final class CalculatorThemes {
 
     public static final CalculatorTheme PORCELAIN_WHITE = theme(
             DEFAULT_ID, R.string.theme_porcelain_white, 1,
-            "#F7F6F2", "#4A4C4F", "#77797C", "#FFFFFF", "#303236");
+            ThemePalette.PALETTE_F7F6F2, ThemePalette.PALETTE_4A4C4F, ThemePalette.PALETTE_77797C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_303236);
     public static final CalculatorTheme OYSTER_CREAM = theme(
             "oyster_cream", R.string.theme_oyster_cream, 2,
-            "#F1ECE2", "#4A4C4F", "#77797C", "#FFFFFF", "#303236");
+            ThemePalette.PALETTE_F1ECE2, ThemePalette.PALETTE_4A4C4F, ThemePalette.PALETTE_77797C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_303236);
     public static final CalculatorTheme TITANIUM_GRAY = theme(
             "titanium_gray", R.string.theme_titanium_gray, 3,
-            "#D6D9DD", "#46484B", "#737579", "#FFFFFF", "#25272A");
+            ThemePalette.PALETTE_D6D9DD, ThemePalette.PALETTE_46484B, ThemePalette.PALETTE_737579, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_25272A);
     public static final CalculatorTheme GRAPHITE_BLACK = theme(
             "graphite_black", R.string.theme_graphite_black, 4,
-            "#25272A", "#D0D2D4", "#9EA1A5", "#FFFFFF", "#F7F7F7");
+            ThemePalette.PALETTE_25272A, ThemePalette.PALETTE_D0D2D4, ThemePalette.PALETTE_9EA1A5, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_F7F7F7);
     public static final CalculatorTheme PURPLE_MOUNTAIN_MAJESTY = theme(
             "purple_mountain_majesty", R.string.theme_purple_mountain_majesty, 5,
-            "#9678B6", "#343238", "#64616A", "#FFFFFF", "#F1EAF7");
+            ThemePalette.PALETTE_9678B6, ThemePalette.PALETTE_343238, ThemePalette.PALETTE_64616A, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_F1EAF7);
     public static final CalculatorTheme GLACIER = theme(
             "glacier", R.string.theme_glacier, 6,
-            "#B8D7E8", "#3E464B", "#707980", "#FFFFFF", "#F3FAFD");
+            ThemePalette.PALETTE_B8D7E8, ThemePalette.PALETTE_3E464B, ThemePalette.PALETTE_707980, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_F3FAFD);
     public static final CalculatorTheme BURGUNDY = theme(
             "burgundy", R.string.theme_burgundy, 7,
-            "#800020", "#F0DDE2", "#C5A9B1", "#FFFFFF", "#FFDCE5");
+            ThemePalette.PALETTE_800020, ThemePalette.PALETTE_F0DDE2, ThemePalette.PALETTE_C5A9B1, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFDCE5);
     public static final CalculatorTheme SAGE_GREEN = theme(
             "sage_green", R.string.theme_sage_green, 8,
-            "#9CAF88", "#384039", "#687168", "#FFFFFF", "#F0F6EC");
+            ThemePalette.PALETTE_9CAF88, ThemePalette.PALETTE_384039, ThemePalette.PALETTE_687168, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_F0F6EC);
     public static final CalculatorTheme BURNT_ORANGE = theme(
             "burnt_orange", R.string.theme_burnt_orange, 9,
-            "#CC5500", "#FFF0E5", "#D8BBA7", "#FFFFFF", "#FFE8D6");
+            ThemePalette.PALETTE_CC5500, ThemePalette.PALETTE_FFF0E5, ThemePalette.PALETTE_D8BBA7, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFE8D6);
     public static final CalculatorTheme GOLDEN_POPPY = theme(
             "golden_poppy", R.string.theme_golden_poppy, 10,
-            "#FCC200", "#39372F", "#706D62", "#FFFFFF", "#FFF7D6");
+            ThemePalette.PALETTE_FCC200, ThemePalette.PALETTE_39372F, ThemePalette.PALETTE_706D62, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFF7D6);
 
     private static final List<CalculatorTheme> ALL = Collections.unmodifiableList(Arrays.asList(
             PORCELAIN_WHITE,
@@ -99,21 +99,21 @@ public final class CalculatorThemes {
             @NonNull String id,
             @StringRes int nameRes,
             int unlockRank,
-            @NonNull String background,
-            @NonNull String mainText,
-            @NonNull String functions,
-            @NonNull String operators,
-            @NonNull String equal
+            int background,
+            int mainText,
+            int functions,
+            int operators,
+            int equal
     ) {
         return new CalculatorTheme(
                 id,
                 nameRes,
                 unlockRank,
-                Color.parseColor(background),
-                Color.parseColor(mainText),
-                Color.parseColor(functions),
-                Color.parseColor(operators),
-                Color.parseColor(equal)
+                background,
+                mainText,
+                functions,
+                operators,
+                equal
         );
     }
 }

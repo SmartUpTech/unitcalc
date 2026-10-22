@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -91,7 +90,7 @@ fun TimerWheelPicker(
         }
     }
 
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(unitLabel, color = semantic.secondaryText, fontSize = 14.sp,
             maxLines = 1, overflow = TextOverflow.Ellipsis)
         BoxWithConstraints(
@@ -110,7 +109,7 @@ fun TimerWheelPicker(
                     .height(itemHeight)
                     .background(
                         color = semantic.connector.copy(alpha = 0.12f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.spacing_12dp)),
                     ),
             )
             LazyColumn(
@@ -129,7 +128,7 @@ fun TimerWheelPicker(
                             .height(itemHeight)
                             .semantics { contentDescription = "$itemValue $unitLabel" }
                             .alpha(if (isSelected) 1f else 0.35f)
-                            .padding(horizontal = 4.dp),
+                            .padding(horizontal = dimensionResource(R.dimen.converter_small_spacing)),
                         color = semantic.primaryText,
                         fontSize = if (isSelected) 18.sp else 16.sp,
                         textAlign = TextAlign.Center,

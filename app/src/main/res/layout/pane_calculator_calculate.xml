@@ -48,7 +48,7 @@
                     android:autoSizeTextType="uniform"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="0"/>
+                    android:text="@string/zero"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -66,11 +66,11 @@
                 <Button
                     android:id="@+id/power"
                     style="@style/CalculatorKey.Function"
-                    android:text="^"/>
+                    android:text="@string/calculator_power_key"/>
                 <Button
                     android:id="@+id/sqrt"
                     style="@style/CalculatorKey.Function"
-                    android:text="√"/>
+                    android:text="@string/calculator_square_root_key"/>
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -93,19 +93,19 @@
                 <Button
                     android:id="@+id/parenthesis_open"
                     style="@style/CalculatorKey.Function"
-                    android:text="("/>
+                    android:text="@string/calculator_open_parenthesis_key"/>
                 <Button
                     android:id="@+id/parenthesis_close"
                     style="@style/CalculatorKey.Function"
-                    android:text=")"/>
+                    android:text="@string/calculator_close_parenthesis_key"/>
                 <Button
                     android:id="@+id/percent"
                     style="@style/CalculatorKey.Function"
-                    android:text="%"/>
+                    android:text="@string/calculator_percent_key"/>
                 <Button
                     android:id="@+id/divide"
                     style="@style/CalculatorKey.SideOperator"
-                    android:text="÷"/>
+                    android:text="@string/divide"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
             <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
@@ -115,19 +115,19 @@
                 <Button
                     android:id="@+id/seven"
                     style="@style/CalculatorKey.Number"
-                    android:text="7"/>
+                    android:text="@string/seven"/>
                 <Button
                     android:id="@+id/eight"
                     style="@style/CalculatorKey.Number"
-                    android:text="8"/>
+                    android:text="@string/eight"/>
                 <Button
                     android:id="@+id/nine"
                     style="@style/CalculatorKey.Number"
-                    android:text="9"/>
+                    android:text="@string/nine"/>
                 <Button
                     android:id="@+id/multiply"
                     style="@style/CalculatorKey.SideOperator"
-                    android:text="×"/>
+                    android:text="@string/multiply"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
             <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
@@ -137,19 +137,19 @@
                 <Button
                     android:id="@+id/four"
                     style="@style/CalculatorKey.Number"
-                    android:text="4"/>
+                    android:text="@string/default_number_decimals"/>
                 <Button
                     android:id="@+id/five"
                     style="@style/CalculatorKey.Number"
-                    android:text="5"/>
+                    android:text="@string/five"/>
                 <Button
                     android:id="@+id/six"
                     style="@style/CalculatorKey.Number"
-                    android:text="6"/>
+                    android:text="@string/six"/>
                 <Button
                     android:id="@+id/minus"
                     style="@style/CalculatorKey.SideOperator"
-                    android:text="-"/>
+                    android:text="@string/calculator_minus_key"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
             <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
@@ -159,19 +159,19 @@
                 <Button
                     android:id="@+id/one"
                     style="@style/CalculatorKey.Number"
-                    android:text="1"/>
+                    android:text="@string/one"/>
                 <Button
                     android:id="@+id/two"
                     style="@style/CalculatorKey.Number"
-                    android:text="2"/>
+                    android:text="@string/two"/>
                 <Button
                     android:id="@+id/three"
                     style="@style/CalculatorKey.Number"
-                    android:text="3"/>
+                    android:text="@string/three"/>
                 <Button
                     android:id="@+id/plus"
                     style="@style/CalculatorKey.SideOperator"
-                    android:text="+"/>
+                    android:text="@string/plus"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
             <net.smartlogic.unitconverter.widget.KeypadRowLayout
                 android:layout_width="match_parent"
@@ -181,19 +181,19 @@
                 <Button
                     android:id="@+id/sign_toggle"
                     style="@style/CalculatorKey.Function"
-                    android:text="-/+"/>
+                    android:text="@string/calculator_sign_key"/>
                 <Button
                     android:id="@+id/zero"
                     style="@style/CalculatorKey.Number"
-                    android:text="0"/>
+                    android:text="@string/zero"/>
                 <Button
                     android:id="@+id/dot"
                     style="@style/CalculatorKey.Number"
-                    android:text="."/>
+                    android:text="@string/default_decimal_separator"/>
                 <Button
                     android:id="@+id/equal"
                     style="@style/CalculatorKey.Equals"
-                    android:text="="/>
+                    android:text="@string/equal"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
         </LinearLayout>
     </net.smartlogic.unitconverter.widget.CalculationLayout>

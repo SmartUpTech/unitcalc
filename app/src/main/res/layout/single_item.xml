@@ -7,9 +7,9 @@
     android:focusable="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingHorizontal="10dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="4dp">
+    android:paddingHorizontal="@dimen/spacing_10dp"
+    android:paddingTop="@dimen/converter_spacing"
+    android:paddingBottom="@dimen/converter_small_spacing">
 
     <FrameLayout
         android:id="@+id/icon_container"
@@ -30,7 +30,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="@dimen/converter_mode_margin_top"
         android:fontFamily="@font/app_text"
         android:gravity="center"
         android:maxWidth="80dp"
@@ -42,7 +42,7 @@
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/converter_spacing"
         android:background="@color/accent"
         android:visibility="invisible" />
 

@@ -38,6 +38,7 @@
             android:exported="true"
             android:name="net.smartlogic.unitconverter.activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">

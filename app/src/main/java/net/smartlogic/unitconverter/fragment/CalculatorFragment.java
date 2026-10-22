@@ -51,6 +51,9 @@ import net.smartlogic.unitconverter.utils.GenericFunctions;
 public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
     private TextView tvExpression, tvResult;
+    private static final int MAX_INPUT_LENGTH = 30;
+    private boolean inputChangeInProgress;
+    private boolean recalculateAfterInput;
     private String expression = "";
     private String lastEvaluatedExpression = "";
     private Preferences mPrefs;
@@ -281,24 +284,37 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        String before = expression;
-
-        if (id == R.id.backspace) {
-            handleBackspace();
-        } else if (id == R.id.sign_toggle) {
-            handleSignToggle();
-        } else if (id == R.id.equal) {
+        if (id == R.id.equal) {
             calculateResult(true);
             return;
-        } else if (id == R.id.dot) {
-            handleDotInput();
-        } else {
-            String input = "";
-            if (v instanceof Button) {
-                input = ((Button) v).getText().toString();
-            }
-            handleInput(input);
         }
+        String before = expression;
+        boolean resultWasDisplayed = isResultDisplayed;
+        inputChangeInProgress = true;
+        recalculateAfterInput = false;
+        try {
+            if (id == R.id.backspace) {
+                handleBackspace();
+            } else if (id == R.id.sign_toggle) {
+                handleSignToggle();
+            } else if (id == R.id.dot) {
+                handleDotInput();
+            } else {
+                handleInput(v instanceof Button ? ((Button) v).getText().toString() : "");
+            }
+        } finally {
+            inputChangeInProgress = false;
+        }
+        // Validate the whole edit, including implicit multiplication and sqrt tokens.
+        // Preserve longer restored history/results and allow edits that shorten them.
+        if (expression.length() > MAX_INPUT_LENGTH && expression.length() > before.length()) {
+            expression = before;
+            isResultDisplayed = resultWasDisplayed;
+            showToast(getString(R.string.calculator_input_limit, MAX_INPUT_LENGTH));
+            return;
+        }
+        updateExpressionDisplay();
+        if (recalculateAfterInput) calculateResult(false);
         if (!before.equals(expression)) {
             InteractionFeedbackManager.perform(v,
                     id == R.id.backspace || id == R.id.sign_toggle
@@ -472,7 +488,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void handleInput(String input) {
         if (TextUtils.isEmpty(input)) return;
-        if (!isResultDisplayed && expression.length() >= 1000) return;
 
         if (isResultDisplayed) {
             if (input.equals("^") && expression.startsWith("-")) {
@@ -557,6 +572,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void updateExpressionDisplay() {
+        if (inputChangeInProgress) return;
         if (tvExpression == null) {
             return;
         }
@@ -606,8 +622,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void calculateResult(boolean isFinal) {
+        if (inputChangeInProgress) { recalculateAfterInput = true; return; }
         if (expression.isEmpty()) {
             tvResult.setText("0");
+            latestGraphyOutput = null;
+            hideGraphy();
+            updateGraphyTabState();
             return;
         }
 
@@ -668,6 +688,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 feedbackFinal(InteractionFeedbackManager.Type.CONFIRM);
             }
         } catch (Exception e) {
+            tvResult.setText("");
             latestGraphyOutput = null;
             hideGraphy();
             updateGraphyTabState();

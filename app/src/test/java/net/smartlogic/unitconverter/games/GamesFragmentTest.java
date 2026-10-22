@@ -38,8 +38,8 @@ public class GamesFragmentTest {
                 org.robolectric.shadows.ShadowNetworkInfo.newInstance(android.net.NetworkInfo.DetailedState.CONNECTED,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         android.net.NetworkCapabilities capabilities = new android.net.NetworkCapabilities();
-        capabilities.addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        capabilities.addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        Shadows.shadowOf(capabilities).addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        Shadows.shadowOf(capabilities).addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         Shadows.shadowOf(connectivity).setNetworkCapabilities(connectivity.getActiveNetwork(), capabilities);
         FrameLayout host = new FrameLayout(activity);
         host.setId(12345);

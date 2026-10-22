@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="12dp" />
+        android:paddingHorizontal="@dimen/theme_swatch_color_size"
+        android:paddingTop="@dimen/spacing_12dp" />
 
     <TextView
         android:id="@+id/tv_empty_favorites"

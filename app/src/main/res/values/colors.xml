@@ -48,4 +48,62 @@
     <color name="pad_numeric_background_color">@color/key_number_bg</color>
     <color name="pad_button_equal">@color/key_equals_bg</color>
     <color name="colorHighlighter">@color/key_operator_text</color>
+    <!-- Theme catalog palette. ThemePalette is generated from these values at build time. -->
+    <color name="palette_f7f6f2">#F7F6F2</color>
+    <color name="palette_4a4c4f">#4A4C4F</color>
+    <color name="palette_77797c">#77797C</color>
+    <color name="palette_ffffff">#FFFFFF</color>
+    <color name="palette_303236">#303236</color>
+    <color name="palette_f1ece2">#F1ECE2</color>
+    <color name="palette_d6d9dd">#D6D9DD</color>
+    <color name="palette_46484b">#46484B</color>
+    <color name="palette_737579">#737579</color>
+    <color name="palette_25272a">#25272A</color>
+    <color name="palette_d0d2d4">#D0D2D4</color>
+    <color name="palette_9ea1a5">#9EA1A5</color>
+    <color name="palette_f7f7f7">#F7F7F7</color>
+    <color name="palette_9678b6">#9678B6</color>
+    <color name="palette_343238">#343238</color>
+    <color name="palette_64616a">#64616A</color>
+    <color name="palette_f1eaf7">#F1EAF7</color>
+    <color name="palette_b8d7e8">#B8D7E8</color>
+    <color name="palette_3e464b">#3E464B</color>
+    <color name="palette_707980">#707980</color>
+    <color name="palette_f3fafd">#F3FAFD</color>
+    <color name="palette_800020">#800020</color>
+    <color name="palette_f0dde2">#F0DDE2</color>
+    <color name="palette_c5a9b1">#C5A9B1</color>
+    <color name="palette_ffdce5">#FFDCE5</color>
+    <color name="palette_9caf88">#9CAF88</color>
+    <color name="palette_384039">#384039</color>
+    <color name="palette_687168">#687168</color>
+    <color name="palette_f0f6ec">#F0F6EC</color>
+    <color name="palette_cc5500">#CC5500</color>
+    <color name="palette_fff0e5">#FFF0E5</color>
+    <color name="palette_d8bba7">#D8BBA7</color>
+    <color name="palette_ffe8d6">#FFE8D6</color>
+    <color name="palette_fcc200">#FCC200</color>
+    <color name="palette_39372f">#39372F</color>
+    <color name="palette_706d62">#706D62</color>
+    <color name="palette_fff7d6">#FFF7D6</color>
+    <color name="asset_ff000000">#FF000000</color>
+
+    <!-- App-wide mathematical semantic colors (light) -->
+    <color name="semantic_background">#F7F5F0</color>
+    <color name="semantic_number">#25282C</color>
+    <color name="semantic_operator">#52677D</color>
+    <color name="semantic_function">#62676D</color>
+    <color name="semantic_utility">#6B7075</color>
+    <color name="semantic_equal">#D94A3A</color>
+    <color name="semantic_primary_text">#25282C</color>
+    <color name="semantic_secondary_text">#85827C</color>
+
+
+    <color name="ic_launcher_background">#FDFBFC</color>
+
+    <!-- Contrast fallback endpoints used by the shared semantic color resolver. -->
+    <color name="palette_000000">#000000</color>
+
+    <color name="graphy_export_paper">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
 </resources>

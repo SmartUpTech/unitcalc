@@ -32,7 +32,7 @@ object TimerWidgetRenderer {
         }
         val timeText = when (snapshot.phase) {
             is TimerPhase.Setting -> TimerDurationFormatter.formatDuration(
-                (snapshot.phase as TimerPhase.Setting).draft.durationMs,
+                snapshot.phase.draft.durationMs,
             )
             is TimerPhase.Completed -> context.getString(R.string.timer_times_up)
             else -> TimerDurationFormatter.formatCountdown(snapshot.remainingMs)

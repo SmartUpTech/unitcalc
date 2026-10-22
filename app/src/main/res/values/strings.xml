@@ -49,7 +49,7 @@
     <string name="games_update_webview">Update Android System WebView to play games securely.</string>
     <string name="games_save_error">Your result couldn’t be saved. Please try again.</string>
     <string name="games_retry">Try again</string>
-    <string name="games_privacy_options">Games ad privacy choices</string>
+    <string name="games_privacy_options">Ad privacy choices</string>
     <string name="explore_search_hint">Search calculators</string>
     <string name="no_favorites">No favorites yet</string>
     <string name="toggle_favorite">Toggle favorite</string>
@@ -406,7 +406,7 @@
     <!-- AdMob Real Ads -->
     <string name="am_banner_ad_unit">XX</string>
     <string name="am_interstitial_ad_unit">XX</string>
-    <string name="am_rewarded_ad_unit">XX</string>
+    <string name="am_rewarded_ad_unit" translatable="false">ca-app-pub-9684723354540179/3894533962</string>
     <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
 
 
@@ -521,4 +521,18 @@
     <string name="pebibyte">Pebibyte</string>
     <string name="exbibit">Exbibit</string>
     <string name="exbibyte">Exbibyte</string>
+    <string name="games_bonus_title">Play a new set</string>
+    <string name="games_bonus_message">Watch a video ad to unlock one extra set of games today.</string>
+    <string name="games_bonus_watch">Watch ad and unlock</string>
+    <string name="games_bonus_finished">You have finished the extra set for today. Come back tomorrow for more games.</string>
+    <string name="games_ad_unavailable">No video is available right now. Please try again later.</string>
+    <string name="calculator_input_limit">Expression limit: %1$d characters</string>
+    <string name="calculator_power_key" translatable="false">^</string>
+    <string name="calculator_square_root_key" translatable="false">√</string>
+    <string name="calculator_open_parenthesis_key" translatable="false">(</string>
+    <string name="calculator_close_parenthesis_key" translatable="false">)</string>
+    <string name="calculator_percent_key" translatable="false">%</string>
+    <string name="calculator_minus_key" translatable="false">-</string>
+    <string name="calculator_sign_key" translatable="false">-/+</string>
+    <string name="timer_preview_time" translatable="false">0:00</string>
 </resources>

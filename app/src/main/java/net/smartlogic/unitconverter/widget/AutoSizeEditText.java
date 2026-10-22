@@ -12,6 +12,7 @@ import net.smartlogic.unitconverter.R;
 
 /** Single-line amount editor; refits from its styled maximum on every measurement. */
 public final class AutoSizeEditText extends AppCompatEditText {
+    private final TextPaint measurementPaint = new TextPaint();
     private final float maximumSp;
     private final int styledMinimumHeight;
 
@@ -33,7 +34,8 @@ public final class AutoSizeEditText extends AppCompatEditText {
         // The row's geometry belongs to the maximum text role, not the current
         // fitted size. Recompute from the current typeface/scaling and padding so
         // resizing, deleting and clearing cannot pull the keypad upward.
-        TextPaint probe = new TextPaint(getPaint());
+        TextPaint probe = measurementPaint;
+        probe.set(getPaint());
         probe.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, maximumSp,
                 getResources().getDisplayMetrics()));
         android.graphics.Paint.FontMetricsInt metrics = probe.getFontMetricsInt();

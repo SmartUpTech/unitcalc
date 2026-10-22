@@ -3,6 +3,7 @@ package net.smartlogic.unitconverter.games;
 import android.content.Context;
 
 import net.smartlogic.unitconverter.BuildConfig;
+import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.theme.CalculatorTheme;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 
@@ -16,6 +17,11 @@ public final class GamesHostConfiguration {
     private GamesHostConfiguration() {}
 
     public static JSONObject create(Context context, String date, String timezone, Map<String, String> completions) {
+        return create(context, date, timezone, completions, 0, false);
+    }
+
+    public static JSONObject create(Context context, String date, String timezone, Map<String, String> completions,
+            int round, boolean eligible) {
         CalculatorTheme current = ThemeManager.get();
         String language = context.getResources().getConfiguration().getLocales().get(0).toLanguageTag();
         try {
@@ -31,7 +37,12 @@ public final class GamesHostConfiguration {
                     .put("appId", BuildConfig.APPLICATION_ID).put("appVersion", BuildConfig.VERSION_NAME)
                     .put("language", language).put("locale", language).put("date", date)
                     .put("timezone", timezone).put("theme", theme)
-                    .put("completions", new JSONObject(completions));
+                    .put("completions", new JSONObject(completions)).put("bonusRound", round)
+                    .put("bonus", new JSONObject().put("enabled", true).put("eligible", eligible)
+                            .put("busy", false).put("title", context.getString(R.string.games_bonus_title))
+                            .put("message", context.getString(R.string.games_bonus_message))
+                            .put("watch", context.getString(R.string.games_bonus_watch))
+                            .put("finished", context.getString(R.string.games_bonus_finished)));
         } catch (JSONException impossible) {
             throw new IllegalStateException("Invalid Games host configuration", impossible);
         }

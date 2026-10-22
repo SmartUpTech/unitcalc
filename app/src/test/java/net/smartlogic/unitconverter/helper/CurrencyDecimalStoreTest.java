@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
+@org.robolectric.annotation.Config(application = android.app.Application.class, sdk = 28)
 public class CurrencyDecimalStoreTest {
     @Test public void decimalSnapshotsAndLegacyCachesRemainReadable() throws Exception {
         String response = "[{\"date\":\"2026-10-20\",\"base\":\"USD\",\"quote\":\"INR\",\"rate\":83.25123456789}]";

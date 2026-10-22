@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="graphy_export_paper">#FFFFFF</color>
     <dimen name="graphy_export_margin">24dp</dimen>
     <dimen name="graphy_export_gap">24dp</dimen>
     <dimen name="graphy_export_title_text">20sp</dimen>

@@ -82,4 +82,19 @@ public class GamesStateRepositoryTest {
         fail.set(false);
         assertEquals(GamesStateRepository.WriteResult.NEW, failingRepository.recordCompletion("valid_game", DAY));
     }
+
+    @Test public void earnedBonusSurvivesRecreationWithoutReplacingDailyCompletions() {
+        assertFalse(repository.bonusUnlocked(DAY));
+        assertTrue(repository.unlockBonus(DAY));
+        assertTrue(repository.unlockBonus(DAY));
+        repository.recordCompletion("word_match", DAY, 0);
+        assertTrue(repository.completionsFor(DAY, 1).isEmpty());
+        repository.recordCompletion("mini_sudoku", DAY, 1);
+        GamesStateRepository recreated = new GamesStateRepository(preferences);
+        assertTrue(recreated.bonusUnlocked(DAY));
+        assertFalse(recreated.bonusUnlocked("2026-10-07"));
+        assertEquals(Map.of("word_match", DAY), recreated.completionsFor(DAY, 0));
+        assertEquals(Map.of("mini_sudoku", DAY), recreated.completionsFor(DAY, 1));
+        assertFalse(recreated.unlockBonus("invalid"));
+    }
 }

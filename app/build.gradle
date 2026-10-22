@@ -156,3 +156,26 @@ dependencies {
     implementation libs.lifecycle.common.java8
     implementation libs.lifecycle.process
 }
+
+// Preserve the context-free theme model while keeping colors.xml the palette source of truth.
+def themePaletteOutput = layout.buildDirectory.dir("generated/source/themePalette")
+def generateThemePalette = tasks.register("generateThemePalette") {
+    def paletteFile = layout.projectDirectory.file("src/main/res/values/colors.xml")
+    inputs.file(paletteFile)
+    outputs.dir(themePaletteOutput)
+    doLast {
+        def declarations = []
+        def matcher = paletteFile.asFile.getText("UTF-8") =~ /<color name="(palette_[^"]+)">#([0-9A-Fa-f]{6})<\/color>/
+        matcher.each { match ->
+            declarations.add("    public static final int ${match[1].toUpperCase(java.util.Locale.ROOT)} = 0xFF${match[2]};")
+        }
+        def outputFile = new File(themePaletteOutput.get().asFile,
+                "net/smartlogic/unitconverter/theme/generated/ThemePalette.java")
+        outputFile.parentFile.mkdirs()
+        outputFile.setText("package net.smartlogic.unitconverter.theme.generated;\n" +
+                "// Generated from colors.xml. Do not edit.\npublic final class ThemePalette {\n" +
+                declarations.join("\n") + "\n    private ThemePalette() {}\n}\n", "UTF-8")
+    }
+}
+android.sourceSets.main.java.srcDir(themePaletteOutput.get().asFile)
+tasks.named("preBuild").configure { dependsOn(generateThemePalette) }

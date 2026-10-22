@@ -9,6 +9,8 @@ import net.smartlogic.unitconverter.R;
 
 /** Shrink a selected unit to the minimum before allowing a second line. */
 public final class UnitSelectionTextView extends AppCompatTextView {
+    private final TypedValue maximumTextSize = new TypedValue();
+    private final TextPaint measurementPaint = new TextPaint();
     public UnitSelectionTextView(Context context, AttributeSet attrs) { super(context, attrs); }
 
     @Override protected void onTextChanged(CharSequence text, int start, int before, int count) {
@@ -23,10 +25,11 @@ public final class UnitSelectionTextView extends AppCompatTextView {
         float minimum = getResources().getInteger(R.integer.value_text_min_sp);
         float step = getResources().getInteger(R.integer.value_text_step_sp);
         // Selected unit text uses the shared 14sp role, independently of the amount size.
-        TypedValue maximum = new TypedValue();
+        TypedValue maximum = maximumTextSize;
         getResources().getValue(R.dimen.converter_unit_text_size, maximum, true);
         float size = TypedValue.complexToFloat(maximum.data);
-        TextPaint probe = new TextPaint(getPaint());
+        TextPaint probe = measurementPaint;
+        probe.set(getPaint());
         CharSequence text = getText();
         boolean fits;
         while (true) {

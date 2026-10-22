@@ -6,11 +6,20 @@ import org.json.JSONObject;
 /** Validates the shared v1 envelope and rejects unstarted, stale and duplicate finishes. */
 public final class GamesBridge {
     public record Event(String type, String gameId, String date, JSONObject result, String errorCode) {}
+    private int round;
+    public void configure(String localDate, int round) {
+        if (!localDate.equals(date) || this.round != round) {
+            activeId = null;
+            completionReceived = false;
+        }
+        date = localDate;
+        this.round = round;
+    }
     private String date;
     private String activeId;
     private boolean completionReceived;
 
-    public void configure(String localDate) { date = localDate; activeId = null; completionReceived = false; }
+    public void configure(String localDate) { configure(localDate, 0); }
     public void reset() { date = null; activeId = null; completionReceived = false; }
 
     public Event accept(String message) {
@@ -25,6 +34,13 @@ public final class GamesBridge {
                 Object id = value.opt("gameId");
                 if (id != null && (!(id instanceof String) || !GamesConfig.isGameId((String) id))) return null;
                 return new Event(type, (String) id, null, null, code);
+            }
+            Object eventRound = value.opt("round");
+            if (eventRound != null && (!(eventRound instanceof Integer) || ((Integer) eventRound) != round)
+                    || eventRound == null && round != 0) return null;
+            if ("onBonusRequested".equals(type)) {
+                if (round != 0 || date == null || !date.equals(value.optString("date"))) return null;
+                return new Event(type, null, date, null, null);
             }
             if (!(value.opt("gameId") instanceof String id) || !GamesConfig.isGameId(id)
                     || !(value.opt("date") instanceof String eventDate)

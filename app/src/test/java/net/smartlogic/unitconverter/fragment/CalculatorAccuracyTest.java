@@ -71,6 +71,47 @@ public class CalculatorAccuracyTest {
             controller.pause().stop().destroy();
         }
     }
+    @Test public void expressionLimitRejectsWholeEditAndAllowsDeleteAndEvaluate() {
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        var activity = controller.get();
+        var container = new FrameLayout(activity);
+        container.setId(12345);
+        activity.setContentView(container);
+        var fragment = new CalculatorFragment();
+        activity.getSupportFragmentManager().beginTransaction().add(12345, fragment).commitNow();
+        activity.getWindow().getDecorView().measure(
+                android.view.View.MeasureSpec.makeMeasureSpec(1080, android.view.View.MeasureSpec.EXACTLY),
+                android.view.View.MeasureSpec.makeMeasureSpec(1920, android.view.View.MeasureSpec.EXACTLY));
+        activity.getWindow().getDecorView().layout(0, 0, 1080, 1920);
+        shadowOf(Looper.getMainLooper()).idle();
+        try {
+            String boundary = "1".repeat(30);
+            for (int i = 0; i < 30; i++) click(fragment, R.id.one);
+            assertEquals(boundary, ReflectionHelpers.getField(fragment, "expression"));
+            TextView expression = ReflectionHelpers.getField(fragment, "tvExpression");
+            assertFalse(expression.getText().toString().isEmpty());
+            click(fragment, R.id.two);
+            click(fragment, R.id.dot);
+            click(fragment, R.id.sign_toggle);
+            click(fragment, R.id.sqrt); // Reject sqrt and implicit multiplication atomically.
+            assertEquals(boundary, ReflectionHelpers.getField(fragment, "expression"));
+            click(fragment, R.id.backspace);
+            assertEquals(29, ((String) ReflectionHelpers.getField(fragment, "expression")).length());
+            click(fragment, R.id.plus);
+            click(fragment, R.id.minus); // Replacing an operator is permitted at the limit.
+            assertEquals("1".repeat(29) + "-", ReflectionHelpers.getField(fragment, "expression"));
+            click(fragment, R.id.backspace);
+            click(fragment, R.id.equal);
+            assertTrue((boolean) ReflectionHelpers.getField(fragment, "isResultDisplayed"));
+            click(fragment, R.id.two); // A new calculation starts normally after equals.
+            assertEquals("2", ReflectionHelpers.getField(fragment, "expression"));
+        } finally {
+            controller.pause().stop().destroy();
+        }
+    }
+
     private void click(CalculatorFragment fragment, int id) {
         android.view.View button = fragment.requireView().findViewById(id);
         assertNotNull(button);

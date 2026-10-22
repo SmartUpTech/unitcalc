@@ -16,14 +16,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 
-enum class TimerIconButtonSize(val diameter: Dp, val iconSize: Dp) {
-    Large(72.dp, 32.dp),
-    Medium(56.dp, 24.dp),
-    Small(48.dp, 18.dp),
+enum class TimerIconButtonSize(private val diameterRes: Int, private val iconRes: Int) {
+    Large(R.dimen.timer_button_large, R.dimen.timer_icon_large),
+    Medium(R.dimen.timer_button_medium, R.dimen.timer_icon_medium),
+    Small(R.dimen.converter_touch_target, R.dimen.timer_icon_small);
+
+    val diameter: Dp @Composable get() = dimensionResource(diameterRes)
+    val iconSize: Dp @Composable get() = dimensionResource(iconRes)
 }
 
 @Composable
@@ -37,7 +40,7 @@ fun TimerPlayButton(
     TimerCircleIconButton(
         background = GraphyThemeTokens.semanticColors.equal,
         iconRes = R.drawable.ic_timer_play,
-        iconTint = Color.White,
+        iconTint = GraphyThemeTokens.semanticColors.resultOn,
         enabled = enabled,
         size = size,
         contentDescription = contentDescription,
@@ -55,7 +58,7 @@ fun TimerPauseButton(
     TimerCircleIconButton(
         background = GraphyThemeTokens.semanticColors.equal,
         iconRes = R.drawable.ic_timer_pause,
-        iconTint = Color.White,
+        iconTint = GraphyThemeTokens.semanticColors.resultOn,
         enabled = true,
         size = TimerIconButtonSize.Medium,
         contentDescription = contentDescription,

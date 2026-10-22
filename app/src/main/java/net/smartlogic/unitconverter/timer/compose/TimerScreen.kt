@@ -39,8 +39,10 @@ fun TimerScreen(viewModel: TimerViewModel) {
             .fillMaxSize()
             .padding(horizontal = spacing.md),
     ) {
-        val minimumHeight = dimensionResource(R.dimen.converter_touch_target) * 3 +
-            with(LocalDensity.current) { 88.sp.toDp() } + spacing.md * 4
+        val minimumHeight = dimensionResource(R.dimen.converter_touch_target) * 2 +
+            dimensionResource(R.dimen.timer_button_large) +
+            with(LocalDensity.current) { 56.sp.toDp() } + spacing.sm * 4 +
+            dimensionResource(R.dimen.converter_divider_height)
         if (maxHeight < minimumHeight || maxWidth < dimensionResource(R.dimen.calculation_pane_min_width)) {
             Text(stringResource(R.string.tool_more_space), color = semantic.primaryText,
                 modifier = Modifier.align(Alignment.Center))
@@ -53,6 +55,7 @@ fun TimerScreen(viewModel: TimerViewModel) {
                     .fillMaxWidth()
                     .weight(1f),
                 label = "timerPhase",
+                contentKey = { it::class },
             ) { phase ->
                 when (phase) {
                     is TimerPhase.Setting -> TimerSettingSection(

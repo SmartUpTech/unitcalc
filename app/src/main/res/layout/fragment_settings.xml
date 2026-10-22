@@ -5,9 +5,9 @@
     android:background="@color/screen_background"
     android:clipToPadding="false"
     android:fillViewport="true"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="24dp">
+    android:paddingHorizontal="@dimen/theme_swatch_color_size"
+    android:paddingTop="@dimen/spacing_12dp"
+    android:paddingBottom="@dimen/converter_flag_height">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,11 +23,11 @@
             android:id="@+id/card_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/converter_spacing"
             android:background="@drawable/bg_converter_card"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="4dp">
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
 
             <include
                 android:id="@+id/row_theme"
@@ -64,18 +64,18 @@
         <TextView
             android:id="@+id/tv_section_feedback"
             style="@style/SettingsSectionTitle"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/converter_flag_height"
             android:text="@string/title_activity_feedback" />
 
         <LinearLayout
             android:id="@+id/card_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/converter_spacing"
             android:background="@drawable/bg_converter_card"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="4dp">
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
 
             <include
                 android:id="@+id/row_key_sounds"
@@ -112,18 +112,18 @@
         <TextView
             android:id="@+id/tv_section_information"
             style="@style/SettingsSectionTitle"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/converter_flag_height"
             android:text="@string/title_activity_info" />
 
         <LinearLayout
             android:id="@+id/card_information"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/converter_spacing"
             android:background="@drawable/bg_converter_card"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="4dp">
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
 
             <include
                 android:id="@+id/row_website"

@@ -129,7 +129,8 @@ public final class CalculatorCatalog {
         List<Entry> utilities = new ArrayList<>();
         utilities.add(register(entry(ID_TIMER, R.string.timer, R.drawable.ic_timer,
                 Destination.TIMER, -1)));
-        SECTIONS.add(new Section(R.string.drawer_section_utilities, utilities));
+        // Keep Timer registered for existing favorites, widgets and notifications.
+        // The complete utilities group is intentionally absent from main navigation.
 
         List<Entry> general = new ArrayList<>();
         general.add(register(entry("explore", R.string.nav_explore, R.drawable.ic_explore, Destination.EXPLORE, -1)));

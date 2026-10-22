@@ -49,4 +49,16 @@
     <dimen name="converter_selector_radius">8dp</dimen>
     <!-- Minimum useful width per pane before moving controls beside the keypad. -->
     <dimen name="calculation_pane_min_width">280dp</dimen>
+    <!-- Shared spacing extracted from existing layouts; geometry is preserved. -->
+    <dimen name="spacing_10dp">10dp</dimen>
+    <dimen name="spacing_0dp">0dp</dimen>
+    <dimen name="spacing_12dp">12dp</dimen>
+    <dimen name="spacing_5dp">5dp</dimen>
+    <dimen name="spacing_15dp">15dp</dimen>
+    <dimen name="spacing_3dp">3dp</dimen>
+    <dimen name="timer_button_large">72dp</dimen>
+    <dimen name="timer_button_medium">56dp</dimen>
+    <dimen name="timer_icon_large">32dp</dimen>
+    <dimen name="timer_icon_medium">24dp</dimen>
+    <dimen name="timer_icon_small">18dp</dimen>
 </resources>

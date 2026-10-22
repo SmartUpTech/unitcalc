@@ -12,6 +12,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="fontFamily">@font/app_text</item>
+        <item name="android:textColorPrimary">@color/semantic_primary_text</item>
+        <item name="android:textColorSecondary">@color/semantic_secondary_text</item>
+        <item name="android:textColorHint">@color/semantic_secondary_text</item>
         <item name="android:textViewStyle">@style/Widget.Graphy.TextView</item>
         <item name="materialButtonStyle">@style/Widget.Graphy.Button</item>
         <item name="materialAlertDialogTheme">@style/GraphyAlertDialogTheme</item>
@@ -34,6 +37,7 @@
     </style>
 
     <style name="Widget.Graphy.TextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/semantic_primary_text</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="fontFamily">@font/app_text</item>
     </style>
@@ -170,7 +174,7 @@
         <item name="android:elevation">0dp</item>
         <item name="elevation">0dp</item>
         <item name="itemActiveIndicatorStyle">@style/GraphyBottomNavigationActiveIndicator</item>
-        <item name="itemBackground">@android:color/transparent</item>
+        <item name="itemBackground">@color/transparent</item>
         <item name="itemRippleColor">@color/pad_button_ripple_color</item>
         <item name="itemTextAppearanceActive">@style/TextAppearance.Graphy.Caption</item>
         <item name="itemTextAppearanceInactive">@style/TextAppearance.Graphy.Caption</item>
@@ -179,7 +183,7 @@
     <style name="GraphyBottomNavigationActiveIndicator">
         <item name="android:width">0dp</item>
         <item name="android:height">0dp</item>
-        <item name="android:color">@android:color/transparent</item>
+        <item name="android:color">@color/transparent</item>
     </style>
 
     <style name="ConverterModeChip" parent="Widget.MaterialComponents.Chip.Filter">
@@ -214,19 +218,19 @@
         <item name="android:gravity">center</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">48dp</item>
-        <item name="android:padding">0dp</item>
+        <item name="android:padding">@dimen/spacing_0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="elevation">0dp</item>
         <item name="cornerRadius">0dp</item>
         <item name="rippleColor">@color/pad_button_ripple_color</item>
-        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="fontFamily">@font/app_text</item>
         <item name="android:textStyle">normal</item>
@@ -252,14 +256,14 @@
         <item name="android:background">@drawable/bg_key_equals</item>
         <item name="backgroundTint">@null</item>
         <item name="cornerRadius">8dp</item>
-        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_margin">@dimen/converter_small_spacing</item>
     </style>
 
     <style name="ButtonStyle.Equals.Plain" parent="ButtonStyle.Equals">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="cornerRadius">0dp</item>
-        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_0dp</item>
     </style>
 
     <style name="CalculatorKey" parent="Widget.AppCompat.Button.Borderless">
@@ -268,8 +272,8 @@
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:layout_margin">0dp</item>
-        <item name="android:padding">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_0dp</item>
+        <item name="android:padding">@dimen/spacing_0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:minWidth">0dp</item>
@@ -315,7 +319,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_0dp</item>
         <item name="android:padding">@dimen/keypad_icon_padding</item>
         <item name="android:minHeight">@dimen/converter_touch_target</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
@@ -328,7 +332,7 @@
 
     <style name="ImageButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:elevation">0dp</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@color/transparent</item>
     </style>
 
     <style name="ImageButtonStyle.Swap" parent="Widget.AppCompat.ImageButton">
@@ -336,11 +340,11 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_swap_key</item>
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">@dimen/spacing_10dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="tint">@color/accent</item>
         <item name="android:tint" tools:ignore="NewApi">@color/accent</item>
-        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_margin">@dimen/converter_small_spacing</item>
     </style>
 
     <style name="ImageButtonStyle.Backspace" parent="Widget.AppCompat.ImageButton">
@@ -348,16 +352,16 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_backspace_key</item>
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">@dimen/spacing_10dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="tint">@color/key_backspace_icon</item>
         <item name="android:tint" tools:ignore="NewApi">@color/key_backspace_icon</item>
-        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_margin">@dimen/converter_small_spacing</item>
     </style>
 
     <style name="ImageButtonStyle.Backspace.Plain" parent="ImageButtonStyle.Backspace">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_0dp</item>
     </style>
 
     <style name="ImageButtonStyle.Action" parent="Widget.AppCompat.ImageButton">
@@ -365,7 +369,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:padding">8dp</item>
+        <item name="android:padding">@dimen/converter_spacing</item>
         <item name="android:scaleType">centerInside</item>
         <item name="tint">@color/key_action_text</item>
         <item name="android:tint" tools:ignore="NewApi">@color/key_action_text</item>
@@ -376,7 +380,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/screen_result_text</item>
         <item name="android:textSize">@dimen/h4</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@color/transparent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -397,7 +401,7 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/screen_background</item>
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
@@ -424,7 +428,7 @@
     <style name="SettingsRowSummary" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginTop">@dimen/converter_mode_margin_bottom</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="fontFamily">@font/app_text</item>
         <item name="android:textColor">@color/screen_expression_text</item>
@@ -464,7 +468,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:minHeight">@dimen/converter_touch_target</item>
-        <item name="android:padding">0dp</item>
+        <item name="android:padding">@dimen/spacing_0dp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:importantForAutofill">no</item>
         <item name="android:inputType">numberDecimal</item>

@@ -42,7 +42,10 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   exponentiation. History/copy store displayed text; restoring history reevaluates its expression.
 - Results are rounded at the display boundary. Nonterminating results remain approximations;
   e.g. 1/3 × 3 displays 1 at normal decimal settings, without forcing internal values to integers.
-- Work is bounded: at most 1024 expression characters, 32 nested parentheses, 64 recursive
+- Calculator keypad edits are limited to 30 canonical expression characters. Reject complete edits
+  beyond the limit (including implicit multiplication and square-root tokens), while allowing
+  deletion, operator replacement, and preserving existing longer history/results.
+- Evaluator work is bounded independently: at most 1024 expression characters, 32 nested parentheses, 64 recursive
   factors, 1024 significant result digits, adjusted decimal exponent -300 through +300, and
   integer powers of magnitude at most 1000. Out-of-range/domain/divide-by-zero results are invalid,
   clear the previous result/Graphy and show the existing error message on final evaluation.

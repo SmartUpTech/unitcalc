@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingVertical="12dp">
+    android:paddingVertical="@dimen/spacing_12dp">
 
     <LinearLayout
         android:id="@+id/history_meta_column"
@@ -30,7 +30,7 @@
             android:id="@+id/tv_history_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/converter_mode_margin_bottom"
             android:fontFamily="@font/app_text"
             android:textColor="@color/history_section_text"
             android:textSize="12sp" />
@@ -40,7 +40,7 @@
         android:id="@+id/tv_history_expression"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/spacing_12dp"
         android:ellipsize="none"
         android:fontFamily="@font/app_text"
         android:gravity="end"
@@ -55,7 +55,7 @@
         android:id="@+id/tv_history_result"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/spacing_12dp"
         android:ellipsize="none"
         android:fontFamily="@font/app_text"
         android:gravity="end"

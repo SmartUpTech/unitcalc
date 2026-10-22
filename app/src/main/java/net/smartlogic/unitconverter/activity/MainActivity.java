@@ -112,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         restoreFragmentsIfNeeded(savedInstanceState);
         getOnBackPressedDispatcher().addCallback(this, timerBackCallback);
         setUpBottomNavigation();
+        net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this).prepareGamesAds(this,
+                () -> !isFinishing() && !isDestroyed(), this::invalidateOptionsMenu);
         ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
         if (shouldOpenTimer(getIntent())) {
             showTimerScreen();
@@ -126,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             showTimerScreen();
         }
     }
+
+    public boolean isTimerScreenVisible() { return timerVisible; }
 
     private boolean shouldOpenTimer(@Nullable Intent intent) {
         return intent != null && intent.getBooleanExtra(EXTRA_OPEN_TIMER, false);
@@ -543,8 +547,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         MenuItem settingsItem = menu.findItem(R.id.menu_settings);
         MenuItem gamesPrivacy = menu.findItem(R.id.menu_games_privacy);
         if (gamesPrivacy != null) {
-            gamesPrivacy.setVisible(activeFragment instanceof GamesFragment games && games.isAdded()
-                    && games.isPrivacyOptionsRequired());
+            gamesPrivacy.setVisible(net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this)
+                    .isGamesPrivacyOptionsRequired());
         }
         if (settingsItem != null && settingsItem.getIcon() != null) {
             settingsItem.getIcon().setTint(ThemeManager.get().functions());
@@ -573,8 +577,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_games_privacy && activeFragment instanceof GamesFragment games) {
-            games.showPrivacyOptions();
+        if (id == R.id.menu_games_privacy) {
+            net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this).showGamesPrivacyOptions(this);
             return true;
         }
         if (id == R.id.menu_favorite) {

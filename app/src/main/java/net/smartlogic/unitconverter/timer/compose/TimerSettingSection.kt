@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
@@ -48,7 +49,8 @@ fun TimerSettingSection(
                 onValueChange = { value ->
                     onDraftChange(draft.copy(label = value.take(TimerDurationFormatter.MAX_LABEL_LENGTH)))
                 },
-                textStyle = TextStyle(
+                cursorBrush = SolidColor(semantic.primaryText),
+                textStyle = MaterialTheme.typography.titleMedium.copy(
                     color = semantic.primaryText,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center,
@@ -69,9 +71,9 @@ fun TimerSettingSection(
                         HorizontalDivider(
                             modifier = Modifier
                                 .fillMaxWidth(0.5f)
-                                .padding(top = 2.dp),
+                                .padding(top = dimensionResource(R.dimen.converter_mode_margin_bottom)),
                             color = semantic.connector,
-                            thickness = 1.dp,
+                            thickness = dimensionResource(R.dimen.converter_divider_height),
                         )
                     }
                 },
@@ -90,21 +92,21 @@ fun TimerSettingSection(
                     range = 0..TimerDurationFormatter.MAX_HOURS,
                     unitLabel = stringResource(R.string.timer_hours),
                     onValueChange = { onDraftChange(draft.copy(hours = it)) },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxSize(),
                 )
                 TimerWheelPicker(
                     value = draft.minutes,
                     range = 0..59,
                     unitLabel = stringResource(R.string.timer_min),
                     onValueChange = { onDraftChange(draft.copy(minutes = it)) },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxSize(),
                 )
                 TimerWheelPicker(
                     value = draft.seconds,
                     range = 0..59,
                     unitLabel = stringResource(R.string.timer_sec),
                     onValueChange = { onDraftChange(draft.copy(seconds = it)) },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxSize(),
                 )
             }
         }

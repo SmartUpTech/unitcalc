@@ -42,7 +42,7 @@ public final class ThemeApplier {
     private static final int[] MAIN_TEXT_IDS = {
             R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
             R.id.txtRate, R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
-            R.id.tv_history_result, R.id.textView, R.id.currency, R.id.currencyISO,
+            R.id.tv_history_result, R.id.textView,
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
             R.id.category_title, R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
@@ -182,6 +182,7 @@ public final class ThemeApplier {
             tv.setTextColor(theme.equal());
         } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView tv) {
             tv.setTextColor(theme.mainText());
+            tv.setHintTextColor(theme.functions());
         } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView tv) {
             tv.setTextColor(theme.functions());
         }

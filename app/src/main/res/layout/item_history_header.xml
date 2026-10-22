@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:fontFamily="@font/app_text"
     android:letterSpacing="0.08"
-    android:paddingTop="16dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="@dimen/theme_swatch_color_size"
+    android:paddingBottom="@dimen/converter_spacing"
     android:textColor="@color/history_section_text"
     android:textSize="12sp" />

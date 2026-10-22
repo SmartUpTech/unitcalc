@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keep only resources whose names are consumed outside normal R references.
+     ThemePalette is generated from colors.xml, so Java uses their color values
+     rather than R.color IDs. Converter flags and layouts use direct R references
+     and require no wildcard keep rule. Add future name/URI lookups here. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@color/palette_*" />

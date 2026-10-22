@@ -11,6 +11,7 @@ import net.smartlogic.unitconverter.R;
 
 /** Shared converter chrome: retain typography and reflow secondary information when necessary. */
 public final class ConverterControlsLayout extends LinearLayout {
+    private final Paint measurementPaint = new Paint();
     private boolean compactHeading;
     private int headingHeight;
 
@@ -35,7 +36,8 @@ public final class ConverterControlsLayout extends LinearLayout {
         View metadata = getChildAt(getChildCount() - 1);
         // Both modes reserve the same font-aware two-line status slot. Wrapped
         // timestamps must not move the keypad when switching converter modes.
-        Paint status = new Paint(rate().getPaint());
+        Paint status = measurementPaint;
+        status.set(rate().getPaint());
         Paint.FontMetricsInt metrics = status.getFontMetricsInt();
         metadata.setMinimumHeight(Math.max(getResources().getDimensionPixelSize(
                 R.dimen.converter_metadata_height), metrics.bottom - metrics.top

@@ -13,7 +13,10 @@ public class GenericFunctions {
 
     public static void showToast(View v, int message) {
         Snackbar sb = Snackbar.make(v, message, Snackbar.LENGTH_LONG);
-        sb.getView().setBackgroundResource(R.color.colorNewGrey);
+        net.smartlogic.unitconverter.theme.CalculatorTheme theme = net.smartlogic.unitconverter.theme.ThemeManager.get();
+        sb.setBackgroundTint(theme.background());
+        sb.setTextColor(theme.mainText());
+        sb.setActionTextColor(theme.equal());
         sb.show();
     }
 
@@ -38,13 +41,12 @@ public class GenericFunctions {
         if (availableWidth <= 0) return;
 
         TextPaint paint = new TextPaint(textView.getPaint());
-        float density = textView.getContext().getResources().getDisplayMetrics().scaledDensity;
-        float currentSizeSp = textView.getTextSize() / density;
+        android.util.DisplayMetrics metrics = textView.getResources().getDisplayMetrics();
         float targetSizeSp = maxSp;
 
         // Reduction loop: start from max and go down until it fits or hits 8sp
         while (targetSizeSp > 8) {
-            paint.setTextSize(targetSizeSp * density);
+            paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, targetSizeSp, metrics));
             if (paint.measureText(text, 0, text.length()) > availableWidth) {
                 targetSizeSp -= 2;
             } else {
@@ -53,7 +55,7 @@ public class GenericFunctions {
         }
         targetSizeSp = Math.max(8, targetSizeSp);
 
-        if (Math.abs(targetSizeSp - currentSizeSp) > 0.1) {
+        if (Math.abs(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, targetSizeSp, metrics) - textView.getTextSize()) > 0.1) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, targetSizeSp);
         }
 
