@@ -362,11 +362,13 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private void updateParentGraphy(String inStr, String inCurrency, String outCurrency,
                                     String formattedOut, double rate, double input, double result) {
         if (!(getParentFragment() instanceof ConverterFragment converter)) return;
+        Context context = getContext();
+        if (context == null || !isAdded()) return;
         if (inStr.trim().isEmpty() || inStr.equals("-")) {
             converter.clearConversionGraphy();
             return;
         }
-        GraphyOutput output = ConversionGraphAdapter.currency(requireContext(), input, result, rate,
+        GraphyOutput output = ConversionGraphAdapter.currency(context, input, result, rate,
                 inStr + " " + inCurrency, formattedOut + " " + outCurrency,
                 inCurrency, outCurrency, rateSnapshot == null ? 0 : rateSnapshot.fetchedAt);
         converter.updateConversionGraphy(output, output.getExpression());
@@ -547,7 +549,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             }
             final CurrencyRateStore.Snapshot loaded = result;
             mainHandler.post(() -> {
-                if (generation != viewGeneration || getView() == null) return;
+                if (generation != viewGeneration || getView() == null || !isAdded() || getContext() == null) return;
                 refreshing = false;
                 refresh.clearAnimation();
                 if (loaded != null) {
@@ -555,7 +557,10 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                     currencyRates.clear();
                     currencyRates.putAll(loaded.rates);
                 } else {
-                    Toast.makeText(requireContext(), R.string.currency_refresh_failed, Toast.LENGTH_SHORT).show();
+                    Context context = getContext();
+                    if (context != null) {
+                        Toast.makeText(context, R.string.currency_refresh_failed, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 updateRateStatus();
                 displayRates();

@@ -1,5 +1,6 @@
 package net.smartlogic.unitconverter.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
 import net.smartlogic.unitconverter.helper.WorkspaceTabController;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
 
 import java.util.ArrayList;
@@ -117,7 +120,11 @@ public class ConverterFragment extends Fragment {
     }
 
     private void bindGraphyWorkspace() {
-        graphyTheme = new GraphyViewTheme(requireContext());
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        graphyTheme = new GraphyViewTheme(context);
         workspacePager.setAdapter(new WorkspacePagerAdapter(WORKSPACE_LAYOUTS, this::bindWorkspacePage));
         workspaceTabController = new WorkspaceTabController(workspacePager, workspaceTabs,
                 WORKSPACE_TAB_TITLES, new WorkspaceTabController.Callback() {
@@ -298,13 +305,18 @@ public class ConverterFragment extends Fragment {
     @NonNull
     public String getActiveCatalogId() {
         if (activeChild != null && activeChild == currencyFragment) {
-            return net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY;
+            return CalculatorCatalog.ID_CURRENCY;
         }
         if (unitFragment != null) {
-            return net.smartlogic.unitconverter.model.CalculatorCatalog.unitId(unitFragment.getSelectedCategoryId());
+            return CalculatorCatalog.unitId(unitFragment.getSelectedCategoryId());
         }
-        return net.smartlogic.unitconverter.model.CalculatorCatalog.unitId(
-                Preferences.getInstance(requireContext()).getLastConversion());
+        Context context = getContext();
+        if (context != null) {
+            return CalculatorCatalog.unitId(
+                    Preferences.getInstance(context).getLastConversion());
+        }
+        return CalculatorCatalog.unitId(
+                Conversion.LENGTH);
     }
 
     private void applyPendingUnitCategory() {

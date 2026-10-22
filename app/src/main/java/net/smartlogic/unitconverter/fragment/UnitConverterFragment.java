@@ -443,11 +443,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     private void updateParentGraphy(String in, Unit from, Unit to, String fromSym,
                                     String toSym, String finalStr, double result) {
         if (!(getParentFragment() instanceof ConverterFragment converter)) return;
+        Context context = getContext();
+        if (context == null || !isAdded()) return;
         if (in.trim().isEmpty() || in.equals("-")) {
             converter.clearConversionGraphy();
             return;
         }
-        GraphyOutput output = ConversionGraphAdapter.unit(requireContext(), conversions,
+        GraphyOutput output = ConversionGraphAdapter.unit(context, conversions,
                 selectedConversion.getId(), from, to, NumberUtils.parseDouble(in), result,
                 in + " " + fromSym, finalStr + " " + toSym, fromSym, toSym);
         converter.updateConversionGraphy(output, output.getExpression());
