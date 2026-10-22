@@ -48,6 +48,9 @@ import net.smartlogic.unitconverter.timer.TimerFragment;
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
     public static final String EXTRA_OPEN_TIMER = "open_timer";
+    private static final long EXIT_BACK_WINDOW_MS = 2000L;
+    private long lastExitBackAt = -1L;
+    private android.widget.Toast exitToast;
     private static final String SAVED_TAB_TAG = "main_tab_tag";
 
     private BottomNavigationView bottomNavigationView;
@@ -74,6 +77,22 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Root fallback: later drawer, Timer and workspace callbacks keep priority.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                long now = android.os.SystemClock.elapsedRealtime();
+                if (lastExitBackAt >= 0 && now - lastExitBackAt <= EXIT_BACK_WINDOW_MS) {
+                    if (exitToast != null) exitToast.cancel();
+                    finish();
+                    return;
+                }
+                lastExitBackAt = now;
+                if (exitToast != null) exitToast.cancel();
+                exitToast = android.widget.Toast.makeText(MainActivity.this,
+                        R.string.press_back_again_to_exit, android.widget.Toast.LENGTH_SHORT);
+                exitToast.show();
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -94,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override public void onDrawerOpened(@NonNull View drawerView) {
+                lastExitBackAt = -1L;
                 // Register when opened so the drawer takes precedence over fragment Back handlers.
                 drawerBackCallback.remove();
                 getOnBackPressedDispatcher().addCallback(MainActivity.this, drawerBackCallback);
@@ -150,7 +170,14 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                         .setIcon(entry.iconRes);
             }
         }
+        navigationView.getMenu().add(Menu.NONE, R.id.menu_games_privacy, order, R.string.games_privacy_options)
+                .setVisible(false);
         navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.menu_games_privacy) {
+                net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this).showGamesPrivacyOptions(this);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
             CalculatorCatalog.Entry entry = CalculatorCatalog.getByMenuId(item.getItemId());
             if (entry != null) {
                 navigateToEntry(entry);
@@ -355,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void selectTab(int itemId) {
+        lastExitBackAt = -1L;
         Fragment fragment = tabFragments.get(itemId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (timerVisible && timerFragment != null) {
@@ -528,34 +556,24 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @Override
     public boolean onPrepareOptionsMenu(@NonNull Menu menu) {
-        MenuItem favoriteItem = menu.findItem(R.id.menu_favorite);
-        if (favoriteItem != null) {
-            CalculatorCatalog.Entry entry = CalculatorCatalog.getById(activeCalculatorId);
-            boolean showFavorite = !(activeFragment instanceof GamesFragment) && entry != null && entry.isFavoriteEligible();
-            favoriteItem.setVisible(showFavorite);
-            if (showFavorite) {
-                boolean isFavorite = favoritesRepository.isFavorite(activeCalculatorId);
-                favoriteItem.setIcon(R.drawable.ic_favorite);
-                if (isFavorite) {
-                    favoriteItem.getIcon().setTint(ThemeManager.get().equal());
-                } else {
-                    favoriteItem.getIcon().setTint(ThemeManager.get().functions());
-                }
-            }
-            favoriteItem.setVisible(false);
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            item.setVisible(item.getItemId() == R.id.menu_history);
+            if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().functions());
         }
-        MenuItem settingsItem = menu.findItem(R.id.menu_settings);
-        MenuItem gamesPrivacy = menu.findItem(R.id.menu_games_privacy);
-        if (gamesPrivacy != null) {
-            gamesPrivacy.setVisible(net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this)
-                    .isGamesPrivacyOptionsRequired());
-        }
-        if (settingsItem != null && settingsItem.getIcon() != null) {
-            settingsItem.getIcon().setTint(ThemeManager.get().functions());
-        }
+        // Keep consent controls reachable from the drawer with a History-only app bar.
+        MenuItem privacy = navigationView.getMenu().findItem(R.id.menu_games_privacy);
+        if (privacy != null) privacy.setVisible(net.smartlogic.unitconverter.helper.AdMobManager
+                .getInstance(this).isGamesPrivacyOptionsRequired());
         // AppCompat installs the menu presenter after the initial window chrome pass.
         WindowChrome.apply(this);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override protected void onStop() {
+        lastExitBackAt = -1L;
+        if (exitToast != null) exitToast.cancel();
+        super.onStop();
     }
 
     @Override
@@ -577,6 +595,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.menu_history) {
+            selectTab(R.id.history);
+            return true;
+        }
         if (id == R.id.menu_games_privacy) {
             net.smartlogic.unitconverter.helper.AdMobManager.getInstance(this).showGamesPrivacyOptions(this);
             return true;

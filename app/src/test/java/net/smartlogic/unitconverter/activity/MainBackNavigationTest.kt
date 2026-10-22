@@ -26,6 +26,28 @@ import java.time.Duration
 @Config(application = Application::class, sdk = [34])
 @LooperMode(LooperMode.Mode.PAUSED)
 class MainBackNavigationTest {
+    @Test fun rootBackRequiresSecondPressWithinTwoSeconds() {
+        val app = RuntimeEnvironment.getApplication()
+        Preferences.getInstance(app).preferences.edit().clear().commit()
+        ThemeManager.init(app)
+        AppConst.CURRENT_TAG = AppConst.TAG_CALC
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(2001))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1999))
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertTrue(activity.isFinishing)
+        } finally {
+            controller.pause().stop().destroy()
+        }
+    }
+
     @Test fun drawerTakesPriorityThenTimerReturnsToWorkspace() {
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit().clear().commit()
@@ -67,6 +89,8 @@ class MainBackNavigationTest {
             activity.onBackPressedDispatcher.onBackPressed()
             assertEquals(1, workspaceBacks)
             workspace.remove()
+            activity.onBackPressedDispatcher.onBackPressed()
+            assertFalse(activity.isFinishing)
             activity.onBackPressedDispatcher.onBackPressed()
             assertTrue(activity.isFinishing)
         } finally {

@@ -42,7 +42,7 @@ public final class ConverterControlsLayout extends LinearLayout {
         metadata.setMinimumHeight(Math.max(getResources().getDimensionPixelSize(
                 R.dimen.converter_metadata_height), metrics.bottom - metrics.top
                 + metrics.descent - metrics.ascent));
-        if (!compactHeading) {
+        if (!compactHeading || findViewById(R.id.category_selector) instanceof com.google.android.material.tabs.TabLayout) {
             super.onMeasure(widthSpec, heightSpec);
             return;
         }
@@ -67,7 +67,7 @@ public final class ConverterControlsLayout extends LinearLayout {
     }
 
     @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (!compactHeading) {
+        if (!compactHeading || findViewById(R.id.category_selector) instanceof com.google.android.material.tabs.TabLayout) {
             super.onLayout(changed, left, top, right, bottom);
             return;
         }

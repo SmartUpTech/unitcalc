@@ -61,4 +61,5 @@
     <dimen name="timer_icon_large">32dp</dimen>
     <dimen name="timer_icon_medium">24dp</dimen>
     <dimen name="timer_icon_small">18dp</dimen>
+    <dimen name="converter_category_indicator_height">2dp</dimen>
 </resources>

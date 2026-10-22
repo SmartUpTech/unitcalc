@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
@@ -52,7 +52,7 @@ public class ConverterFragment extends Fragment {
             R.string.graphy
     };
 
-    private ChipGroup modeToggle;
+    private MaterialButtonToggleGroup modeToggle;
     private UnitConverterFragment unitFragment;
     private CurrencyConverterFragment currencyFragment;
     private Fragment activeChild;
@@ -96,34 +96,8 @@ public class ConverterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        workspaceTabs = view.findViewById(R.id.workspace_tabs);
-        workspacePager = view.findViewById(R.id.workspace_pager);
-        graphyTheme = new GraphyViewTheme(requireContext());
-
-        WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
-                WORKSPACE_LAYOUTS,
-                this::bindWorkspacePage
-        );
-        workspacePager.setAdapter(pagerAdapter);
-
-        workspaceTabController = new WorkspaceTabController(
-                workspacePager,
-                workspaceTabs,
-                WORKSPACE_TAB_TITLES,
-                new WorkspaceTabController.Callback() {
-                    @Override
-                    public void onTabSelected(int position) {
-                        lastWorkspaceTab = position;
-                        applyWorkspaceTab(position);
-                    }
-
-                    @Override
-                    public boolean isTabEnabled(int position) {
-                        return position != 1 || hasGraphyContent();
-                    }
-                }
-        );
-        updateGraphyTabState();
+        // Graphy implementation is retained, but the converter now has one fixed workspace.
+        bindConvertPage(view);
         ThemeApplier.apply(view);
         ensureChildFragments();
         if (pendingOpenConvertWorkspace) {
@@ -172,35 +146,10 @@ public class ConverterFragment extends Fragment {
         }
         convertPageBound = true;
 
-        View container = getView() != null ? getView().findViewById(R.id.converter_container) : null;
-        ViewGroup placeholder = pageView.findViewById(R.id.converter_placeholder);
-        if (container != null && placeholder != null) {
-            ViewGroup parent = (ViewGroup) container.getParent();
-            if (parent != null && parent != placeholder) {
-                parent.removeView(container);
-            }
-            if (container.getParent() == null) {
-                container.setVisibility(View.VISIBLE);
-                ViewGroup.LayoutParams lp = container.getLayoutParams();
-                if (lp == null) {
-                    lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                } else {
-                    lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                }
-                placeholder.addView(container, lp);
-            }
-        }
-
         modeToggle = pageView.findViewById(R.id.converter_mode_toggle);
-        modeToggle.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) return;
-            int checkedId = checkedIds.get(0);
-            if (checkedId == R.id.btn_currency_mode) {
-                showConverterTab(TAB_CURRENCY);
-            } else {
-                showConverterTab(TAB_UNIT);
-            }
+        modeToggle.addOnButtonCheckedListener((group, checkedId, checked) -> {
+            if (!checked) return;
+            showConverterTab(checkedId == R.id.btn_currency_mode ? TAB_CURRENCY : TAB_UNIT);
         });
 
         ensureChildFragments();
@@ -227,7 +176,7 @@ public class ConverterFragment extends Fragment {
     private boolean pendingOpenConvertWorkspace;
 
     public void openConvertWorkspace() {
-        if (workspaceTabController != null) {
+        if (convertPageBound) {
             selectWorkspaceTab(0);
             pendingOpenConvertWorkspace = false;
         } else {

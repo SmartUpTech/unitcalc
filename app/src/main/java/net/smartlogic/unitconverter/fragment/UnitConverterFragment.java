@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
+import com.google.android.material.tabs.TabLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -56,9 +56,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     Button dot, double_zero;
     EditText inputValue, outputValue;
     TextView inputSymbol, outputSymbol;
-    private View categorySelector;
-    private ImageView categoryIcon;
-    private TextView categoryTitle, unitRate;
+    private TabLayout categorySelector;
+    private TextView unitRate;
     private Context context;
     private Spinner fromUnit, toUnit;
 
@@ -125,8 +124,6 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         outputSymbol = view.findViewById(R.id.outputSymbol);
 
         categorySelector = view.findViewById(R.id.category_selector);
-        categoryIcon = view.findViewById(R.id.category_icon);
-        categoryTitle = view.findViewById(R.id.category_title);
         unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
@@ -340,7 +337,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         initUILayout(view);
 
-        categorySelector.setOnClickListener(v -> showCategoryPicker());
+        bindCategoryTabs();
         initialDropDown(conversions.getById(mPrefs.getLastConversion()));
         updateCategoryPicker();
         updateInputType(getSelectedCategoryId());
@@ -551,28 +548,38 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 target.getSelectedItemPosition(), labels, details, keywords, null).showFor(this);
     }
 
-    private void showCategoryPicker() {
-        PopupMenu menu = new PopupMenu(requireContext(), categorySelector);
-        for (int categoryId : conversions.getCategoryIds()) {
-            Conversion category = conversions.getById(categoryId);
-            menu.getMenu().add(0, categoryId, categoryId, category.getLabelResource())
-                    .setCheckable(true).setChecked(categoryId == getSelectedCategoryId());
+    private void bindCategoryTabs() {
+        for (int id : conversions.getCategoryIds()) {
+            Conversion category = conversions.getById(id);
+            categorySelector.addTab(categorySelector.newTab().setTag(id)
+                    .setText(category.getLabelResource()).setIcon(category.getImageResource()), false);
         }
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == getSelectedCategoryId()) return true;
-            selectCategory(item.getItemId());
-            InteractionFeedbackManager.perform(categorySelector, InteractionFeedbackManager.Type.ACTION);
-            return true;
+        categorySelector.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                int id = (Integer) tab.getTag();
+                if (id != getSelectedCategoryId()) {
+                    selectCategory(id);
+                    InteractionFeedbackManager.perform(categorySelector, InteractionFeedbackManager.Type.ACTION);
+                }
+            }
+            @Override public void onTabUnselected(TabLayout.Tab tab) { }
+            @Override public void onTabReselected(TabLayout.Tab tab) { }
         });
-        menu.show();
     }
 
     private void updateCategoryPicker() {
         if (selectedConversion == null || categorySelector == null) return;
-        categoryTitle.setText(selectedConversion.getLabelResource());
-        categoryIcon.setImageResource(selectedConversion.getImageResource());
-        categoryIcon.setColorFilter(ThemeManager.get().mainText());
-        categorySelector.setContentDescription(getString(selectedConversion.getLabelResource()));
+        ThemeApplier.applyTabLayout(categorySelector);
+        categorySelector.setTabIconTint(ThemeApplier.navigationTint(ThemeManager.get()));
+        for (int i = 0; i < categorySelector.getTabCount(); i++) {
+            TabLayout.Tab tab = categorySelector.getTabAt(i);
+            if (tab != null && (Integer) tab.getTag() == getSelectedCategoryId()) {
+                if (!tab.isSelected()) tab.select();
+                // Selection from drawer/restoration must also reveal off-screen categories.
+                categorySelector.setScrollPosition(i, 0f, true);
+                break;
+            }
+        }
     }
 
     private void updateInputType(int categoryId) {

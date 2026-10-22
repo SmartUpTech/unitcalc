@@ -6,28 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.google.android.material.chip.ChipGroup
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/converter_mode_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/converter_card_margin"
         android:layout_marginTop="@dimen/converter_mode_margin_top"
         android:layout_marginBottom="@dimen/converter_mode_margin_bottom"
-        app:selectionRequired="true"
-        app:singleSelection="true"
-        app:chipSpacingHorizontal="@dimen/converter_spacing"
-        app:singleLine="true">
-        <com.google.android.material.chip.Chip
+        app:selectionRequired="true" app:singleSelection="true">
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_unit_mode"
-            style="@style/ConverterModeChip"
+            style="@style/ConverterModeSegment"
             android:text="@string/unit_converter" />
-        <com.google.android.material.chip.Chip
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_currency_mode"
-            style="@style/ConverterModeChip"
+            style="@style/ConverterModeSegment"
             android:text="@string/currency_converter" />
-    </com.google.android.material.chip.ChipGroup>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
     <FrameLayout
-        android:id="@+id/converter_placeholder"
+        android:id="@+id/converter_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
