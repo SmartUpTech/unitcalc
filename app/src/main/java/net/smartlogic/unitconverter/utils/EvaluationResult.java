@@ -26,6 +26,10 @@ public final class EvaluationResult {
         return new EvaluationResult(value, trace, valid);
     }
 
+    public java.math.BigDecimal getDecimalValue() {
+        return valid ? trace.getRoot().getDecimalValue() : null;
+    }
+
     public double getValue() {
         return value;
     }

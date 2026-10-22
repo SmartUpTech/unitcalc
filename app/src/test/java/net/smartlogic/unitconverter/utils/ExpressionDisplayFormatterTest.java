@@ -53,6 +53,23 @@ public class ExpressionDisplayFormatterTest {
         assertPlainText("1234.567", "1,234.567 =", ',', 4, true);
     }
 
+    @Test public void enteredDecimalsAreNeverRoundedOrHidden() {
+        assertPlainText("1.005", "1.005 =", ',', 2, true);
+        assertPlainText("1.", "1. =");
+        assertPlainText("1.00", "1.00 =");
+        assertPlainText("-0.001", "-0.001 =");
+    }
+
+    @Test public void incompleteSquareRootsAreSafeAtEveryTypingStep() {
+        assertPlainText("sqrt(", "√( =");
+        assertPlainText("sqrt(1", "√(1 =");
+        assertPlainText("sqrt(16", "√(16 =");
+        assertPlainText("sqrt(16)", "√16 =");
+        assertPlainText("sqrt(sqrt(", "√(√( =");
+        assertPlainText("sqrt()", "√() =");
+        assertPlainText("sqrt(9007199254740993)", "√9007199254740993 =");
+    }
+
     private void assertPlainText(String rawExpression, String expected) {
         assertPlainText(rawExpression, expected, '.', 4, false);
     }

@@ -20,14 +20,22 @@ import java.util.List;
 public final class ExpressionGraphBuilder implements GraphBuilder {
 
     private int nodeCounter;
-    private final java.util.function.DoubleFunction<String> formatter;
+    private final java.util.function.Function<java.math.BigDecimal, String> formatter;
 
     public ExpressionGraphBuilder() {
-        this(value -> net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(value, 8));
+        this(value -> net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(value, 8), true);
     }
 
     public ExpressionGraphBuilder(java.util.function.DoubleFunction<String> formatter) {
+        this(value -> formatter.apply(value.doubleValue()), true);
+    }
+
+    private ExpressionGraphBuilder(java.util.function.Function<java.math.BigDecimal, String> formatter, boolean decimal) {
         this.formatter = formatter;
+    }
+
+    public static ExpressionGraphBuilder decimalFormatted(java.util.function.Function<java.math.BigDecimal, String> formatter) {
+        return new ExpressionGraphBuilder(formatter, true);
     }
 
     @NonNull
@@ -83,7 +91,7 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
             if (child != null) {
                 return walk(child, nodes, connections, isRoot);
             }
-            return addNode(nodes, GraphyNodeType.DERIVED, "(", formatValue(evalNode.getValue()), "group");
+            return addNode(nodes, GraphyNodeType.DERIVED, "(", formatter.apply(evalNode.getDecimalValue()), "group");
         }
 
         String operationNodeId = addNode(nodes, GraphyNodeType.OPERATION, evalNode.getLabel(),
@@ -101,8 +109,8 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
 
         GraphyNodeType valueType = isRoot ? GraphyNodeType.RESULT : GraphyNodeType.DERIVED;
         String semanticRole = isRoot ? "result" : "derived";
-        String valueNodeId = addNode(nodes, valueType, formatValue(evalNode.getValue()),
-                formatValue(evalNode.getValue()), semanticRole, formulaFor(evalNode));
+        String valueNodeId = addNode(nodes, valueType, formatter.apply(evalNode.getDecimalValue()),
+                formatter.apply(evalNode.getDecimalValue()), semanticRole, formulaFor(evalNode));
         connections.add(new GraphyConnection(operationNodeId, valueNodeId, null));
         return valueNodeId;
     }
@@ -180,6 +188,4 @@ public final class ExpressionGraphBuilder implements GraphBuilder {
         }
     }
 
-    @NonNull
-    private String formatValue(double value) { return formatter.apply(value); }
 }

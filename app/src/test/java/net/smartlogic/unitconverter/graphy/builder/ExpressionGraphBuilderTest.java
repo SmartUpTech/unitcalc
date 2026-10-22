@@ -20,6 +20,19 @@ public class ExpressionGraphBuilderTest {
 
     private final ExpressionGraphBuilder builder = new ExpressionGraphBuilder();
 
+    @Test public void decimalIntermediateAndFinalValuesNeverNarrowToDouble() {
+        var evaluation = ExpressionEvaluator.evaluate("(9007199254740992+1)*2");
+        var snapshot = CalculationSnapshot.create("basic-calculator", "(9007199254740992+1)*2",
+                "(9007199254740992+1)*2", "18,014,398,509,481,986", evaluation);
+        var decimalBuilder = ExpressionGraphBuilder.decimalFormatted(value ->
+                net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(value, 8, '.', ',', true));
+        var graph = decimalBuilder.build(snapshot, evaluation.getTrace());
+        assertEquals("18,014,398,509,481,986", graph.getResult());
+        assertTrue(graph.getNodes().stream().anyMatch(node -> node.type() == GraphyNodeType.DERIVED
+                && node.displayValue().equals("9,007,199,254,740,993")));
+    }
+
+
     @Test
     public void build_createsResultNodeForSimpleExpression() {
         EvaluationResult evaluation = ExpressionEvaluator.evaluate("2+3");

@@ -64,7 +64,7 @@ public class ConversionGraphAdapterTest {
     @Test public void everyLinearCategoryUsesItsExistingFactorsIncludingReverse() {
         int[] categories = {Conversion.LENGTH, Conversion.MASS, Conversion.AREA, Conversion.VOLUME,
                 Conversion.SPEED, Conversion.TIME, Conversion.STORAGE, Conversion.COOKING,
-                Conversion.POWER, Conversion.PRESSURE, Conversion.ENERGY, Conversion.TORQUE};
+                Conversion.POWER, Conversion.PRESSURE, Conversion.ENERGY, Conversion.TORQUE, Conversion.ANGLE};
         for (int category : categories) {
             var units = conversions.getById(category).getUnits();
             Unit first = units.get(0), last = units.get(units.size() - 1);
@@ -104,6 +104,12 @@ public class ConversionGraphAdapterTest {
                 "1.2 USD", "100.20 INR", "USD", "INR", 0);
         assertEquals("1.2 × 83.5", output.getNodes().get(2).displayValue());
         assertEquals("100.20 INR", output.getResult());
+    }
+    @Test public void correctedTimeAndVolumeFactorsMatchConverter() {
+        Unit year = unit(Conversion.TIME, Unit.YEAR), month = unit(Conversion.TIME, Unit.MONTH);
+        assertEquals(1188, ConversionGraphAdapter.transformation(conversions, Conversion.TIME, year, month).apply(99), 0);
+        Unit yard = unit(Conversion.VOLUME, Unit.CUBIC_YARD), foot = unit(Conversion.VOLUME, Unit.CUBIC_FOOT);
+        assertEquals(2673, ConversionGraphAdapter.transformation(conversions, Conversion.VOLUME, yard, foot).apply(99), 0);
     }
     @Test public void tinyFactorsDoNotRoundToZero() {
         var output = ConversionGraphAdapter.currency(context, 1, 1e-12, 1e-12, "1 X", "0.000000000001 Y", "X", "Y", 0);

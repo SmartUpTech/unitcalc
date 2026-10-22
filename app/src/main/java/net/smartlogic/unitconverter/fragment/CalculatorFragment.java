@@ -62,7 +62,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private DatabaseHelper dbHelper;
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge(
-            new net.smartlogic.unitconverter.graphy.builder.ExpressionGraphBuilder(this::formatResult));
+            net.smartlogic.unitconverter.graphy.builder.ExpressionGraphBuilder.decimalFormatted(
+                    value -> formatResult(value)));
     private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
     private GraphyViewTheme graphyTheme;
     private ExpressionDisplayFormatter.GraphySemanticTheme semanticTheme;
@@ -97,6 +98,19 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         mPrefs = Preferences.getInstance(getActivity());
         dbHelper = new DatabaseHelper(getContext());
+        if (savedInstanceState != null) {
+            expression = savedInstanceState.getString("calculator_expression", "");
+            lastEvaluatedExpression = savedInstanceState.getString("calculator_last_expression", "");
+            isResultDisplayed = savedInstanceState.getBoolean("calculator_result_displayed", false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("calculator_expression", expression);
+        outState.putString("calculator_last_expression", lastEvaluatedExpression);
+        outState.putBoolean("calculator_result_displayed", isResultDisplayed);
     }
 
     @Override
@@ -127,6 +141,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (getView() != null) {
             ThemeApplier.apply(getView());
         }
+        if (tvResult != null) {
+            updateExpressionDisplay();
+            calculateResult(false);
+        }
     }
 
     @Override
@@ -135,6 +153,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             workspaceTabController.detach();
             workspaceTabController = null;
         }
+        calculatePageBound = false;
+        tvExpression = null;
+        tvResult = null;
         graphyPageBound = false;
         graphyPanelController = null;
         graphyPanel = null;
@@ -144,6 +165,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void initViews(View view) {
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
         mCoordinatorLayout = view.findViewById(R.id.cl);
         workspaceTabs = view.findViewById(R.id.workspace_tabs);
         workspacePager = view.findViewById(R.id.workspace_pager);
@@ -232,6 +254,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 GenericFunctions.adjustTextSize(tvExpression, 21);
             }
         });
+        updateExpressionDisplay();
+        calculateResult(false);
     }
 
     private void bindGraphyPage(@NonNull View pageView) {
@@ -320,7 +344,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void handleSignToggle() {
         if (isResultDisplayed) {
-            String result = tvResult.getText().toString().replace(",", "");
+            String result = expression;
             if (result.startsWith("-")) {
                 expression = result.substring(1);
             } else {
@@ -367,6 +391,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
                 i--;
             }
+            if (i >= 3 && expr.substring(i - 3, i + 1).equals("sqrt")) i -= 4;
             if (i >= 0 && expr.charAt(i) == '-') {
                 char before = i > 0 ? expr.charAt(i - 1) : '\0';
                 if (i == 0 || before == '(' || isOperatorChar(before) || before == '^') {
@@ -447,11 +472,13 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void handleInput(String input) {
         if (TextUtils.isEmpty(input)) return;
+        if (!isResultDisplayed && expression.length() >= 1000) return;
 
         if (isResultDisplayed) {
-            if (isOperatorChar(input.charAt(0)) || input.equals("^") || input.equals("%")) {
-                expression = tvResult.getText().toString().replace(",", "");
-            } else {
+            if (input.equals("^") && expression.startsWith("-")) {
+                expression = "(" + expression + ")";
+            }
+            if (!(isOperatorChar(input.charAt(0)) || input.equals("^") || input.equals("%"))) {
                 expression = "";
             }
             isResultDisplayed = false;
@@ -585,10 +612,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
 
         try {
-            String sanitized = expression.replace('×', '*').replace('÷', '/').replace("√", "sqrt");
+            String sourceExpression = isResultDisplayed && !lastEvaluatedExpression.isEmpty()
+                    ? lastEvaluatedExpression : expression;
+            String sanitized = sourceExpression.replace('×', '*').replace('÷', '/').replace("√", "sqrt");
             
             // Auto-close parentheses for final calculation
-            if (isFinal) {
+            if (isFinal || isResultDisplayed) {
                 int openCount = countOccurrences(sanitized, '(');
                 int closeCount = countOccurrences(sanitized, ')');
                 while (openCount > closeCount) {
@@ -603,6 +632,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
             EvaluationResult evaluationResult = ExpressionEvaluator.evaluate(sanitized);
             if (!evaluationResult.isValid()) {
+                tvResult.setText("");
                 latestGraphyOutput = null;
                 hideGraphy();
                 updateGraphyTabState();
@@ -613,13 +643,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 return;
             }
 
-            double res = evaluationResult.getValue();
-            String formatted = formatResult(res);
+            String formatted = formatResult(evaluationResult.getDecimalValue());
             tvResult.setText(formatted);
 
             CalculationSnapshot snapshot = CalculationSnapshot.create(
                     CalculationSnapshot.BASIC_CALCULATOR_ID,
-                    expression,
+                    sourceExpression,
                     sanitized,
                     formatted,
                     evaluationResult
@@ -631,9 +660,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             }
 
             if (isFinal) {
-                lastEvaluatedExpression = expression;
-                dbHelper.addHistory(expression, formatted, CalculatorCatalog.ID_BASIC);
-                expression = formatted.replace(",", "");
+                lastEvaluatedExpression = sourceExpression;
+                dbHelper.addHistory(sourceExpression, formatted, CalculatorCatalog.ID_BASIC);
+                expression = evaluationResult.getDecimalValue().stripTrailingZeros().toPlainString();
                 isResultDisplayed = true;
                 updateExpressionDisplay();
                 feedbackFinal(InteractionFeedbackManager.Type.CONFIRM);
@@ -653,8 +682,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (tvExpression != null) InteractionFeedbackManager.perform(tvExpression, type);
     }
 
-    private String formatResult(double value) {
-        return NumberUtils.formatCalculator(value, mPrefs.getNumberDecimals());
+    private String formatResult(java.math.BigDecimal value) {
+        String group = mPrefs.getGroupSeparator();
+        boolean grouping = !group.isEmpty() && !group.equals(getString(R.string.group_separator_none));
+        return NumberUtils.formatCalculator(value, mPrefs.getNumberDecimals(),
+                mPrefs.getDecimalSeparator().charAt(0), grouping ? group.charAt(0) : ',', grouping);
     }
 
     private void copyExpressionAndResult() {

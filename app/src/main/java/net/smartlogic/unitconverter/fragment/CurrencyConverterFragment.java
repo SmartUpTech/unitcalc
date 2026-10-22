@@ -44,6 +44,8 @@ import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
+import net.smartlogic.unitconverter.utils.DecimalMath;
+import java.math.BigDecimal;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private EditText inputValue, outputValue;
     private TextView inputSymbol, outputSymbol;
     private Context context;
-    private HashMap<String, Float> currencyRates;
+    private HashMap<String, BigDecimal> currencyRates;
     private Preferences prefs;
     private TextView fromCurrency, fromCurrencyISO, toCurrency, toCurrencyISO, txtRate;
     private TextView lastRefreshTime;
@@ -207,7 +209,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         } else if (id == R.id.dot) {
             if (inputValue.getText().toString().isEmpty()) inputValue.setText("0.");
             else if (inputValue.getText().toString().equals("-")) inputValue.append("0.");
-            else inputValue.append(".");
+            else if (!previous.contains(".")) inputValue.append(".");
             inputValue.setSelection(inputValue.getText().length());
         } else if (id == R.id.minus) {
             inputValue.setText(previous.startsWith("-") ? previous.substring(1) : "-" + previous);
@@ -267,28 +269,29 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         String inCurrency = fromCurrencyISO.getText().toString();
         String outCurrency = toCurrencyISO.getText().toString();
-        Float inRate = currencyRates.get(inCurrency);
-        Float outRate = currencyRates.get(outCurrency);
+        BigDecimal inRate = currencyRates.get(inCurrency);
+        BigDecimal outRate = currencyRates.get(outCurrency);
+        if (inCurrency.equals(outCurrency)) {
+            inRate = BigDecimal.ONE;
+            outRate = BigDecimal.ONE;
+        }
 
         if (inRate != null && outRate != null) {
-            Float in;
-            try { in = NumberUtils.parseFloat(inStr); }
-            catch (NumberFormatException invalid) {
+            try {
+                BigDecimal input = NumberUtils.parseDecimal(inStr);
+                BigDecimal out = DecimalMath.currency(input, inRate, outRate);
+                BigDecimal rate = DecimalMath.currency(BigDecimal.ONE, inRate, outRate);
+                NumberFormat format = NumberFormat.getInstance();
+                format.setMaximumFractionDigits(2);
+                format.setGroupingUsed(false);
+                String formattedOut = format.format(out);
+                outputValue.setText(formattedOut);
+                updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut,
+                        rate.doubleValue(), input.doubleValue(), out.doubleValue());
+            } catch (IllegalArgumentException | ArithmeticException invalid) {
                 outputValue.setText("");
                 if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
-                return;
             }
-            //Log.d("SHRIKI", "Input:" + in + " " + inCurrency + " at rate (EUR) " + inRate);
-            float out = in * (outRate / inRate);
-            //Log.d("SHRIKI", "Output:" + out + " " + outCurrency + " at rate (EUR) " + outRate);
-
-            NumberFormat format = NumberFormat.getInstance();
-            format.setMaximumFractionDigits(2);
-            format.setGroupingUsed(false);
-            //format.setRoundingMode(RoundingMode.CEILING);
-            String formattedOut = format.format(out);
-            outputValue.setText(formattedOut);
-            updateParentGraphy(inStr, inCurrency, outCurrency, formattedOut, outRate / inRate, in, out);
         } else {
             outputValue.setText("");
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
@@ -296,7 +299,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     }
 
     private void updateParentGraphy(String inStr, String inCurrency, String outCurrency,
-                                    String formattedOut, float rate, float input, float result) {
+                                    String formattedOut, double rate, double input, double result) {
         if (!(getParentFragment() instanceof ConverterFragment converter)) return;
         if (inStr.trim().isEmpty() || inStr.equals("-")) {
             converter.clearConversionGraphy();
@@ -546,13 +549,18 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     public void displayRates() {
         String inCurrency = fromCurrencyISO.getText().toString();
         String outCurrency = toCurrencyISO.getText().toString();
-        Float inRate = currencyRates.get(inCurrency);
-        Float outRate = currencyRates.get(outCurrency);
+        BigDecimal inRate = currencyRates.get(inCurrency);
+        BigDecimal outRate = currencyRates.get(outCurrency);
+        if (inCurrency.equals(outCurrency)) {
+            inRate = BigDecimal.ONE;
+            outRate = BigDecimal.ONE;
+        }
 
         if (inRate != null && outRate != null) {
-            float rate = outRate / inRate;
+            BigDecimal rate = DecimalMath.currency(BigDecimal.ONE, inRate, outRate);
             //Log.d("SHRIKI", "1 " + inCurrency + " = " + rate + " " + outCurrency);
-            txtRate.setText(String.format("1 %s = %.4f %s", inCurrency, rate, outCurrency));
+            txtRate.setText(String.format("1 %s = %s %s", inCurrency,
+                    rate.setScale(4, java.math.RoundingMode.HALF_EVEN).toPlainString(), outCurrency));
             txtRate.setVisibility(View.VISIBLE);
         } else {
             txtRate.setText(R.string.currency_unavailable);

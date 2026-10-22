@@ -35,7 +35,7 @@ public final class ConversionGraphAdapter {
             if (to.getId() == Unit.L_100K) return ConversionTransformation.reciprocal(
                     to.getConversionFromBaseUnit() / from.getConversionToBaseUnit());
         }
-        return ConversionTransformation.linear(from.getConversionToBaseUnit() * to.getConversionFromBaseUnit());
+        return ConversionTransformation.linear(conversions.convert(1, from, to));
     }
 
     public static GraphyOutput unit(Context context, Conversions conversions, int category,

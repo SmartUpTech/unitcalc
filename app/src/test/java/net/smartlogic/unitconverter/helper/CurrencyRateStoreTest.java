@@ -25,11 +25,20 @@ public class CurrencyRateStoreTest {
 
     @Test public void parsesDatesBaseAndKnownCrossRate() throws Exception {
         CurrencyRateStore.Snapshot snapshot = CurrencyRateStore.parseResponse(RESPONSE, NOW);
-        assertEquals(1f, snapshot.rates.get("USD"), 0);
-        assertEquals(100f, snapshot.rates.get("INR") / snapshot.rates.get("EUR"), 0.0001f);
+        assertEquals(0, java.math.BigDecimal.ONE.compareTo(snapshot.rates.get("USD")));
+        assertEquals(0, new java.math.BigDecimal("100").compareTo(
+                snapshot.rates.get("INR").divide(snapshot.rates.get("EUR"))));
         assertEquals("2026-10-20", snapshot.dates.get("INR"));
         assertFalse(snapshot.rates.containsKey("HRK"));
         assertEquals(snapshot.rates, CurrencyRateStore.readCache(snapshot.encode(), 0).rates);
+    }
+
+    @Test public void providerDecimalsSurviveCacheRoundTripWithoutFloatNarrowing() throws Exception {
+        String response = RESPONSE.replace("0.8", "0.8123456789");
+        var snapshot = CurrencyRateStore.parseResponse(response, NOW);
+        assertEquals(0, new java.math.BigDecimal("0.8123456789").compareTo(snapshot.rates.get("EUR")));
+        assertEquals(0, snapshot.rates.get("EUR").compareTo(
+                CurrencyRateStore.readCache(snapshot.encode(), 0).rates.get("EUR")));
     }
 
     @Test public void rejectsMissingMalformedAndInvalidRates() {

@@ -1,5 +1,8 @@
 package net.smartlogic.unitconverter.model;
 
+import java.math.BigDecimal;
+import net.smartlogic.unitconverter.utils.DecimalMath;
+
 public class Unit {
 
     public static final int SQ_KILOMETRES = 0;
@@ -188,11 +191,57 @@ public class Unit {
     public static final int CUBIC_MM = 1220;
     public static final int CUBIC_KM = 1221;
 
+    // Additional definitions: never reuse IDs or reorder existing persisted unit rows.
+    public static final int SQ_MILLIMETRE = 11;
+    public static final int GUNTHA = 12;
+    public static final int CENT = 13;
+    public static final int MARLA = 14;
+    public static final int BIGHA_ASSAM = 15;
+    public static final int BIGHA_RAJASTHAN_PUCCA = 16;
+    public static final int BIGHA_RAJASTHAN_KACCHA = 17;
+    public static final int QUINTAL = 512;
+    public static final int TOLA = 513;
+    public static final int TROY_OUNCE = 514;
+    public static final int MICROLITRE = 1222;
+    public static final int CENTILITRE = 1223;
+    public static final int DECILITRE = 1224;
+    public static final int OIL_BARREL_US = 1225;
+    public static final int METRIC_CUP = 1226;
+    public static final int TABLESPOON_AU = 1227;
+    public static final int TEASPOON_IMPERIAL = 1228;
+    public static final int TABLESPOON_IMPERIAL = 1229;
+    public static final int TEASPOON_METRIC = 1230;
+    public static final int TABLESPOON_METRIC = 1231;
+    public static final int MILLIBAR = 711;
+    public static final int INCH_MERCURY = 712;
+    public static final int CM_WATER = 713;
+    public static final int INCH_WATER = 714;
+    public static final int KGF_M = 1101;
+    public static final int N_CM = 1102;
+    public static final int DEGREE = 1400;
+    public static final int RADIAN = 1401;
+    public static final int GRADIAN = 1402;
+    public static final int REVOLUTION = 1403;
+    public static final int DECIMAL_KILOBIT = 114;
+    public static final int DECIMAL_KILOBYTE = 115;
+    public static final int DECIMAL_MEGABIT = 116;
+    public static final int DECIMAL_MEGABYTE = 117;
+    public static final int DECIMAL_GIGABIT = 118;
+    public static final int DECIMAL_GIGABYTE = 119;
+    public static final int DECIMAL_TERABIT = 120;
+    public static final int DECIMAL_TERABYTE = 121;
+    public static final int DECIMAL_PETABIT = 122;
+    public static final int DECIMAL_PETABYTE = 123;
+    public static final int DECIMAL_EXABIT = 124;
+    public static final int DECIMAL_EXABYTE = 125;
+
     private final int id;
     private final int labelResource;
     private final double conversionToBase;
     private final double conversionFromBase;
     private final String symbol;
+    private final BigDecimal baseNumerator;
+    private final BigDecimal baseDenominator;
 
     /**
      * Create a unit object
@@ -209,7 +258,31 @@ public class Unit {
         this.conversionToBase = conversionToBase;
         this.conversionFromBase = conversionFromBase;
         this.symbol = symbol;
+        this.baseNumerator = BigDecimal.valueOf(conversionToBase);
+        this.baseDenominator = BigDecimal.ONE;
     }
+
+    /** Canonical base-unit definition; inverse factors are derived, never stored independently. */
+    public Unit(int id, int labelResource, String numerator, String symbol) {
+        this(id, labelResource, numerator, "1", symbol);
+    }
+
+    public Unit(int id, int labelResource, String numerator, String denominator, String symbol) {
+        this.id = id;
+        this.labelResource = labelResource;
+        this.baseNumerator = new BigDecimal(numerator);
+        this.baseDenominator = new BigDecimal(denominator);
+        if (baseNumerator.signum() <= 0 || baseDenominator.signum() <= 0) {
+            throw new IllegalArgumentException("Unit factors must be positive");
+        }
+        this.conversionToBase = baseNumerator.divide(baseDenominator, DecimalMath.CONTEXT).doubleValue();
+        this.conversionFromBase = baseDenominator.divide(baseNumerator, DecimalMath.CONTEXT).doubleValue();
+        this.symbol = symbol;
+    }
+
+    public BigDecimal getBaseNumerator() { return baseNumerator; }
+    public BigDecimal getBaseDenominator() { return baseDenominator; }
+
 
     public int getId() {
         return id;

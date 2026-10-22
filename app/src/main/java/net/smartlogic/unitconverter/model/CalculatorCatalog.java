@@ -140,6 +140,9 @@ public final class CalculatorCatalog {
         general.add(register(entry("rate", R.string.pref_rate_title, R.drawable.ic_explore, Destination.RATE_APP, -1)));
         general.add(register(entry("share", R.string.pref_share_title, R.drawable.share, Destination.SHARE_APP, -1)));
         SECTIONS.add(new Section(R.string.drawer_section_general, general));
+        // Append so existing runtime menu IDs remain stable.
+        register(entry(unitId(Conversion.ANGLE), R.string.angle, R.drawable.ic_angle,
+                Destination.UNIT_CATEGORY, Conversion.ANGLE));
     }
 
     private CalculatorCatalog() {

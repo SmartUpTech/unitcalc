@@ -155,18 +155,18 @@
     <!-- Digital Storage -->
     <string name="bit">Bit</string>
     <string name="Byte">Byte</string>
-    <string name="kilobit">Kilobit</string>
-    <string name="kilobyte">Kilobyte</string>
-    <string name="megabit">Megabit</string>
-    <string name="megabyte">Megabyte</string>
-    <string name="gigabit">Gigabit</string>
-    <string name="gigabyte">Gigabyte</string>
-    <string name="terabit">Terabit</string>
-    <string name="terabyte">Terabyte</string>
-    <string name="petabit">Petabit</string>
-    <string name="petabyte">Petabyte</string>
-    <string name="exabit">Exabit</string>
-    <string name="exabyte">Exabyte</string>
+    <string name="kilobit">Kilobit (decimal)</string>
+    <string name="kilobyte">Kilobyte (decimal)</string>
+    <string name="megabit">Megabit (decimal)</string>
+    <string name="megabyte">Megabyte (decimal)</string>
+    <string name="gigabit">Gigabit (decimal)</string>
+    <string name="gigabyte">Gigabyte (decimal)</string>
+    <string name="terabit">Terabit (decimal)</string>
+    <string name="terabyte">Terabyte (decimal)</string>
+    <string name="petabit">Petabit (decimal)</string>
+    <string name="petabyte">Petabyte (decimal)</string>
+    <string name="exabit">Exabit (decimal)</string>
+    <string name="exabyte">Exabyte (decimal)</string>
 
     <!-- Energy -->
     <string name="joule">Joule</string>
@@ -282,14 +282,14 @@
     <string name="n_m">N-m</string>
 
     <!-- Volume -->
-    <string name="teaspoon">Teaspoon</string>
-    <string name="tablespoon">Tablespoon</string>
-    <string name="cup">Cup</string>
+    <string name="teaspoon">Teaspoon (US)</string>
+    <string name="tablespoon">Tablespoon (US)</string>
+    <string name="cup">Cup (US)</string>
     <string name="fluid_ounce">Fluid Ounce (US)</string>
     <string name="quart">Quart (US)</string>
     <string name="pint">Pint (US)</string>
     <string name="gallon">Gallon (US)</string>
-    <string name="barrel">Barrel (US)</string>
+    <string name="barrel">Barrel (US beer, 31.5 gal)</string>
     <string name="fluid_ounce_uk">Fluid Ounce (UK)</string>
     <string name="quart_uk">Quart (UK)</string>
     <string name="pint_uk">Pint (UK)</string>
@@ -476,4 +476,48 @@
     <string name="graphy_export_failed">Could not save the graph. Please try again.</string>
     <string name="graphy_export_png_too_large">This graph is too large for PNG. Please download it as PDF.</string>
     <string name="graphy_export_result">= %1$s</string>
+    <!-- Explicit conversion variants; factors live in the unit registry. -->
+    <string name="angle">Angle</string>
+    <string name="sq_millimetre">Square millimetre</string>
+    <string name="guntha">Guntha (1/40 acre)</string>
+    <string name="cent">Cent (1/100 acre)</string>
+    <string name="marla">Marla (272.25 sq ft)</string>
+    <string name="bigha_assam">Bigha (Assam, 14400 sq ft)</string>
+    <string name="bigha_rajasthan_pucca">Bigha (Rajasthan pucca, 27225 sq ft)</string>
+    <string name="bigha_rajasthan_kaccha">Bigha (Rajasthan kaccha, 17424 sq ft)</string>
+    <string name="quintal">Quintal (metric)</string>
+    <string name="tola">Tola (180 grains)</string>
+    <string name="troy_ounce">Troy ounce</string>
+    <string name="microlitre">Microlitre</string>
+    <string name="centilitre">Centilitre</string>
+    <string name="decilitre">Decilitre</string>
+    <string name="oil_barrel_us">Oil barrel (US, 42 gal)</string>
+    <string name="metric_cup">Cup (metric, 250 mL)</string>
+    <string name="tablespoon_au">Tablespoon (Australia, 20 mL)</string>
+    <string name="teaspoon_imperial">Teaspoon (Imperial, 1/768 gal)</string>
+    <string name="tablespoon_imperial">Tablespoon (Imperial, 1/256 gal)</string>
+    <string name="teaspoon_metric">Teaspoon (metric, 5 mL)</string>
+    <string name="tablespoon_metric">Tablespoon (metric, 15 mL)</string>
+    <string name="millibar">Millibar</string>
+    <string name="inch_mercury">Inch of mercury (conventional)</string>
+    <string name="cm_water">Centimetre of water (conventional)</string>
+    <string name="inch_water">Inch of water (conventional)</string>
+    <string name="kgf_m">Kilogram-force metre</string>
+    <string name="n_cm">Newton centimetre</string>
+    <string name="degree">Degree</string>
+    <string name="radian">Radian</string>
+    <string name="gradian">Gradian</string>
+    <string name="revolution">Revolution</string>
+    <string name="kibibit">Kibibit</string>
+    <string name="kibibyte">Kibibyte</string>
+    <string name="mebibit">Mebibit</string>
+    <string name="mebibyte">Mebibyte</string>
+    <string name="gibibit">Gibibit</string>
+    <string name="gibibyte">Gibibyte</string>
+    <string name="tebibit">Tebibit</string>
+    <string name="tebibyte">Tebibyte</string>
+    <string name="pebibit">Pebibit</string>
+    <string name="pebibyte">Pebibyte</string>
+    <string name="exbibit">Exbibit</string>
+    <string name="exbibyte">Exbibyte</string>
 </resources>
