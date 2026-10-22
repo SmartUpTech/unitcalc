@@ -123,18 +123,33 @@ public final class GamesWebView extends WebView {
 
     public void configure(JSONObject config, Consumer<Boolean> callback) {
         if (!GamesConfig.isTrustedUrl(getUrl())) { callback.accept(false); return; }
+        try {
         evaluateJavascript("Boolean(window.SmartUpGames && window.SmartUpGames.configure(" + config + "))", result -> {
             if (!"true".equals(result)) { callback.accept(false); return; }
-            postVisualStateCallback(0, new VisualStateCallback() {
-                @Override public void onComplete(long requestId) { callback.accept(true); }
-            });
+            if (disposed) return;
+            try {
+                postVisualStateCallback(0, new VisualStateCallback() {
+                    @Override public void onComplete(long requestId) {
+                        if (!disposed) callback.accept(true);
+                    }
+                });
+            } catch (RuntimeException | LinkageError error) {
+                listener.onFailure(R.string.games_load_error);
+            }
         });
+        } catch (RuntimeException | LinkageError error) {
+            listener.onFailure(R.string.games_load_error);
+        }
     }
 
     public void back(Consumer<Boolean> callback) {
         if (!GamesConfig.isTrustedUrl(getUrl())) { callback.accept(false); return; }
+        try {
         evaluateJavascript("(function(){if(location.hash && window.SmartUpGames){window.SmartUpGames.back();return true;}return false;})()",
-                result -> callback.accept("true".equals(result)));
+                result -> { if (!disposed) callback.accept("true".equals(result)); });
+        } catch (RuntimeException | LinkageError error) {
+            listener.onFailure(R.string.games_load_error);
+        }
     }
 
     public void dispose() {

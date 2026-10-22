@@ -2,6 +2,10 @@ package net.smartlogic.unitconverter.games;
 
 import android.app.Application;
 import android.os.Looper;
+import android.view.View;
+import android.widget.TextView;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.widget.FrameLayout;
 
 import androidx.fragment.app.FragmentActivity;
@@ -27,6 +31,16 @@ public class GamesFragmentTest {
         controller.get().setTheme(R.style.AppTheme);
         controller.setup();
         FragmentActivity activity = controller.get();
+        Shadows.shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setDefaultNetworkActive(true);
+        ConnectivityManager connectivity = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Shadows.shadowOf(connectivity).setActiveNetworkInfo(
+                org.robolectric.shadows.ShadowNetworkInfo.newInstance(android.net.NetworkInfo.DetailedState.CONNECTED,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+        android.net.NetworkCapabilities capabilities = new android.net.NetworkCapabilities();
+        capabilities.addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        capabilities.addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        Shadows.shadowOf(connectivity).setNetworkCapabilities(connectivity.getActiveNetwork(), capabilities);
         FrameLayout host = new FrameLayout(activity);
         host.setId(12345);
         activity.setContentView(host);
@@ -55,4 +69,30 @@ public class GamesFragmentTest {
         controller.pause().stop().destroy();
         assertEquals(0, container.getChildCount());
     }
+    @Test public void offlineVisitShowsFullscreenErrorAndRetryWithoutCreatingWebView() {
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        FragmentActivity activity = controller.get();
+        Shadows.shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(null);
+        FrameLayout host = new FrameLayout(activity);
+        host.setId(12345);
+        activity.setContentView(host);
+        GamesFragment fragment = new GamesFragment();
+        activity.getSupportFragmentManager().beginTransaction().add(12345, fragment).commitNow();
+        View root = fragment.requireView();
+        assertEquals(0, ((FrameLayout) root.findViewById(R.id.games_web_container)).getChildCount());
+        assertEquals(activity.getString(R.string.games_offline_message),
+                ((TextView) root.findViewById(R.id.games_status_text)).getText().toString());
+        assertEquals(View.VISIBLE, root.findViewById(R.id.games_status).getVisibility());
+        assertEquals(View.GONE, root.findViewById(R.id.games_progress).getVisibility());
+        root.findViewById(R.id.games_retry).performClick();
+        assertEquals(0, ((FrameLayout) root.findViewById(R.id.games_web_container)).getChildCount());
+        fragment.onRendererGone();
+        assertEquals(View.VISIBLE, root.findViewById(R.id.games_retry).getVisibility());
+        controller.pause().stop().destroy();
+        fragment.onFailure(R.string.games_load_error);
+    }
+
 }
