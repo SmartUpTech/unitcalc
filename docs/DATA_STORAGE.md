@@ -9,6 +9,8 @@ description: Details of the application's persistence layers including SQLite an
 - **Table**: `calculation_history`
 - **Fields**: `id`, `expression`, `result`, `created_at`, `calculator_id`.
 - **Constraint**: Never perform SQL operations on the Main Thread.
+- **History reads/deletion**: History uses a shared serial background executor and 50-record keyset pages ordered by descending database ID. Individual deletion targets the ID; Undo reinserts the original ID, timestamp, calculator and values with conflict-ignore. No schema migration is needed.
+- **History scope**: The basic calculator currently writes history. Legacy entries from other tools can open their tool, but do not contain enough structured input to restore units or rates.
 
 ## SHAREDPREFERENCES (Preferences)
 - **Usage**: App settings, last used states, and cached currency data.

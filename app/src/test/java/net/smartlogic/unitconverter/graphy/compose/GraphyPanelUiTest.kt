@@ -8,6 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
+import net.smartlogic.unitconverter.graphy.compose.ui.GraphyDownloadButton
+import net.smartlogic.unitconverter.graphy.compose.ui.GraphyDownloadState
+import net.smartlogic.unitconverter.graphy.theme.GraphySemanticStyle
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
@@ -42,6 +50,38 @@ import java.time.Duration
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
 class GraphyPanelUiTest {
+    @Test fun downloadIconTracksThemeWhileCompositionRemainsOpen() {
+        val app = RuntimeEnvironment.getApplication()
+        Preferences.getInstance(app).preferences.edit().putInt(Preferences.PREFS_THEME_USAGE_DAYS, Int.MAX_VALUE).commit()
+        RuntimeEnvironment.setFontScale(1f)
+        val controller = Robolectric.buildActivity(ComponentActivity::class.java).setup().visible()
+        val view = ComposeView(controller.get())
+        controller.get().setContentView(view)
+        view.setContent {
+            GraphyTheme {
+                Box(Modifier.fillMaxSize().background(GraphyThemeTokens.semanticColors.background)) {
+                    GraphyDownloadButton(GraphyDownloadState(true, false) {})
+                }
+            }
+        }
+        try {
+            for (theme in CalculatorThemes.all()) {
+                ThemeManager.select(app, theme.id())
+                settle()
+                view.measure(View.MeasureSpec.makeMeasureSpec(96, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(96, View.MeasureSpec.EXACTLY))
+                view.layout(0, 0, 96, 96)
+                settle()
+                val bitmap = Bitmap.createBitmap(96, 96, Bitmap.Config.ARGB_8888)
+                view.draw(Canvas(bitmap))
+                val ink = GraphySemanticStyle.connector(theme)
+                var matching = 0
+                for (y in 0 until 96) for (x in 0 until 96) if (bitmap.getPixel(x, y) == ink) matching++
+                assertTrue("Download must use visible theme ink in ${theme.id()}", matching > 10)
+                bitmap.recycle()
+            }
+        } finally { controller.pause().stop().destroy() }
+    }
     private fun expression(text: String, result: String) = GraphyBridge().build(
         CalculationSnapshot.create("basic", text, text, result, ExpressionEvaluator.evaluate(text)))
 

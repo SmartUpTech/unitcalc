@@ -36,6 +36,81 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class CalculationLayoutTest {
+    @Test public void converterBordersAlignAndLeaveSpaceBelowCategories() {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            for (CalculatorTheme theme : new CalculatorTheme[]{CalculatorThemes.PORCELAIN_WHITE, CalculatorThemes.GRAPHITE_BLACK}) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
+                        ViewGroup root = (ViewGroup) inflate(layout, scale);
+                        measure(root, 360, 460);
+                        assertKeys(root, true);
+                        for (int[] ids : new int[][]{{R.id.converter_source_section, R.id.fromUnit},
+                                {R.id.converter_target_section, R.id.toUnit}}) {
+                            ViewGroup row = root.findViewById(ids[0]);
+                            View amount = row.getChildAt(0);
+                            View selector = root.findViewById(ids[1] == R.id.fromUnit ? R.id.from_selector : R.id.to_selector);
+                            if (selector == null) selector = root.findViewById(ids[1]);
+                            assertNotNull("layout=" + layout + " amount=" + amount.getId() + " tag=" + amount.getTag(), amount.getBackground());
+                            assertTrue(amount.getPaddingRight() >= root.getResources().getDimensionPixelSize(R.dimen.converter_spacing));
+                            assertEquals(bounds(root, amount).top, bounds(root, selector).top);
+                            assertEquals(bounds(root, amount).bottom, bounds(root, selector).bottom);
+                        }
+                        assertTrue(bounds(root, root.findViewById(R.id.converter_source_section)).top
+                                - bounds(root, root.findViewById(R.id.category_selector)).bottom
+                                >= root.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing));
+                        View heading = root.findViewById(R.id.category_selector);
+                        ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) heading.getLayoutParams();
+                        int stripGap = root.getResources().getDimensionPixelSize(R.dimen.converter_spacing);
+                        assertTrue(margins.topMargin >= stripGap);
+                        assertTrue(margins.bottomMargin >= stripGap);
+                        if (heading instanceof com.google.android.material.tabs.TabLayout tabs && !tabs.isInlineLabel()) {
+                            View item = tabs.getTabAt(0).getCustomView();
+                            View icon = item.findViewById(R.id.converter_category_tab_icon);
+                            View label = item.findViewById(R.id.converter_category_tab_label);
+                            assertEquals(root.getResources().getDimensionPixelSize(R.dimen.converter_category_icon_label_gap),
+                                    label.getTop() - icon.getBottom());
+                            assertEquals(theme.equal(), ((TextView) label).getCurrentTextColor());
+                        }
+                    }
+                }
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
+        }
+    }
+
+    @Test public void converterModeSwitchKeepsPillSelectionAcrossThemes() {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            for (CalculatorTheme theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                View root = inflate(R.layout.pane_converter_convert, 1.3f);
+                com.google.android.material.button.MaterialButtonToggleGroup toggle = root.findViewById(R.id.converter_mode_toggle);
+                com.google.android.material.button.MaterialButton unit = root.findViewById(R.id.btn_unit_mode);
+                com.google.android.material.button.MaterialButton currency = root.findViewById(R.id.btn_currency_mode);
+                toggle.check(R.id.btn_unit_mode);
+                measure(root, 320, 500);
+                assertEquals(unit.getWidth(), currency.getWidth());
+                assertTrue(unit.getHeight() >= root.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
+                android.graphics.RectF segmentBounds = new android.graphics.RectF(0, 0, unit.getWidth(), unit.getHeight());
+                assertEquals((unit.getHeight() - 2 * root.getResources().getDimensionPixelSize(
+                        R.dimen.converter_mode_vertical_inset)) / 2f, unit.getShapeAppearanceModel()
+                        .getTopRightCornerSize().getCornerSize(segmentBounds), 0.1f);
+                assertTrue(androidx.core.graphics.ColorUtils.calculateContrast(
+                        unit.getCurrentTextColor(), theme.equal()) >= 4.5);
+                currency.performClick();
+                assertEquals(R.id.btn_currency_mode, toggle.getCheckedButtonId());
+                assertFalse(unit.isChecked());
+                assertTrue(currency.isChecked());
+                assertNotNull(toggle.getBackground());
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
+        }
+    }
+
     private static final int[] SCREENS = {R.layout.pane_calculator_calculate,
             R.layout.fragment_unit_converter, R.layout.fragment_currency_converter};
 
@@ -83,7 +158,8 @@ public class CalculationLayoutTest {
                 output.setText(value + ".123456789");
                 measure(root, 360, 460);
                 ViewGroup row = root.findViewById(R.id.converter_source_section);
-                assertEquals(90, row.getChildAt(1).getWidth());
+                assertEquals(90 + root.getResources().getDimensionPixelSize(R.dimen.converter_selector_extra_width),
+                        row.getChildAt(1).getWidth());
             }
             input.setText("99999");
             output.setText("30479695200000000");
@@ -117,6 +193,16 @@ public class CalculationLayoutTest {
                             <= bounds(root, converter.findViewById(R.id.toUnit)).left);
                     assertTrue(bounds(root, converter.findViewById(R.id.fromUnit)).right
                             <= bounds(root, converter.findViewById(R.id.reverse)).left);
+                    ViewGroup source = converter.findViewById(R.id.converter_source_section);
+                    View selector = converter.findViewById(R.id.from_selector);
+                    if (selector == null) selector = converter.findViewById(R.id.fromUnit);
+                    assertNotNull(source.getChildAt(0).getBackground());
+                    assertEquals(bounds(root, source.getChildAt(0)).top,
+                            bounds(root, selector).top);
+                    assertEquals(bounds(root, source.getChildAt(0)).bottom,
+                            bounds(root, selector).bottom);
+                    assertTrue(bounds(root, source).top - bounds(root, converter.findViewById(R.id.category_selector)).bottom
+                            >= converter.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing));
                 }
                 assertEquals("keypad parity " + size[0] + "x" + size[1] + " scale=" + scale,
                         bounds((ViewGroup) unit, unit.findViewById(R.id.keypad)),
@@ -140,7 +226,7 @@ public class CalculationLayoutTest {
                 View root = inflate(layout, 1f);
                 measure(root, size[0], size[1]);
                 CalculationViewport viewport = viewport(root);
-                assertEquals(label(layout, size), View.VISIBLE, viewport.getChildAt(0).getVisibility());
+                assertKeys(root, true);
                 assertFalse(label(layout, size), viewport.canScrollVertically(1));
                 assertFalse(viewport.canScrollVertically(-1));
                 assertKeys(root, true);
@@ -185,7 +271,10 @@ public class CalculationLayoutTest {
                         assertKeys(root, true);
                         assertInside((ViewGroup) root, root.findViewById(R.id.txtLastUpdateTime));
                         assertInside((ViewGroup) root, root.findViewById(R.id.txtRate));
-                        assertEquals(theme.mainText(), ((TextView) root.findViewById(R.id.txtRate)).getCurrentTextColor());
+                        assertEquals(theme.functions(), ((TextView) root.findViewById(R.id.txtRate)).getCurrentTextColor());
+                        assertEquals(theme.functions(), ((TextView) root.findViewById(R.id.inputSymbol)).getCurrentTextColor());
+                        assertEquals(theme.functions(), ((TextView) root.findViewById(R.id.outputSymbol)).getCurrentTextColor());
+                        assertEquals(theme.mainText(), ((TextView) root.findViewById(R.id.input)).getCurrentTextColor());
                     }
                 }
             }
@@ -236,7 +325,9 @@ public class CalculationLayoutTest {
                     {840, 700}, {600, 340}, {360, 460}}) {
                 measure(root, size[0], size[1]);
                 assertFalse(label(layout, size), viewport(root).canScrollVertically(1));
-                assertEquals(label(layout, size), View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
+                assertEquals(label(layout, size) + " controls=" + root.findViewById(R.id.calculation_controls).getMeasuredHeight()
+                        + " keypad=" + root.findViewById(R.id.keypad).getMeasuredHeight(),
+                        View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
                 assertKeys(root, true);
             }
         }
@@ -366,6 +457,8 @@ public class CalculationLayoutTest {
         }
         if (root.findViewById(R.id.fromUnit) instanceof Spinner) bindUnits(root, Conversion.LENGTH);
         if (root.findViewById(R.id.fromCurrencyISO) != null) {
+            ((TextView) root.findViewById(R.id.inputSymbol)).setText("د.إ");
+            ((TextView) root.findViewById(R.id.outputSymbol)).setText("₹");
             ((TextView) root.findViewById(R.id.fromCurrencyISO)).setText("USD");
             ((TextView) root.findViewById(R.id.toCurrencyISO)).setText("INR");
             ((TextView) root.findViewById(R.id.fromCurrency)).setText("United States Dollar");
@@ -387,8 +480,11 @@ public class CalculationLayoutTest {
         if (categories.getTabCount() == 0) {
             for (int id : Conversions.getInstance().getCategoryIds()) {
                 Conversion item = Conversions.getInstance().getById(id);
+                View custom = LayoutInflater.from(root.getContext()).inflate(R.layout.converter_category_tab, categories, false);
+                ((android.widget.ImageView) custom.findViewById(R.id.converter_category_tab_icon)).setImageResource(item.getImageResource());
+                ((TextView) custom.findViewById(R.id.converter_category_tab_label)).setText(item.getLabelResource());
                 categories.addTab(categories.newTab().setTag(id).setText(item.getLabelResource())
-                        .setIcon(item.getImageResource()), id == category);
+                        .setIcon(item.getImageResource()).setCustomView(custom), id == category);
             }
         }
         ((TextView) root.findViewById(R.id.unit_rate)).setText("1 m = 3.28084 ft");
@@ -410,7 +506,11 @@ public class CalculationLayoutTest {
         assertEquals("workspace must be operable at " + root.getWidth() + "x" + root.getHeight()
                         + " scale=" + root.getResources().getConfiguration().fontScale
                         + " controls=" + root.findViewById(R.id.calculation_controls).getMeasuredHeight()
-                        + " keypad=" + root.findViewById(R.id.keypad).getMeasuredHeight(),
+                        + " keypad=" + root.findViewById(R.id.keypad).getMeasuredHeight()
+                        + " amount=" + (root.findViewById(R.id.input) == null ? 0 : root.findViewById(R.id.input).getMeasuredHeight())
+                        + " heading=" + (root.findViewById(R.id.category_selector) == null ? 0 : root.findViewById(R.id.category_selector).getMeasuredHeight())
+                        + " symbol=" + (root.findViewById(R.id.inputSymbol) == null ? 0 : root.findViewById(R.id.inputSymbol).getMeasuredHeight())
+                        + " source=" + (root.findViewById(R.id.converter_source_section) == null ? 0 : root.findViewById(R.id.converter_source_section).getMeasuredHeight()),
                 View.VISIBLE, viewport(root).getChildAt(0).getVisibility());
         ViewGroup keys = root.findViewById(R.id.keypad);
         assertKeyChildren((ViewGroup) root, keys, inside);

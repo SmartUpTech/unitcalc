@@ -74,7 +74,8 @@ public final class CalculationLayout extends LinearLayout {
         }
         // Compact structural whitespace, never drawable/text padding inside controls.
         if (view == this || view == controls || view.getId() == R.id.converter_card
-                || view.getId() == R.id.category_selector || view.getId() == R.id.display_values) {
+                || view.getId() == R.id.category_selector || view.getId() == R.id.converter_target_section
+                || view.getId() == R.id.display_values) {
             spacing.add(new Spacing(view));
         }
         if (view instanceof LinearLayout && "calculation_section".equals(view.getTag())) {
@@ -123,6 +124,18 @@ public final class CalculationLayout extends LinearLayout {
         if (needed > viewportHeight) needed = measureRequired(widthMeasureSpec, minimumRow);
         if (needed > viewportHeight && controls instanceof ConverterControlsLayout converter && !sideBySide) {
             converter.setCompactHeading(true);
+            needed = measureRequired(widthMeasureSpec, minimumRow);
+        }
+        if (needed > viewportHeight && controls instanceof ConverterControlsLayout) {
+            // Keep a visible strip margin even in the smallest supported windows.
+            // Reclaim secondary gaps only after the regular arrangements fail.
+            View heading = findViewById(R.id.category_selector);
+            MarginLayoutParams margins = (MarginLayoutParams) heading.getLayoutParams();
+            margins.topMargin = margins.bottomMargin = dimension(R.dimen.converter_compact_row_spacing);
+            View card = findViewById(R.id.converter_card);
+            card.setPadding(card.getPaddingLeft(), 0, card.getPaddingRight(), 0);
+            MarginLayoutParams target = (MarginLayoutParams) findViewById(R.id.converter_target_section).getLayoutParams();
+            target.topMargin = dimension(R.dimen.converter_compact_row_spacing);
             needed = measureRequired(widthMeasureSpec, minimumRow);
         }
         if (needed > viewportHeight && minimumResultHeight > 0 && !sideBySide) {
@@ -313,11 +326,19 @@ public final class CalculationLayout extends LinearLayout {
             marginBottom = params instanceof MarginLayoutParams ? ((MarginLayoutParams) params).bottomMargin : 0;
         }
         void apply(boolean compact) {
-            view.setPadding(left, compact ? 0 : top, right, compact ? 0 : bottom);
+            int compactTop = view.getId() == R.id.converter_card
+                    ? view.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing) : 0;
+            view.setPadding(left, compact ? compactTop : top, right, compact ? 0 : bottom);
             if (view.getLayoutParams() instanceof MarginLayoutParams) {
                 MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
                 params.topMargin = compact ? 0 : marginTop;
                 params.bottomMargin = compact ? 0 : marginBottom;
+                if (view.getId() == R.id.converter_target_section) params.topMargin = marginTop;
+                if (view.getId() == R.id.category_selector) {
+                    int gap = view.getResources().getDimensionPixelSize(R.dimen.converter_spacing);
+                    params.topMargin = Math.max(params.topMargin, gap);
+                    params.bottomMargin = Math.max(params.bottomMargin, gap);
+                }
             }
         }
     }

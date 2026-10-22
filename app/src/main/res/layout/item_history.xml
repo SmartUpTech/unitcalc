@@ -1,72 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
-    android:paddingVertical="@dimen/spacing_12dp">
-
-    <LinearLayout
-        android:id="@+id/history_meta_column"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tv_history_calculator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/app_text"
-            android:maxWidth="112dp"
-            android:maxLines="2"
-            android:textColor="@color/screen_result_text"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_history_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/converter_mode_margin_bottom"
-            android:fontFamily="@font/app_text"
-            android:textColor="@color/history_section_text"
-            android:textSize="12sp" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_history_expression"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_12dp"
-        android:ellipsize="none"
-        android:fontFamily="@font/app_text"
-        android:gravity="end"
-        android:maxLines="2"
-        android:textColor="@color/history_section_text"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/history_meta_column"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_history_result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_12dp"
-        android:ellipsize="none"
-        android:fontFamily="@font/app_text"
-        android:gravity="end"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textColor="@color/screen_result_text"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/history_meta_column"
-        app:layout_constraintTop_toBottomOf="@id/tv_history_expression" />
-
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/selectableItemBackground" android:paddingVertical="@dimen/converter_spacing" android:clickable="true" android:focusable="true">
+    <TextView android:id="@+id/tv_history_calculator" style="@style/ConverterLabel" android:layout_width="0dp" android:layout_height="wrap_content" android:maxLines="1" android:ellipsize="end" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toStartOf="@id/history_item_more" app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton android:id="@+id/history_item_more" style="@style/ConverterIconButton" android:contentDescription="@string/history_more" android:src="@drawable/ic_history_more" app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+    <TextView android:id="@+id/tv_history_expression" style="@style/ConverterLabel" android:layout_width="0dp" android:layout_height="wrap_content" android:gravity="end" android:textSize="@dimen/converter_unit_text_size" android:layout_marginTop="@dimen/converter_small_spacing" android:maxLines="2" android:ellipsize="end" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toStartOf="@id/history_item_more" app:layout_constraintTop_toBottomOf="@id/tv_history_calculator" />
+    <androidx.constraintlayout.widget.Barrier android:id="@+id/history_content_bottom" android:layout_width="wrap_content" android:layout_height="wrap_content" app:barrierDirection="bottom" app:constraint_referenced_ids="tv_history_expression,history_item_more" />
+    <TextView android:id="@+id/tv_history_result" style="@style/ConverterSelectorText" android:layout_width="0dp" android:layout_height="wrap_content" android:gravity="end" android:textSize="@dimen/historyResultSize" android:includeFontPadding="false" android:maxLines="1" android:ellipsize="middle" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/history_content_bottom" />
+    <View android:id="@+id/history_row_divider" android:layout_width="0dp" android:layout_height="@dimen/converter_divider_height" android:layout_marginTop="@dimen/converter_spacing" app:layout_constraintTop_toBottomOf="@id/tv_history_result" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

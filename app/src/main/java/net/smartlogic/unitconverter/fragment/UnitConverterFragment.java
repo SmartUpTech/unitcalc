@@ -552,8 +552,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     private void bindCategoryTabs() {
         for (int id : conversions.getCategoryIds()) {
             Conversion category = conversions.getById(id);
+            View item = getLayoutInflater().inflate(R.layout.converter_category_tab, categorySelector, false);
+            ((android.widget.ImageView) item.findViewById(R.id.converter_category_tab_icon)).setImageResource(category.getImageResource());
+            ((TextView) item.findViewById(R.id.converter_category_tab_label)).setText(category.getLabelResource());
+            ThemeApplier.apply(item);
             categorySelector.addTab(categorySelector.newTab().setTag(id)
-                    .setText(category.getLabelResource()).setIcon(category.getImageResource()), false);
+                    .setText(category.getLabelResource()).setIcon(category.getImageResource())
+                    .setContentDescription(category.getLabelResource()).setCustomView(item), false);
         }
         categorySelector.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) {

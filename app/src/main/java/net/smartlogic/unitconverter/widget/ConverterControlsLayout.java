@@ -33,10 +33,22 @@ public final class ConverterControlsLayout extends LinearLayout {
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
         View header = getChildAt(0);
         View metadata = getChildAt(getChildCount() - 1);
-        // Both modes use identical font-aware heading/metadata allocations. Compact
-        // category tabs put icons beside labels instead of narrowing the strip.
+        // Keep the reference's stacked tabs normally. Only the last constrained
+        // viewport fallback puts icons beside labels to preserve usable key rows.
         if (header instanceof com.google.android.material.tabs.TabLayout tabs) {
             tabs.setInlineLabel(compactHeading);
+            for (int i = 0; i < tabs.getTabCount(); i++) {
+                View custom = tabs.getTabAt(i).getCustomView();
+                if (custom instanceof LinearLayout item) {
+                    item.setOrientation(compactHeading ? HORIZONTAL : VERTICAL);
+                    View iconView = item.findViewById(R.id.converter_category_tab_icon);
+                    if (iconView != null) {
+                        LayoutParams iconParams = (LayoutParams) iconView.getLayoutParams();
+                        iconParams.bottomMargin = compactHeading ? 0 : getResources().getDimensionPixelSize(R.dimen.converter_category_icon_label_gap);
+                        iconParams.setMarginEnd(compactHeading ? getResources().getDimensionPixelSize(R.dimen.converter_small_spacing) : 0);
+                    }
+                }
+            }
         }
         Paint status = measurementPaint;
         status.set(rate().getPaint());
@@ -47,12 +59,14 @@ public final class ConverterControlsLayout extends LinearLayout {
         status.setTextSize(getResources().getDimension(R.dimen.converter_category_text_size));
         metrics = status.getFontMetricsInt();
         int textHeight = metrics.bottom - metrics.top;
-        int padding = 2 * getResources().getDimensionPixelSize(R.dimen.converter_spacing);
+        int padding = 2 * getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
         int icon = getResources().getDimensionPixelSize(R.dimen.converter_flag_height);
         int contentHeight = compactHeading ? Math.max(icon, textHeight) + padding
-                : icon + textHeight + padding + getResources().getDimensionPixelSize(R.dimen.converter_spacing);
-        header.setMinimumHeight(Math.max(contentHeight, getResources().getDimensionPixelSize(compactHeading
-                ? R.dimen.converter_touch_target : R.dimen.converter_category_header_height)));
+                : icon + textHeight + padding + getResources().getDimensionPixelSize(R.dimen.converter_category_icon_label_gap);
+        int headerHeight = Math.max(contentHeight, getResources().getDimensionPixelSize(compactHeading
+                ? R.dimen.converter_touch_target : R.dimen.converter_category_header_height));
+        header.setMinimumHeight(headerHeight);
+        header.getLayoutParams().height = headerHeight;
         super.onMeasure(widthSpec, heightSpec);
     }
 }

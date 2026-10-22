@@ -1,34 +1,43 @@
 package net.smartlogic.unitconverter.helper;
 
+import android.app.Application;
+import net.smartlogic.unitconverter.R;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import java.util.Calendar;
 import java.util.Locale;
+import static org.junit.Assert.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 34)
 public class HistoryDateLabelsTest {
-
-    @Test
-    public void formatDayMonth_usesEnglishDayMonth() {
-        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-        calendar.clear();
-        calendar.set(2024, Calendar.SEPTEMBER, 2, 12, 0, 0);
-        assertEquals("2 Sep", HistoryDateLabels.formatDayMonth(calendar.getTimeInMillis()));
+    @Test public void datesUseLocaleAndIncludeOlderYear() {
+        Locale previous = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.FRANCE);
+            Calendar date = Calendar.getInstance();
+            date.clear();
+            date.set(2020, Calendar.SEPTEMBER, 2, 14, 34);
+            String section = HistoryDateLabels.sectionLabel(RuntimeEnvironment.getApplication(), date.getTimeInMillis());
+            assertTrue(section, section.contains("sept"));
+            assertTrue(section, section.contains("2020"));
+        } finally { Locale.setDefault(previous); }
     }
-
-    @Test
-    public void formatTime_usesShortLocaleTime() {
-        Calendar calendar = Calendar.getInstance(Locale.US);
-        calendar.clear();
-        calendar.set(2024, Calendar.SEPTEMBER, 2, 14, 34, 0);
-        String formatted = HistoryDateLabels.formatTime(calendar.getTimeInMillis(), Locale.US);
-        assertTrue(formatted.contains("2:34"));
+    @Test public void todayAndYesterdayHaveFriendlyLabels() {
+        Application app = RuntimeEnvironment.getApplication();
+        Calendar day = Calendar.getInstance();
+        assertEquals(app.getString(R.string.history_today), HistoryDateLabels.sectionLabel(app, day.getTimeInMillis()));
+        day.add(Calendar.DAY_OF_YEAR, -1);
+        assertEquals(app.getString(R.string.history_yesterday), HistoryDateLabels.sectionLabel(app, day.getTimeInMillis()));
     }
-
-    @Test
-    public void formatTime_emptyForMissingTimestamp() {
-        assertEquals("", HistoryDateLabels.formatTime(0L, Locale.US));
+    @Test public void timeUsesLocaleAndMissingTimeIsEmpty() {
+        Calendar date = Calendar.getInstance();
+        date.clear();
+        date.set(2024, Calendar.SEPTEMBER, 2, 14, 34);
+        assertTrue(HistoryDateLabels.formatTime(date.getTimeInMillis(), Locale.US).contains("2:34"));
+        assertEquals("", HistoryDateLabels.formatTime(0, Locale.US));
     }
 }

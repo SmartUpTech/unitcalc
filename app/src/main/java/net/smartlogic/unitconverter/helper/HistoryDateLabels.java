@@ -30,7 +30,9 @@ public final class HistoryDateLabels {
         if (isSameDay(then, yesterday)) {
             return context.getString(R.string.history_yesterday);
         }
-        return formatDayMonth(then.getTimeInMillis());
+        String skeleton = then.get(Calendar.YEAR) == today.get(Calendar.YEAR) ? "dMMM" : "dMMMy";
+        return new SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton),
+                Locale.getDefault()).format(then.getTime());
     }
 
     public static String formatTime(long epochMillis) {
@@ -45,7 +47,8 @@ public final class HistoryDateLabels {
     }
 
     static String formatDayMonth(long epochMillis) {
-        return new SimpleDateFormat("d MMM", Locale.ENGLISH).format(new java.util.Date(epochMillis));
+        return new SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), "dMMM"),
+                Locale.getDefault()).format(new java.util.Date(epochMillis));
     }
 
     private static boolean isSameDay(Calendar a, Calendar b) {

@@ -426,6 +426,7 @@
     <string name="converter_backspace">Delete last digit</string>
     <string name="converter_clear_input">Clear input</string>
     <string name="converter_clear_key" translatable="false">AC</string>
+    <string name="currency_country_code_symbol">%1$s · %2$s · %3$s</string>
     <string name="currency_country_code">%1$s · %2$s</string>
     <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
     <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
@@ -536,4 +537,29 @@
     <string name="calculator_sign_key" translatable="false">-/+</string>
     <string name="timer_preview_time" translatable="false">0:00</string>
     <string name="press_back_again_to_exit">Press back again to exit</string>
+    <string name="history_reuse_hint">Tap a calculation to reuse it. More options show full values.</string>
+    <string name="history_empty_description">Your calculations will appear here after you calculate a result.</string>
+    <string name="history_start">Start calculating</string>
+    <string name="history_more">Calculation options</string>
+    <string name="history_details">Full calculation</string>
+    <string name="history_copy_result">Copy result</string>
+    <string name="history_copy_calculation">Copy calculation</string>
+    <string name="history_view_full">View full calculation</string>
+    <string name="history_reuse">Reuse calculation</string>
+    <string name="history_open_tool">Open tool</string>
+    <string name="history_delete">Delete calculation</string>
+    <string name="history_clear_all">Clear all history</string>
+    <string name="history_clear_question">Clear all calculation history? This cannot be undone.</string>
+    <string name="history_deleted">Calculation deleted</string>
+    <string name="history_undo">Undo</string>
+    <string name="history_copied">Copied</string>
+    <string name="history_error">History could not be updated. Please try again.</string>
+    <string name="history_loading_error">History could not be loaded. Tap to retry.</string>
+    <string name="history_expression_label">Expression</string>
+    <string name="history_result_label">Result</string>
+    <string name="history_legacy_hint">This entry has no saved input details. Open the tool to start a new calculation.</string>
+    <string name="history_metadata">%1$s · %2$s</string>
+    <string name="history_retry">Retry</string>
+    <string name="history_back">Back to previous tool</string>
+    <string name="history_copy_content">Expression: %1$s\nResult: %2$s</string>
 </resources>

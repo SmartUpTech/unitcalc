@@ -29,6 +29,35 @@ import java.time.Duration
 @Config(application = Application::class, sdk = [34])
 @LooperMode(LooperMode.Mode.PAUSED)
 class MainBackNavigationTest {
+    @Test fun historyBackReturnsToConverterAndRestoresNavigation() {
+        val app = RuntimeEnvironment.getApplication()
+        Preferences.getInstance(app).preferences.edit().clear().commit()
+        ThemeManager.init(app)
+        AppConst.CURRENT_TAG = AppConst.TAG_CALC
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            activity.navigateToEntry(CalculatorCatalog.getById(CalculatorCatalog.ID_UNIT)!!)
+            shadowOf(Looper.getMainLooper()).idle()
+            val previousTag = AppConst.CURRENT_TAG
+            val menu = PopupMenu(activity, activity.findViewById<View>(android.R.id.content)).menu
+            activity.onCreateOptionsMenu(menu)
+            activity.onOptionsItemSelected(menu.findItem(R.id.menu_history))
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(AppConst.TAG_HISTORY, AppConst.CURRENT_TAG)
+            assertEquals("History", activity.findViewById<android.widget.TextView>(R.id.tv_app_bar_brand).text.toString())
+            assertEquals(View.GONE, activity.findViewById<View>(R.id.navigation).visibility)
+            val restoredActivity = controller.recreate().get()
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(AppConst.TAG_HISTORY, AppConst.CURRENT_TAG)
+            restoredActivity.onBackPressedDispatcher.onBackPressed()
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(previousTag, AppConst.CURRENT_TAG)
+            assertFalse(restoredActivity.isFinishing)
+            assertEquals(View.VISIBLE, restoredActivity.findViewById<View>(R.id.navigation).visibility)
+            assertEquals(restoredActivity.getString(R.string.app_bar_brand), restoredActivity.findViewById<android.widget.TextView>(R.id.tv_app_bar_brand).text.toString())
+        } finally { controller.pause().stop().destroy() }
+    }
     @Test fun rootBackRequiresSecondPressWithinTwoSeconds() {
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit().clear().commit()

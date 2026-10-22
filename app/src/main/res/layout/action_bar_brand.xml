@@ -7,8 +7,8 @@
 
     <ImageButton
         android:id="@+id/btn_nav_menu"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/converter_touch_target"
+        android:layout_height="@dimen/converter_touch_target"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/nav_open_drawer"
         android:padding="@dimen/converter_spacing"

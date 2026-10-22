@@ -20,6 +20,7 @@ import kotlinx.coroutines.*
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.export.GraphyExportFiles
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput
+import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.graphy.renderer.GraphyDocumentRenderer.Format
 import java.io.File
 import java.time.LocalDateTime
@@ -82,10 +83,15 @@ internal fun rememberGraphyDownload(output: GraphyOutput?, viewportWidth: Int): 
 internal fun GraphyDownloadButton(state: GraphyDownloadState) {
     var expanded by remember { mutableStateOf(false) }
     val preparing = stringResource(R.string.graphy_export_preparing)
+    val colors = GraphyThemeTokens.semanticColors
+    val disabledAlpha = LocalContext.current.resources.getFraction(R.fraction.graphy_disabled_content_alpha, 1, 1)
     Box {
-        IconButton(onClick = { expanded = true }, enabled = state.enabled) {
+        IconButton(onClick = { expanded = true }, enabled = state.enabled,
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = colors.secondaryText,
+                disabledContentColor = colors.secondaryText.copy(alpha = disabledAlpha))) {
             if (state.busy) CircularProgressIndicator(Modifier.size(dimensionResource(R.dimen.graphy_spacing_lg)).semantics { contentDescription = preparing },
-                strokeWidth = dimensionResource(R.dimen.graphy_node_border_stroke))
+                color = colors.secondaryText, strokeWidth = dimensionResource(R.dimen.graphy_node_border_stroke))
             else Icon(painterResource(R.drawable.ic_graphy_download), stringResource(R.string.graphy_download))
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {

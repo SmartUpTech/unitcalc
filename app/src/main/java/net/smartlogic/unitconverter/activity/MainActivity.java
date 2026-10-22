@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private long lastExitBackAt = -1L;
     private android.widget.Toast exitToast;
     private static final String SAVED_TAB_TAG = "main_tab_tag";
+    private static final String SAVED_HISTORY_RETURN = "history_return_tab";
+    private int historyReturnTab = R.id.calculator;
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -77,9 +79,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) historyReturnTab = savedInstanceState.getInt(SAVED_HISTORY_RETURN, R.id.calculator);
         // Root fallback: later drawer, Timer and workspace callbacks keep priority.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
+                if (activeFragment instanceof HistoryFragment) { closeHistory(); return; }
                 long now = android.os.SystemClock.elapsedRealtime();
                 if (lastExitBackAt >= 0 && now - lastExitBackAt <= EXIT_BACK_WINDOW_MS) {
                     if (exitToast != null) exitToast.cancel();
@@ -103,7 +107,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             View customView = actionBar.getCustomView();
             ImageButton menuButton = customView.findViewById(R.id.btn_nav_menu);
             if (menuButton != null) {
-                menuButton.setOnClickListener(v -> openDrawer());
+                menuButton.setOnClickListener(v -> {
+                    if (activeFragment instanceof HistoryFragment) closeHistory();
+                    else openDrawer();
+                });
             }
         }
         WindowChrome.apply(this);
@@ -382,7 +389,15 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void selectTab(int itemId) {
+        selectTab(itemId, true);
+    }
+
+    private void selectTab(int itemId, boolean openWorkspace) {
         lastExitBackAt = -1L;
+        if (itemId == R.id.history && !(activeFragment instanceof HistoryFragment)) {
+            int previous = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+            if (previous != R.id.history) historyReturnTab = previous;
+        }
         Fragment fragment = tabFragments.get(itemId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (timerVisible && timerFragment != null) {
@@ -407,10 +422,34 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         transaction.commit();
         activeFragment = fragment;
-        if (itemId == R.id.converter && fragment instanceof ConverterFragment) {
+        if (openWorkspace && itemId == R.id.converter && fragment instanceof ConverterFragment) {
             ((ConverterFragment) fragment).openConvertWorkspace();
         }
         updateCurrentTag(itemId);
+        updateHistoryChrome(itemId == R.id.history);
+    }
+
+    public void closeHistory() {
+        selectTab(historyReturnTab == R.id.history ? R.id.calculator : historyReturnTab, false);
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
+    private void updateHistoryChrome(boolean history) {
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(history ? View.GONE : View.VISIBLE);
+            MenuItem selected = bottomNavigationView.getMenu().findItem(resolveMenuIdForTag(AppConst.CURRENT_TAG));
+            if (!history && selected != null) selected.setChecked(true);
+        }
+        android.widget.TextView title = findViewById(R.id.tv_app_bar_brand);
+        ImageButton navigation = findViewById(R.id.btn_nav_menu);
+        if (title != null) title.setText(history ? R.string.nav_history : R.string.app_bar_brand);
+        if (navigation != null) {
+            navigation.setImageResource(history ? R.drawable.ic_settings_back : R.drawable.ic_menu);
+            navigation.setContentDescription(getString(history ? R.string.history_back : R.string.nav_open_drawer));
+        }
+        WindowChrome.apply(this);
+        invalidateOptionsMenu();
     }
 
     @NonNull
@@ -557,9 +596,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @Override
     public boolean onPrepareOptionsMenu(@NonNull Menu menu) {
+        boolean history = activeFragment instanceof HistoryFragment;
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
-            item.setVisible(item.getItemId() == R.id.menu_history);
+            item.setVisible(item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
+            if (item.getItemId() == R.id.menu_clear_history) item.setEnabled(history && ((HistoryFragment) activeFragment).hasHistory());
             if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().functions());
         }
         // Keep consent controls reachable from the drawer with a History-only app bar.
@@ -596,6 +637,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.menu_clear_history && activeFragment instanceof HistoryFragment history) {
+            history.showClearHistoryConfirmation();
+            return true;
+        }
         if (id == R.id.menu_history) {
             selectTab(R.id.history);
             return true;
@@ -653,6 +698,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(SAVED_TAB_TAG, AppConst.CURRENT_TAG);
+        outState.putInt(SAVED_HISTORY_RETURN, historyReturnTab);
         super.onSaveInstanceState(outState);
     }
 }

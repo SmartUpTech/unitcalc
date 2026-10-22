@@ -28,6 +28,7 @@
                     android:minHeight="@dimen/converter_touch_target"
                     android:layout_marginHorizontal="@dimen/converter_card_margin"
                     android:layout_marginTop="@dimen/converter_spacing"
+                    android:layout_marginBottom="@dimen/converter_spacing"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
                     <TextView
@@ -47,7 +48,8 @@
                     android:id="@+id/converter_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:layout_marginStart="@dimen/converter_card_margin"
+                    android:layout_marginEnd="@dimen/converter_swap_end_margin"
                     android:paddingVertical="@dimen/converter_spacing">
                     <net.smartlogic.unitconverter.widget.ConverterValueRow
                         android:layout_width="0dp"
@@ -61,16 +63,36 @@
                         app:layout_constraintTop_toTopOf="parent"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/converter_row_height">
-                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
-                            android:id="@+id/input"
-                            style="@style/ConverterValue"
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_input_amount" android:hint="@string/zero"
-                            android:maxLength="12"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="right|center_vertical" />
+                            android:baselineAligned="false"
+                            android:tag="converter_amount"
+                            android:paddingHorizontal="@dimen/converter_spacing"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:id="@+id/inputSymbol"
+                                style="@style/ConverterSelectorText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_small_spacing"
+                                android:textSize="@dimen/converter_currency_symbol_size"
+                                android:singleLine="true"
+                                android:includeFontPadding="false"
+                                android:importantForAccessibility="no" />
+                            <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                                android:id="@+id/input"
+                                style="@style/ConverterValue"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="@string/converter_input_amount" android:hint="@string/zero"
+                                android:maxLength="12"
+                                android:layout_weight="1"
+                                android:gravity="right|center_vertical" />
+                        </LinearLayout>
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -89,7 +111,7 @@
                             <RelativeLayout
                                 android:id="@+id/fromUnit"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:minHeight="@dimen/converter_touch_target"
                                 android:paddingVertical="@dimen/converter_small_spacing"
@@ -165,23 +187,44 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/spacing_0dp"
                         android:id="@+id/converter_target_section"
+                        android:layout_marginTop="@dimen/converter_small_spacing"
                         android:tag="calculation_section"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/reverse_container"
                         app:layout_constraintTop_toBottomOf="@id/converter_source_section"
                         android:gravity="center_vertical"
                         android:minHeight="@dimen/converter_row_height">
-                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
-                            android:id="@+id/output"
-                            style="@style/ConverterValue"
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/converter_output_amount"
-                            android:focusable="false"
-                            android:textIsSelectable="true"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/converter_spacing"
-                            android:gravity="right|center_vertical" />
+                            android:baselineAligned="false"
+                            android:tag="converter_amount"
+                            android:paddingHorizontal="@dimen/converter_spacing"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:id="@+id/outputSymbol"
+                                style="@style/ConverterSelectorText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_small_spacing"
+                                android:textSize="@dimen/converter_currency_symbol_size"
+                                android:singleLine="true"
+                                android:includeFontPadding="false"
+                                android:importantForAccessibility="no" />
+                            <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                                android:id="@+id/output"
+                                style="@style/ConverterValue"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="@string/converter_output_amount"
+                                android:focusable="false"
+                                android:textIsSelectable="true"
+                                android:layout_weight="1"
+                                android:gravity="right|center_vertical" />
+                        </LinearLayout>
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -200,7 +243,7 @@
                             <RelativeLayout
                                 android:id="@+id/toUnit"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:minHeight="@dimen/converter_touch_target"
                                 android:paddingVertical="@dimen/converter_small_spacing"
@@ -263,16 +306,6 @@
                         </LinearLayout>
                     </net.smartlogic.unitconverter.widget.ConverterValueRow>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                <TextView
-                    android:id="@+id/inputSymbol"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone" />
-                <TextView
-                    android:id="@+id/outputSymbol"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -44,9 +44,16 @@
     <dimen name="converter_chip_height">36dp</dimen>
     <dimen name="converter_chip_radius">18dp</dimen>
     <dimen name="converter_chip_horizontal_padding">13dp</dimen>
+    <dimen name="converter_mode_height">41dp</dimen>
+    <dimen name="converter_mode_vertical_inset">3.5dp</dimen>
+    <dimen name="converter_mode_text_size">16sp</dimen>
+    <dimen name="converter_currency_symbol_size">20sp</dimen>
+    <dimen name="converter_category_min_width">56dp</dimen>
     <dimen name="converter_mode_margin_top">6dp</dimen>
     <dimen name="converter_mode_margin_bottom">2dp</dimen>
     <dimen name="converter_selector_radius">8dp</dimen>
+    <dimen name="converter_swap_end_margin">6dp</dimen>
+    <dimen name="converter_selector_extra_width">10dp</dimen>
     <!-- Minimum useful width per pane before moving controls beside the keypad. -->
     <dimen name="calculation_pane_min_width">280dp</dimen>
     <!-- Shared spacing extracted from existing layouts; geometry is preserved. -->
@@ -62,6 +69,8 @@
     <dimen name="timer_icon_medium">24dp</dimen>
     <dimen name="timer_icon_small">18dp</dimen>
     <dimen name="converter_category_indicator_height">2dp</dimen>
-    <dimen name="converter_category_header_height">72dp</dimen>
+    <dimen name="converter_category_header_height">64dp</dimen>
     <dimen name="converter_category_text_size">13sp</dimen>
+    <dimen name="converter_category_icon_label_gap">2dp</dimen>
+    <dimen name="converter_compact_row_spacing">2dp</dimen>
 </resources>

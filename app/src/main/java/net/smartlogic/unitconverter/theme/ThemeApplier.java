@@ -35,28 +35,29 @@ public final class ThemeApplier {
     };
     private static final int[] ICON_IDS = {
             R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
-            R.id.btn_clear_history, R.id.refresh, R.id.catalog_icon,
+            R.id.refresh, R.id.catalog_icon,
             R.id.btn_favorite, R.id.fromChevron,
             R.id.toChevron
     };
     private static final int[] MAIN_TEXT_IDS = {
-            R.id.result, R.id.input, R.id.output, R.id.inputSymbol, R.id.outputSymbol,
-            R.id.txtRate, R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
+            R.id.result, R.id.input, R.id.output,
+            R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
             R.id.tv_history_result, R.id.textView,
             R.id.fromCurrency, R.id.toCurrency,
-            R.id.catalog_title, R.id.tv_history_calculator, R.id.tv_history_section,
-            R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message
+            R.id.catalog_title, R.id.tv_history_section,
+            R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message,
+            R.id.tv_empty_history, R.id.history_start
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
             R.id.tv_choice_value, R.id.tv_info_value, R.id.tv_history_expression,
-            R.id.tv_empty_history, R.id.txtLastUpdateTime, R.id.tv_history_time,
+            R.id.txtLastUpdateTime, R.id.tv_history_time, R.id.tv_history_calculator,
             R.id.converter_from_label, R.id.converter_to_label,
-            R.id.unit_rate
+            R.id.unit_rate, R.id.txtRate, R.id.inputSymbol, R.id.outputSymbol,
+            R.id.history_reuse_hint, R.id.history_empty_description, R.id.history_legacy_hint
     };
     private static final int[] CLEAR_BACKGROUND_IDS = {
-            R.id.converter_card, R.id.reverse_container,
-            R.id.converter_mode_toggle
+            R.id.converter_card, R.id.reverse_container
     };
 
     private ThemeApplier() {
@@ -143,6 +144,14 @@ public final class ThemeApplier {
         if (id == R.id.converter_divider) {
             view.setBackgroundColor(withAlpha(theme.functions(), 0x33));
         }
+        if (id == R.id.history_row_divider) view.setBackgroundColor(withAlpha(theme.functions(), 0x26));
+        if ("history_secondary".equals(view.getTag()) && view instanceof TextView tv) tv.setTextColor(theme.functions());
+        if (id == R.id.history_start && view instanceof com.google.android.material.button.MaterialButton button) {
+            button.setRippleColor(ColorStateList.valueOf(withAlpha(theme.mainText(), 0x22)));
+        }
+        if (id == R.id.history_loading && view instanceof android.widget.ProgressBar progress) {
+            progress.setIndeterminateTintList(ColorStateList.valueOf(theme.functions()));
+        }
         if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
                 && view instanceof com.google.android.material.chip.Chip chip) {
             int[][] states = {{android.R.attr.state_checked}, {}};
@@ -156,19 +165,33 @@ public final class ThemeApplier {
         if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
                 && view instanceof com.google.android.material.button.MaterialButton button) {
             int[][] states = {{android.R.attr.state_checked}, {}};
+            int selectedText = androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, theme.equal())
+                    >= androidx.core.graphics.ColorUtils.calculateContrast(Color.BLACK, theme.equal())
+                    ? Color.WHITE : Color.BLACK;
             button.setTextColor(new ColorStateList(states,
-                    new int[]{theme.mainText(), theme.functions()}));
+                    new int[]{selectedText, theme.mainText()}));
             button.setBackgroundTintList(new ColorStateList(states,
-                    new int[]{androidx.core.graphics.ColorUtils.compositeColors(
-                            withAlpha(theme.functions(), 0x26), theme.background()), theme.background()}));
-            button.setStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x88)));
+                    new int[]{theme.equal(), Color.TRANSPARENT}));
+            button.setStrokeWidth(0);
         }
-        if ("converter_selector".equals(view.getTag())) {
+        if (id == R.id.converter_mode_toggle) {
+            GradientDrawable track = new GradientDrawable();
+            track.setColor(androidx.core.graphics.ColorUtils.compositeColors(
+                    withAlpha(theme.functions(), 0x18), theme.background()));
+            track.setCornerRadius(view.getResources().getDimension(R.dimen.converter_mode_height));
+            int inset = view.getResources().getDimensionPixelSize(R.dimen.converter_mode_vertical_inset);
+            view.setBackground(new android.graphics.drawable.InsetDrawable(track, 0, inset, 0, inset));
+            view.setPadding(0, 0, 0, 0);
+        }
+        if ("converter_selector".equals(view.getTag()) || "converter_amount".equals(view.getTag())) {
+            int left = view.getPaddingLeft(), top = view.getPaddingTop();
+            int right = view.getPaddingRight(), bottom = view.getPaddingBottom();
             GradientDrawable outline = roundedFill(Color.TRANSPARENT,
                     view.getResources().getDimension(R.dimen.converter_selector_radius));
             outline.setStroke(view.getResources().getDimensionPixelSize(R.dimen.converter_divider_height),
                     withAlpha(theme.functions(), 0x88));
             view.setBackground(outline);
+            view.setPadding(left, top, right, bottom);
         }
 
         boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;
@@ -199,6 +222,15 @@ public final class ThemeApplier {
 
         if (contains(ICON_IDS, id) && view instanceof ImageView iv) {
             ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.mainText()));
+        }
+        if (id == R.id.history_item_more && view instanceof ImageView iv) {
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.functions()));
+        }
+        if (id == R.id.converter_category_tab_icon && view instanceof ImageView iv) {
+            ImageViewCompat.setImageTintList(iv, navigationTint(theme));
+        }
+        if (id == R.id.converter_category_tab_label && view instanceof TextView tv) {
+            tv.setTextColor(navigationTint(theme));
         }
 
         if (view instanceof ViewGroup group) {

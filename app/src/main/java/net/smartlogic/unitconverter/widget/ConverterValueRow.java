@@ -6,9 +6,12 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import net.smartlogic.unitconverter.R;
 
-/** Reserve a stable quarter of the tool viewport for the selected unit/currency. */
+/** Reserve a stable quarter of the viewport plus the space reclaimed beside swap. */
 public final class ConverterValueRow extends LinearLayout {
-    public ConverterValueRow(Context context, AttributeSet attrs) { super(context, attrs); }
+    public ConverterValueRow(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setBaselineAligned(false);
+    }
 
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
         int available = MeasureSpec.getSize(widthSpec) - getPaddingLeft() - getPaddingRight();
@@ -23,10 +26,13 @@ public final class ConverterValueRow extends LinearLayout {
         }
         if (screenWidth == 0) screenWidth = getResources().getDisplayMetrics().widthPixels;
         picker.width = Math.round(screenWidth * getResources().getFraction(
-                R.fraction.converter_selector_screen_width, 1, 1));
+                R.fraction.converter_selector_screen_width, 1, 1))
+                + getResources().getDimensionPixelSize(R.dimen.converter_selector_extra_width);
         amount.width = Math.max(0, available - picker.width - amount.leftMargin - amount.rightMargin);
         picker.weight = 0;
         amount.weight = 0;
+        // Both bordered fields share the tallest value/selector's measured row.
+        amount.height = picker.height = LayoutParams.MATCH_PARENT;
         super.onMeasure(widthSpec, heightSpec);
     }
 }

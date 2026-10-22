@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.google.android.material.button.MaterialButtonToggleGroup
+    <net.smartlogic.unitconverter.widget.ConverterModeToggleGroup
         android:id="@+id/converter_mode_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:id="@+id/btn_currency_mode"
             style="@style/ConverterModeSegment"
             android:text="@string/currency_converter" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+    </net.smartlogic.unitconverter.widget.ConverterModeToggleGroup>
     <FrameLayout
         android:id="@+id/converter_container"
         android:layout_width="match_parent"

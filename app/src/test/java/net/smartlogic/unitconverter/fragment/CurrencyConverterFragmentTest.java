@@ -30,6 +30,7 @@ public class CurrencyConverterFragmentTest {
         java.util.Set<String> countries = new java.util.HashSet<>();
         java.util.Set<String> codes = new java.util.HashSet<>();
         for (Currency currency : currencies) {
+            assertFalse("Missing symbol: " + currency.getCurrencyISOCode(), currency.getCurrencySymbol().isEmpty());
             assertTrue("Duplicate country: " + currency.getCountry(), countries.add(currency.getCountry()));
             codes.add(currency.getCurrencyISOCode());
             assertNotNull(RuntimeEnvironment.getApplication().getDrawable(currency.getFlagImageResource()));
@@ -103,6 +104,11 @@ public class CurrencyConverterFragmentTest {
         EditText output = fragment.requireView().findViewById(R.id.output);
         input.setText("2");
         assertEquals("160", output.getText().toString());
+        assertEquals("$", ((TextView) fragment.requireView().findViewById(R.id.inputSymbol)).getText().toString());
+        assertEquals("₹", ((TextView) fragment.requireView().findViewById(R.id.outputSymbol)).getText().toString());
+        assertEquals(android.view.View.VISIBLE, fragment.requireView().findViewById(R.id.inputSymbol).getVisibility());
+        assertTrue(fragment.requireView().findViewById(R.id.inputSymbol).getParent()
+                == input.getParent());
         fragment.requireView().findViewById(R.id.minus).performClick();
         assertEquals("-2", input.getText().toString());
         assertEquals("-160", output.getText().toString());
@@ -128,6 +134,7 @@ public class CurrencyConverterFragmentTest {
         activity.getSupportFragmentManager().beginTransaction().detach(fragment).commitNow();
         activity.getSupportFragmentManager().beginTransaction().attach(fragment).commitNow();
         assertEquals("EUR", ((TextView) fragment.requireView().findViewById(R.id.toCurrencyISO)).getText().toString());
+        assertEquals("€", ((TextView) fragment.requireView().findViewById(R.id.outputSymbol)).getText().toString());
         assertEquals("", ((EditText) fragment.requireView().findViewById(R.id.output)).getText().toString());
         controller.pause().stop().destroy();
     }

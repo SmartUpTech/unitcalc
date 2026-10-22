@@ -110,13 +110,13 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         currencies.add(new Currency("Philippine peso", "PHP", "Philippines", "₱", R.drawable.ph));
         currencies.add(new Currency("Polish złoty", "PLN", "Poland", "zł", R.drawable.pl));
         currencies.add(new Currency("Romanian leu", "RON", "Romania", "lei", R.drawable.ro));
-        currencies.add(new Currency("Russian ruble", "RUB", "Russia", "", R.drawable.ru));
+        currencies.add(new Currency("Russian ruble", "RUB", "Russia", "₽", R.drawable.ru));
         currencies.add(new Currency("Singapore dollar", "SGD", "Singapore", "$", R.drawable.sg));
         currencies.add(new Currency("South African rand", "ZAR", "South Africa", "R", R.drawable.za));
         currencies.add(new Currency("Swedish krona", "SEK", "Sweden", "kr", R.drawable.se));
         currencies.add(new Currency("Swiss franc", "CHF", "Switzerland", "Fr", R.drawable.ch));
         currencies.add(new Currency("Thai baht", "THB", "Thailand", "฿", R.drawable.th));
-        currencies.add(new Currency("Turkish lira", "TRY", "Turkey", "", R.drawable.tr));
+        currencies.add(new Currency("Turkish lira", "TRY", "Turkey", "₺", R.drawable.tr));
         currencies.add(new Currency("British pound", "GBP", "United Kingdom", "£", R.drawable.gb));
         currencies.add(new Currency("US dollar", "USD", "United States", "$", R.drawable.us));
         currencies.add(new Currency("Euro", "EUR", "Germany", "€", R.drawable.de));
@@ -198,7 +198,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         for (int i = 0; i < currencies.size(); i++) {
             Currency currency = currencies.get(i);
             labels.add(currency.getCurrencyName());
-            details.add(getString(R.string.currency_country_code, currency.getCountry(), currency.getCurrencyISOCode()));
+            details.add(getString(R.string.currency_country_code_symbol, currency.getCountry(), currency.getCurrencyISOCode(), currency.getCurrencySymbol().isEmpty() ? currency.getCurrencyISOCode() : currency.getCurrencySymbol()));
             keywords.add(currency.getCountry() + " " + currency.getCurrencySymbol());
             flags[i] = currency.getFlagImageResource();
         }

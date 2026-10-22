@@ -1,63 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/history_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/screen_background">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/theme_swatch_color_size"
-            android:paddingVertical="@dimen/spacing_12dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/nav_history"
-                android:textColor="@color/screen_result_text"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btn_clear_history"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/clear_history"
-                android:src="@drawable/ic_delete"
-                app:tint="@color/colorNewGrey" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_empty_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/converter_category_icon_size"
-            android:text="@string/no_history"
-            android:textColor="@color/colorNewGrey"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_history"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/theme_swatch_color_size"
-            android:paddingBottom="@dimen/theme_swatch_color_size" />
-
+    android:id="@+id/history_root" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+        <TextView android:id="@+id/history_reuse_hint" style="@style/ConverterLabel"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/converter_card_margin" android:paddingVertical="@dimen/converter_spacing"
+            android:text="@string/history_reuse_hint" />
+        <ProgressBar android:id="@+id/history_loading" style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent" android:layout_height="@dimen/converter_category_indicator_height"
+            android:indeterminate="true" android:visibility="invisible" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_history"
+                android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/converter_card_margin" android:paddingBottom="@dimen/converter_card_margin" />
+            <LinearLayout android:id="@+id/history_empty_group" android:layout_width="match_parent" android:layout_height="match_parent"
+                android:padding="@dimen/converter_card_margin" android:orientation="vertical" android:gravity="center" android:visibility="gone">
+                <TextView android:id="@+id/tv_empty_history" style="@style/ConverterSelectorText"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="@dimen/h2"
+                    android:text="@string/no_history" />
+                <TextView android:id="@+id/history_empty_description" style="@style/ConverterLabel"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center"
+                    android:layout_marginVertical="@dimen/converter_spacing" android:text="@string/history_empty_description" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/history_start"
+                    style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:minHeight="@dimen/converter_touch_target"
+                    android:textAllCaps="false" android:text="@string/history_start" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    // Shared ordering keeps a pending delete ahead of Undo across recreation.
+    private static final java.util.concurrent.ExecutorService HISTORY_IO = java.util.concurrent.Executors.newSingleThreadExecutor();
+    public static void executeHistoryWork(Runnable task) { HISTORY_IO.execute(task); }
 
     private static final String DATABASE_NAME = "UnitCalc.db";
     private static final int DATABASE_VERSION = 3;
@@ -65,10 +68,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<CalculationHistoryItem> getAllHistory() {
+        return getHistoryPage(Long.MAX_VALUE, Integer.MAX_VALUE);
+    }
+
+    public List<CalculationHistoryItem> getHistoryPage(long beforeId, int limit) {
         List<CalculationHistoryItem> historyList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + COLUMN_ID + " DESC";
+        if (limit <= 0) return historyList;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        try (Cursor cursor = db.query(TABLE_HISTORY, null, COLUMN_ID + " < ?",
+                new String[]{Long.toString(beforeId)}, null, null, COLUMN_ID + " DESC", Integer.toString(limit))) {
 
         if (cursor.moveToFirst()) {
             do {
@@ -88,15 +96,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             cursor.getString(expressionIndex),
                             cursor.getString(resultIndex),
                             createdAt,
-                            calculatorId
+                            calculatorId,
+                            cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))
                     );
                     historyList.add(item);
                 }
             } while (cursor.moveToNext());
         }
-        cursor.close();
-        db.close();
+        } finally { db.close(); }
         return historyList;
+    }
+
+    public boolean deleteHistoryItem(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        try { return db.delete(TABLE_HISTORY, COLUMN_ID + " = ?", new String[]{Long.toString(id)}) == 1; }
+        finally { db.close(); }
+    }
+
+    /** Undo restores the original identity and order, without replacing newer records. */
+    public boolean restoreHistoryItem(@NonNull CalculationHistoryItem item) {
+        if (item.id() < 0) return false;
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, item.id());
+        values.put(COLUMN_EXPRESSION, item.expression());
+        values.put(COLUMN_RESULT, item.result());
+        values.put(COLUMN_CREATED_AT, item.createdAt());
+        values.put(COLUMN_CALCULATOR_ID, item.calculatorId());
+        SQLiteDatabase db = getWritableDatabase();
+        try { return db.insertWithOnConflict(TABLE_HISTORY, null, values, SQLiteDatabase.CONFLICT_IGNORE) != -1; }
+        finally { db.close(); }
     }
 
     public void clearHistory() {
