@@ -22,6 +22,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.android.material.button.MaterialButton;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.utils.Utils;
+import android.util.Log;
 import net.smartlogic.unitconverter.activity.MainActivity;
 import net.smartlogic.unitconverter.helper.AdMobManager;
 import net.smartlogic.unitconverter.theme.CalculatorTheme;
@@ -115,23 +117,53 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
     }
 
     private void createWebView() {
+        if (root == null) return;
+        main.removeCallbacks(timeout);
         if (webView != null) {
-            if (GamesConfig.isTrustedUrl(webView.getUrl())) lastUrl = webView.getUrl();
-            ((ViewGroup) webView.getParent()).removeView(webView);
-            webView.dispose();
+            try {
+                String url = webView.getUrl();
+                if (GamesConfig.isTrustedUrl(url)) lastUrl = url;
+            } catch (RuntimeException | LinkageError error) {
+                Log.w("GamesFragment", "Unable to read games route", error);
+            }
         }
+        releaseWebView();
         documentGeneration++;
         ready = false;
         failed = false;
         configured = null;
         bridge.reset();
-        webView = new GamesWebView(requireContext(), this);
-        FrameLayout container = root.findViewById(R.id.games_web_container);
-        container.addView(webView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         applyTheme();
+        if (!new Utils().isNetworkAvailable(requireContext())) {
+            showError(R.string.games_offline_message);
+            return;
+        }
         showLoading();
-        webView.loadGames(lastUrl);
-        if (!isPlayingSurfaceVisible()) webView.onPause();
+        try {
+            webView = new GamesWebView(requireContext(), this);
+            FrameLayout container = root.findViewById(R.id.games_web_container);
+            container.addView(webView, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            applyTheme();
+            webView.loadGames(lastUrl);
+            if (!isPlayingSurfaceVisible()) webView.onPause();
+        } catch (RuntimeException | LinkageError error) {
+            Log.e("GamesFragment", "Unable to open games WebView", error);
+            releaseWebView();
+            showError(R.string.games_load_error);
+        }
+    }
+
+    private void releaseWebView() {
+        GamesWebView target = webView;
+        webView = null;
+        if (target == null) return;
+        try {
+            if (target.getParent() instanceof ViewGroup parent) parent.removeView(target);
+            target.dispose();
+        } catch (RuntimeException | LinkageError error) {
+            Log.w("GamesFragment", "Unable to dispose games WebView", error);
+        }
     }
 
     @Override public void onDocumentStarted() {
@@ -162,8 +194,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                 saveCompletion(event);
                 break;
             case "onError":
-                if ("INVALID_HOST".equals(event.errorCode())) showError(R.string.games_load_error);
-                // Other web errors use the shared themed web retry UI.
+                showError(R.string.games_load_error);
                 break;
             default: break;
         }
@@ -195,7 +226,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                 bridge.configure(date);
                 configuredDate = date;
                 target.configure(config, accepted -> {
-                    if (root == null || target != webView || page != documentGeneration || request != configurationGeneration) return;
+                    if (root == null || failed || target != webView || page != documentGeneration || request != configurationGeneration) return;
                     if (!accepted) { showError(R.string.games_load_error); return; }
                     if (!date.equals(LocalDate.now().toString()) || !zone.equals(ZoneId.systemDefault().getId())) {
                         configureIfChanged();
@@ -276,11 +307,17 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         if (root == null) return;
         failed = true;
         main.removeCallbacks(timeout);
-        if (webView != null) { webView.stopLoading(); webView.setVisibility(View.INVISIBLE); }
+        if (webView != null) {
+            webView.setVisibility(View.INVISIBLE);
+            try { webView.stopLoading(); }
+            catch (RuntimeException | LinkageError error) { releaseWebView(); }
+        }
         status.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
         retry.setVisibility(View.VISIBLE);
-        statusText.setText(messageRes);
+        statusText.setText(messageRes == R.string.games_load_error
+                && !new Utils().isNetworkAvailable(requireContext())
+                ? R.string.games_offline_message : messageRes);
     }
 
     @Override public void onFailure(int messageRes) { showError(messageRes); }
@@ -288,11 +325,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
     @Override public void onRouteChanged() { navigationGeneration++; }
 
     @Override public void onRendererGone() {
-        if (webView != null) {
-            ((ViewGroup) webView.getParent()).removeView(webView);
-            webView.dispose();
-            webView = null;
-        }
+        releaseWebView();
         documentGeneration++;
         showError(R.string.games_load_error);
     }
@@ -300,7 +333,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
     @Override public void onPause() {
         main.removeCallbacks(dateCheck);
         main.removeCallbacks(timeout);
-        if (webView != null) webView.onPause();
+        setWebViewResumed(false);
         super.onPause();
     }
 
@@ -321,12 +354,31 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         main.removeCallbacks(timeout);
         if (isPlayingSurfaceVisible()) {
             if (configured == null && !failed) main.postDelayed(timeout, GamesConfig.LOAD_TIMEOUT_MS);
-            if (webView != null) webView.onResume();
+            setWebViewResumed(true);
             configureIfChanged();
             scheduleDateCheck(dateCheck);
-            AdMobManager.getInstance(requireContext()).prepareGamesAds(requireActivity(), this::isPlayingSurfaceVisible,
-                    () -> { if (isAdded()) requireActivity().invalidateOptionsMenu(); });
-        } else if (webView != null) webView.onPause();
+            if (!failed) {
+                try {
+                    AdMobManager.getInstance(requireContext()).prepareGamesAds(requireActivity(), this::isPlayingSurfaceVisible,
+                            () -> { if (isAdded()) requireActivity().invalidateOptionsMenu(); });
+                } catch (RuntimeException | LinkageError error) {
+                    Log.e("GamesFragment", "Unable to prepare games", error);
+                    showError(R.string.games_load_error);
+                }
+            }
+        } else setWebViewResumed(false);
+    }
+
+    private void setWebViewResumed(boolean resumed) {
+        if (webView == null) return;
+        try {
+            if (resumed) webView.onResume();
+            else webView.onPause();
+        } catch (RuntimeException | LinkageError error) {
+            Log.e("GamesFragment", "Unable to update games WebView lifecycle", error);
+            releaseWebView();
+            showError(R.string.games_load_error);
+        }
     }
 
     public boolean isPrivacyOptionsRequired() {
@@ -348,11 +400,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         main.removeCallbacks(timeout);
         main.removeCallbacks(dateCheck);
         ThemeManager.removeListener(themeListener);
-        if (webView != null) {
-            ((ViewGroup) webView.getParent()).removeView(webView);
-            webView.dispose();
-            webView = null;
-        }
+        releaseWebView();
         root = null;
         status = null;
         statusText = null;
