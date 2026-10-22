@@ -81,6 +81,30 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 
 ## EXPANDED UNIT REGISTRY
 
+### Currency country coverage (2026-10-22)
+
+- CurrencyConverterFragment defines 100 country/region entries representing 98 distinct
+  Frankfurter v2 currency codes. Hong Kong is retained for compatibility. Bulgaria, Croatia
+  and Germany share EUR; country names in the searchable picker distinguish these entries.
+- Existing selection positions are preserved. Former BGN and HRK entries now select EUR
+  for Bulgaria and Croatia. The former generic EU entry represents Germany/EUR. New
+  entries are appended; do not sort this list without migrating persisted preference indices.
+- Flags use direct drawable references so missing resources fail compilation and release
+  shrinking retains them. Croatia uses hr (the previous cr reference was Costa Rica), and
+  Germany uses de in place of the generic eu flag. No flag image files were modified.
+  Dominican Republic was excluded because a do flag resource is absent; Brunei is included.
+- All 98 codes were checked against https://api.frankfurter.dev/v2/rates?base=USD.
+  Cached/offline rates remain subject to availability; no fallback rates are fabricated.
+  Calculation precision, rate loading and refresh behavior are unchanged.
+- Validation: all three CurrencyConverterFragmentTest cases passed, including drawable
+  resolution for every entry, legacy selection positions, AED cross-rates, identity,
+  missing-rate handling and selection restoration. The currency-filtered run passed
+  11 of 12 tests; unchanged CurrencyDecimalStoreTest fails because JSONArray is not
+  mocked. An unchanged GamesFragmentTest compile error required a temporary Gradle
+  init-script exclusion for this run. Production sources compiled with the build cache
+  disabled after stale cached resources caused linking errors. Device visual checks
+  across themes, constrained viewports and font scaling remain pending (no device attached).
+
 - Angle is category 15; currency remains 14. Category pickers iterate `Conversions.getCategoryIds()`
   instead of assuming a contiguous range ending at Currency. CalculatorCatalog exposes Angle to
   the existing navigation/favorites system; it uses the shared linear Graphy primitives.

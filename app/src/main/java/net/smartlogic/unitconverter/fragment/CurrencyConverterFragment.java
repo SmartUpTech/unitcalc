@@ -84,50 +84,111 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         return fragment;
     }
 
-    public int getDrawableResourceId(String name) {
-        try {
-            return getResources().getIdentifier(name, "drawable", context.getPackageName());
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     public void initCurrencies() {
         currencies = new ArrayList<>();
 
-        currencies.add(new Currency("Australian dollar", "AUD", "Australia", "$", getDrawableResourceId("au")));
-        currencies.add(new Currency("Brazilian real", "BRL", "Brazil", "R$", getDrawableResourceId("br")));
-        currencies.add(new Currency("Bulgarian lev", "BGN", "Bulgaria", "лв", getDrawableResourceId("bg")));
-        currencies.add(new Currency("Canadian dollar", "CAD", "Canada", "$", getDrawableResourceId("ca")));
-        currencies.add(new Currency("Chinese yuan", "CNY", "China", "¥", getDrawableResourceId("cn")));
-        currencies.add(new Currency("Croatian kuna", "HRK", "Croatia", "kn", getDrawableResourceId("cr")));
-        currencies.add(new Currency("Czech koruna", "CZK", "Czechia", "Kč", getDrawableResourceId("cz")));
-        currencies.add(new Currency("Danish krone", "DKK", "Denmark", "kr", getDrawableResourceId("dk")));
-        currencies.add(new Currency("Hong Kong dollar", "HKD", "Hong Kong", "$", getDrawableResourceId("hk")));
-        currencies.add(new Currency("Hungarian forint", "HUF", "Hungary", "Ft", getDrawableResourceId("hu")));
-        currencies.add(new Currency("Icelandic króna", "ISK", "Iceland", "kr", getDrawableResourceId("is")));
-        currencies.add(new Currency("Indian rupee", "INR", "India", "₹", getDrawableResourceId("in")));
-        currencies.add(new Currency("Indonesian rupiah", "IDR", "Indonesia", "Rp", getDrawableResourceId("id")));
-        currencies.add(new Currency("Israeli new shekel", "ILS", "Israel", "₪", getDrawableResourceId("il")));
-        currencies.add(new Currency("Japanese yen", "JPY", "Japan", "¥", getDrawableResourceId("jp")));
-        currencies.add(new Currency("South Korean won", "KRW", "South Korea", "₩", getDrawableResourceId("kr")));
-        currencies.add(new Currency("Malaysian ringgit", "MYR", "Malaysia", "RM", getDrawableResourceId("my")));
-        currencies.add(new Currency("Mexican peso", "MXN", "Mexico", "$", getDrawableResourceId("mx")));
-        currencies.add(new Currency("New Zealand dollar", "NZD", "New Zealand", "$", getDrawableResourceId("nz")));
-        currencies.add(new Currency("Norwegian krone", "NOK", "Norway", "kr", getDrawableResourceId("no")));
-        currencies.add(new Currency("Philippine peso", "PHP", "Philippines", "₱", getDrawableResourceId("ph")));
-        currencies.add(new Currency("Polish złoty", "PLN", "Poland", "zł", getDrawableResourceId("pl")));
-        currencies.add(new Currency("Romanian leu", "RON", "Romania", "lei", getDrawableResourceId("ro")));
-        currencies.add(new Currency("Russian ruble", "RUB", "Russia", "", getDrawableResourceId("ru")));
-        currencies.add(new Currency("Singapore dollar", "SGD", "Singapore", "$", getDrawableResourceId("sg")));
-        currencies.add(new Currency("South African rand", "ZAR", "South Africa", "R", getDrawableResourceId("za")));
-        currencies.add(new Currency("Swedish krona", "SEK", "Sweden", "kr", getDrawableResourceId("se")));
-        currencies.add(new Currency("Swiss franc", "CHF", "Switzerland", "Fr", getDrawableResourceId("ch")));
-        currencies.add(new Currency("Thai baht", "THB", "Thailand", "฿", getDrawableResourceId("th")));
-        currencies.add(new Currency("Turkish lira", "TRY", "Turkey", "", getDrawableResourceId("tr")));
-        currencies.add(new Currency("British pound", "GBP", "United Kingdom", "£", getDrawableResourceId("gb")));
-        currencies.add(new Currency("US dollar", "USD", "United States", "$", getDrawableResourceId("us")));
-        currencies.add(new Currency("Euro", "EUR", "European Union", "€", getDrawableResourceId("eu")));
+        currencies.add(new Currency("Australian dollar", "AUD", "Australia", "$", R.drawable.au));
+        currencies.add(new Currency("Brazilian real", "BRL", "Brazil", "R$", R.drawable.br));
+        currencies.add(new Currency("Euro", "EUR", "Bulgaria", "€", R.drawable.bg));
+        currencies.add(new Currency("Canadian dollar", "CAD", "Canada", "$", R.drawable.ca));
+        currencies.add(new Currency("Chinese yuan", "CNY", "China", "¥", R.drawable.cn));
+        currencies.add(new Currency("Euro", "EUR", "Croatia", "€", R.drawable.hr));
+        currencies.add(new Currency("Czech koruna", "CZK", "Czechia", "Kč", R.drawable.cz));
+        currencies.add(new Currency("Danish krone", "DKK", "Denmark", "kr", R.drawable.dk));
+        currencies.add(new Currency("Hong Kong dollar", "HKD", "Hong Kong", "$", R.drawable.hk));
+        currencies.add(new Currency("Hungarian forint", "HUF", "Hungary", "Ft", R.drawable.hu));
+        currencies.add(new Currency("Icelandic króna", "ISK", "Iceland", "kr", R.drawable.is));
+        currencies.add(new Currency("Indian rupee", "INR", "India", "₹", R.drawable.in));
+        currencies.add(new Currency("Indonesian rupiah", "IDR", "Indonesia", "Rp", R.drawable.id));
+        currencies.add(new Currency("Israeli new shekel", "ILS", "Israel", "₪", R.drawable.il));
+        currencies.add(new Currency("Japanese yen", "JPY", "Japan", "¥", R.drawable.jp));
+        currencies.add(new Currency("South Korean won", "KRW", "South Korea", "₩", R.drawable.kr));
+        currencies.add(new Currency("Malaysian ringgit", "MYR", "Malaysia", "RM", R.drawable.my));
+        currencies.add(new Currency("Mexican peso", "MXN", "Mexico", "$", R.drawable.mx));
+        currencies.add(new Currency("New Zealand dollar", "NZD", "New Zealand", "$", R.drawable.nz));
+        currencies.add(new Currency("Norwegian krone", "NOK", "Norway", "kr", R.drawable.no));
+        currencies.add(new Currency("Philippine peso", "PHP", "Philippines", "₱", R.drawable.ph));
+        currencies.add(new Currency("Polish złoty", "PLN", "Poland", "zł", R.drawable.pl));
+        currencies.add(new Currency("Romanian leu", "RON", "Romania", "lei", R.drawable.ro));
+        currencies.add(new Currency("Russian ruble", "RUB", "Russia", "", R.drawable.ru));
+        currencies.add(new Currency("Singapore dollar", "SGD", "Singapore", "$", R.drawable.sg));
+        currencies.add(new Currency("South African rand", "ZAR", "South Africa", "R", R.drawable.za));
+        currencies.add(new Currency("Swedish krona", "SEK", "Sweden", "kr", R.drawable.se));
+        currencies.add(new Currency("Swiss franc", "CHF", "Switzerland", "Fr", R.drawable.ch));
+        currencies.add(new Currency("Thai baht", "THB", "Thailand", "฿", R.drawable.th));
+        currencies.add(new Currency("Turkish lira", "TRY", "Turkey", "", R.drawable.tr));
+        currencies.add(new Currency("British pound", "GBP", "United Kingdom", "£", R.drawable.gb));
+        currencies.add(new Currency("US dollar", "USD", "United States", "$", R.drawable.us));
+        currencies.add(new Currency("Euro", "EUR", "Germany", "€", R.drawable.de));
+
+        // Append only: preferences persist positions. Legacy BGN/HRK positions now use EUR.
+        currencies.add(new Currency("United Arab Emirates Dirham", "AED", "United Arab Emirates", "د.إ", R.drawable.ae));
+        currencies.add(new Currency("Armenian Dram", "AMD", "Armenia", "֏", R.drawable.am));
+        currencies.add(new Currency("Azerbaijani Manat", "AZN", "Azerbaijan", "₼", R.drawable.az));
+        currencies.add(new Currency("Bangladeshi Taka", "BDT", "Bangladesh", "৳", R.drawable.bd));
+        currencies.add(new Currency("Bahraini Dinar", "BHD", "Bahrain", "د.ب", R.drawable.bh));
+        currencies.add(new Currency("Bhutanese Ngultrum", "BTN", "Bhutan", "Nu.", R.drawable.bt));
+        currencies.add(new Currency("Georgian Lari", "GEL", "Georgia", "₾", R.drawable.ge));
+        currencies.add(new Currency("Iraqi Dinar", "IQD", "Iraq", "ع.د", R.drawable.iq));
+        currencies.add(new Currency("Jordanian Dinar", "JOD", "Jordan", "د.ا", R.drawable.jo));
+        currencies.add(new Currency("Kyrgyzstani Som", "KGS", "Kyrgyzstan", "som", R.drawable.kg));
+        currencies.add(new Currency("Cambodian Riel", "KHR", "Cambodia", "៛", R.drawable.kh));
+        currencies.add(new Currency("Kuwaiti Dinar", "KWD", "Kuwait", "د.ك", R.drawable.kw));
+        currencies.add(new Currency("Kazakhstani Tenge", "KZT", "Kazakhstan", "₸", R.drawable.kz));
+        currencies.add(new Currency("Lao Kip", "LAK", "Laos", "₭", R.drawable.la));
+        currencies.add(new Currency("Lebanese Pound", "LBP", "Lebanon", "ل.ل", R.drawable.lb));
+        currencies.add(new Currency("Sri Lankan Rupee", "LKR", "Sri Lanka", "₨", R.drawable.lk));
+        currencies.add(new Currency("Myanmar Kyat", "MMK", "Myanmar", "K", R.drawable.mm));
+        currencies.add(new Currency("Mongolian Tögrög", "MNT", "Mongolia", "₮", R.drawable.mn));
+        currencies.add(new Currency("Nepalese Rupee", "NPR", "Nepal", "Rs.", R.drawable.np));
+        currencies.add(new Currency("Omani Rial", "OMR", "Oman", "ر.ع.", R.drawable.om));
+        currencies.add(new Currency("Pakistani Rupee", "PKR", "Pakistan", "₨", R.drawable.pk));
+        currencies.add(new Currency("Qatari Riyal", "QAR", "Qatar", "ر.ق", R.drawable.qa));
+        currencies.add(new Currency("Saudi Riyal", "SAR", "Saudi Arabia", "ر.س", R.drawable.sa));
+        currencies.add(new Currency("Tajikistani Somoni", "TJS", "Tajikistan", "ЅМ", R.drawable.tj));
+        currencies.add(new Currency("New Taiwan Dollar", "TWD", "Taiwan", "$", R.drawable.tw));
+        currencies.add(new Currency("Uzbekistan Som", "UZS", "Uzbekistan", "so'm", R.drawable.uz));
+        currencies.add(new Currency("Vietnamese Đồng", "VND", "Vietnam", "₫", R.drawable.vn));
+        currencies.add(new Currency("Albanian Lek", "ALL", "Albania", "L", R.drawable.al));
+        currencies.add(new Currency("Bosnia and Herzegovina Convertible Mark", "BAM", "Bosnia and Herzegovina", "КМ", R.drawable.ba));
+        currencies.add(new Currency("Belarusian Ruble", "BYN", "Belarus", "Br", R.drawable.by));
+        currencies.add(new Currency("Moldovan Leu", "MDL", "Moldova", "L", R.drawable.md));
+        currencies.add(new Currency("Macedonian Denar", "MKD", "North Macedonia", "ден", R.drawable.mk));
+        currencies.add(new Currency("Serbian Dinar", "RSD", "Serbia", "RSD", R.drawable.rs));
+        currencies.add(new Currency("Ukrainian Hryvnia", "UAH", "Ukraine", "₴", R.drawable.ua));
+        currencies.add(new Currency("Argentine Peso", "ARS", "Argentina", "$", R.drawable.ar));
+        currencies.add(new Currency("Barbadian Dollar", "BBD", "Barbados", "$", R.drawable.bb));
+        currencies.add(new Currency("Bolivian Boliviano", "BOB", "Bolivia", "Bs.", R.drawable.bo));
+        currencies.add(new Currency("Bahamian Dollar", "BSD", "Bahamas", "$", R.drawable.bs));
+        currencies.add(new Currency("Belize Dollar", "BZD", "Belize", "$", R.drawable.bz));
+        currencies.add(new Currency("Chilean Peso", "CLP", "Chile", "$", R.drawable.cl));
+        currencies.add(new Currency("Colombian Peso", "COP", "Colombia", "$", R.drawable.co));
+        currencies.add(new Currency("Costa Rican Colón", "CRC", "Costa Rica", "₡", R.drawable.cr));
+        currencies.add(new Currency("Brunei Dollar", "BND", "Brunei", "$", R.drawable.bn));
+        currencies.add(new Currency("Guatemalan Quetzal", "GTQ", "Guatemala", "Q", R.drawable.gt));
+        currencies.add(new Currency("Guyanese Dollar", "GYD", "Guyana", "$", R.drawable.gy));
+        currencies.add(new Currency("Honduran Lempira", "HNL", "Honduras", "L", R.drawable.hn));
+        currencies.add(new Currency("Jamaican Dollar", "JMD", "Jamaica", "$", R.drawable.jm));
+        currencies.add(new Currency("Peruvian Sol", "PEN", "Peru", "S/", R.drawable.pe));
+        currencies.add(new Currency("Paraguayan Guaraní", "PYG", "Paraguay", "₲", R.drawable.py));
+        currencies.add(new Currency("Trinidad and Tobago Dollar", "TTD", "Trinidad and Tobago", "$", R.drawable.tt));
+        currencies.add(new Currency("Uruguayan Peso", "UYU", "Uruguay", "$U", R.drawable.uy));
+        currencies.add(new Currency("Angolan Kwanza", "AOA", "Angola", "Kz", R.drawable.ao));
+        currencies.add(new Currency("Botswana Pula", "BWP", "Botswana", "P", R.drawable.bw));
+        currencies.add(new Currency("Algerian Dinar", "DZD", "Algeria", "د.ج", R.drawable.dz));
+        currencies.add(new Currency("Egyptian Pound", "EGP", "Egypt", "ج.م", R.drawable.eg));
+        currencies.add(new Currency("Ethiopian Birr", "ETB", "Ethiopia", "Br", R.drawable.et));
+        currencies.add(new Currency("Ghanaian Cedi", "GHS", "Ghana", "₵", R.drawable.gh));
+        currencies.add(new Currency("Kenyan Shilling", "KES", "Kenya", "KSh", R.drawable.ke));
+        currencies.add(new Currency("Moroccan Dirham", "MAD", "Morocco", "د.م.", R.drawable.ma));
+        currencies.add(new Currency("Mauritian Rupee", "MUR", "Mauritius", "₨", R.drawable.mu));
+        currencies.add(new Currency("Nigerian Naira", "NGN", "Nigeria", "₦", R.drawable.ng));
+        currencies.add(new Currency("Tunisian Dinar", "TND", "Tunisia", "د.ت", R.drawable.tn));
+        currencies.add(new Currency("Tanzanian Shilling", "TZS", "Tanzania", "Sh", R.drawable.tz));
+        currencies.add(new Currency("Ugandan Shilling", "UGX", "Uganda", "USh", R.drawable.ug));
+        currencies.add(new Currency("Zambian Kwacha", "ZMW", "Zambia", "K", R.drawable.zm));
+        currencies.add(new Currency("Fijian Dollar", "FJD", "Fiji", "$", R.drawable.fj));
+        currencies.add(new Currency("Papua New Guinean Kina", "PGK", "Papua New Guinea", "K", R.drawable.pg));
 
     }
 
@@ -137,7 +198,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         for (int i = 0; i < currencies.size(); i++) {
             Currency currency = currencies.get(i);
             labels.add(currency.getCurrencyName());
-            details.add(currency.getCurrencyISOCode());
+            details.add(getString(R.string.currency_country_code, currency.getCountry(), currency.getCurrencyISOCode()));
             keywords.add(currency.getCountry() + " " + currency.getCurrencySymbol());
             flags[i] = currency.getFlagImageResource();
         }

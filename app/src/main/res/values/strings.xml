@@ -426,6 +426,7 @@
     <string name="converter_backspace">Delete last digit</string>
     <string name="converter_clear_input">Clear input</string>
     <string name="converter_clear_key" translatable="false">AC</string>
+    <string name="currency_country_code">%1$s · %2$s</string>
     <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
     <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
     <string name="graphy_role_input">Input</string>
