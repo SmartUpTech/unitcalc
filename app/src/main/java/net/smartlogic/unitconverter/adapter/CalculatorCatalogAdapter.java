@@ -68,7 +68,7 @@ public class CalculatorCatalogAdapter extends RecyclerView.Adapter<CalculatorCat
         if (showFavoriteButton && entry.isFavoriteEligible()) {
             holder.favorite.setVisibility(View.VISIBLE);
             boolean isFavorite = favoritesRepository.isFavorite(entry.id);
-            int tint = isFavorite ? theme.equal() : theme.functions();
+            int tint = isFavorite ? theme.accentContentColor() : theme.secondaryContentColor();
             holder.favorite.setColorFilter(tint);
             holder.favorite.setOnClickListener(v -> {
                 boolean next = favoritesRepository.toggleFavorite(entry.id);

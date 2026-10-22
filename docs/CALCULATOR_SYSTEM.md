@@ -118,8 +118,10 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   Storage's existing binary values now show IEC labels/symbols (KiB through EiB, Kibit through
   Eibit), and separate SI decimal choices (kB through EB, kbit through Ebit) are appended.
 - Land units explicitly identify their definitions. Guntha = 1/40 acre, cent = 1/100 acre;
-  Marla uses the 272.25 sq ft convention. Bigha variants are Assam (14400 sq ft), Rajasthan
-  pucca/Shahjahani Jarib (27225 sq ft), Rajasthan kaccha/Gantari Jarib (17424 sq ft).
+  Marla uses the 272.25 sq ft convention. Assam and Rajasthan Bigha variants were removed
+  from the selectable registry on 2026-10-22; their IDs remain reserved. Guntha, cent and
+  marla remain available for review, without in-app highlighting. See
+  `docs/reviews/regional-area-units-2026-10-22.md`.
   These are named conventions, not universal state-wide/legal survey assumptions. Exact square-foot
   definitions are converted using 1 ft² = 0.09290304 m², not rounded metric figures from source tables.
 - Mass adds metric quintal (100 kg), tola (180 grains) and troy ounce (480 grains).

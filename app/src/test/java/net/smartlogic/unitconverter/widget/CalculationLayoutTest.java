@@ -172,6 +172,26 @@ public class CalculationLayoutTest {
         }
     }
 
+    @Test public void compactCategoriesHaveOneVisibleLabelPerTab() {
+        View root = inflate(R.layout.fragment_unit_converter, 1.3f);
+        measure(root, 320, 460);
+        com.google.android.material.tabs.TabLayout tabs = root.findViewById(R.id.category_selector);
+        ViewGroup strip = (ViewGroup) tabs.getChildAt(0);
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            String label = tabs.getTabAt(i).getText().toString();
+            assertEquals(label, 1, visibleTextCount(strip.getChildAt(i), label));
+        }
+    }
+
+    private int visibleTextCount(View view, String label) {
+        if (view.getVisibility() != View.VISIBLE) return 0;
+        int count = view instanceof TextView text && label.contentEquals(text.getText()) ? 1 : 0;
+        if (view instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) count += visibleTextCount(group.getChildAt(i), label);
+        }
+        return count;
+    }
+
     @Test public void convertersKeepKeypadGeometryStableAcrossModes() {
         for (float scale : new float[]{1f, 1.3f}) {
             for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}}) {

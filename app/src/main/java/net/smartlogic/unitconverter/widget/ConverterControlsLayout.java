@@ -36,7 +36,8 @@ public final class ConverterControlsLayout extends LinearLayout {
         // Keep the reference's stacked tabs normally. Only the last constrained
         // viewport fallback puts icons beside labels to preserve usable key rows.
         if (header instanceof com.google.android.material.tabs.TabLayout tabs) {
-            tabs.setInlineLabel(compactHeading);
+            // Custom tab content owns its orientation. setInlineLabel() also
+            // revives Material's default icon/text alongside that custom view.
             for (int i = 0; i < tabs.getTabCount(); i++) {
                 View custom = tabs.getTabAt(i).getCustomView();
                 if (custom instanceof LinearLayout item) {

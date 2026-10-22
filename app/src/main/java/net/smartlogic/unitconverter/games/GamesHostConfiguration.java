@@ -29,10 +29,10 @@ public final class GamesHostConfiguration {
                     .put("mode", current.isLightBackground() ? "light" : "dark")
                     .put("background", hex(current.background()))
                     .put("surface", hex(current.background()))
-                    .put("primaryText", hex(current.mainText()))
-                    .put("secondaryText", hex(current.functions()))
-                    .put("accent", hex(current.equal()))
-                    .put("divider", hex(current.functions()));
+                    .put("primaryText", hex(current.primaryContentColor()))
+                    .put("secondaryText", hex(current.secondaryContentColor()))
+                    .put("accent", hex(current.accentContentColor()))
+                    .put("divider", hex(current.secondaryContentColor()));
             return new JSONObject().put("bridgeVersion", GamesConfig.BRIDGE_VERSION)
                     .put("appId", BuildConfig.APPLICATION_ID).put("appVersion", BuildConfig.VERSION_NAME)
                     .put("language", language).put("locale", language).put("date", date)

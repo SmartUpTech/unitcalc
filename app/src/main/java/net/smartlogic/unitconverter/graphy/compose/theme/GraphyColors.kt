@@ -58,43 +58,30 @@ fun graphySemanticColors(theme: CalculatorTheme): GraphySemanticColors {
 
 fun graphyColorScheme(theme: CalculatorTheme): ColorScheme {
     val background = Color(theme.background)
-    val main = Color(GraphySemanticStyle.readable(theme.mainText, theme.background))
-    val functions = Color(GraphySemanticStyle.connector(theme))
-    val primaryInk = GraphySemanticStyle.readable(theme.equal, theme.background)
-    val onEqual = Color(GraphySemanticStyle.readable(theme.background, primaryInk))
-    return if (theme.isLightBackground) {
-        lightColorScheme(
-            primary = Color(primaryInk),
-            onPrimary = onEqual,
-            secondary = functions,
-            onSecondary = Color(GraphySemanticStyle.readable(theme.background, GraphySemanticStyle.connector(theme))),
-            tertiary = Color(primaryInk),
-            onTertiary = onEqual,
-            background = background,
-            onBackground = main,
-            surface = background,
-            onSurface = main,
-            surfaceContainerHigh = background,
-            onSurfaceVariant = functions,
-            outline = functions,
-        )
-    } else {
-        darkColorScheme(
-            primary = Color(primaryInk),
-            onPrimary = onEqual,
-            secondary = functions,
-            onSecondary = Color(GraphySemanticStyle.readable(theme.background, GraphySemanticStyle.connector(theme))),
-            tertiary = Color(primaryInk),
-            onTertiary = onEqual,
-            background = background,
-            onBackground = main,
-            surface = background,
-            onSurface = main,
-            surfaceContainerHigh = background,
-            onSurfaceVariant = functions,
-            outline = functions,
-        )
-    }
+    val main = Color(theme.primaryContentColor())
+    val functions = Color(theme.secondaryContentColor())
+    val accent = Color(theme.accentContentColor())
+    val onAccent = Color(theme.onAccentColor())
+    val onSecondary = Color(CalculatorTheme.readableColor(theme.background, theme.secondaryContentColor()))
+    val base = if (theme.isLightBackground) lightColorScheme() else darkColorScheme()
+    // Every used Material surface/state follows the app palette, including switches and radios.
+    return base.copy(
+        primary = accent, onPrimary = onAccent,
+        primaryContainer = accent, onPrimaryContainer = onAccent,
+        secondary = functions, onSecondary = onSecondary,
+        secondaryContainer = background, onSecondaryContainer = main,
+        tertiary = accent, onTertiary = onAccent,
+        tertiaryContainer = accent, onTertiaryContainer = onAccent,
+        background = background, onBackground = main,
+        surface = background, onSurface = main, onSurfaceVariant = functions,
+        surfaceVariant = background, surfaceTint = Color.Transparent,
+        surfaceDim = background, surfaceBright = background,
+        surfaceContainerLowest = background, surfaceContainerLow = background,
+        surfaceContainer = background, surfaceContainerHigh = background,
+        surfaceContainerHighest = background,
+        inverseSurface = main, inverseOnSurface = background, inversePrimary = background,
+        outline = functions, outlineVariant = functions,
+    )
 }
 
 fun graphySemanticColorsFromManager(): GraphySemanticColors =

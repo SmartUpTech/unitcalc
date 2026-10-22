@@ -49,6 +49,20 @@
     <color name="pad_button_equal">@color/key_equals_bg</color>
     <color name="colorHighlighter">@color/key_operator_text</color>
     <!-- Theme catalog palette. ThemePalette is generated from these values at build time. -->
+    <color name="palette_6b6d70">#6B6D70</color>
+    <color name="palette_686a6d">#686A6D</color>
+    <color name="palette_595c60">#595C60</color>
+    <color name="palette_18121f">#18121F</color>
+    <color name="palette_211a2a">#211A2A</color>
+    <color name="palette_4c5a63">#4C5A63</color>
+    <color name="palette_243f55">#243F55</color>
+    <color name="palette_303a31">#303A31</color>
+    <color name="palette_303d2c">#303D2C</color>
+    <color name="palette_293d2b">#293D2B</color>
+    <color name="palette_ae4300">#AE4300</color>
+    <color name="palette_ffe0c8">#FFE0C8</color>
+    <color name="palette_5c512c">#5C512C</color>
+    <color name="palette_483b0a">#483B0A</color>
     <color name="palette_f7f6f2">#F7F6F2</color>
     <color name="palette_4a4c4f">#4A4C4F</color>
     <color name="palette_77797c">#77797C</color>

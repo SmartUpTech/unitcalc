@@ -310,10 +310,10 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
         CalculatorTheme theme = ThemeManager.get();
         root.setBackgroundColor(theme.background());
         status.setBackgroundColor(theme.background());
-        statusText.setTextColor(theme.mainText());
-        progress.setIndeterminateTintList(ColorStateList.valueOf(theme.equal()));
+        statusText.setTextColor(theme.primaryContentColor());
+        progress.setIndeterminateTintList(ColorStateList.valueOf(theme.accentContentColor()));
         retry.setBackgroundTintList(ColorStateList.valueOf(theme.background()));
-        retry.setTextColor(theme.equal());
+        retry.setTextColor(theme.accentContentColor());
         if (webView != null) webView.setBackgroundColor(theme.background());
     }
 

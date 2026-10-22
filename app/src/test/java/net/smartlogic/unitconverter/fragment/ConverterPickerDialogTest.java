@@ -33,6 +33,24 @@ import static org.robolectric.Shadows.shadowOf;
 @Config(application = Application.class, sdk = 34, qualifiers = "w360dp-h720dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class ConverterPickerDialogTest {
+    @Test public void removedAreaSelectionsFallBackWithoutChangingRemainingUnitOrder() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            Preferences prefs = Preferences.getInstance(controller.get());
+            prefs.setLastConversion(Conversion.AREA);
+            prefs.setLastFromConversion(14); // Retired Assam Bigha row.
+            prefs.setLastToConversion(16); // Retired Rajasthan kaccha row.
+            UnitConverterFragment fragment = new UnitConverterFragment();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, fragment, "area").commitNow();
+            shadowOf(Looper.getMainLooper()).idle();
+            android.widget.Spinner from = fragment.requireView().findViewById(R.id.fromUnit);
+            android.widget.Spinner to = fragment.requireView().findViewById(R.id.toUnit);
+            assertEquals(14, from.getCount());
+            assertEquals(0, from.getSelectedItemPosition());
+            assertEquals(1, to.getSelectedItemPosition());
+            assertEquals(Unit.MARLA, ((Unit) from.getItemAtPosition(13)).getId());
+        }
+    }
     private ArrayList<String> values(String... values) { return new ArrayList<>(Arrays.asList(values)); }
 
     private ActivityController<AppCompatActivity> activity() {

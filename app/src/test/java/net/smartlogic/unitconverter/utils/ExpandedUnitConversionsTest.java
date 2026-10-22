@@ -65,9 +65,9 @@ public class ExpandedUnitConversionsTest {
         exact(Conversion.AREA, Unit.GUNTHA, Unit.SQ_FOOT, "1", "1089");
         exact(Conversion.AREA, Unit.CENT, Unit.SQ_FOOT, "1", "435.6");
         exact(Conversion.AREA, Unit.MARLA, Unit.SQ_FOOT, "1", "272.25");
-        exact(Conversion.AREA, Unit.BIGHA_ASSAM, Unit.SQ_FOOT, "1", "14400");
-        exact(Conversion.AREA, Unit.BIGHA_RAJASTHAN_PUCCA, Unit.SQ_FOOT, "1", "27225");
-        exact(Conversion.AREA, Unit.BIGHA_RAJASTHAN_KACCHA, Unit.SQ_FOOT, "1", "17424");
+        assertFalse(conversions.getById(Conversion.AREA).getUnits().stream().anyMatch(u ->
+                u.getId() == Unit.BIGHA_ASSAM || u.getId() == Unit.BIGHA_RAJASTHAN_PUCCA
+                        || u.getId() == Unit.BIGHA_RAJASTHAN_KACCHA));
         exact(Conversion.AREA, Unit.GUNTHA, Unit.ACRE, "40", "1");
         exact(Conversion.AREA, Unit.CENT, Unit.ACRE, "100", "1");
     }

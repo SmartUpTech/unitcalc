@@ -1,6 +1,5 @@
 package net.smartlogic.unitconverter.graphy.theme;
 
-import net.smartlogic.unitconverter.theme.generated.ThemePalette;
 import androidx.core.graphics.ColorUtils;
 import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 import net.smartlogic.unitconverter.theme.CalculatorTheme;
@@ -35,12 +34,10 @@ public final class GraphySemanticStyle {
 
     /** Preserve a theme role when it has normal-text contrast; otherwise use readable ink. */
     public static int readable(int preferred, int surface) {
-        if (ColorUtils.calculateContrast(preferred, surface) >= 4.5d) return preferred;
-        return ColorUtils.calculateContrast(ThemePalette.PALETTE_000000, surface)
-                >= ColorUtils.calculateContrast(ThemePalette.PALETTE_FFFFFF, surface) ? ThemePalette.PALETTE_000000 : ThemePalette.PALETTE_FFFFFF;
+        return CalculatorTheme.readableColor(preferred, surface);
     }
 
     public static int connector(CalculatorTheme theme) {
-        return readable(theme.functions(), theme.background());
+        return theme.secondaryContentColor();
     }
 }

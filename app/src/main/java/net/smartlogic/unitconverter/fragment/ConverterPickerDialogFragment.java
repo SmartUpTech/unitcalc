@@ -77,9 +77,9 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         CalculatorTheme theme = ThemeManager.get();
         TextView title = root.findViewById(R.id.converter_picker_title);
         title.setText(args.getString(TITLE));
-        title.setTextColor(theme.mainText());
+        title.setTextColor(theme.primaryContentColor());
         ImageView close = root.findViewById(R.id.converter_picker_close);
-        close.setImageTintList(ColorStateList.valueOf(theme.mainText()));
+        close.setImageTintList(ColorStateList.valueOf(theme.primaryContentColor()));
         close.setOnClickListener(v -> dismiss());
         TextInputLayout searchBox = root.findViewById(R.id.converter_picker_search_box);
         boolean currency = args.getIntArray(FLAGS) != null;
@@ -87,17 +87,17 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
                 : R.string.converter_picker_search_units));
         searchBox.setBoxStrokeColorStateList(new ColorStateList(
                 new int[][]{{android.R.attr.state_focused}, {}},
-                new int[]{theme.mainText(), theme.functions()}));
-        searchBox.setDefaultHintTextColor(ColorStateList.valueOf(theme.functions()));
-        searchBox.setHintTextColor(ColorStateList.valueOf(theme.functions()));
-        searchBox.setStartIconTintList(ColorStateList.valueOf(theme.functions()));
-        searchBox.setEndIconTintList(ColorStateList.valueOf(theme.functions()));
+                new int[]{theme.primaryContentColor(), theme.secondaryContentColor()}));
+        searchBox.setDefaultHintTextColor(ColorStateList.valueOf(theme.secondaryContentColor()));
+        searchBox.setHintTextColor(ColorStateList.valueOf(theme.secondaryContentColor()));
+        searchBox.setStartIconTintList(ColorStateList.valueOf(theme.secondaryContentColor()));
+        searchBox.setEndIconTintList(ColorStateList.valueOf(theme.secondaryContentColor()));
         search = root.findViewById(R.id.converter_picker_search);
-        search.setTextColor(theme.mainText());
+        search.setTextColor(theme.primaryContentColor());
         search.setSelectAllOnFocus(false);
         list = root.findViewById(R.id.converter_picker_list);
         TextView empty = root.findViewById(R.id.converter_picker_empty);
-        empty.setTextColor(theme.functions());
+        empty.setTextColor(theme.secondaryContentColor());
         list.setEmptyView(empty);
         adapter = new PickerAdapter(args);
         list.setAdapter(adapter);
@@ -234,28 +234,29 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
                     .inflate(R.layout.item_converter_picker, parent, false);
             int index = originalIndex(position);
             CalculatorTheme theme = ThemeManager.get();
+            boolean checked = index == selected;
+            int surface = checked ? ColorUtils.compositeColors(ColorUtils.setAlphaComponent(theme.primaryContentColor(),
+                    getResources().getInteger(R.integer.converter_picker_selected_alpha)), theme.background())
+                    : theme.background();
             TextView name = row.findViewById(R.id.converter_picker_name);
             name.setText(labels.get(index));
-            name.setTextColor(theme.mainText());
+            name.setTextColor(CalculatorTheme.readableColor(theme.primaryContentColor(), surface));
             TextView detail = row.findViewById(R.id.converter_picker_detail);
             detail.setText(details.get(index));
-            detail.setTextColor(theme.functions());
+            detail.setTextColor(CalculatorTheme.readableColor(theme.secondaryContentColor(), surface));
             detail.setVisibility(details.get(index).isEmpty() ? View.GONE : View.VISIBLE);
             ImageView flag = row.findViewById(R.id.converter_picker_flag);
             flag.setVisibility(flags == null ? View.GONE : View.VISIBLE);
             if (flags != null) flag.setImageResource(flags[index]);
-            boolean checked = index == selected;
             ImageView check = row.findViewById(R.id.converter_picker_check);
             check.setVisibility(checked ? View.VISIBLE : View.INVISIBLE);
-            check.setImageTintList(ColorStateList.valueOf(theme.mainText()));
+            check.setImageTintList(ColorStateList.valueOf(CalculatorTheme.readableColor(theme.primaryContentColor(), surface)));
             row.setSelected(checked);
             String label = labels.get(index) + (details.get(index).isEmpty() ? "" : ", " + details.get(index));
             row.setContentDescription(checked ? getString(R.string.converter_picker_selected, label) : label);
-            int selectedColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(theme.mainText(),
-                    getResources().getInteger(R.integer.converter_picker_selected_alpha)), theme.background());
             row.setBackground(new RippleDrawable(ContextCompat.getColorStateList(requireContext(),
-                    R.color.pad_button_ripple_color), ThemeApplier.roundedFill(checked ? selectedColor
-                    : theme.background(), getResources().getDimension(R.dimen.converter_picker_corner)), null));
+                    R.color.pad_button_ripple_color), ThemeApplier.roundedFill(surface,
+                    getResources().getDimension(R.dimen.converter_picker_corner)), null));
             return row;
         }
     }

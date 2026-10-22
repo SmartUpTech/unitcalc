@@ -55,12 +55,12 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
         boolean selected = position == selectedItem;
         convertView.setSelected(selected);
         holder.indicator.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
-        holder.indicator.setBackgroundColor(theme.equal());
+        holder.indicator.setBackgroundColor(theme.accentContentColor());
         holder.iconContainer.setBackgroundResource(
                 selected ? R.drawable.bg_category_icon_selected : R.drawable.bg_category_icon_default);
         
-        int accent = theme.equal();
-        int muted = theme.functions();
+        int accent = theme.accentContentColor();
+        int muted = theme.secondaryContentColor();
         holder.textView.setTextColor(selected ? accent : muted);
         holder.imageView.setColorFilter(selected ? accent : muted);
 

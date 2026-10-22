@@ -601,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             MenuItem item = menu.getItem(i);
             item.setVisible(item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
             if (item.getItemId() == R.id.menu_clear_history) item.setEnabled(history && ((HistoryFragment) activeFragment).hasHistory());
-            if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().mainText());
+            if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().primaryContentColor());
         }
         // Keep consent controls reachable from the drawer with a History-only app bar.
         MenuItem privacy = navigationView.getMenu().findItem(R.id.menu_games_privacy);

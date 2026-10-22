@@ -5,6 +5,31 @@
 - Propagation: Recursive ThemeApplier.apply(). Constraint: MaterialButtonToggleGroup buttons must keep background (don't set null). WindowChrome syncs status/nav bars.
 - Ext: Add to CalculatorThemes for auto-support.
 
+## Shared foreground and selection colors
+
+`CalculatorTheme` owns `primaryContentColor`, `secondaryContentColor`,
+`operatorContentColor`, `accentContentColor`, `onAccentColor` and the shared
+`readableColor(preferred, surface)` resolver. Foreground roles require normal-text
+contrast (4.5:1), including operators used in smaller expression text. XML,
+Compose, Graphy, dialogs, catalog rows, games and window chrome consume the same
+roles. Selected tabs, category icons, bottom navigation and equals use accent
+ink; filled converter segments pair that accent with on-accent content.
+
+All catalog palettes supply readable primary, secondary and accent ink directly.
+Glacier, Sage Green and Golden Poppy use dark accents on their lighter surfaces;
+Purple Mountain Majesty uses deep-purple ink. Burnt Orange uses the deeper
+approved background to retain warm light text. Theme IDs, unlock ranks and
+catalog order remain permanent. System-bar icon mode chooses the higher-contrast
+black/white foreground, rather than using a fixed brightness threshold.
+
+Navigation drawer subheaders receive the shared secondary role explicitly.
+Converter outlines use that role at full opacity; picker text/checks resolve
+against the selected-row surface. Compose container and inverse roles are
+mapped to the app palette instead of inheriting unrelated Material defaults.
+Theme-card labels reserve the maximum measured wrapped-name height equally
+across the catalog, while retaining the shared card elevation and exact preview
+backgrounds.
+
 ## Shared typography
 
 Oswald is the app font. XML Views and Canvas resolve `@font/app_text`, which
@@ -18,7 +43,7 @@ AppCompat font-family attributes. Keep font sizes/weights semantic; do not fix
 individual screens with font overrides or recursive runtime typeface changes.
 
 ## Theme preferences and progression
-- Settings hosts a compact horizontal Compose swatch row in the existing XML screen, using GraphyTheme and CalculatorTheme tokens. Items share a fixed width and an equal height derived from the preview, status line and font-scaled two-line label slot. Check/lock icons sit above names; available unselected items have no icon. Theme names, plurals, states and dimensions are Android resources.
+- Settings hosts a compact horizontal Compose swatch row in the existing XML screen, using GraphyTheme and CalculatorTheme tokens. Items share a fixed width and an equal height derived from the preview, status line and complete font-scaled wrapped name. Check/lock icons sit above names; available unselected items have no icon. Theme names, plurals, states and dimensions are Android resources.
 - ThemeProgression is a pure domain policy. The first three catalog ranks are available by default; every three foreground usage days unlocks the next rank. Constants live in ThemeProgression. CalculatorTheme.unlockRank is permanent metadata: do not renumber/reuse ranks when reordering/removing cards; append new ranks for new themes. Removed ranks remain reserved, so removing a theme cannot change any remaining theme's earned threshold.
 - Preferences stores selected_theme (reused), theme_usage_days, theme_last_usage_date (ISO local date), theme_progression_version and one theme_grandfathered_id. Availability is derived; there are no per-theme unlock flags. Updates use one SharedPreferences batch. Backup/restore includes these preferences through the existing backup policy.
 - Version 1 migration grandfathers an existing valid selected theme without adding artificial usage days. Its access remains after switching away. Unknown/removed/wrong-type selections fall back to the default; missing/corrupt progression values have safe defaults. Future progression versions are preserved.

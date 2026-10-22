@@ -196,6 +196,7 @@ public class Unit {
     public static final int GUNTHA = 12;
     public static final int CENT = 13;
     public static final int MARLA = 14;
+    // Retired Bigha IDs remain reserved; never reuse them for another unit.
     public static final int BIGHA_ASSAM = 15;
     public static final int BIGHA_RAJASTHAN_PUCCA = 16;
     public static final int BIGHA_RAJASTHAN_KACCHA = 17;

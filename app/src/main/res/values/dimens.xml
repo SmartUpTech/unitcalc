@@ -1,4 +1,6 @@
 <resources>
+    <dimen name="theme_card_elevation">3dp</dimen>
+    <dimen name="theme_card_shadow_padding">8dp</dimen>
     <dimen name="theme_card_width">104dp</dimen>
     <dimen name="theme_swatch_height">40dp</dimen>
     <dimen name="theme_swatch_color_size">16dp</dimen>
@@ -17,9 +19,9 @@
 
     <dimen name="spinnerHeight">54dp</dimen>
 
-    <dimen name="buttonTextSize">22sp</dimen>
+    <dimen name="buttonTextSize">26sp</dimen>
 
-    <dimen name="buttonOperatorTextSize">28sp</dimen>
+    <dimen name="buttonOperatorTextSize">32sp</dimen>
 
     <dimen name="converter_category_height">100dp</dimen>
     <dimen name="converter_category_icon_size">48dp</dimen>

@@ -55,18 +55,18 @@ public final class WindowChrome {
                 View actionBarView = activity.findViewById(androidx.appcompat.R.id.action_bar);
                 if (actionBarView instanceof Toolbar) {
                     Toolbar toolbar = (Toolbar) actionBarView;
-                    toolbar.setTitleTextColor(theme.mainText());
-                    toolbar.setSubtitleTextColor(theme.functions());
+                    toolbar.setTitleTextColor(theme.primaryContentColor());
+                    toolbar.setSubtitleTextColor(theme.secondaryContentColor());
                     Drawable navigation = toolbar.getNavigationIcon();
                     if (navigation != null) {
                         navigation = DrawableCompat.wrap(navigation.mutate());
-                        DrawableCompat.setTint(navigation, theme.mainText());
+                        DrawableCompat.setTint(navigation, theme.primaryContentColor());
                         toolbar.setNavigationIcon(navigation);
                     }
                     Drawable overflow = toolbar.getOverflowIcon();
                     if (overflow != null) {
                         overflow = DrawableCompat.wrap(overflow.mutate());
-                        DrawableCompat.setTint(overflow, theme.mainText());
+                        DrawableCompat.setTint(overflow, theme.primaryContentColor());
                         toolbar.setOverflowIcon(overflow);
                     }
                 }
@@ -86,15 +86,15 @@ public final class WindowChrome {
         custom.setBackgroundColor(theme.background());
         ImageView menu = custom.findViewById(R.id.btn_nav_menu);
         if (menu != null && menu.getDrawable() != null) {
-            DrawableCompat.setTint(DrawableCompat.wrap(menu.getDrawable().mutate()), theme.mainText());
+            DrawableCompat.setTint(DrawableCompat.wrap(menu.getDrawable().mutate()), theme.primaryContentColor());
         }
         TextView brand = custom.findViewById(R.id.tv_app_bar_brand);
         if (brand != null) {
-            brand.setTextColor(theme.mainText());
+            brand.setTextColor(theme.primaryContentColor());
         }
         TextView product = custom.findViewById(R.id.tv_app_bar_product);
         if (product != null) {
-            product.setTextColor(theme.functions());
+            product.setTextColor(theme.secondaryContentColor());
         }
     }
 }

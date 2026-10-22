@@ -51,7 +51,7 @@ public final class GraphyViewTheme {
 
     @ColorInt
     public int getPrimaryTextColor() {
-        return palette().mainText();
+        return palette().primaryContentColor();
     }
 
     @ColorInt

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,8 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -40,7 +41,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 
@@ -49,12 +52,26 @@ fun ThemeSelector(state: ThemeSelectorState, onThemeTapped: (String) -> Unit, on
     val spacing = GraphyThemeTokens.spacing
     val initialSelection = remember { state.cards.indexOfFirst { it.selected }.coerceAtLeast(0) }
     val scroll = rememberLazyListState(initialFirstVisibleItemIndex = initialSelection)
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelLarge
+    val cardWidth = dimensionResource(R.dimen.theme_card_width)
+    val labelWidth = with(density) { (cardWidth - spacing.sm * 2).roundToPx() }
+    val names = state.cards.map { stringResource(it.theme.nameRes()) }
+    // Reserve the complete wrapped name, equally for every card at this font scale.
+    val measuredLabelHeight = names.maxOfOrNull {
+        textMeasurer.measure(it, style = labelStyle,
+            constraints = Constraints(maxWidth = labelWidth)).size.height
+    } ?: 0
+    val labelHeight = maxOf(dimensionResource(R.dimen.theme_card_label_height),
+        with(density) { measuredLabelHeight.toDp() })
     LazyRow(
         state = scroll,
         modifier = Modifier.selectableGroup(),
+        contentPadding = PaddingValues(dimensionResource(R.dimen.theme_card_shadow_padding)),
         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
     ) {
-        items(state.cards, key = { it.theme.id() }) { card -> ThemeCard(card, onThemeTapped) }
+        items(state.cards, key = { it.theme.id() }) { card -> ThemeCard(card, labelHeight, onThemeTapped) }
     }
     if (state.lockedThemeNameRes != null) {
         AlertDialog(
@@ -78,7 +95,7 @@ fun ThemeSelector(state: ThemeSelectorState, onThemeTapped: (String) -> Unit, on
 }
 
 @Composable
-private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
+private fun ThemeCard(card: ThemeCardState, labelHeight: Dp, onThemeTapped: (String) -> Unit) {
     val theme = card.theme
     val spacing = GraphyThemeTokens.spacing
     val name = stringResource(theme.nameRes())
@@ -89,22 +106,20 @@ private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
     })
     val previewHeight = dimensionResource(R.dimen.theme_swatch_height)
     val iconSize = dimensionResource(R.dimen.theme_state_icon_size)
-    // The label slot uses sp so every item grows equally with the user's font size.
-    val labelHeight = dimensionResource(R.dimen.theme_card_label_height)
     val itemHeight = previewHeight + iconSize + labelHeight + spacing.xs * 2 + spacing.sm * 2
     Surface(
         modifier = Modifier
             .width(dimensionResource(R.dimen.theme_card_width))
             .height(itemHeight)
-            .clip(MaterialTheme.shapes.medium)
             .selectable(selected = card.selected, role = Role.RadioButton, onClick = { onThemeTapped(theme.id()) })
             .semantics {
                 contentDescription = name
                 stateDescription = status
             },
         color = Color(theme.background()),
-        contentColor = Color(theme.mainText()),
+        contentColor = Color(theme.primaryContentColor()),
         shape = MaterialTheme.shapes.medium,
+        shadowElevation = dimensionResource(R.dimen.theme_card_elevation),
     ) {
         // One accessible choice; swatch, icon and visible label are decorative children.
         Column(
@@ -118,9 +133,9 @@ private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
                 contentAlignment = Alignment.Center,
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(spacing.xs)) {
-                    ThemeColorDot(Color(theme.mainText()))
-                    ThemeColorDot(Color(theme.functions()))
-                    ThemeColorDot(Color(theme.equal()))
+                    ThemeColorDot(Color(theme.primaryContentColor()))
+                    ThemeColorDot(Color(theme.secondaryContentColor()))
+                    ThemeColorDot(Color(theme.accentContentColor()))
                 }
             }
             // A small, borderless status line aligns names without an empty badge.
@@ -138,8 +153,6 @@ private fun ThemeCard(card: ThemeCardState, onThemeTapped: (String) -> Unit) {
                     name,
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

@@ -3,6 +3,9 @@ package net.smartlogic.unitconverter.theme;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -80,7 +83,7 @@ public final class ThemeApplier {
             bottomNav.setBackgroundColor(theme.background());
             bottomNav.setItemIconTintList(selectedEqual);
             bottomNav.setItemTextColor(selectedEqual);
-            bottomNav.setItemRippleColor(ColorStateList.valueOf(theme.functions() & 0x33FFFFFF | 0x33000000));
+            bottomNav.setItemRippleColor(ColorStateList.valueOf(theme.secondaryContentColor() & 0x33FFFFFF | 0x33000000));
             bottomNav.setItemActiveIndicatorEnabled(false);
         }
         if (drawer != null) {
@@ -88,6 +91,15 @@ public final class ThemeApplier {
             drawer.setItemIconTintList(selectedEqual);
             drawer.setItemTextColor(selectedEqual);
             drawer.setItemBackground(null);
+            // NavigationView does not apply itemTextColor to section subheaders.
+            for (int i = 0; i < drawer.getMenu().size(); i++) {
+                var item = drawer.getMenu().getItem(i);
+                if (!item.hasSubMenu()) continue;
+                var title = new SpannableString(item.getTitle().toString());
+                title.setSpan(new ForegroundColorSpan(theme.secondaryContentColor()),
+                        0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                item.setTitle(title);
+            }
         }
     }
 
@@ -98,7 +110,7 @@ public final class ThemeApplier {
                 new int[]{android.R.attr.state_selected},
                 new int[]{}
         };
-        int[] colors = new int[]{theme.equal(), theme.equal(), theme.functions()};
+        int[] colors = new int[]{theme.accentContentColor(), theme.accentContentColor(), theme.secondaryContentColor()};
         return new ColorStateList(states, colors);
     }
 
@@ -108,8 +120,8 @@ public final class ThemeApplier {
         }
         CalculatorTheme theme = ThemeManager.get();
         tabLayout.setBackgroundColor(theme.background());
-        tabLayout.setTabTextColors(theme.functions(), theme.equal());
-        tabLayout.setSelectedTabIndicatorColor(theme.equal());
+        tabLayout.setTabTextColors(theme.secondaryContentColor(), theme.accentContentColor());
+        tabLayout.setSelectedTabIndicatorColor(theme.accentContentColor());
     }
 
     @NonNull
@@ -142,42 +154,42 @@ public final class ThemeApplier {
             applyTabLayout((TabLayout) view);
         }
         if (id == R.id.converter_divider) {
-            view.setBackgroundColor(withAlpha(theme.functions(), 0x33));
+            view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x33));
         }
-        if (id == R.id.history_row_divider) view.setBackgroundColor(withAlpha(theme.functions(), 0x26));
-        if ("history_secondary".equals(view.getTag()) && view instanceof TextView tv) tv.setTextColor(theme.functions());
+        if (id == R.id.history_row_divider) view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x26));
+        if ("history_secondary".equals(view.getTag()) && view instanceof TextView tv) tv.setTextColor(theme.secondaryContentColor());
         if (id == R.id.history_start && view instanceof com.google.android.material.button.MaterialButton button) {
-            button.setRippleColor(ColorStateList.valueOf(withAlpha(theme.mainText(), 0x22)));
+            button.setRippleColor(ColorStateList.valueOf(withAlpha(theme.primaryContentColor(), 0x22)));
         }
         if (id == R.id.history_loading && view instanceof android.widget.ProgressBar progress) {
-            progress.setIndeterminateTintList(ColorStateList.valueOf(theme.functions()));
+            progress.setIndeterminateTintList(ColorStateList.valueOf(theme.secondaryContentColor()));
         }
         if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
                 && view instanceof com.google.android.material.chip.Chip chip) {
             int[][] states = {{android.R.attr.state_checked}, {}};
             chip.setTextColor(new ColorStateList(states,
-                    new int[]{theme.mainText(), theme.functions()}));
+                    new int[]{theme.primaryContentColor(), theme.secondaryContentColor()}));
             chip.setChipBackgroundColor(new ColorStateList(states,
                     new int[]{androidx.core.graphics.ColorUtils.compositeColors(
-                            withAlpha(theme.functions(), 0x26), theme.background()), theme.background()}));
-            chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.functions(), 0x88)));
+                            withAlpha(theme.secondaryContentColor(), 0x26), theme.background()), theme.background()}));
+            chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.secondaryContentColor(), 0x88)));
         }
         if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
                 && view instanceof com.google.android.material.button.MaterialButton button) {
             int[][] states = {{android.R.attr.state_checked}, {}};
-            int selectedText = androidx.core.graphics.ColorUtils.calculateContrast(Color.WHITE, theme.equal())
-                    >= androidx.core.graphics.ColorUtils.calculateContrast(Color.BLACK, theme.equal())
-                    ? Color.WHITE : Color.BLACK;
+            int selectedText = theme.onAccentColor();
             button.setTextColor(new ColorStateList(states,
-                    new int[]{selectedText, theme.mainText()}));
+                    new int[]{selectedText, theme.primaryContentColor()}));
             button.setBackgroundTintList(new ColorStateList(states,
-                    new int[]{theme.equal(), Color.TRANSPARENT}));
+                    new int[]{theme.accentContentColor(), Color.TRANSPARENT}));
             button.setStrokeWidth(0);
+            button.setRippleColor(new ColorStateList(states, new int[]{
+                    withAlpha(selectedText, 0x22), withAlpha(theme.primaryContentColor(), 0x22)}));
         }
         if (id == R.id.converter_mode_toggle) {
             GradientDrawable track = new GradientDrawable();
             track.setColor(androidx.core.graphics.ColorUtils.compositeColors(
-                    withAlpha(theme.functions(), 0x18), theme.background()));
+                    withAlpha(theme.secondaryContentColor(), 0x18), theme.background()));
             track.setCornerRadius(view.getResources().getDimension(R.dimen.converter_mode_height));
             int inset = view.getResources().getDimensionPixelSize(R.dimen.converter_mode_vertical_inset);
             view.setBackground(new android.graphics.drawable.InsetDrawable(track, 0, inset, 0, inset));
@@ -189,7 +201,7 @@ public final class ThemeApplier {
             GradientDrawable outline = roundedFill(Color.TRANSPARENT,
                     view.getResources().getDimension(R.dimen.converter_selector_radius));
             outline.setStroke(view.getResources().getDimensionPixelSize(R.dimen.converter_divider_height),
-                    withAlpha(theme.functions(), 0x88));
+                    theme.secondaryContentColor());
             view.setBackground(outline);
             view.setPadding(left, top, right, bottom);
         }
@@ -206,25 +218,25 @@ public final class ThemeApplier {
         }
 
         if (contains(NUMBER_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.mainText());
+            tv.setTextColor(theme.primaryContentColor());
         } else if (contains(FUNCTION_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.functions());
+            tv.setTextColor(theme.secondaryContentColor());
         } else if (contains(OPERATOR_IDS, id) && view instanceof TextView tv) {
             tv.setTextColor(theme.operatorContentColor());
         } else if (id == R.id.equal && view instanceof TextView tv) {
-            tv.setTextColor(theme.equal());
+            tv.setTextColor(theme.accentContentColor());
         } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.mainText());
-            tv.setHintTextColor(theme.functions());
+            tv.setTextColor(theme.primaryContentColor());
+            tv.setHintTextColor(theme.secondaryContentColor());
         } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.functions());
+            tv.setTextColor(theme.secondaryContentColor());
         }
 
         if (contains(ICON_IDS, id) && view instanceof ImageView iv) {
-            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.mainText()));
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.primaryContentColor()));
         }
         if (id == R.id.history_item_more && view instanceof ImageView iv) {
-            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.functions()));
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.secondaryContentColor()));
         }
         if (id == R.id.converter_category_tab_icon && view instanceof ImageView iv) {
             ImageViewCompat.setImageTintList(iv, navigationTint(theme));

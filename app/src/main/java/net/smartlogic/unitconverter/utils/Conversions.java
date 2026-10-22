@@ -93,9 +93,6 @@ public final class Conversions {
         units.add(new Unit(GUNTHA, R.string.guntha, "4046.8564224", "40", "guntha"));
         units.add(new Unit(CENT, R.string.cent, "4046.8564224", "100", "cent"));
         units.add(new Unit(MARLA, R.string.marla, "25.29285264", "marla"));
-        units.add(new Unit(BIGHA_ASSAM, R.string.bigha_assam, "1337.803776", "bigha (Assam)"));
-        units.add(new Unit(BIGHA_RAJASTHAN_PUCCA, R.string.bigha_rajasthan_pucca, "2529.285264", "bigha (pucca)"));
-        units.add(new Unit(BIGHA_RAJASTHAN_KACCHA, R.string.bigha_rajasthan_kaccha, "1618.74256896", "bigha (kaccha)"));
         addConversion(Conversion.AREA, new Conversion(Conversion.AREA, R.string.area, R.drawable.ic_area, units));
     }
 

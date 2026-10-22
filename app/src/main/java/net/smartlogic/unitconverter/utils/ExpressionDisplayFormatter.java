@@ -440,13 +440,13 @@ public final class ExpressionDisplayFormatter {
             public static GraphySemanticTheme from(@NonNull Context context) {
                 CalculatorTheme theme = ThemeManager.get();
                 return new GraphySemanticTheme(
-                        theme.mainText(),
+                        theme.primaryContentColor(),
                         theme.operatorContentColor(),
-                        theme.functions(),
-                        theme.functions(),
-                        theme.equal(),
-                        theme.mainText(),
-                        theme.functions(),
+                        theme.secondaryContentColor(),
+                        theme.secondaryContentColor(),
+                        theme.accentContentColor(),
+                        theme.primaryContentColor(),
+                        theme.secondaryContentColor(),
                         theme.background()
                 );
             }

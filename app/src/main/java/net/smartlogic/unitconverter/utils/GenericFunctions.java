@@ -15,8 +15,8 @@ public class GenericFunctions {
         Snackbar sb = Snackbar.make(v, message, Snackbar.LENGTH_LONG);
         net.smartlogic.unitconverter.theme.CalculatorTheme theme = net.smartlogic.unitconverter.theme.ThemeManager.get();
         sb.setBackgroundTint(theme.background());
-        sb.setTextColor(theme.mainText());
-        sb.setActionTextColor(theme.equal());
+        sb.setTextColor(theme.primaryContentColor());
+        sb.setActionTextColor(theme.accentContentColor());
         sb.show();
     }
 

@@ -71,7 +71,7 @@ public class HistoryDialogFragment extends DialogFragment {
             CharSequence[] titles = new CharSequence[labels.length];
             for (int i = 0; i < labels.length; i++) {
                 SpannableString title = new SpannableString(getString(labels[i]));
-                title.setSpan(new ForegroundColorSpan(theme.mainText()), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                title.setSpan(new ForegroundColorSpan(theme.primaryContentColor()), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 titles[i] = title;
             }
             builder.setTitle(R.string.history_more).setItems(titles, (dialog, which) -> send(actions[which]));
@@ -103,10 +103,10 @@ public class HistoryDialogFragment extends DialogFragment {
         var theme = ThemeManager.get();
         TextView title = dialog.findViewById(androidx.appcompat.R.id.alertTitle);
         TextView message = dialog.findViewById(android.R.id.message);
-        if (title != null) title.setTextColor(theme.mainText());
-        if (message != null) message.setTextColor(theme.mainText());
+        if (title != null) title.setTextColor(theme.primaryContentColor());
+        if (message != null) message.setTextColor(theme.primaryContentColor());
         for (int button : new int[]{AlertDialog.BUTTON_POSITIVE, AlertDialog.BUTTON_NEGATIVE, AlertDialog.BUTTON_NEUTRAL}) {
-            if (dialog.getButton(button) != null) dialog.getButton(button).setTextColor(theme.mainText());
+            if (dialog.getButton(button) != null) dialog.getButton(button).setTextColor(theme.primaryContentColor());
         }
     }
 }

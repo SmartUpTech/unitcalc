@@ -476,7 +476,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
-                    label.setTextColor(ThemeManager.get().mainText());
+                    label.setTextColor(ThemeManager.get().primaryContentColor());
                 }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastFromConversion(position);
@@ -494,7 +494,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
-                    label.setTextColor(ThemeManager.get().mainText());
+                    label.setTextColor(ThemeManager.get().primaryContentColor());
                 }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastToConversion(position);
@@ -508,8 +508,12 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             }
         });
 
-        fromUnit.setSelection(mPrefs.getLastFromConversion());
-        toUnit.setSelection(mPrefs.getLastToConversion());
+        int fromPosition = mPrefs.getLastFromConversion();
+        int toPosition = mPrefs.getLastToConversion();
+        // Removed trailing units must not leave an invalid restored spinner position.
+        int unitCount = selectedConversion.getUnits().size();
+        fromUnit.setSelection(fromPosition >= 0 && fromPosition < unitCount ? fromPosition : 0);
+        toUnit.setSelection(toPosition >= 0 && toPosition < unitCount ? toPosition : Math.min(1, unitCount - 1));
     }
 
     public int getSelectedCategoryId() {
