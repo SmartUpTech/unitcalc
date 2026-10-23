@@ -46,6 +46,7 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
     private EditText search;
     private ListView list;
     private PickerAdapter adapter;
+    private boolean selectionCommitted;
     private View dialogDecor;
     private ViewTreeObserver.OnGlobalLayoutListener visibleFrameListener;
 
@@ -66,9 +67,11 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    public void showFor(Fragment parent) {
+    public boolean showFor(Fragment parent) {
         var manager = parent.getChildFragmentManager();
-        if (!manager.isStateSaved() && manager.findFragmentByTag(TAG) == null) showNow(manager, TAG);
+        if (manager.isStateSaved() || manager.findFragmentByTag(TAG) != null) return false;
+        showNow(manager, TAG);
+        return true;
     }
 
     @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -102,6 +105,8 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         adapter = new PickerAdapter(args);
         list.setAdapter(adapter);
         list.setOnItemClickListener((parent, view, position, id) -> {
+            if (selectionCommitted) return;
+            selectionCommitted = true;
             Bundle result = new Bundle();
             result.putInt(INDEX, adapter.originalIndex(position));
             result.putBoolean(SOURCE, args.getBoolean(SOURCE));

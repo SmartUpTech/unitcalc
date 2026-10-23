@@ -96,9 +96,8 @@ private fun SettingsScreen(
     val spacing = GraphyThemeTokens.spacing
     val themeState by themes.uiState.collectAsStateWithLifecycle()
     val rateUrl = stringResource(R.string.url_app_link)
-    val shareBody = stringResource(R.string.note_share_body) +
-        stringResource(R.string.url_app_short_link)
-    val brandName = stringResource(R.string.brand_name)
+    val shareBody = stringResource(R.string.note_share_body, stringResource(R.string.brand_name), rateUrl)
+    val shareSubject = stringResource(R.string.share_app_subject, stringResource(R.string.brand_name))
     val shareTitle = stringResource(R.string.pref_share_title)
     val websiteUrl = stringResource(R.string.url_smartup_website)
     val privacyUrl = stringResource(R.string.url_privacy_policy)
@@ -195,7 +194,7 @@ private fun SettingsScreen(
             SettingsRow(shareTitle, onClick = {
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_SUBJECT, brandName)
+                    putExtra(Intent.EXTRA_SUBJECT, shareSubject)
                     putExtra(Intent.EXTRA_TEXT, shareBody)
                 }
                 context.startActivity(Intent.createChooser(intent, shareTitle))

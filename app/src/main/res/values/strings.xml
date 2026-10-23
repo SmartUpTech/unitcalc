@@ -6,15 +6,14 @@
     <string name="app_bar_product">CALCULATOR</string>
 
     <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
-    <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
     <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
     <string name="url_smartup_website">https://smartuptech.github.io</string>
     <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
-    <string name="description">Calculator+ is a wonderful app for everyday maths, unit conversion, and currency rates.</string>
-    <string name="keywords">Calculator+ app for maths, unit conversion, and currency conversion</string>
+    <string name="description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
+    <string name="keywords">scientific calculator, unit converter, currency converter, calculation history</string>
     <string name="company">SMARTUP</string>
 
-    <string name="note_share_body">Hi,\n\nI am using Calculator+.\nIt\'s accurate, customizable yet light-weight. Must try it.\n\n</string>
+    <string name="note_share_body">Meet %1$s: a scientific calculator, unit converter and currency converter in one app. Calculate, convert and revisit your calculation history.\n\nTry it on Google Play:\n%2$s</string>
 
     <string name="share">Share</string>
     <string name="url_exchangeratesapi">exchangeratesapi.io</string>
@@ -88,6 +87,8 @@
     <string name="divide">÷</string>
     <string name="clear">AC</string>
     <string name="history">History</string>
+    <string name="history_conversion_input">%1$s %2$s → %3$s</string>
+    <string name="history_conversion_result">%1$s %2$s</string>
     <string name="no_history">No history yet</string>
     <string name="scientific_mode">Scientific Mode</string>
     <string name="standard_mode">Standard Mode</string>
@@ -562,4 +563,414 @@
     <string name="history_retry">Retry</string>
     <string name="history_back">Back to previous tool</string>
     <string name="history_copy_content">Expression: %1$s\nResult: %2$s</string>
+    <!-- Store listing copy: publish these values through Google Play Console. -->
+    <string name="store_listing_title">Calculator+: Unit Converter</string>
+    <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
+    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nUse standard and scientific modes to work through calculations, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings. Keep frequently used tools close with favourites.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
+    <string name="share_app_subject">%1$s: Calculate and convert</string>
+    <string name="currency_copy_format">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
+    <string name="currency_rate_format">1 %1$s = %2$s %3$s</string>
+    <string name="unit_label_symbol_format">%1$s (%2$s)</string>
+    <string name="conversion_copy_format">%1$s %2$s = %3$s %4$s</string>
+    <string name="decimal_input_start" translatable="false">0.</string>
+    <string name="currency_name_aud">Australian dollar</string>
+    <string name="currency_code_aud" translatable="false">AUD</string>
+    <string name="currency_country_aud">Australia</string>
+    <string name="currency_symbol_aud" translatable="false">$</string>
+    <string name="currency_name_brl">Brazilian real</string>
+    <string name="currency_code_brl" translatable="false">BRL</string>
+    <string name="currency_country_brl">Brazil</string>
+    <string name="currency_symbol_brl" translatable="false">R$</string>
+    <string name="currency_name_eur_bg">Euro</string>
+    <string name="currency_code_eur_bg" translatable="false">EUR</string>
+    <string name="currency_country_eur_bg">Bulgaria</string>
+    <string name="currency_symbol_eur_bg" translatable="false">€</string>
+    <string name="currency_name_cad">Canadian dollar</string>
+    <string name="currency_code_cad" translatable="false">CAD</string>
+    <string name="currency_country_cad">Canada</string>
+    <string name="currency_symbol_cad" translatable="false">$</string>
+    <string name="currency_name_cny">Chinese yuan</string>
+    <string name="currency_code_cny" translatable="false">CNY</string>
+    <string name="currency_country_cny">China</string>
+    <string name="currency_symbol_cny" translatable="false">¥</string>
+    <string name="currency_name_eur_hr">Euro</string>
+    <string name="currency_code_eur_hr" translatable="false">EUR</string>
+    <string name="currency_country_eur_hr">Croatia</string>
+    <string name="currency_symbol_eur_hr" translatable="false">€</string>
+    <string name="currency_name_czk">Czech koruna</string>
+    <string name="currency_code_czk" translatable="false">CZK</string>
+    <string name="currency_country_czk">Czechia</string>
+    <string name="currency_symbol_czk" translatable="false">Kč</string>
+    <string name="currency_name_dkk">Danish krone</string>
+    <string name="currency_code_dkk" translatable="false">DKK</string>
+    <string name="currency_country_dkk">Denmark</string>
+    <string name="currency_symbol_dkk" translatable="false">kr</string>
+    <string name="currency_name_hkd">Hong Kong dollar</string>
+    <string name="currency_code_hkd" translatable="false">HKD</string>
+    <string name="currency_country_hkd">Hong Kong</string>
+    <string name="currency_symbol_hkd" translatable="false">$</string>
+    <string name="currency_name_huf">Hungarian forint</string>
+    <string name="currency_code_huf" translatable="false">HUF</string>
+    <string name="currency_country_huf">Hungary</string>
+    <string name="currency_symbol_huf" translatable="false">Ft</string>
+    <string name="currency_name_isk">Icelandic króna</string>
+    <string name="currency_code_isk" translatable="false">ISK</string>
+    <string name="currency_country_isk">Iceland</string>
+    <string name="currency_symbol_isk" translatable="false">kr</string>
+    <string name="currency_name_inr">Indian rupee</string>
+    <string name="currency_code_inr" translatable="false">INR</string>
+    <string name="currency_country_inr">India</string>
+    <string name="currency_symbol_inr" translatable="false">₹</string>
+    <string name="currency_name_idr">Indonesian rupiah</string>
+    <string name="currency_code_idr" translatable="false">IDR</string>
+    <string name="currency_country_idr">Indonesia</string>
+    <string name="currency_symbol_idr" translatable="false">Rp</string>
+    <string name="currency_name_ils">Israeli new shekel</string>
+    <string name="currency_code_ils" translatable="false">ILS</string>
+    <string name="currency_country_ils">Israel</string>
+    <string name="currency_symbol_ils" translatable="false">₪</string>
+    <string name="currency_name_jpy">Japanese yen</string>
+    <string name="currency_code_jpy" translatable="false">JPY</string>
+    <string name="currency_country_jpy">Japan</string>
+    <string name="currency_symbol_jpy" translatable="false">¥</string>
+    <string name="currency_name_krw">South Korean won</string>
+    <string name="currency_code_krw" translatable="false">KRW</string>
+    <string name="currency_country_krw">South Korea</string>
+    <string name="currency_symbol_krw" translatable="false">₩</string>
+    <string name="currency_name_myr">Malaysian ringgit</string>
+    <string name="currency_code_myr" translatable="false">MYR</string>
+    <string name="currency_country_myr">Malaysia</string>
+    <string name="currency_symbol_myr" translatable="false">RM</string>
+    <string name="currency_name_mxn">Mexican peso</string>
+    <string name="currency_code_mxn" translatable="false">MXN</string>
+    <string name="currency_country_mxn">Mexico</string>
+    <string name="currency_symbol_mxn" translatable="false">$</string>
+    <string name="currency_name_nzd">New Zealand dollar</string>
+    <string name="currency_code_nzd" translatable="false">NZD</string>
+    <string name="currency_country_nzd">New Zealand</string>
+    <string name="currency_symbol_nzd" translatable="false">$</string>
+    <string name="currency_name_nok">Norwegian krone</string>
+    <string name="currency_code_nok" translatable="false">NOK</string>
+    <string name="currency_country_nok">Norway</string>
+    <string name="currency_symbol_nok" translatable="false">kr</string>
+    <string name="currency_name_php">Philippine peso</string>
+    <string name="currency_code_php" translatable="false">PHP</string>
+    <string name="currency_country_php">Philippines</string>
+    <string name="currency_symbol_php" translatable="false">₱</string>
+    <string name="currency_name_pln">Polish złoty</string>
+    <string name="currency_code_pln" translatable="false">PLN</string>
+    <string name="currency_country_pln">Poland</string>
+    <string name="currency_symbol_pln" translatable="false">zł</string>
+    <string name="currency_name_ron">Romanian leu</string>
+    <string name="currency_code_ron" translatable="false">RON</string>
+    <string name="currency_country_ron">Romania</string>
+    <string name="currency_symbol_ron" translatable="false">lei</string>
+    <string name="currency_name_rub">Russian ruble</string>
+    <string name="currency_code_rub" translatable="false">RUB</string>
+    <string name="currency_country_rub">Russia</string>
+    <string name="currency_symbol_rub" translatable="false">₽</string>
+    <string name="currency_name_sgd">Singapore dollar</string>
+    <string name="currency_code_sgd" translatable="false">SGD</string>
+    <string name="currency_country_sgd">Singapore</string>
+    <string name="currency_symbol_sgd" translatable="false">$</string>
+    <string name="currency_name_zar">South African rand</string>
+    <string name="currency_code_zar" translatable="false">ZAR</string>
+    <string name="currency_country_zar">South Africa</string>
+    <string name="currency_symbol_zar" translatable="false">R</string>
+    <string name="currency_name_sek">Swedish krona</string>
+    <string name="currency_code_sek" translatable="false">SEK</string>
+    <string name="currency_country_sek">Sweden</string>
+    <string name="currency_symbol_sek" translatable="false">kr</string>
+    <string name="currency_name_chf">Swiss franc</string>
+    <string name="currency_code_chf" translatable="false">CHF</string>
+    <string name="currency_country_chf">Switzerland</string>
+    <string name="currency_symbol_chf" translatable="false">Fr</string>
+    <string name="currency_name_thb">Thai baht</string>
+    <string name="currency_code_thb" translatable="false">THB</string>
+    <string name="currency_country_thb">Thailand</string>
+    <string name="currency_symbol_thb" translatable="false">฿</string>
+    <string name="currency_name_try">Turkish lira</string>
+    <string name="currency_code_try" translatable="false">TRY</string>
+    <string name="currency_country_try">Turkey</string>
+    <string name="currency_symbol_try" translatable="false">₺</string>
+    <string name="currency_name_gbp">British pound</string>
+    <string name="currency_code_gbp" translatable="false">GBP</string>
+    <string name="currency_country_gbp">United Kingdom</string>
+    <string name="currency_symbol_gbp" translatable="false">£</string>
+    <string name="currency_name_usd">US dollar</string>
+    <string name="currency_code_usd" translatable="false">USD</string>
+    <string name="currency_country_usd">United States</string>
+    <string name="currency_symbol_usd" translatable="false">$</string>
+    <string name="currency_name_eur">Euro</string>
+    <string name="currency_code_eur" translatable="false">EUR</string>
+    <string name="currency_country_eur">Germany</string>
+    <string name="currency_symbol_eur" translatable="false">€</string>
+    <string name="currency_name_aed">United Arab Emirates Dirham</string>
+    <string name="currency_code_aed" translatable="false">AED</string>
+    <string name="currency_country_aed">United Arab Emirates</string>
+    <string name="currency_symbol_aed" translatable="false">د.إ</string>
+    <string name="currency_name_amd">Armenian Dram</string>
+    <string name="currency_code_amd" translatable="false">AMD</string>
+    <string name="currency_country_amd">Armenia</string>
+    <string name="currency_symbol_amd" translatable="false">֏</string>
+    <string name="currency_name_azn">Azerbaijani Manat</string>
+    <string name="currency_code_azn" translatable="false">AZN</string>
+    <string name="currency_country_azn">Azerbaijan</string>
+    <string name="currency_symbol_azn" translatable="false">₼</string>
+    <string name="currency_name_bdt">Bangladeshi Taka</string>
+    <string name="currency_code_bdt" translatable="false">BDT</string>
+    <string name="currency_country_bdt">Bangladesh</string>
+    <string name="currency_symbol_bdt" translatable="false">৳</string>
+    <string name="currency_name_bhd">Bahraini Dinar</string>
+    <string name="currency_code_bhd" translatable="false">BHD</string>
+    <string name="currency_country_bhd">Bahrain</string>
+    <string name="currency_symbol_bhd" translatable="false">د.ب</string>
+    <string name="currency_name_btn">Bhutanese Ngultrum</string>
+    <string name="currency_code_btn" translatable="false">BTN</string>
+    <string name="currency_country_btn">Bhutan</string>
+    <string name="currency_symbol_btn" translatable="false">Nu.</string>
+    <string name="currency_name_gel">Georgian Lari</string>
+    <string name="currency_code_gel" translatable="false">GEL</string>
+    <string name="currency_country_gel">Georgia</string>
+    <string name="currency_symbol_gel" translatable="false">₾</string>
+    <string name="currency_name_iqd">Iraqi Dinar</string>
+    <string name="currency_code_iqd" translatable="false">IQD</string>
+    <string name="currency_country_iqd">Iraq</string>
+    <string name="currency_symbol_iqd" translatable="false">ع.د</string>
+    <string name="currency_name_jod">Jordanian Dinar</string>
+    <string name="currency_code_jod" translatable="false">JOD</string>
+    <string name="currency_country_jod">Jordan</string>
+    <string name="currency_symbol_jod" translatable="false">د.ا</string>
+    <string name="currency_name_kgs">Kyrgyzstani Som</string>
+    <string name="currency_code_kgs" translatable="false">KGS</string>
+    <string name="currency_country_kgs">Kyrgyzstan</string>
+    <string name="currency_symbol_kgs" translatable="false">som</string>
+    <string name="currency_name_khr">Cambodian Riel</string>
+    <string name="currency_code_khr" translatable="false">KHR</string>
+    <string name="currency_country_khr">Cambodia</string>
+    <string name="currency_symbol_khr" translatable="false">៛</string>
+    <string name="currency_name_kwd">Kuwaiti Dinar</string>
+    <string name="currency_code_kwd" translatable="false">KWD</string>
+    <string name="currency_country_kwd">Kuwait</string>
+    <string name="currency_symbol_kwd" translatable="false">د.ك</string>
+    <string name="currency_name_kzt">Kazakhstani Tenge</string>
+    <string name="currency_code_kzt" translatable="false">KZT</string>
+    <string name="currency_country_kzt">Kazakhstan</string>
+    <string name="currency_symbol_kzt" translatable="false">₸</string>
+    <string name="currency_name_lak">Lao Kip</string>
+    <string name="currency_code_lak" translatable="false">LAK</string>
+    <string name="currency_country_lak">Laos</string>
+    <string name="currency_symbol_lak" translatable="false">₭</string>
+    <string name="currency_name_lbp">Lebanese Pound</string>
+    <string name="currency_code_lbp" translatable="false">LBP</string>
+    <string name="currency_country_lbp">Lebanon</string>
+    <string name="currency_symbol_lbp" translatable="false">ل.ل</string>
+    <string name="currency_name_lkr">Sri Lankan Rupee</string>
+    <string name="currency_code_lkr" translatable="false">LKR</string>
+    <string name="currency_country_lkr">Sri Lanka</string>
+    <string name="currency_symbol_lkr" translatable="false">₨</string>
+    <string name="currency_name_mmk">Myanmar Kyat</string>
+    <string name="currency_code_mmk" translatable="false">MMK</string>
+    <string name="currency_country_mmk">Myanmar</string>
+    <string name="currency_symbol_mmk" translatable="false">K</string>
+    <string name="currency_name_mnt">Mongolian Tögrög</string>
+    <string name="currency_code_mnt" translatable="false">MNT</string>
+    <string name="currency_country_mnt">Mongolia</string>
+    <string name="currency_symbol_mnt" translatable="false">₮</string>
+    <string name="currency_name_npr">Nepalese Rupee</string>
+    <string name="currency_code_npr" translatable="false">NPR</string>
+    <string name="currency_country_npr">Nepal</string>
+    <string name="currency_symbol_npr" translatable="false">Rs.</string>
+    <string name="currency_name_omr">Omani Rial</string>
+    <string name="currency_code_omr" translatable="false">OMR</string>
+    <string name="currency_country_omr">Oman</string>
+    <string name="currency_symbol_omr" translatable="false">ر.ع.</string>
+    <string name="currency_name_pkr">Pakistani Rupee</string>
+    <string name="currency_code_pkr" translatable="false">PKR</string>
+    <string name="currency_country_pkr">Pakistan</string>
+    <string name="currency_symbol_pkr" translatable="false">₨</string>
+    <string name="currency_name_qar">Qatari Riyal</string>
+    <string name="currency_code_qar" translatable="false">QAR</string>
+    <string name="currency_country_qar">Qatar</string>
+    <string name="currency_symbol_qar" translatable="false">ر.ق</string>
+    <string name="currency_name_sar">Saudi Riyal</string>
+    <string name="currency_code_sar" translatable="false">SAR</string>
+    <string name="currency_country_sar">Saudi Arabia</string>
+    <string name="currency_symbol_sar" translatable="false">ر.س</string>
+    <string name="currency_name_tjs">Tajikistani Somoni</string>
+    <string name="currency_code_tjs" translatable="false">TJS</string>
+    <string name="currency_country_tjs">Tajikistan</string>
+    <string name="currency_symbol_tjs" translatable="false">ЅМ</string>
+    <string name="currency_name_twd">New Taiwan Dollar</string>
+    <string name="currency_code_twd" translatable="false">TWD</string>
+    <string name="currency_country_twd">Taiwan</string>
+    <string name="currency_symbol_twd" translatable="false">$</string>
+    <string name="currency_name_uzs">Uzbekistan Som</string>
+    <string name="currency_code_uzs" translatable="false">UZS</string>
+    <string name="currency_country_uzs">Uzbekistan</string>
+    <string name="currency_symbol_uzs" translatable="false">so\'m</string>
+    <string name="currency_name_vnd">Vietnamese Đồng</string>
+    <string name="currency_code_vnd" translatable="false">VND</string>
+    <string name="currency_country_vnd">Vietnam</string>
+    <string name="currency_symbol_vnd" translatable="false">₫</string>
+    <string name="currency_name_all">Albanian Lek</string>
+    <string name="currency_code_all" translatable="false">ALL</string>
+    <string name="currency_country_all">Albania</string>
+    <string name="currency_symbol_all" translatable="false">L</string>
+    <string name="currency_name_bam">Bosnia and Herzegovina Convertible Mark</string>
+    <string name="currency_code_bam" translatable="false">BAM</string>
+    <string name="currency_country_bam">Bosnia and Herzegovina</string>
+    <string name="currency_symbol_bam" translatable="false">КМ</string>
+    <string name="currency_name_byn">Belarusian Ruble</string>
+    <string name="currency_code_byn" translatable="false">BYN</string>
+    <string name="currency_country_byn">Belarus</string>
+    <string name="currency_symbol_byn" translatable="false">Br</string>
+    <string name="currency_name_mdl">Moldovan Leu</string>
+    <string name="currency_code_mdl" translatable="false">MDL</string>
+    <string name="currency_country_mdl">Moldova</string>
+    <string name="currency_symbol_mdl" translatable="false">L</string>
+    <string name="currency_name_mkd">Macedonian Denar</string>
+    <string name="currency_code_mkd" translatable="false">MKD</string>
+    <string name="currency_country_mkd">North Macedonia</string>
+    <string name="currency_symbol_mkd" translatable="false">ден</string>
+    <string name="currency_name_rsd">Serbian Dinar</string>
+    <string name="currency_code_rsd" translatable="false">RSD</string>
+    <string name="currency_country_rsd">Serbia</string>
+    <string name="currency_symbol_rsd" translatable="false">RSD</string>
+    <string name="currency_name_uah">Ukrainian Hryvnia</string>
+    <string name="currency_code_uah" translatable="false">UAH</string>
+    <string name="currency_country_uah">Ukraine</string>
+    <string name="currency_symbol_uah" translatable="false">₴</string>
+    <string name="currency_name_ars">Argentine Peso</string>
+    <string name="currency_code_ars" translatable="false">ARS</string>
+    <string name="currency_country_ars">Argentina</string>
+    <string name="currency_symbol_ars" translatable="false">$</string>
+    <string name="currency_name_bbd">Barbadian Dollar</string>
+    <string name="currency_code_bbd" translatable="false">BBD</string>
+    <string name="currency_country_bbd">Barbados</string>
+    <string name="currency_symbol_bbd" translatable="false">$</string>
+    <string name="currency_name_bob">Bolivian Boliviano</string>
+    <string name="currency_code_bob" translatable="false">BOB</string>
+    <string name="currency_country_bob">Bolivia</string>
+    <string name="currency_symbol_bob" translatable="false">Bs.</string>
+    <string name="currency_name_bsd">Bahamian Dollar</string>
+    <string name="currency_code_bsd" translatable="false">BSD</string>
+    <string name="currency_country_bsd">Bahamas</string>
+    <string name="currency_symbol_bsd" translatable="false">$</string>
+    <string name="currency_name_bzd">Belize Dollar</string>
+    <string name="currency_code_bzd" translatable="false">BZD</string>
+    <string name="currency_country_bzd">Belize</string>
+    <string name="currency_symbol_bzd" translatable="false">$</string>
+    <string name="currency_name_clp">Chilean Peso</string>
+    <string name="currency_code_clp" translatable="false">CLP</string>
+    <string name="currency_country_clp">Chile</string>
+    <string name="currency_symbol_clp" translatable="false">$</string>
+    <string name="currency_name_cop">Colombian Peso</string>
+    <string name="currency_code_cop" translatable="false">COP</string>
+    <string name="currency_country_cop">Colombia</string>
+    <string name="currency_symbol_cop" translatable="false">$</string>
+    <string name="currency_name_crc">Costa Rican Colón</string>
+    <string name="currency_code_crc" translatable="false">CRC</string>
+    <string name="currency_country_crc">Costa Rica</string>
+    <string name="currency_symbol_crc" translatable="false">₡</string>
+    <string name="currency_name_bnd">Brunei Dollar</string>
+    <string name="currency_code_bnd" translatable="false">BND</string>
+    <string name="currency_country_bnd">Brunei</string>
+    <string name="currency_symbol_bnd" translatable="false">$</string>
+    <string name="currency_name_gtq">Guatemalan Quetzal</string>
+    <string name="currency_code_gtq" translatable="false">GTQ</string>
+    <string name="currency_country_gtq">Guatemala</string>
+    <string name="currency_symbol_gtq" translatable="false">Q</string>
+    <string name="currency_name_gyd">Guyanese Dollar</string>
+    <string name="currency_code_gyd" translatable="false">GYD</string>
+    <string name="currency_country_gyd">Guyana</string>
+    <string name="currency_symbol_gyd" translatable="false">$</string>
+    <string name="currency_name_hnl">Honduran Lempira</string>
+    <string name="currency_code_hnl" translatable="false">HNL</string>
+    <string name="currency_country_hnl">Honduras</string>
+    <string name="currency_symbol_hnl" translatable="false">L</string>
+    <string name="currency_name_jmd">Jamaican Dollar</string>
+    <string name="currency_code_jmd" translatable="false">JMD</string>
+    <string name="currency_country_jmd">Jamaica</string>
+    <string name="currency_symbol_jmd" translatable="false">$</string>
+    <string name="currency_name_pen">Peruvian Sol</string>
+    <string name="currency_code_pen" translatable="false">PEN</string>
+    <string name="currency_country_pen">Peru</string>
+    <string name="currency_symbol_pen" translatable="false">S/</string>
+    <string name="currency_name_pyg">Paraguayan Guaraní</string>
+    <string name="currency_code_pyg" translatable="false">PYG</string>
+    <string name="currency_country_pyg">Paraguay</string>
+    <string name="currency_symbol_pyg" translatable="false">₲</string>
+    <string name="currency_name_ttd">Trinidad and Tobago Dollar</string>
+    <string name="currency_code_ttd" translatable="false">TTD</string>
+    <string name="currency_country_ttd">Trinidad and Tobago</string>
+    <string name="currency_symbol_ttd" translatable="false">$</string>
+    <string name="currency_name_uyu">Uruguayan Peso</string>
+    <string name="currency_code_uyu" translatable="false">UYU</string>
+    <string name="currency_country_uyu">Uruguay</string>
+    <string name="currency_symbol_uyu" translatable="false">$U</string>
+    <string name="currency_name_aoa">Angolan Kwanza</string>
+    <string name="currency_code_aoa" translatable="false">AOA</string>
+    <string name="currency_country_aoa">Angola</string>
+    <string name="currency_symbol_aoa" translatable="false">Kz</string>
+    <string name="currency_name_bwp">Botswana Pula</string>
+    <string name="currency_code_bwp" translatable="false">BWP</string>
+    <string name="currency_country_bwp">Botswana</string>
+    <string name="currency_symbol_bwp" translatable="false">P</string>
+    <string name="currency_name_dzd">Algerian Dinar</string>
+    <string name="currency_code_dzd" translatable="false">DZD</string>
+    <string name="currency_country_dzd">Algeria</string>
+    <string name="currency_symbol_dzd" translatable="false">د.ج</string>
+    <string name="currency_name_egp">Egyptian Pound</string>
+    <string name="currency_code_egp" translatable="false">EGP</string>
+    <string name="currency_country_egp">Egypt</string>
+    <string name="currency_symbol_egp" translatable="false">ج.م</string>
+    <string name="currency_name_etb">Ethiopian Birr</string>
+    <string name="currency_code_etb" translatable="false">ETB</string>
+    <string name="currency_country_etb">Ethiopia</string>
+    <string name="currency_symbol_etb" translatable="false">Br</string>
+    <string name="currency_name_ghs">Ghanaian Cedi</string>
+    <string name="currency_code_ghs" translatable="false">GHS</string>
+    <string name="currency_country_ghs">Ghana</string>
+    <string name="currency_symbol_ghs" translatable="false">₵</string>
+    <string name="currency_name_kes">Kenyan Shilling</string>
+    <string name="currency_code_kes" translatable="false">KES</string>
+    <string name="currency_country_kes">Kenya</string>
+    <string name="currency_symbol_kes" translatable="false">KSh</string>
+    <string name="currency_name_mad">Moroccan Dirham</string>
+    <string name="currency_code_mad" translatable="false">MAD</string>
+    <string name="currency_country_mad">Morocco</string>
+    <string name="currency_symbol_mad" translatable="false">د.م.</string>
+    <string name="currency_name_mur">Mauritian Rupee</string>
+    <string name="currency_code_mur" translatable="false">MUR</string>
+    <string name="currency_country_mur">Mauritius</string>
+    <string name="currency_symbol_mur" translatable="false">₨</string>
+    <string name="currency_name_ngn">Nigerian Naira</string>
+    <string name="currency_code_ngn" translatable="false">NGN</string>
+    <string name="currency_country_ngn">Nigeria</string>
+    <string name="currency_symbol_ngn" translatable="false">₦</string>
+    <string name="currency_name_tnd">Tunisian Dinar</string>
+    <string name="currency_code_tnd" translatable="false">TND</string>
+    <string name="currency_country_tnd">Tunisia</string>
+    <string name="currency_symbol_tnd" translatable="false">د.ت</string>
+    <string name="currency_name_tzs">Tanzanian Shilling</string>
+    <string name="currency_code_tzs" translatable="false">TZS</string>
+    <string name="currency_country_tzs">Tanzania</string>
+    <string name="currency_symbol_tzs" translatable="false">Sh</string>
+    <string name="currency_name_ugx">Ugandan Shilling</string>
+    <string name="currency_code_ugx" translatable="false">UGX</string>
+    <string name="currency_country_ugx">Uganda</string>
+    <string name="currency_symbol_ugx" translatable="false">USh</string>
+    <string name="currency_name_zmw">Zambian Kwacha</string>
+    <string name="currency_code_zmw" translatable="false">ZMW</string>
+    <string name="currency_country_zmw">Zambia</string>
+    <string name="currency_symbol_zmw" translatable="false">K</string>
+    <string name="currency_name_fjd">Fijian Dollar</string>
+    <string name="currency_code_fjd" translatable="false">FJD</string>
+    <string name="currency_country_fjd">Fiji</string>
+    <string name="currency_symbol_fjd" translatable="false">$</string>
+    <string name="currency_name_pgk">Papua New Guinean Kina</string>
+    <string name="currency_code_pgk" translatable="false">PGK</string>
+    <string name="currency_country_pgk">Papua New Guinea</string>
+    <string name="currency_symbol_pgk" translatable="false">K</string>
 </resources>

@@ -34,6 +34,8 @@ import net.smartlogic.unitconverter.widget.ConverterPickerSpinner;
 import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
 import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.IdleHistoryRecorder;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
@@ -56,6 +58,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     EditText inputValue, outputValue;
     TextView inputSymbol, outputSymbol;
     private TabLayout categorySelector;
+    private boolean categoryChangeInProgress;
     private TextView unitRate;
     private Context context;
     private Spinner fromUnit, toUnit;
@@ -70,6 +73,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     ImageButton reverse, copy, backspace;
 
     TextWatcher inputTextWatcher;
+    private IdleHistoryRecorder historyRecorder;
 
     public UnitConverterFragment() {
         // Required empty public constructor
@@ -84,9 +88,29 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         return fragment;
     }
 
+    @Override public void onSaveInstanceState(@NonNull Bundle state) {
+        super.onSaveInstanceState(state);
+        historyRecorder.saveState(state);
+    }
+
+    public void historyVisibilityChanged() {
+        if (historyRecorder != null) historyRecorder.visibilityChanged();
+    }
+
+    @Override public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        historyVisibilityChanged();
+    }
+
+    @Override public void onDestroyView() {
+        historyRecorder.invalidate();
+        super.onDestroyView();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        historyRecorder = new IdleHistoryRecorder(this, savedInstanceState);
 
         this.context = this.getActivity();
         mPrefs = Preferences.getInstance(getActivity());
@@ -217,7 +241,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.dot) {
                 if (inputValue.getText().toString().isEmpty())
-                    inputValue.setText("0.");
+                    inputValue.setText(R.string.decimal_input_start);
                 else if (inputValue.getText().toString().equals("-"))
                     inputValue.append("0.");
                 else if (!previous.contains("."))
@@ -247,10 +271,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
                     ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
-                    String result = inputValue.getText().toString() + " " +
-                            context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()) + " = " +
-                            outputValue.getText().toString() + " " +
-                            context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource());
+                    String result = getString(R.string.conversion_copy_format, inputValue.getText().toString(), context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()), outputValue.getText().toString(), context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource()));
                     ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), result);
                     clipboard.setPrimaryClip(clip);
                     showToast(R.string.toast_copied_positive);
@@ -366,6 +387,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     }
 
     private void convertAndDisplay(String in) {
+        historyRecorder.invalidate();
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + fromUnit.getSelectedItem() + " to " + toUnit.getSelectedItem());
         //Log.d("SHRIKI","Convert value: " + in + " from " + fromUnit.getSelectedItemPosition() + " to " + toUnit.getSelectedItemPosition());
@@ -438,6 +460,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         }
 
         outputValue.setText(finalStr);
+        historyRecorder.update(getString(R.string.history_conversion_input, in,
+                        getString(from.getLabelResource()), getString(to.getLabelResource())),
+                getString(R.string.history_conversion_result, finalStr, getString(to.getLabelResource())),
+                CalculatorCatalog.unitId(selectedConversion.getId()));
         updateParentGraphy(in, from, to, fromSym, toSym, finalStr, result);
     }
 
@@ -549,9 +575,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         String title = getString(source ? R.string.converter_picker_from_title : R.string.converter_picker_to_title,
                 getString(selectedConversion.getLabelResource()));
         Spinner target = source ? fromUnit : toUnit;
-        InteractionFeedbackManager.perform(target, InteractionFeedbackManager.Type.ACTION);
-        ConverterPickerDialogFragment.newInstance(title, source, getSelectedCategoryId(),
-                target.getSelectedItemPosition(), labels, details, keywords, null).showFor(this);
+        if (ConverterPickerDialogFragment.newInstance(title, source, getSelectedCategoryId(),
+                target.getSelectedItemPosition(), labels, details, keywords, null).showFor(this)) {
+            InteractionFeedbackManager.perform(target, InteractionFeedbackManager.Type.ACTION);
+        }
     }
 
     private void bindCategoryTabs() {
@@ -568,9 +595,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         categorySelector.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) {
                 int id = (Integer) tab.getTag();
-                if (id != getSelectedCategoryId()) {
+                if (categoryChangeInProgress || id == getSelectedCategoryId()) return;
+                categoryChangeInProgress = true;
+                try {
                     selectCategory(id);
                     InteractionFeedbackManager.perform(categorySelector, InteractionFeedbackManager.Type.ACTION);
+                } finally {
+                    categoryChangeInProgress = false;
                 }
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) { }

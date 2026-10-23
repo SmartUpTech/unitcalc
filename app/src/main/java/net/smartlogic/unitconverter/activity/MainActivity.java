@@ -293,9 +293,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private void shareApp() {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.brand_name));
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_app_subject, getString(R.string.brand_name)));
         sharingIntent.putExtra(Intent.EXTRA_TEXT,
-                getString(R.string.note_share_body) + getString(R.string.url_app_short_link));
+                getString(R.string.note_share_body, getString(R.string.brand_name), getString(R.string.url_app_link)));
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
     }
 

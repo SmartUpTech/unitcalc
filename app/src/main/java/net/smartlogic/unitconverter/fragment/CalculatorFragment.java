@@ -34,7 +34,7 @@ import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
 import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
 import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
-import net.smartlogic.unitconverter.helper.DatabaseHelper;
+import net.smartlogic.unitconverter.helper.IdleHistoryRecorder;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
@@ -62,7 +62,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     
     private TextView graphyEmpty;
     private TextView graphyContext;
-    private DatabaseHelper dbHelper;
+    private IdleHistoryRecorder historyRecorder;
     private OnBackPressedCallback onBackPressedCallback;
     private final GraphyBridge graphyBridge = new GraphyBridge(
             net.smartlogic.unitconverter.graphy.builder.ExpressionGraphBuilder.decimalFormatted(
@@ -100,7 +100,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPrefs = Preferences.getInstance(getActivity());
-        dbHelper = new DatabaseHelper(getContext());
+        historyRecorder = new IdleHistoryRecorder(this, savedInstanceState);
         if (savedInstanceState != null) {
             expression = savedInstanceState.getString("calculator_expression", "");
             lastEvaluatedExpression = savedInstanceState.getString("calculator_last_expression", "");
@@ -114,6 +114,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         outState.putString("calculator_expression", expression);
         outState.putString("calculator_last_expression", lastEvaluatedExpression);
         outState.putBoolean("calculator_result_displayed", isResultDisplayed);
+        historyRecorder.saveState(outState);
     }
 
     @Override
@@ -153,6 +154,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onDestroyView() {
+        historyRecorder.invalidate();
         if (workspaceTabController != null) {
             workspaceTabController.detach();
             workspaceTabController = null;
@@ -338,10 +340,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void clearAll() {
+        historyRecorder.invalidate();
         expression = "";
         lastEvaluatedExpression = "";
         updateExpressionDisplay();
-        tvResult.setText("0");
+        tvResult.setText(R.string.zero);
         isResultDisplayed = false;
         latestGraphyOutput = null;
         hideGraphy();
@@ -355,6 +358,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         updateExpressionDisplay();
         tvResult.setText(item.result());
         calculateResult(false);
+        historyRecorder.markCurrentAsSaved();
         updateGraphyTabState();
         selectWorkspaceTab(0);
     }
@@ -611,6 +615,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     @Override public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        if (historyRecorder != null) historyRecorder.visibilityChanged();
         updateWorkspaceBackCallback();
     }
 
@@ -634,8 +639,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     private void calculateResult(boolean isFinal) {
         if (inputChangeInProgress) { recalculateAfterInput = true; return; }
+        historyRecorder.invalidate();
         if (expression.isEmpty()) {
-            tvResult.setText("0");
+            tvResult.setText(R.string.zero);
             latestGraphyOutput = null;
             hideGraphy();
             updateGraphyTabState();
@@ -690,9 +696,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 renderGraphy(latestGraphyOutput);
             }
 
+            historyRecorder.update(sourceExpression, formatted, CalculatorCatalog.ID_BASIC);
             if (isFinal) {
                 lastEvaluatedExpression = sourceExpression;
-                dbHelper.addHistory(sourceExpression, formatted, CalculatorCatalog.ID_BASIC);
+                historyRecorder.saveNow();
                 expression = evaluationResult.getDecimalValue().stripTrailingZeros().toPlainString();
                 isResultDisplayed = true;
                 updateExpressionDisplay();

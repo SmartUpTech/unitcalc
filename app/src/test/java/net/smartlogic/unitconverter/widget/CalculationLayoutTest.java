@@ -36,7 +36,86 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class CalculationLayoutTest {
-    @Test public void converterBordersAlignAndLeaveSpaceBelowCategories() {
+    @Test public void reorderedConverterRowsAlignAcrossThemesAndRenderPreviews() throws Exception {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            int themeIndex = 0;
+            for (CalculatorTheme theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}}) {
+                        ViewGroup unit = (ViewGroup) inflate(R.layout.fragment_unit_converter, scale);
+                        ViewGroup currency = (ViewGroup) inflate(R.layout.fragment_currency_converter, scale);
+                        measure(unit, size[0], size[1]);
+                        measure(currency, size[0], size[1]);
+                        for (ViewGroup root : new ViewGroup[]{unit, currency}) {
+                            boolean fits = viewport(root).getChildAt(0).getVisibility() == View.VISIBLE;
+                            if (fits) {
+                                assertKeys(root, true);
+                            } else {
+                                // Compare against the previous order before classifying a
+                                // physically constrained configuration as an existing limit.
+                                LinearLayout controls = root.findViewById(R.id.calculation_controls);
+                                View strip = root.findViewById(R.id.category_selector);
+                                controls.removeView(strip);
+                                controls.addView(strip, 0);
+                                measure(root, size[0], size[1]);
+                                assertEquals("previous order must have the same space limit",
+                                        View.INVISIBLE, viewport(root).getChildAt(0).getVisibility());
+                                controls.removeView(strip);
+                                controls.addView(strip, 1);
+                                measure(root, size[0], size[1]);
+                                assertEquals(View.VISIBLE, root.findViewById(R.id.tool_space_message).getVisibility());
+                            }
+                        }
+                        for (int id : new int[]{R.id.converter_source_section, R.id.converter_target_section, R.id.keypad}) {
+                            assertEquals("theme=" + themeIndex + " scale=" + scale + " size=" + size[0],
+                                    bounds(unit, unit.findViewById(id)), bounds(currency, currency.findViewById(id)));
+                        }
+                        for (ViewGroup root : new ViewGroup[]{unit, currency}) {
+                            assertTrue(bounds(root, root.findViewById(R.id.category_selector)).top
+                                    >= bounds(root, root.findViewById(R.id.converter_target_section)).bottom);
+                        }
+                        if (viewport(currency).getChildAt(0).getVisibility() == View.VISIBLE) {
+                            assertInside(currency, currency.findViewById(R.id.refresh));
+                        }
+                        if (size[0] == 360 && (theme == CalculatorThemes.PORCELAIN_WHITE || theme == CalculatorThemes.GRAPHITE_BLACK)) {
+                            android.graphics.Bitmap preview = android.graphics.Bitmap.createBitmap(
+                                    720, 460, android.graphics.Bitmap.Config.ARGB_8888);
+                            android.graphics.Canvas canvas = new android.graphics.Canvas(preview);
+                            unit.draw(canvas);
+                            canvas.translate(360, 0);
+                            currency.draw(canvas);
+                            java.io.File directory = new java.io.File("build/reports/converter-layout");
+                            assertTrue(directory.isDirectory() || directory.mkdirs());
+                            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(new java.io.File(directory,
+                                    "converter-" + themeIndex + "-" + scale + ".png"))) {
+                                preview.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+                            }
+                            preview.recycle();
+                        }
+                    }
+                }
+                themeIndex++;
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
+        }
+    }
+
+    @Test public void previousCurrencyOrderHasSameLimitAtLargeDisplayDensity() {
+        ViewGroup root = (ViewGroup) inflate(R.layout.fragment_currency_converter, 1f, 520);
+        measure(root, 1080, 1185);
+        int reorderedVisibility = viewport(root).getChildAt(0).getVisibility();
+        LinearLayout controls = root.findViewById(R.id.calculation_controls);
+        View strip = root.findViewById(R.id.category_selector);
+        controls.removeView(strip);
+        controls.addView(strip, 0);
+        measure(root, 1080, 1185);
+        assertEquals(reorderedVisibility, viewport(root).getChildAt(0).getVisibility());
+    }
+
+    @Test public void converterBordersAlignAndCategoriesFollowValueRows() {
         CalculatorTheme original = ThemeManager.get();
         try {
             for (CalculatorTheme theme : new CalculatorTheme[]{CalculatorThemes.PORCELAIN_WHITE, CalculatorThemes.GRAPHITE_BLACK}) {
@@ -57,8 +136,8 @@ public class CalculationLayoutTest {
                             assertEquals(bounds(root, amount).top, bounds(root, selector).top);
                             assertEquals(bounds(root, amount).bottom, bounds(root, selector).bottom);
                         }
-                        assertTrue(bounds(root, root.findViewById(R.id.converter_source_section)).top
-                                - bounds(root, root.findViewById(R.id.category_selector)).bottom
+                        assertTrue(bounds(root, root.findViewById(R.id.category_selector)).top
+                                - bounds(root, root.findViewById(R.id.converter_target_section)).bottom
                                 >= root.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing));
                         View heading = root.findViewById(R.id.category_selector);
                         ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) heading.getLayoutParams();
@@ -221,7 +300,8 @@ public class CalculationLayoutTest {
                             bounds(root, selector).top);
                     assertEquals(bounds(root, source.getChildAt(0)).bottom,
                             bounds(root, selector).bottom);
-                    assertTrue(bounds(root, source).top - bounds(root, converter.findViewById(R.id.category_selector)).bottom
+                    assertTrue(bounds(root, converter.findViewById(R.id.category_selector)).top
+                            - bounds(root, converter.findViewById(R.id.converter_target_section)).bottom
                             >= converter.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing));
                 }
                 assertEquals("keypad parity " + size[0] + "x" + size[1] + " scale=" + scale,
@@ -229,6 +309,11 @@ public class CalculationLayoutTest {
                         bounds((ViewGroup) currency, currency.findViewById(R.id.keypad)));
                 for (int id : new int[]{R.id.seven, R.id.nine, R.id.ac, R.id.zero, R.id.minus}) {
                     assertEquals(bounds((ViewGroup) unit, unit.findViewById(id)),
+                            bounds((ViewGroup) currency, currency.findViewById(id)));
+                }
+                for (int id : new int[]{R.id.converter_source_section, R.id.converter_target_section}) {
+                    assertEquals("value row alignment at scale=" + scale,
+                            bounds((ViewGroup) unit, unit.findViewById(id)),
                             bounds((ViewGroup) currency, currency.findViewById(id)));
                 }
                 ViewGroup keypad = unit.findViewById(R.id.keypad);

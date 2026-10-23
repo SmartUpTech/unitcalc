@@ -21,29 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <LinearLayout
-                    android:id="@+id/category_selector"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/converter_touch_target"
-                    android:layout_marginHorizontal="@dimen/converter_card_margin"
-                    android:layout_marginTop="@dimen/converter_spacing"
-                    android:layout_marginBottom="@dimen/converter_spacing"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <TextView
-                        style="@style/ConverterSelectorText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:id="@+id/exchange_rate_title"
-                        android:text="@string/converter_exchange_rate" />
-                    <ImageButton
-                        android:id="@+id/refresh"
-                        style="@style/ConverterIconButton"
-                        android:contentDescription="@string/converter_refresh_rates"
-                        android:src="@drawable/ic_unit_converter" />
-                </LinearLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/converter_card"
                     android:layout_width="match_parent"
@@ -306,6 +283,29 @@
                         </LinearLayout>
                     </net.smartlogic.unitconverter.widget.ConverterValueRow>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:id="@+id/category_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/converter_touch_target"
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:layout_marginTop="@dimen/converter_spacing"
+                    android:layout_marginBottom="@dimen/converter_spacing"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView
+                        style="@style/ConverterSelectorText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/exchange_rate_title"
+                        android:text="@string/converter_exchange_rate" />
+                    <ImageButton
+                        android:id="@+id/refresh"
+                        style="@style/ConverterIconButton"
+                        android:contentDescription="@string/converter_refresh_rates"
+                        android:src="@drawable/ic_unit_converter" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

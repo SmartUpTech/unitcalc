@@ -55,7 +55,7 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         String symbol = unit.getSymbol();
 
         if (symbol != null && !symbol.isEmpty()) {
-            holder.textView.setText(String.format("%s (%s)", label, symbol));
+            holder.textView.setText(holder.textView.getContext().getString(R.string.unit_label_symbol_format, label, symbol));
         } else {
             holder.textView.setText(label);
         }
@@ -80,7 +80,7 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         String symbol = unit.getSymbol();
 
         if (symbol != null && !symbol.isEmpty()) {
-            holder.textView.setText(String.format("%s (%s)", label, symbol));
+            holder.textView.setText(holder.textView.getContext().getString(R.string.unit_label_symbol_format, label, symbol));
         } else {
             holder.textView.setText(label);
         }

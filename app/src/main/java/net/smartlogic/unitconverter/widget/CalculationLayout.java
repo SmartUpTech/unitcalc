@@ -131,8 +131,8 @@ public final class CalculationLayout extends LinearLayout {
             // Reclaim secondary gaps only after the regular arrangements fail.
             View heading = findViewById(R.id.category_selector);
             MarginLayoutParams margins = (MarginLayoutParams) heading.getLayoutParams();
-            margins.topMargin = dimension(R.dimen.converter_compact_row_spacing);
-            margins.bottomMargin = dimension(R.dimen.converter_small_spacing);
+            margins.topMargin = dimension(R.dimen.converter_small_spacing);
+            margins.bottomMargin = dimension(R.dimen.converter_compact_row_spacing);
             View card = findViewById(R.id.converter_card);
             card.setPadding(card.getPaddingLeft(), 0, card.getPaddingRight(), 0);
             MarginLayoutParams target = (MarginLayoutParams) findViewById(R.id.converter_target_section).getLayoutParams();

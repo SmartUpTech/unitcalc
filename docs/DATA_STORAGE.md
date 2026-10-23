@@ -10,7 +10,7 @@ description: Details of the application's persistence layers including SQLite an
 - **Fields**: `id`, `expression`, `result`, `created_at`, `calculator_id`.
 - **Constraint**: Never perform SQL operations on the Main Thread.
 - **History reads/deletion**: History uses a shared serial background executor and 50-record keyset pages ordered by descending database ID. Individual deletion targets the ID; Undo reinserts the original ID, timestamp, calculator and values with conflict-ignore. No schema migration is needed.
-- **History scope**: The basic calculator currently writes history. Legacy entries from other tools can open their tool, but do not contain enough structured input to restore units or rates.
+- **History scope**: Calculator, unit and currency results save after 3 seconds of idle time on a visible, resumed tool. Invalid/empty input cancels the pending result; pausing/hiding cancels the countdown and returning starts a fresh delay. Equals saves immediately through the same recorder. Consecutive identical snapshots are suppressed, including after saved-state recreation. Writes use the shared serial history executor. Unit entries carry the category catalog ID and readable source/destination names; currency entries include ISO codes. Converter entries open their tool but do not restore structured selections or historical rates. No database migration is required.
 
 ## SHAREDPREFERENCES (Preferences)
 - **Usage**: App settings, last used states, and cached currency data.

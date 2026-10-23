@@ -84,6 +84,12 @@ public class ConverterFragment extends Fragment {
     public ConverterFragment() {
     }
 
+    @Override public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (unitFragment != null) unitFragment.historyVisibilityChanged();
+        if (currencyFragment != null) currencyFragment.historyVisibilityChanged();
+    }
+
     public static ConverterFragment newInstance() {
         return new ConverterFragment();
     }

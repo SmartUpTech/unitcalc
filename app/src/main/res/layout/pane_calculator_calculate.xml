@@ -82,7 +82,7 @@
                 <ImageButton
                     android:id="@+id/backspace"
                     style="@style/CalculatorKey.Icon"
-                    android:contentDescription="Backspace"
+                    android:contentDescription="@string/converter_backspace"
                     android:src="@drawable/backspace"/>
             </net.smartlogic.unitconverter.widget.KeypadRowLayout>
             <net.smartlogic.unitconverter.widget.KeypadRowLayout

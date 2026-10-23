@@ -21,24 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/category_selector"
-                    style="@style/WorkspaceTabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/converter_touch_target"
-                    android:layout_marginHorizontal="@dimen/converter_card_margin"
-                    android:layout_marginTop="@dimen/converter_spacing"
-                    android:layout_marginBottom="@dimen/converter_spacing"
-                    app:tabMinWidth="@dimen/converter_category_min_width"
-                    app:tabPaddingStart="@dimen/converter_spacing"
-                    app:tabPaddingEnd="@dimen/converter_spacing"
-                    app:tabTextAppearance="@style/ConverterCategoryText"
-                    app:tabMode="scrollable"
-                    app:tabGravity="start"
-                    app:tabInlineLabel="false"
-                    app:tabIndicatorHeight="@dimen/converter_category_indicator_height"
-                    app:tabIconTint="@null" />
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/converter_card"
                     android:layout_width="match_parent"
@@ -199,6 +181,24 @@
                         </LinearLayout>
                     </net.smartlogic.unitconverter.widget.ConverterValueRow>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/category_selector"
+                    style="@style/WorkspaceTabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/converter_touch_target"
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:layout_marginTop="@dimen/converter_spacing"
+                    android:layout_marginBottom="@dimen/converter_spacing"
+                    app:tabMinWidth="@dimen/converter_category_min_width"
+                    app:tabPaddingStart="@dimen/converter_spacing"
+                    app:tabPaddingEnd="@dimen/converter_spacing"
+                    app:tabTextAppearance="@style/ConverterCategoryText"
+                    app:tabMode="scrollable"
+                    app:tabGravity="start"
+                    app:tabInlineLabel="false"
+                    app:tabIndicatorHeight="@dimen/converter_category_indicator_height"
+                    app:tabIconTint="@null" />
                 <TextView
                     android:id="@+id/inputSymbol"
                     android:layout_width="0dp"

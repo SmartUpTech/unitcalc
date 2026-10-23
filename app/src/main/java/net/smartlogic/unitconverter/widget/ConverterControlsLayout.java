@@ -31,7 +31,7 @@ public final class ConverterControlsLayout extends LinearLayout {
     }
 
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
-        View header = getChildAt(0);
+        View header = findViewById(R.id.category_selector);
         View metadata = getChildAt(getChildCount() - 1);
         // Keep the reference's stacked tabs normally. Only the last constrained
         // viewport fallback puts icons beside labels to preserve usable key rows.
