@@ -6,6 +6,10 @@
     <string name="age_as_of">Age as of</string>
     <string name="age_today">Today</string>
     <string name="age_select_date">Select date</string>
+    <string name="age_year">Year</string>
+    <string name="age_month">Month</string>
+    <string name="age_day">Day</string>
+    <string name="age_search_date_values">Search</string>
     <string name="age_date_button">%1$s\n%2$s</string>
     <string name="age_result">Age</string>
     <string name="age_next_birthday">Next birthday</string>
@@ -71,13 +75,5 @@
         <item name="android:paddingRight">@dimen/converter_spacing</item>
         <item name="cornerRadius">@dimen/graphy_node_corner_radius</item>
         <item name="android:tag">theme_outline_action</item>
-    </style>
-    <style name="AgeDatePickerTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="android:datePickerStyle">@style/AgeDatePicker</item>
-        <item name="android:fontFamily">@font/app_text</item>
-    </style>
-    <style name="AgeDatePicker" parent="android:Widget.Material.DatePicker">
-        <item name="android:datePickerMode">spinner</item>
-        <item name="android:calendarViewShown">false</item>
     </style>
 </resources>

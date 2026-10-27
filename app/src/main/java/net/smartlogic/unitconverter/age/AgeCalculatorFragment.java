@@ -80,6 +80,7 @@ public final class AgeCalculatorFragment extends Fragment {
             if (AgeDialogFragment.BIRTH.equals(mode)) birth = date;
             else { asOf = date; followsToday = false; }
             render();
+            scheduleMidnight();
         });
         pager = view.findViewById(R.id.workspace_pager);
         // Dates use modal pickers; swiping the shared workspace still works normally.

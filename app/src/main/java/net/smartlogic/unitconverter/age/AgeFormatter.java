@@ -38,7 +38,8 @@ public final class AgeFormatter {
 
     public String countdown(AgeCalculator.Result result) {
         return result.nextBirthday().equals(result.asOf()) ? context.getString(R.string.age_today)
-                : breakdown(result.countdown());
+                : context.getString(R.string.age_remaining,
+                        months(result.countdown().years() * 12 + result.countdown().months()), days(result.countdown().days()));
     }
 
     public String weekday(LocalDate date) {

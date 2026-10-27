@@ -74,6 +74,16 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         return true;
     }
 
+    /** Reuse the same searchable, restorable picker for non-unit selections. */
+    public static ConverterPickerDialogFragment forValues(String title, int group, int selected,
+            ArrayList<String> labels, int searchHint) {
+        ArrayList<String> details = new ArrayList<>();
+        for (String ignored : labels) details.add("");
+        var dialog = newInstance(title, false, group, selected, labels, details, labels, null);
+        dialog.requireArguments().putInt("search_hint", searchHint);
+        return dialog;
+    }
+
     @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = requireArguments();
         View root = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_converter_picker, null);
@@ -86,8 +96,8 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         close.setOnClickListener(v -> dismiss());
         TextInputLayout searchBox = root.findViewById(R.id.converter_picker_search_box);
         boolean currency = args.getIntArray(FLAGS) != null;
-        searchBox.setHint(getString(currency ? R.string.converter_picker_search_currencies
-                : R.string.converter_picker_search_units));
+        searchBox.setHint(getString(args.getInt("search_hint", currency ? R.string.converter_picker_search_currencies
+                : R.string.converter_picker_search_units)));
         searchBox.setBoxStrokeColorStateList(new ColorStateList(
                 new int[][]{{android.R.attr.state_focused}, {}},
                 new int[]{theme.primaryContentColor(), theme.secondaryContentColor()}));
