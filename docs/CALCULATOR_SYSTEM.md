@@ -23,6 +23,8 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 - **Graphy Integration**: Logic must produce structured snapshots for visual rendering.
 
 ## REGISTRY
+- Adult BMI is `bmi_calculator`, under Tools beside Age Calculator. `BmiCalculator` owns kg/m² arithmetic with DECIMAL128 division, exact 2.54 cm/in and 0.45359237 kg/lb definitions, positive measurement validation and raw-value classification. Standard adult intervals are <18.5, [18.5,25), [25,30), [30,35), [35,40), and ≥40. The healthy mass interval is [18.5×height²,25×height²); the upper boundary is exclusive. Display BMI/mass to two decimals without feeding rounding back into classification or unit switching. Difference is distance below/above the interval, or “Within range”. No pediatric percentiles or Graphy output.
+  Definition references: https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html and the existing NIST unit references below (checked 2026-10-28).
 - **CalculatorCatalog**: The central source of truth for all tools. New categories, units, or calculators MUST be registered here to appear in the UI.
 
 
@@ -87,6 +89,14 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 
 
 ## EXPANDED UNIT REGISTRY
+
+## Age Calculator
+
+- `AgeCalculator` uses Gregorian `LocalDate` arithmetic for birth and comparison dates from 1900 through 2100. The comparison date may be in the future but cannot precede birth.
+- Completed years use anniversaries of the original birth date. February 29 advances on February 28 in non-leap years and returns to February 29 in leap years. Count 0–11 completed months from the anniversary using clamped month additions, then count the remaining calendar days. This decomposition reconstructs the comparison date; a leap-boundary remainder can reach 31 days.
+- Summary years/months are completed calendar units. Weeks are whole elapsed days divided by seven; hours/minutes are calendar-day totals multiplied by 24/1,440, without a birth time or daylight-saving adjustment. These calculations must not use the time converter's fixed-length months/years.
+- `AgeFormatter` and `AgeGraphBuilder` consume the immutable authoritative result. Graphy explains the year, month and day anchors with existing shared primitives; next birthday and totals remain on Calculate.
+- Birthday countdown is relative to Age as of and includes today. Calendar handoff independently starts on or after actual device today, asks once/yearly each time and opens a user-reviewed calendar event without Calendar Provider access. February 29 recurrence requests the last day of February. No birth dates enter history, preferences or analytics; small session state survives recreation.
 
 ### Currency country coverage (2026-10-22)
 

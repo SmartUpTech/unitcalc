@@ -6,6 +6,7 @@ description: Guidelines for UI consistency, component usage, and layout rules. U
 # DESIGN SYSTEM
 
 ## COMPONENTS
+- **BMI tool**: Use the main app bar title, History and Reset actions. Keep existing bottom navigation visible, with no BMI tab; enter from Tools in the drawer. Reuse `converter_keypad`, canonical key styles and feedback, replacing copy/sign functions with Next field/Save. Show the BMI semicircle, current category, healthy mass interval and difference together; “BMI ranges · More info” opens a themed reference popup with the current range identified. The local gauge is not Graphy. Shared `CalculatorTheme.StatusTone` supplies category colors with contrast against the selected palette. `BmiLayout` compacts spacing and reflows results beside the gauge in short wide windows; `contentFits()` exposes physically impossible configurations to QA rather than adding scrolling.
 - **Keypad**: Use `pane_calculator_calculate` for standard layouts.
 - **Result Display**: Apply `@style/ResultDisplay`.
 - **Cards**: Wrap sections in `@drawable/bg_converter_card`.
@@ -28,6 +29,8 @@ description: Guidelines for UI consistency, component usage, and layout rules. U
 - **Accessibility**: All `ImageButton` elements MUST have a `contentDescription`.
 
 - **History**: Secondary scrollable page with a History title and Back navigation to the previous workspace; hide bottom navigation while viewing it. Use compact date sections, single-line tool/time metadata, explicit ellipsis for long previews and selectable full-value details. Row options provide copying and deletion with Undo. Clear all requires confirmation. No search/filter controls currently.
+
+- **Age Calculator**: Drawer → Tools, with Calculate/Graphy workspace tabs and no bottom-navigation entry. Use two borderless date rows and the shared themed result outline: age and next birthday above a divider, then a three-column/two-row summary and calendar-total note. The age uses the shared result typography, with its year unit alongside; constrained panes use shared smaller text roles while retaining readable scaled text. Calendar and Share actions remain at the bottom. Portrait keeps the result sections stacked; short wide windows may reflow them. Empty/invalid values use explicit placeholders and an explanatory message. Date parts reuse `ConverterPickerDialogFragment` with a generic search hint, preserving the app font, theme, search and restoration behavior. No stock date-wheel typography or independent color palette.
 
 ## COMPOSE INTEGRATION
 - **Graphy toolbar**: Download and busy indicators resolve the shared Graphy semantic colors on recomposition. Preserve distinct enabled/disabled states in every theme.

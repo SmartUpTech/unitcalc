@@ -23,6 +23,26 @@ public record CalculatorTheme(@NonNull String id, @StringRes int nameRes, int un
 
     @ColorInt public int secondaryContentColor() { return readableColor(functions, background); }
 
+    public enum StatusTone { LOW, POSITIVE, CAUTION, WARNING, DANGER, CRITICAL }
+
+    /** Shared status ink retains its hue while meeting text contrast on every app palette. */
+    @ColorInt public int statusContentColor(StatusTone tone) {
+        int preferred = switch (tone) {
+            case LOW -> ThemePalette.PALETTE_1565C0;
+            case POSITIVE -> ThemePalette.PALETTE_137D50;
+            case CAUTION -> ThemePalette.PALETTE_B45A00;
+            case WARNING -> ThemePalette.PALETTE_C43E24;
+            case DANGER -> ThemePalette.PALETTE_AD244B;
+            case CRITICAL -> ThemePalette.PALETTE_8228A8;
+        };
+        int endpoint = isLightBackground() ? ThemePalette.PALETTE_000000 : ThemePalette.PALETTE_FFFFFF;
+        for (int step = 0; step <= 20; step++) {
+            int candidate = ColorUtils.blendARGB(preferred, endpoint, step / 20f);
+            if (ColorUtils.calculateContrast(candidate, background) >= 4.5d) return candidate;
+        }
+        return readableColor(preferred, background);
+    }
+
     /** Foreground accent for equals, selected tabs, navigation and action text. */
     @ColorInt public int accentContentColor() { return readableColor(equal, background); }
 

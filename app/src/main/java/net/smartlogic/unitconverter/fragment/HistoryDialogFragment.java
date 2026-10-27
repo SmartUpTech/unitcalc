@@ -87,6 +87,8 @@ public class HistoryDialogFragment extends DialogFragment {
             ((TextView) content.findViewById(R.id.tv_history_result)).setText(item.result());
             boolean reusable = CalculatorCatalog.ID_BASIC.equals(item.calculatorId());
             content.findViewById(R.id.history_legacy_hint).setVisibility(reusable ? View.GONE : View.VISIBLE);
+            if (CalculatorCatalog.ID_BMI.equals(item.calculatorId()))
+                ((TextView) content.findViewById(R.id.history_legacy_hint)).setText(R.string.bmi_history_hint);
             ThemeApplier.apply(content);
             builder.setTitle(R.string.history_details).setView(content)
                     .setNegativeButton(android.R.string.cancel, null)

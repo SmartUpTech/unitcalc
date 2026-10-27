@@ -1,4 +1,6 @@
 <resources>
+    <!-- Two result sections need at least 200dp each before horizontal reflow. -->
+    <dimen name="age_result_split_min_width">400dp</dimen>
     <item name="age_calculator" type="id" />
     <string name="age_calculator">Age Calculator</string>
     <string name="drawer_section_tools">Tools</string>
@@ -10,6 +12,7 @@
     <string name="age_month">Month</string>
     <string name="age_day">Day</string>
     <string name="age_search_date_values">Search</string>
+    <string name="age_placeholder">—</string>
     <string name="age_date_button">%1$s\n%2$s</string>
     <string name="age_result">Age</string>
     <string name="age_next_birthday">Next birthday</string>
@@ -23,7 +26,7 @@
     <string name="age_minutes_label">Minutes</string>
     <string name="age_empty">Select a date of birth to calculate age.</string>
     <string name="age_invalid">Date of birth must be on or before Age as of.</string>
-    <string name="age_totals_note">Completed calendar units. Hours and minutes use 24-hour days, without time of birth.</string>
+    <string name="age_totals_note">Calendar totals · 24-hour days; no birth time.</string>
     <string name="age_breakdown">%1$s, %2$s, %3$s</string>
     <string name="age_remaining">%1$s · %2$s</string>
     <string name="age_birthday_details">%1$s\n%2$s\n%3$s</string>
@@ -45,6 +48,7 @@
     <string name="age_calendar_rule">Count completed years from the birth date, then completed months from that anniversary, then the remaining calendar days. February 29 anniversaries use February 28 in non-leap years. Month additions clamp to the last valid day of the target month.</string>
     <string name="age_share_body">Age Calculator\nDate of birth: %1$s\nAge as of: %2$s\nAge: %3$s\nNext birthday: %4$s (%5$s)\nCountdown: %6$s\n\nSummary\nYears: %7$s\nMonths: %8$s\nWeeks: %9$s\nDays: %10$s\nHours: %11$s\nMinutes: %12$s\nCompleted calendar units; hours and minutes use 24-hour days without time of birth.</string>
     <plurals name="age_years"><item quantity="one">%1$s year</item><item quantity="other">%1$s years</item></plurals>
+    <plurals name="age_year_unit"><item quantity="one">year</item><item quantity="other">years</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s month</item><item quantity="other">%1$s months</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
 
@@ -66,6 +70,7 @@
     <style name="AgeDateButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:fontFamily">@font/app_text</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
         <item name="android:textSize">@dimen/h3</item>
         <item name="android:minHeight">@dimen/converter_touch_target</item>
         <item name="android:minWidth">@dimen/converter_touch_target</item>
@@ -75,5 +80,12 @@
         <item name="android:paddingRight">@dimen/converter_spacing</item>
         <item name="cornerRadius">@dimen/graphy_node_corner_radius</item>
         <item name="android:tag">theme_outline_action</item>
+    </style>
+    <style name="AgeInlineDate" parent="AgeDateButton">
+        <item name="android:tag">theme_text_action</item>
+        <item name="android:gravity">end|center_vertical</item>
+        <item name="android:textSize">@dimen/h2</item>
+        <item name="iconSize">@dimen/converter_chevron_size</item>
+        <item name="iconPadding">@dimen/converter_small_spacing</item>
     </style>
 </resources>

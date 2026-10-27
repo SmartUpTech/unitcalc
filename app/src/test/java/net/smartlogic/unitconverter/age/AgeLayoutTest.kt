@@ -49,9 +49,10 @@ class AgeLayoutTest {
             val r = AgeCalculator.calculate(LocalDate.of(2010, 8, 16), LocalDate.of(2020, 1, 21))
             val f = AgeFormatter(activity)
             fun text(id: Int, value: String) { pane.findViewById<TextView>(id).text = value }
-            text(R.id.age_birth_button, activity.getString(R.string.age_date_button, activity.getString(R.string.age_birth), f.date(r.birth())))
-            text(R.id.age_asof_button, activity.getString(R.string.age_date_button, activity.getString(R.string.age_as_of), f.date(r.asOf())))
-            text(R.id.age_years, f.years(r.age().years()))
+            text(R.id.age_birth_button, f.date(r.birth()))
+            text(R.id.age_asof_button, f.date(r.asOf()))
+            text(R.id.age_years, f.number(r.age().years().toLong()))
+            text(R.id.age_year_unit, activity.resources.getQuantityString(R.plurals.age_year_unit, 9))
             text(R.id.age_remainder, activity.getString(R.string.age_remaining, f.months(5), f.days(5)))
             text(R.id.age_birthday_details, activity.getString(R.string.age_birthday_details, f.date(r.nextBirthday()), f.weekday(r.nextBirthday()), f.countdown(r)))
             val ids = intArrayOf(R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks, R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes)
@@ -73,7 +74,7 @@ class AgeLayoutTest {
                 for (v in descendants(pane).filter { it.visibility == View.VISIBLE }) {
                     if (v !== pane) {
                         val parent = v.parent as View
-                        assertTrue("$name ${v.id} fits parent", v.left >= 0 && v.top >= 0 && v.right <= parent.width && v.bottom <= parent.height)
+                        assertTrue("$name ${if (v is TextView) v.text else v.javaClass.simpleName} fits parent: ${v.left},${v.top},${v.right},${v.bottom} in ${parent.width}x${parent.height}", v.left >= 0 && v.top >= 0 && v.right <= parent.width && v.bottom <= parent.height)
                     }
                     if (v is TextView && v.text.isNotEmpty()) {
                         assertTrue("$name ${v.id} has unclipped text", v.layout.getLineBottom(v.layout.lineCount - 1) <= v.height - v.compoundPaddingTop - v.compoundPaddingBottom)

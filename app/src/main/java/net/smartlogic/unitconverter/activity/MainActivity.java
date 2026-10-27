@@ -45,6 +45,7 @@ import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
 import net.smartlogic.unitconverter.timer.TimerFragment;
 import net.smartlogic.unitconverter.age.AgeCalculatorFragment;
+import net.smartlogic.unitconverter.bmi.BmiCalculatorFragment;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private static final String SAVED_HISTORY_RETURN = "history_return_tab";
     private int historyReturnTab = R.id.calculator;
     private int ageReturnTab = R.id.calculator;
+    private int bmiReturnTab = R.id.calculator;
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -83,11 +85,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null) historyReturnTab = savedInstanceState.getInt(SAVED_HISTORY_RETURN, R.id.calculator);
         if (savedInstanceState != null) ageReturnTab = savedInstanceState.getInt("age_return_tab", R.id.calculator);
+        if (savedInstanceState != null) bmiReturnTab = savedInstanceState.getInt("bmi_return_tab", R.id.calculator);
         // Root fallback: later drawer, Timer and workspace callbacks keep priority.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 if (activeFragment instanceof HistoryFragment) { closeHistory(); return; }
                 if (activeFragment instanceof AgeCalculatorFragment) { closeAge(); return; }
+                if (activeFragment instanceof BmiCalculatorFragment) { closeBmi(); return; }
                 long now = android.os.SystemClock.elapsedRealtime();
                 if (lastExitBackAt >= 0 && now - lastExitBackAt <= EXIT_BACK_WINDOW_MS) {
                     if (exitToast != null) exitToast.cancel();
@@ -114,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 menuButton.setOnClickListener(v -> {
                     if (activeFragment instanceof HistoryFragment) closeHistory();
                     else if (activeFragment instanceof AgeCalculatorFragment) closeAge();
+                    else if (activeFragment instanceof BmiCalculatorFragment) closeBmi();
                     else openDrawer();
                 });
             }
@@ -242,6 +247,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             case AGE_CALCULATOR:
                 selectTab(R.id.age_calculator);
                 break;
+            case BMI_CALCULATOR:
+                selectTab(R.id.bmi_calculator);
+                break;
             case RATE_APP:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_app_link))));
                 break;
@@ -273,6 +281,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         final CalculatorCatalog.Entry targetEntry = entry;
         switch (targetEntry.destination) {
+            case BMI_CALCULATOR:
+                selectTab(R.id.bmi_calculator);
+                break;
             case BASIC_CALCULATOR:
                 selectTab(R.id.calculator);
                 runOnCalculatorFragment(fragment -> fragment.restoreFromHistory(item));
@@ -359,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         registerRestoredFragment(R.id.converter, AppConst.TAG_CONVERTER);
         registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
         registerRestoredFragment(R.id.age_calculator, AppConst.TAG_AGE);
+        registerRestoredFragment(R.id.bmi_calculator, AppConst.TAG_BMI);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
         registerRestoredFragment(R.id.play, GamesConfig.TAG);
@@ -395,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (!initialTabSelected) {
             initialTabSelected = true;
             int restoredId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-            if (restoredId == R.id.history || restoredId == R.id.age_calculator) selectTab(restoredId);
+            if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator) selectTab(restoredId);
             else bottomNavigationView.setSelectedItemId(restoredId);
         }
     }
@@ -406,8 +418,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     private void selectTab(int itemId, boolean openWorkspace) {
         lastExitBackAt = -1L;
-        if (itemId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)) {
+        if (openWorkspace && itemId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)) {
             ageReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+        }
+        if (openWorkspace && itemId == R.id.bmi_calculator && !(activeFragment instanceof BmiCalculatorFragment)
+                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.bmi_calculator)) {
+            bmiReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
         }
         if (itemId == R.id.history && !(activeFragment instanceof HistoryFragment)) {
             int previous = resolveMenuIdForTag(AppConst.CURRENT_TAG);
@@ -459,17 +475,24 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         updateFavoriteMenuItem();
     }
 
+    private void closeBmi() {
+        selectTab(bmiReturnTab == R.id.bmi_calculator || bmiReturnTab == R.id.history ? R.id.calculator : bmiReturnTab, false);
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
     private void updateHistoryChrome(boolean history) {
         boolean age = activeFragment instanceof AgeCalculatorFragment;
-        boolean secondary = history || age;
+        boolean bmi = activeFragment instanceof BmiCalculatorFragment;
+        boolean secondary = history || age || bmi;
         if (bottomNavigationView != null) {
-            bottomNavigationView.setVisibility(secondary ? View.GONE : View.VISIBLE);
+            bottomNavigationView.setVisibility(history || age ? View.GONE : View.VISIBLE);
             MenuItem selected = bottomNavigationView.getMenu().findItem(resolveMenuIdForTag(AppConst.CURRENT_TAG));
             if (!history && selected != null) selected.setChecked(true);
         }
         android.widget.TextView title = findViewById(R.id.tv_app_bar_brand);
         ImageButton navigation = findViewById(R.id.btn_nav_menu);
-        if (title != null) title.setText(age ? R.string.age_calculator : history ? R.string.nav_history : R.string.app_bar_brand);
+        if (title != null) title.setText(bmi ? R.string.bmi_calculator : age ? R.string.age_calculator : history ? R.string.nav_history : R.string.app_bar_brand);
         if (navigation != null) {
             navigation.setImageResource(secondary ? R.drawable.ic_settings_back : R.drawable.ic_menu);
             navigation.setContentDescription(getString(secondary ? R.string.history_back : R.string.nav_open_drawer));
@@ -480,6 +503,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @NonNull
     private Fragment createFragmentFor(int itemId) {
+        if (itemId == R.id.bmi_calculator) return new BmiCalculatorFragment();
         if (itemId == R.id.age_calculator) return new AgeCalculatorFragment();
         if (itemId == R.id.play) return new GamesFragment();
         if (itemId == R.id.calculator) {
@@ -501,6 +525,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void updateCurrentTag(int itemId) {
+        if (itemId == R.id.bmi_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_BMI; return; }
         if (itemId == R.id.age_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_AGE; return; }
         if (itemId == R.id.play) {
             AppConst.CURRENT_TAG = GamesConfig.TAG;
@@ -520,6 +545,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private int resolveMenuIdForTag(@NonNull String tag) {
+        if (AppConst.TAG_BMI.equals(tag)) return R.id.bmi_calculator;
         if (AppConst.TAG_AGE.equals(tag)) return R.id.age_calculator;
         if (GamesConfig.TAG.equals(tag)) return R.id.play;
         if (AppConst.TAG_CALC.equals(tag)) {
@@ -542,6 +568,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @NonNull
     private String fragmentTagFor(int itemId) {
+        if (itemId == R.id.bmi_calculator) return AppConst.TAG_BMI;
         if (itemId == R.id.age_calculator) return AppConst.TAG_AGE;
         if (itemId == R.id.play) return GamesConfig.TAG;
         if (itemId == R.id.calculator) {
@@ -567,6 +594,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             activeCalculatorId = CalculatorCatalog.ID_TIMER;
         } else if (activeFragment instanceof AgeCalculatorFragment) {
             activeCalculatorId = CalculatorCatalog.ID_AGE;
+        } else if (activeFragment instanceof BmiCalculatorFragment) {
+            activeCalculatorId = CalculatorCatalog.ID_BMI;
         } else if (activeFragment instanceof CalculatorFragment) {
             activeCalculatorId = CalculatorCatalog.ID_BASIC;
         } else if (activeFragment instanceof ConverterFragment) {
@@ -632,6 +661,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             item.setVisible(!(activeFragment instanceof AgeCalculatorFragment) && item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
+            if (item.getItemId() == R.id.menu_bmi_reset) item.setVisible(activeFragment instanceof BmiCalculatorFragment);
             if (item.getItemId() == R.id.menu_clear_history) item.setEnabled(history && ((HistoryFragment) activeFragment).hasHistory());
             if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().primaryContentColor());
         }
@@ -669,6 +699,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.menu_bmi_reset && activeFragment instanceof BmiCalculatorFragment bmi) {
+            bmi.reset();
+            return true;
+        }
         if (id == R.id.menu_clear_history && activeFragment instanceof HistoryFragment history) {
             history.showClearHistoryConfirmation();
             return true;
@@ -719,9 +753,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         // A widget/notification may have opened Timer during onCreate.
         // Reselecting a tab here would immediately hide that screen.
         if (!timerVisible) {
-            if (currentId == R.id.history || currentId == R.id.age_calculator) {
+            if (currentId == R.id.history || currentId == R.id.age_calculator || currentId == R.id.bmi_calculator) {
                 if (currentId == R.id.history && !(activeFragment instanceof HistoryFragment)
-                        || currentId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)) selectTab(currentId);
+                        || currentId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)
+                        || currentId == R.id.bmi_calculator && !(activeFragment instanceof BmiCalculatorFragment)) selectTab(currentId);
             } else {
                 bottomNavigationView.setSelectedItemId(currentId);
             }
@@ -735,6 +770,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         outState.putString(SAVED_TAB_TAG, AppConst.CURRENT_TAG);
         outState.putInt(SAVED_HISTORY_RETURN, historyReturnTab);
         outState.putInt("age_return_tab", ageReturnTab);
+        outState.putInt("bmi_return_tab", bmiReturnTab);
         super.onSaveInstanceState(outState);
     }
 }

@@ -1,0 +1,42 @@
+<net.smartlogic.unitconverter.bmi.BmiLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bmi_root" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:id="@+id/bmi_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView style="@style/BmiCaption" android:text="@string/bmi_adults" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:paddingEnd="@dimen/converter_small_spacing">
+            <TextView style="@style/BmiText" android:text="@string/bmi_height" android:labelFor="@id/bmi_height_input" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+            <net.smartlogic.unitconverter.widget.AutoSizeEditText android:id="@+id/bmi_height_input" style="@style/BmiInput" android:contentDescription="@string/bmi_height_cm" />
+            <TextView android:id="@+id/bmi_feet_label" style="@style/BmiCaption" android:layout_width="wrap_content" android:text="@string/bmi_ft" android:visibility="gone" />
+            <net.smartlogic.unitconverter.widget.AutoSizeEditText android:id="@+id/bmi_inches_input" style="@style/BmiInput" android:contentDescription="@string/bmi_height_in" android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/bmi_height_unit" style="@style/AgeDateButton" android:layout_width="@dimen/converter_touch_target" android:layout_height="wrap_content" android:contentDescription="@string/bmi_height_unit" android:text="@string/bmi_cm" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="@dimen/converter_small_spacing">
+            <TextView style="@style/BmiText" android:text="@string/bmi_weight" android:labelFor="@id/bmi_weight_input" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+            <net.smartlogic.unitconverter.widget.AutoSizeEditText android:id="@+id/bmi_weight_input" style="@style/BmiInput" android:contentDescription="@string/bmi_weight_kg" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/bmi_weight_unit" style="@style/AgeDateButton" android:layout_width="@dimen/converter_touch_target" android:layout_height="wrap_content" android:contentDescription="@string/bmi_weight_unit" android:text="@string/bmi_kg" />
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <net.smartlogic.unitconverter.bmi.BmiResultLayout android:id="@+id/bmi_results" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <FrameLayout android:id="@+id/bmi_gauge_container" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <net.smartlogic.unitconverter.bmi.BmiGaugeView android:id="@+id/bmi_gauge" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="no" />
+            <LinearLayout android:id="@+id/bmi_gauge_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="bottom" android:gravity="center" android:orientation="vertical" android:paddingBottom="@dimen/converter_spacing">
+                <TextView style="@style/BmiCaption" android:gravity="center" android:text="@string/bmi_label" />
+                <TextView android:id="@+id/bmi_value" style="@style/BmiText" android:textSize="@dimen/bmi_value_size" android:gravity="center" android:text="@string/bmi_no_result" />
+            </LinearLayout>
+        </FrameLayout>
+        <LinearLayout android:id="@+id/bmi_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:accessibilityLiveRegion="polite">
+            <TextView android:id="@+id/bmi_category_value" style="@style/BmiText" android:textStyle="bold" android:gravity="center" android:text="@string/bmi_empty" />
+            <TextView android:id="@+id/bmi_range_value" style="@style/BmiText" android:gravity="center" android:text="@string/bmi_no_result" />
+            <TextView android:id="@+id/bmi_difference_value" style="@style/BmiText" android:gravity="center" android:text="@string/bmi_no_result" />
+        </LinearLayout>
+    </net.smartlogic.unitconverter.bmi.BmiResultLayout>
+    <LinearLayout android:id="@+id/bmi_actions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/bmi_ranges" style="@style/AgeDateButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/bmi_ranges_action" />
+    </LinearLayout>
+    <include android:id="@+id/keypad" layout="@layout/converter_keypad" android:layout_width="match_parent" android:layout_height="wrap_content" />
+</net.smartlogic.unitconverter.bmi.BmiLayout>

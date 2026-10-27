@@ -50,7 +50,7 @@ class AgeNavigationTest {
             var age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
             choose(age, AgeDialogFragment.AS_OF, "2020-01-21")
             choose(age, AgeDialogFragment.BIRTH, "2010-08-16")
-            assertEquals("9 years", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
+            assertEquals("9", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
             age.requireView().findViewById<TabLayout>(R.id.workspace_tabs).getTabAt(1)!!.select()
             settle()
             activity = controller.recreate().get()
@@ -58,7 +58,7 @@ class AgeNavigationTest {
             age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
             assertEquals(AppConst.TAG_AGE, AppConst.CURRENT_TAG)
             assertEquals(1, age.requireView().findViewById<TabLayout>(R.id.workspace_tabs).selectedTabPosition)
-            assertEquals("9 years", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
+            assertEquals("9", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
             activity.onBackPressedDispatcher.onBackPressed()
             settle()
             assertEquals(0, age.requireView().findViewById<TabLayout>(R.id.workspace_tabs).selectedTabPosition)
@@ -96,7 +96,7 @@ class AgeNavigationTest {
             assertNotNull(age.childFragmentManager.findFragmentByTag(AgeDialogFragment.TAG))
             (age.childFragmentManager.findFragmentByTag(AgeDialogFragment.TAG) as AgeDialogFragment).dismissNow()
             choose(age, AgeDialogFragment.AS_OF, "2009-01-01")
-            assertEquals("", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
+            assertEquals(activity.getString(R.string.age_placeholder), age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
             assertFalse(calendar.isEnabled)
             assertFalse(age.requireView().findViewById<View>(R.id.age_share).isEnabled)
             assertEquals(activity.getString(R.string.age_invalid), age.requireView().findViewById<TextView>(R.id.age_note).text.toString())

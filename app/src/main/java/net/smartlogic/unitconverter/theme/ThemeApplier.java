@@ -171,13 +171,28 @@ public final class ThemeApplier {
             if ("content_secondary".equals(view.getTag())) text.setTextColor(theme.secondaryContentColor());
             if ("content_accent".equals(view.getTag())) text.setTextColor(theme.accentContentColor());
         }
-        if ("theme_outline_action".equals(view.getTag()) && view instanceof com.google.android.material.button.MaterialButton button) {
+        if ("theme_outlined_surface".equals(view.getTag())) {
+            GradientDrawable surface = roundedFill(theme.background(), view.getResources().getDimension(R.dimen.converter_card_padding));
+            surface.setStroke(view.getResources().getDimensionPixelSize(R.dimen.theme_outline), withAlpha(theme.secondaryContentColor(), 0x66));
+            view.setBackground(surface);
+        }
+        if ("theme_divider".equals(view.getTag())) view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x44));
+        if ("content_accent".equals(view.getTag()) && view instanceof ImageView icon) {
+            ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(theme.accentContentColor()));
+        }
+        if (("theme_outline_action".equals(view.getTag()) || "theme_text_action".equals(view.getTag())
+                || "theme_filled_action".equals(view.getTag())) && view instanceof com.google.android.material.button.MaterialButton button) {
+            boolean filled = "theme_filled_action".equals(view.getTag());
+            int ink = filled ? theme.onAccentColor() : theme.accentContentColor();
+            int disabledSurface = androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x18), theme.background());
             button.setTextColor(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
-                    new int[]{theme.secondaryContentColor(), theme.accentContentColor()}));
-            button.setBackgroundTintList(ColorStateList.valueOf(theme.background()));
+                    new int[]{CalculatorTheme.readableColor(theme.secondaryContentColor(), filled ? disabledSurface : theme.background()), ink}));
+            button.setIconTint(ColorStateList.valueOf(ink));
+            button.setBackgroundTintList(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
+                    new int[]{filled ? disabledSurface : theme.background(), filled ? theme.accentContentColor() : theme.background()}));
             button.setStrokeColor(ColorStateList.valueOf(theme.secondaryContentColor()));
-            button.setStrokeWidth(view.getResources().getDimensionPixelSize(R.dimen.theme_outline));
-            button.setRippleColor(ColorStateList.valueOf(withAlpha(theme.accentContentColor(), 0x22)));
+            button.setStrokeWidth("theme_outline_action".equals(view.getTag()) ? view.getResources().getDimensionPixelSize(R.dimen.theme_outline) : 0);
+            button.setRippleColor(ColorStateList.valueOf(withAlpha(ink, 0x22)));
         }
         if (id == R.id.converter_divider) {
             view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x33));

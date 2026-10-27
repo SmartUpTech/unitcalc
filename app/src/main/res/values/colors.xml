@@ -49,6 +49,13 @@
     <color name="pad_button_equal">@color/key_equals_bg</color>
     <color name="colorHighlighter">@color/key_operator_text</color>
     <!-- Theme catalog palette. ThemePalette is generated from these values at build time. -->
+    <!-- Shared health screening status tones; resolved for the selected surface by CalculatorTheme. -->
+    <color name="palette_1565c0">#1565C0</color>
+    <color name="palette_137d50">#137D50</color>
+    <color name="palette_b45a00">#B45A00</color>
+    <color name="palette_c43e24">#C43E24</color>
+    <color name="palette_ad244b">#AD244B</color>
+    <color name="palette_8228a8">#8228A8</color>
     <color name="palette_6b6d70">#6B6D70</color>
     <color name="palette_686a6d">#686A6D</color>
     <color name="palette_595c60">#595C60</color>

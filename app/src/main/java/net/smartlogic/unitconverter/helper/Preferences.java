@@ -57,6 +57,13 @@ public class Preferences {
         return mPrefs;
     }
 
+    private static final String PREFS_BMI_STATE = "bmi_state_v1";
+    public String getBmiState() {
+        try { return mPrefs.getString(PREFS_BMI_STATE, ""); }
+        catch (ClassCastException invalid) { return ""; }
+    }
+    public void setBmiState(String state) { mPrefs.edit().putString(PREFS_BMI_STATE, state).apply(); }
+
     public boolean isKeySoundsEnabled() {
         return mPrefs.getBoolean(PREFS_KEY_SOUNDS, true);
     }

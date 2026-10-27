@@ -140,16 +140,19 @@ public final class AgeCalculatorFragment extends Fragment {
             if (tab != null) { tab.view.setEnabled(result != null); tab.view.setAlpha(result == null ? 0.5f : 1f); }
         }
         if (calculatePage == null) return;
-        text(R.id.age_birth_button, getString(R.string.age_date_button, getString(R.string.age_birth), birth == null ? getString(R.string.age_select_date) : f.date(birth)));
-        text(R.id.age_asof_button, getString(R.string.age_date_button, getString(R.string.age_as_of), f.date(asOf)));
+        text(R.id.age_birth_button, birth == null ? getString(R.string.age_select_date) : f.date(birth));
+        text(R.id.age_asof_button, f.date(asOf));
+        calculatePage.findViewById(R.id.age_birth_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_birth), birth == null ? getString(R.string.age_select_date) : f.date(birth)));
+        calculatePage.findViewById(R.id.age_asof_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_as_of), f.date(asOf)));
         text(R.id.age_note, getString(result != null ? R.string.age_totals_note : birth == null ? R.string.age_empty : R.string.age_invalid));
         calculatePage.findViewById(R.id.age_note).setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         int[] totals = {R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks, R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes};
         long[] values = result == null ? new long[6] : new long[]{result.age().years(), result.totalMonths(), result.totalWeeks(), result.totalDays(), result.totalHours(), result.totalMinutes()};
-        for (int i = 0; i < totals.length; i++) text(totals[i], result == null ? "" : f.number(values[i]));
-        text(R.id.age_years, result == null ? "" : f.years(result.age().years()));
-        text(R.id.age_remainder, result == null ? "" : getString(R.string.age_remaining, f.months(result.age().months()), f.days(result.age().days())));
-        text(R.id.age_birthday_details, result == null ? "" : getString(R.string.age_birthday_details,
+        for (int i = 0; i < totals.length; i++) text(totals[i], result == null ? getString(R.string.age_placeholder) : f.number(values[i]));
+        text(R.id.age_years, result == null ? getString(R.string.age_placeholder) : f.number(result.age().years()));
+        text(R.id.age_year_unit, getResources().getQuantityString(R.plurals.age_year_unit, result == null ? 0 : result.age().years()));
+        text(R.id.age_remainder, result == null ? getString(R.string.age_placeholder) : getString(R.string.age_remaining, f.months(result.age().months()), f.days(result.age().days())));
+        text(R.id.age_birthday_details, result == null ? getString(R.string.age_placeholder) : getString(R.string.age_birthday_details,
                 f.date(result.nextBirthday()), f.weekday(result.nextBirthday()), f.countdown(result)));
         calculatePage.findViewById(R.id.age_calendar).setEnabled(result != null);
         calculatePage.findViewById(R.id.age_share).setEnabled(result != null);
