@@ -24,6 +24,11 @@ import static org.junit.Assert.*;
 public class CurrencyConverterFragmentTest {
     @Test public void expandedCountryListHasResolvableFlagsAndPreservesLegacySelections() {
         CurrencyConverterFragment fragment = new CurrencyConverterFragment();
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        // Localized currency labels require an attached Fragment context.
+        controller.get().getSupportFragmentManager().beginTransaction().add(fragment, "currency-catalog").commitNow();
         fragment.initCurrencies();
         ArrayList<Currency> currencies = ReflectionHelpers.getField(fragment, "currencies");
         assertEquals(100, currencies.size());
@@ -49,6 +54,7 @@ public class CurrencyConverterFragmentTest {
         assertEquals(R.drawable.hr, currencies.get(5).getFlagImageResource());
         assertEquals(R.drawable.de, currencies.get(32).getFlagImageResource());
         assertEquals("AED", currencies.get(33).getCurrencyISOCode());
+        controller.pause().stop().destroy();
     }
 
     @Test public void converterStartupExposesOnlyTheSelectedChildAndSwitchesCleanly() throws Exception {

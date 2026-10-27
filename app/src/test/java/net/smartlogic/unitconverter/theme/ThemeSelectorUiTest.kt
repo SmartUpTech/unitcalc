@@ -54,8 +54,11 @@ class ThemeSelectorUiTest {
     private lateinit var preferences: Preferences
 
     @Before fun setup() {
+        ThemeManager.setProAccessProvider { false }
         preferences = Preferences.getInstance(RuntimeEnvironment.getApplication())
         preferences.preferences.edit().clear().commit()
+        preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
     }
 
@@ -89,14 +92,54 @@ class ThemeSelectorUiTest {
             tap(CalculatorThemes.OYSTER_CREAM.nameRes())
             assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
             tap(CalculatorThemes.GRAPHITE_BLACK.nameRes())
-            if (net.smartlogic.unitconverter.BuildConfig.DEBUG) {
-                assertEquals(CalculatorThemes.GRAPHITE_BLACK.id(), preferences.selectedThemeId)
-                assertTrue(model.uiState.value.cards.all { it.unlocked })
-                assertNull(model.uiState.value.lockedThemeNameRes)
-            } else {
-                assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
-                assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
-                assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
+            assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
+            assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
+        }
+    }
+
+    @Test fun sharedHintExplainsUnlocksAndConfirmationCanBeCancelled() {
+        render(800, 1f) { view, model ->
+            val locked = cards(view).first { it.config[SemanticsProperties.StateDescription].contains("Watch ad") }
+            assertEquals(view.context.getString(R.string.theme_watch_seven_days), locked.config[SemanticsProperties.StateDescription])
+            assertEquals(1, nodes(view).count {
+                it.config.getOrNull(SemanticsProperties.Text)?.any { text ->
+                    text.text == view.context.getString(R.string.theme_unlock_hint)
+                } == true
+            })
+            assertTrue(locked.config[SemanticsActions.OnClick].action!!.invoke())
+            settle()
+            assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
+            assertEquals(0L, preferences.getThemeExpiry("graphite_black"))
+            model.dismissLockedTheme()
+            settle()
+            assertNull(model.uiState.value.lockedThemeNameRes)
+            assertEquals(CalculatorThemes.DEFAULT_ID, preferences.selectedThemeId)
+        }
+    }
+
+    @Test fun everyPaletteFitsConstrainedPickerAtNormalAndLargeTextIncludingRtl() {
+        for (theme in CalculatorThemes.all()) {
+            for (scale in listOf(1f, 2f)) {
+                preferences.preferences.edit().clear()
+                    .putString(Preferences.PREFS_SELECTED_THEME, theme.id())
+                    .putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + theme.id(),
+                        System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
+                ThemeManager.init(RuntimeEnvironment.getApplication())
+                render(320, scale, rtl = scale == 2f) { view, _ ->
+                    val visible = cards(view)
+                    assertTrue(visible.isNotEmpty())
+                    assertTrue("${theme.id()} scale=$scale", view.height <= 640)
+                    val selected = visible.single { it.config[SemanticsProperties.Selected] }
+                    assertEquals(listOf(view.context.getString(theme.nameRes())),
+                        selected.config[SemanticsProperties.ContentDescription])
+                    visible.forEach { assertEquals(selected.size.height, it.size.height) }
+                    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                    view.draw(Canvas(bitmap))
+                    val file = File("../.artifacts/theme-picker/${theme.id()}-$scale.png")
+                    file.parentFile?.mkdirs()
+                    file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                    bitmap.recycle()
+                }
             }
         }
     }
@@ -111,6 +154,8 @@ class ThemeSelectorUiTest {
         }
         preferences.preferences.edit().clear()
             .putString(Preferences.PREFS_SELECTED_THEME, CalculatorThemes.GOLDEN_POPPY.id()).commit()
+        preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
         render(320, 1f) { view, _ ->
             val selected = cards(view).single { it.config[SemanticsProperties.Selected] }
@@ -121,11 +166,13 @@ class ThemeSelectorUiTest {
 
     @Test fun renderLightAndDarkSettingsSnapshots() {
         for (theme in listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)) {
-            // Exercise the existing legacy-selected-theme path to preview an available dark theme.
+            // Persist a valid rewarded entitlement for the dark preview.
             preferences.preferences.edit().clear()
                 .putString(Preferences.PREFS_SELECTED_THEME, theme.id()).commit()
-            ThemeManager.init(RuntimeEnvironment.getApplication())
-            preferences.recordThemeUsage(java.time.LocalDate.of(2026, 10, 7))
+            preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
+        ThemeManager.init(RuntimeEnvironment.getApplication())
+
             RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
             val controller = Robolectric.buildActivity(SettingsActivity::class.java).setup().visible()
             try {
@@ -152,7 +199,11 @@ class ThemeSelectorUiTest {
     @Test fun settingsAppBarAndChromeUpdateImmediatelyWhenSelectingATheme() {
         preferences.preferences.edit().clear()
             .putString(Preferences.PREFS_SELECTED_THEME, CalculatorThemes.GRAPHITE_BLACK.id()).commit()
+        preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
+        preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + "graphite_black",
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
         ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.TITANIUM_GRAY.id())
         RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
         val controller = Robolectric.buildActivity(SettingsActivity::class.java).setup().visible()
@@ -199,7 +250,9 @@ class ThemeSelectorUiTest {
         for (theme in listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)) {
             preferences.preferences.edit().clear()
                 .putString(Preferences.PREFS_SELECTED_THEME, theme.id()).commit()
-            ThemeManager.init(RuntimeEnvironment.getApplication())
+            preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
+            System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
+        ThemeManager.init(RuntimeEnvironment.getApplication())
             RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
             val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
             try {
@@ -232,7 +285,7 @@ class ThemeSelectorUiTest {
         bitmap.recycle()
     }
 
-    private fun render(width: Int, fontScale: Float, inspect: (ComposeView, ThemeSelectorViewModel) -> Unit) {
+    private fun render(width: Int, fontScale: Float, rtl: Boolean = false, inspect: (ComposeView, ThemeSelectorViewModel) -> Unit) {
         RuntimeEnvironment.setQualifiers("w${width}dp-h640dp-mdpi")
         val resources = RuntimeEnvironment.getApplication().resources
         val configuration = Configuration(resources.configuration).apply { this.fontScale = fontScale }
@@ -242,6 +295,7 @@ class ThemeSelectorUiTest {
         val activity = controller.get()
         val model = ThemeSelectorViewModel(preferences)
         val view = ComposeView(activity)
+        view.layoutDirection = if (rtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
         activity.setContentView(view)
         view.setContent {
             val state by model.uiState.collectAsState()

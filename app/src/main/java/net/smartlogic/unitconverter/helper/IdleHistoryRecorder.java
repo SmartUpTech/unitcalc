@@ -77,6 +77,8 @@ public final class IdleHistoryRecorder implements DefaultLifecycleObserver {
         DatabaseHelper.executeHistoryWork(() -> {
             try (DatabaseHelper database = new DatabaseHelper(context)) {
                 database.addHistory(entry.expression(), entry.result(), entry.tool());
+                UsageAnalytics.event("calculation_saved", "tool_id", entry.tool());
+                handler.post(() -> InAppReview.recordUse(context));
             } catch (RuntimeException error) {
                 Log.e("IdleHistoryRecorder", "Unable to save calculation history", error);
                 handler.post(() -> { if (entry.equals(lastSaved)) lastSaved = null; });

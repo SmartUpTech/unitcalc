@@ -36,13 +36,10 @@ import static org.junit.Assert.*;
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class GraphyRenderingTest {
     @org.junit.Before public void unlockThemesForRenderingCoverage() {
-        // These rendering tests exercise every palette, independent of the usage gate.
-        net.smartlogic.unitconverter.helper.Preferences.getInstance(RuntimeEnvironment.getApplication())
-                .getPreferences().edit().putInt(
-                        net.smartlogic.unitconverter.helper.Preferences.PREFS_THEME_USAGE_DAYS,
-                        Integer.MAX_VALUE).apply();
+        ThemeManager.setProAccessProvider(() -> true);
     }
     @After public void reset() {
+        ThemeManager.setProAccessProvider(() -> false);
         RuntimeEnvironment.setFontScale(1f);
         ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.DEFAULT_ID);
     }

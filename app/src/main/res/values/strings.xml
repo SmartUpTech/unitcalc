@@ -1,4 +1,6 @@
 <resources>
+    <string name="settings_usage_analytics">Share usage analytics</string>
+    <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Optional; turn off anytime to reset analytics data on this device.</string>
     <string name="launcher_name">Calculator+</string>
     <string name="brand_name">Calculator+</string>
     <string name="app_name">@string/brand_name</string>
@@ -332,10 +334,30 @@
     <string name="theme_state_selected">Selected</string>
     <string name="theme_state_available">Available</string>
     <string name="theme_locked_title">Theme locked</string>
-    <string name="theme_locked_dismiss">Got it</string>
-    <plurals name="theme_locked_message">
-        <item quantity="one">Unlocks in %1$d more usage day. Keep using Calculator+ to unlock this theme.</item>
-        <item quantity="other">Unlocks in %1$d more usage days. Keep using Calculator+ to unlock this theme.</item>
+    <string name="theme_always_free">Always free</string>
+    <string name="theme_included_pro">Included with Pro</string>
+    <string name="theme_watch_seven_days">Watch ad · 7 days</string>
+    <string name="theme_unlock_hint">Watch an ad to unlock a theme for 7 days.</string>
+    <string name="theme_watch_ad">Watch ad</string>
+    <string name="theme_reward_confirmation">Watch a video to unlock and apply %1$s for seven days. Other themes keep their own access periods.</string>
+    <string name="theme_unlock_offline">Connect to the internet to unlock themes.</string>
+    <string name="theme_ad_loading">Preparing theme reward…</string>
+    <string name="theme_ad_unavailable">The ad could not be shown. No theme was unlocked. Please try again.</string>
+    <string name="theme_ad_not_earned">The video closed before a reward was earned. No theme was unlocked. You can try again.</string>
+    <string name="theme_reward_save_failed">Your theme reward could not be saved. Please try again.</string>
+    <string name="theme_access_expired">Theme access expired. Applying Porcelain White. Unlock themes from Preferences.</string>
+    <string name="theme_access_migrated">Applying Porcelain White. Additional themes can now be unlocked for seven days from Preferences. Porcelain White, Oyster Cream, and Titanium Gray remain free.</string>
+    <plurals name="theme_remaining_days">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
+    <plurals name="theme_remaining_hours">
+        <item quantity="one">%1$d hour left</item>
+        <item quantity="other">%1$d hours left</item>
+    </plurals>
+    <plurals name="theme_remaining_minutes">
+        <item quantity="one">%1$d minute left</item>
+        <item quantity="other">%1$d minutes left</item>
     </plurals>
     <string name="prefs_title_formatting">Customization</string>
     <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>
@@ -566,7 +588,7 @@
     <!-- Store listing copy: publish these values through Google Play Console. -->
     <string name="store_listing_title">Calculator+: Unit Converter</string>
     <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
-    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nUse standard and scientific modes to work through calculations, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings. Keep frequently used tools close with favourites.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
+    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
     <string name="share_app_subject">%1$s: Calculate and convert</string>
     <string name="currency_copy_format">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
     <string name="currency_rate_format">1 %1$s = %2$s %3$s</string>

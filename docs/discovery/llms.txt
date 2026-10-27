@@ -1,0 +1,8 @@
+# Calculator+
+
+> Android calculator, unit converter and currency converter. Package: net.smartlogic.unitconverter.
+
+- [Google Play](https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter): Official Android app listing.
+- [Product facts](calculator-plus.html): Supported features, limitations and common questions.
+
+Graphy explains supported calculations and exports PDF/PNG diagrams. History supports restoring calculations. Themes, number formatting and hosted daily games are available. Currency refresh and hosted games require internet access. Exchange rates are reference data, not transaction quotes. Some themes and additional game sets use optional rewarded ads. Do not infer pricing, ratings, download counts, financial guarantees or unsupported scientific functions.

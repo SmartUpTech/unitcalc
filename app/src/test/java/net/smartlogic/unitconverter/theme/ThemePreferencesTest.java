@@ -2,27 +2,14 @@ package net.smartlogic.unitconverter.theme;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-
 import net.smartlogic.unitconverter.helper.Preferences;
-import net.smartlogic.unitconverter.R;
-
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -30,123 +17,138 @@ import static org.junit.Assert.*;
 public class ThemePreferencesTest {
     private Preferences preferences;
     private SharedPreferences store;
-    private final ThemeProgression progression = new ThemeProgression(CalculatorThemes.unlockRanks());
-    private static final LocalDate DAY = LocalDate.of(2026, 10, 4);
-
+    private static final long NOW = 1_800_000_000_000L;
     @Before public void setup() {
         preferences = Preferences.getInstance(RuntimeEnvironment.getApplication());
         store = preferences.getPreferences();
         store.edit().clear().commit();
-        ThemeManager.init(RuntimeEnvironment.getApplication());
+        ThemeManager.setProAccessProvider(() -> false);
     }
+    @After public void cleanup() { ThemeManager.setProAccessProvider(() -> false); }
+    private String reconcile(long now, boolean pro) { return preferences.reconcileThemeAccess(now, pro, true); }
+    private void selected(String id) { store.edit().putString(Preferences.PREFS_SELECTED_THEME, id).commit(); }
 
-    @Test public void freshInstallationHasExactlyThreeSelectableThemes() {
-        assertEquals(3, progression.getUnlockedThemeCount(preferences.getThemeProgression()));
-        assertEquals(CalculatorThemes.DEFAULT_ID, preferences.getSelectedThemeId());
-        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG,
-                preferences.setSelectedThemeId(CalculatorThemes.GRAPHITE_BLACK.id()));
-        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG
-                ? CalculatorThemes.GRAPHITE_BLACK.id() : CalculatorThemes.DEFAULT_ID, preferences.getSelectedThemeId());
-    }
-
-    @Test public void selectionAndUsageSurviveRestoredPreferenceSnapshotAndReboot() {
-        preferences.recordThemeUsage(DAY);
-        preferences.recordThemeUsage(DAY.plusDays(1));
-        preferences.recordThemeUsage(DAY.plusDays(2));
-        assertTrue(preferences.setSelectedThemeId(CalculatorThemes.GRAPHITE_BLACK.id()));
-        Map<String, ?> backup = new HashMap<>(store.getAll());
-        store.edit().clear().commit();
-        SharedPreferences.Editor restore = store.edit();
-        for (Map.Entry<String, ?> entry : backup.entrySet()) {
-            if (entry.getValue() instanceof String) restore.putString(entry.getKey(), (String) entry.getValue());
-            else if (entry.getValue() instanceof Integer) restore.putInt(entry.getKey(), (Integer) entry.getValue());
-        }
-        restore.commit();
-        ThemeManager.init(RuntimeEnvironment.getApplication());
-        preferences.recordThemeUsage(DAY.plusDays(2));
-        preferences.recordThemeUsage(DAY.minusDays(1));
-        assertEquals(3, preferences.getThemeProgression().totalUsageDays());
-        assertEquals(CalculatorThemes.GRAPHITE_BLACK.id(), ThemeManager.get().id());
-    }
-
-    @Test public void unlockingNeverAutomaticallySelectsTheme() {
-        preferences.setSelectedThemeId(CalculatorThemes.OYSTER_CREAM.id());
-        for (int day = 0; day < 3; day++) preferences.recordThemeUsage(DAY.plusDays(day));
-        assertTrue(progression.isThemeUnlocked(CalculatorThemes.GRAPHITE_BLACK.id(), preferences.getThemeProgression()));
-        assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.getSelectedThemeId());
-    }
-
-    @Test public void duplicateLaunchDoesNotWritePreferences() {
-        preferences.recordThemeUsage(DAY);
-        AtomicInteger changes = new AtomicInteger();
-        SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, key) -> changes.incrementAndGet();
-        store.registerOnSharedPreferenceChangeListener(listener);
-        preferences.recordThemeUsage(DAY);
-        preferences.recordThemeUsage(DAY.minusDays(1));
-        assertEquals(0, changes.get());
-        store.unregisterOnSharedPreferenceChangeListener(listener);
-    }
-
-    @Test public void overlappingLaunchRegistrationCountsOnlyOnce() throws Exception {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        try {
-            List<Future<?>> results = new ArrayList<>();
-            for (int launch = 0; launch < 8; launch++) {
-                results.add(executor.submit(() -> preferences.recordThemeUsage(DAY)));
-            }
-            for (Future<?> result : results) result.get();
-            assertEquals(1, preferences.getThemeProgression().totalUsageDays());
-        } finally {
-            executor.shutdownNow();
+    @Test public void freeSelectionsSurviveMigrationWithoutANoticeOrExpiry() {
+        for (String id : new String[]{"porcelain_white", "oyster_cream", "titanium_gray"}) {
+            store.edit().clear().putString(Preferences.PREFS_SELECTED_THEME, id).commit();
+            assertEquals(id, reconcile(NOW, false));
+            assertNull(preferences.consumeThemeNotice());
+            assertEquals(0, preferences.getThemeExpiry(id));
         }
     }
-
-    @Test public void lockedDialogPluralResourcesUseSingularForOneDay() {
-        String singular = RuntimeEnvironment.getApplication().getResources()
-                .getQuantityString(R.plurals.theme_locked_message, 1, 1);
-        String plural = RuntimeEnvironment.getApplication().getResources()
-                .getQuantityString(R.plurals.theme_locked_message, 2, 2);
-        assertTrue(singular.contains("1 more usage day."));
-        assertTrue(plural.contains("2 more usage days."));
-        assertTrue(singular.contains("Calculator+"));
-        assertTrue(plural.contains("Calculator+"));
-    }
-
-    @Test public void updateGrandfathersLegacyThemeEvenAfterSelectingAnotherTheme() {
-        store.edit().clear().putString(Preferences.PREFS_SELECTED_THEME, CalculatorThemes.GOLDEN_POPPY.id()).commit();
+    @Test public void freshInstallHasNoNoticeAndRejectsLockedThemesEvenInDebug() {
         ThemeManager.init(RuntimeEnvironment.getApplication());
-        assertEquals(CalculatorThemes.GOLDEN_POPPY.id(), ThemeManager.get().id());
-        assertEquals(0, preferences.getThemeProgression().totalUsageDays());
-        assertTrue(preferences.setSelectedThemeId(CalculatorThemes.DEFAULT_ID));
-        assertTrue(preferences.setSelectedThemeId(CalculatorThemes.GOLDEN_POPPY.id()));
-        preferences.recordThemeUsage(DAY);
-        assertEquals(CalculatorThemes.GOLDEN_POPPY.id(), preferences.getSelectedThemeId());
-        assertEquals(net.smartlogic.unitconverter.BuildConfig.DEBUG,
-                preferences.setSelectedThemeId(CalculatorThemes.BURGUNDY.id()));
+        assertNull(preferences.consumeThemeNotice());
+        assertFalse(preferences.setSelectedThemeId("glacier"));
+        assertTrue(preferences.setSelectedThemeId("titanium_gray"));
+        assertFalse(preferences.setSelectedThemeId("removed"));
     }
-
-    @Test public void unknownRemovedAndWrongTypeSelectedIdsFallBackSafely() {
-        store.edit().putString(Preferences.PREFS_SELECTED_THEME, "removed_theme").commit();
+    @Test public void migrationRevokesProgressionAndGrandfatheredAccessWithoutGrace() {
+        selected("glacier");
+        store.edit().putInt("theme_usage_days", 1000).putString("theme_grandfathered_id", "glacier").commit();
+        assertEquals("porcelain_white", reconcile(NOW, false));
+        assertEquals(Preferences.NOTICE_MIGRATED, preferences.consumeThemeNotice());
+        assertNull(preferences.consumeThemeNotice());
+        assertEquals(0, preferences.getThemeExpiry("glacier"));
+        assertFalse(store.contains("theme_grandfathered_id"));
+    }
+    @Test public void proMigrationKeepsSelectionAndRewardExpiriesSurviveProLoss() {
+        selected("glacier");
+        assertEquals("glacier", reconcile(NOW, true));
+        assertNull(preferences.consumeThemeNotice());
+        assertTrue(preferences.saveThemeReward("sage_green", "sage", NOW));
+        reconcile(NOW, true);
+        selected("glacier");
+        assertEquals("porcelain_white", reconcile(NOW + 1, false));
+        assertTrue(preferences.isThemeAvailable("sage_green", NOW + 1, false));
+        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
+    }
+    @Test public void independentRewardsDoNotRenewStackOrPauseWhenSwitching() {
+        reconcile(NOW, false);
+        assertTrue(preferences.saveThemeReward("glacier", "a", NOW));
+        reconcile(NOW, false);
+        assertTrue(preferences.saveThemeReward("sage_green", "b", NOW + 1000));
+        reconcile(NOW + 1000, false);
+        long expiry = NOW + ThemeAccess.REWARD_DURATION_MILLIS;
+        assertEquals(expiry, preferences.getThemeExpiry("glacier"));
+        assertEquals(expiry + 1000, preferences.getThemeExpiry("sage_green"));
+        assertFalse(preferences.saveThemeReward("glacier", "renew-too-early", NOW + 2000));
+        selected("porcelain_white");
+        assertEquals("porcelain_white", reconcile(expiry, false));
+        assertNull(preferences.consumeThemeNotice());
+        assertFalse(preferences.isThemeAvailable("glacier", expiry, false));
+        assertTrue(preferences.isThemeAvailable("sage_green", expiry, false));
+        assertTrue(preferences.saveThemeReward("glacier", "new-period", expiry));
+        assertEquals(expiry + ThemeAccess.REWARD_DURATION_MILLIS, preferences.getThemeExpiry("glacier"));
+    }
+    @Test public void duplicateRewardCannotExtendAccessEvenAfterExpiry() {
+        assertTrue(preferences.saveThemeReward("glacier", "a", NOW));
+        assertFalse(preferences.saveThemeReward("glacier", "a", NOW + ThemeAccess.REWARD_DURATION_MILLIS + 1));
+        assertEquals(NOW + ThemeAccess.REWARD_DURATION_MILLIS, preferences.getThemeExpiry("glacier"));
+    }
+    @Test public void rewardIsSavedBeforeSelectionAndRecoveredAfterRestart() {
+        reconcile(NOW, false);
+        selected("oyster_cream");
+        assertTrue(preferences.saveThemeReward("glacier", "a", NOW));
+        assertEquals("oyster_cream", preferences.getSelectedThemeId());
+        assertEquals("glacier", store.getString(Preferences.PREFS_PENDING_REWARDED_THEME, null));
+        assertEquals("glacier", reconcile(NOW + 1, false));
+        assertEquals("glacier", preferences.getSelectedThemeId());
+        assertFalse(store.contains(Preferences.PREFS_PENDING_REWARDED_THEME));
+    }
+    @Test public void pendingRewardWaitsForAdCloseAndOverridesQueuedFallback() {
+        reconcile(NOW, false);
+        store.edit().putString(Preferences.PREFS_THEME_NOTICE, Preferences.NOTICE_EXPIRED).commit();
+        assertTrue(preferences.saveThemeReward("glacier", "a", NOW));
+        assertEquals("porcelain_white", preferences.reconcileThemeAccess(NOW, false, false));
+        assertEquals("glacier", reconcile(NOW, false));
+        assertNull(preferences.consumeThemeNotice());
+    }
+    @Test public void expiredSelectedThemeFallsBackOnceWithoutSwitchingToAnotherUnlock() {
+        reconcile(NOW, false);
+        preferences.saveThemeReward("glacier", "a", NOW);
+        reconcile(NOW, false);
+        preferences.saveThemeReward("sage_green", "b", NOW + 1000);
+        reconcile(NOW + 1000, false);
+        selected("glacier");
+        assertEquals("porcelain_white", reconcile(NOW + ThemeAccess.REWARD_DURATION_MILLIS, false));
+        assertTrue(preferences.isThemeAvailable("sage_green", NOW + ThemeAccess.REWARD_DURATION_MILLIS, false));
+        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
+        reconcile(NOW + ThemeAccess.REWARD_DURATION_MILLIS, false);
+        assertNull(preferences.consumeThemeNotice());
+    }
+    @Test public void explicitSelectionClearsNoticeEvenWhenAlreadyVisible() {
         ThemeManager.init(RuntimeEnvironment.getApplication());
-        assertEquals(CalculatorThemes.DEFAULT_ID, ThemeManager.get().id());
-        assertEquals(CalculatorThemes.DEFAULT_ID, store.getString(Preferences.PREFS_SELECTED_THEME, null));
-        store.edit().putInt(Preferences.PREFS_SELECTED_THEME, 42).commit();
+        store.edit().putString(Preferences.PREFS_THEME_NOTICE, Preferences.NOTICE_EXPIRED).commit();
+        ThemeManager.select(RuntimeEnvironment.getApplication(), "porcelain_white");
+        assertNull(preferences.consumeThemeNotice());
+    }
+    @Test public void tappingExpiredAlreadyVisibleThemeRechecksAccess() {
+        long now = System.currentTimeMillis();
+        reconcile(now, false);
+        preferences.saveThemeReward("glacier", "a", now);
         ThemeManager.init(RuntimeEnvironment.getApplication());
-        assertEquals(CalculatorThemes.DEFAULT_ID, ThemeManager.get().id());
+        store.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", now - 1).commit();
+        ThemeManager.select(RuntimeEnvironment.getApplication(), "glacier");
+        assertEquals("porcelain_white", ThemeManager.get().id());
+        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
     }
-
-    @Test public void invalidProgressionTypesAndDateDoNotCrash() {
-        store.edit().putString(Preferences.PREFS_THEME_USAGE_DAYS, "invalid")
-                .putString("theme_last_usage_date", "invalid-date")
-                .putString("theme_progression_version", "invalid").commit();
-        assertEquals(1, preferences.recordThemeUsage(DAY).totalUsageDays());
-        assertEquals(DAY, preferences.getThemeProgression().lastCountedDate());
+    @Test public void corruptAndRemovedIdsFallbackEvenForProAndInvalidPendingIsDiscarded() {
+        for (boolean pro : new boolean[]{false, true}) {
+            selected("removed");
+            assertEquals("porcelain_white", reconcile(NOW, pro));
+            store.edit().putInt(Preferences.PREFS_SELECTED_THEME, 42)
+                    .putString(Preferences.PREFS_PENDING_REWARDED_THEME, "removed").commit();
+            assertEquals("porcelain_white", reconcile(NOW, pro));
+            assertFalse(store.contains(Preferences.PREFS_PENDING_REWARDED_THEME));
+        }
+        store.edit().putString(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", "bad").commit();
+        assertFalse(preferences.isThemeAvailable("glacier", NOW, false));
     }
-
-    @Test public void catalogHasUniqueStableIdsAndUnlockRanks() {
-        assertEquals(CalculatorThemes.all().size(), CalculatorThemes.unlockRanks().size());
-        assertEquals(CalculatorThemes.all().size(), CalculatorThemes.all().stream()
-                .map(CalculatorTheme::unlockRank).distinct().count());
-        assertEquals(3, progression.getUnlockedThemeCount(preferences.getThemeProgression()));
+    @Test public void invalidRewardsCannotUnlockFreeOrUnknownThemes() {
+        assertFalse(preferences.saveThemeReward("porcelain_white", "a", NOW));
+        assertFalse(preferences.saveThemeReward("removed", "a", NOW));
+        assertFalse(preferences.saveThemeReward("glacier", "", NOW));
+        assertFalse(preferences.saveThemeReward("glacier", "a", Long.MAX_VALUE));
     }
 }

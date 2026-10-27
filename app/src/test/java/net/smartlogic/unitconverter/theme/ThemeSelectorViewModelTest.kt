@@ -18,81 +18,50 @@ class ThemeSelectorViewModelTest {
     private lateinit var preferences: Preferences
     private lateinit var model: ThemeSelectorViewModel
     private lateinit var store: ViewModelStore
-
     @Before fun setup() {
         preferences = Preferences.getInstance(RuntimeEnvironment.getApplication())
         preferences.preferences.edit().clear().commit()
+        ThemeManager.setProAccessProvider { false }
         ThemeManager.init(RuntimeEnvironment.getApplication())
-        model = ThemeSelectorViewModel(preferences, ThemeProgression(CalculatorThemes.unlockRanks()))
+        model = ThemeSelectorViewModel(preferences)
         store = ViewModelStore().apply { put("theme", model) }
     }
-
-    @After fun teardown() = store.clear()
-
-    @Test fun everyInitialUnlockedThemeCanBeSelectedAndEveryLockedTapIsRejected() {
-        val initialCards = model.uiState.value.cards
-        assertEquals(3, initialCards.count { it.unlocked })
-        initialCards.filter { it.unlocked }.forEach { card ->
-            assertTrue(model.requestTheme(card.theme.id()))
-            ThemeManager.select(RuntimeEnvironment.getApplication(), card.theme.id())
-            assertEquals(card.theme.id(), model.uiState.value.cards.single { it.selected }.theme.id())
+    @After fun teardown() { store.clear(); ThemeManager.setProAccessProvider { false } }
+    @Test fun freeThemesHaveNoCountdownAndLockedTapOnlyOpensConfirmation() {
+        val cards = model.uiState.value.cards
+        assertEquals(3, cards.count { it.unlocked && it.alwaysFree })
+        cards.filter { it.alwaysFree }.forEach {
+            assertEquals(0L, it.remainingMillis)
+            assertTrue(model.requestTheme(it.theme.id()))
         }
-        val selectedId = preferences.selectedThemeId
-        initialCards.filterNot { it.unlocked }.forEach { card ->
-            assertFalse(model.requestTheme(card.theme.id()))
-            assertEquals(card.theme.nameRes(), model.uiState.value.lockedThemeNameRes)
-            assertEquals((card.theme.unlockRank() - 3) * 3, model.uiState.value.daysUntilTappedUnlock)
-            assertEquals(selectedId, preferences.selectedThemeId)
-            assertEquals(selectedId, model.uiState.value.cards.single { it.selected }.theme.id())
-        }
-    }
-
-    @Test fun dialogCountdownUsesTappedThemeAndUpdatesWhileOpen() {
-        val day = java.time.LocalDate.of(2026, 10, 4)
-        assertFalse(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
-        preferences.recordThemeUsage(day)
-        assertEquals(2, model.uiState.value.daysUntilTappedUnlock)
-        preferences.recordThemeUsage(day.plusDays(1))
-        assertEquals(1, model.uiState.value.daysUntilTappedUnlock)
-        preferences.recordThemeUsage(day.plusDays(2))
-        assertNull(model.uiState.value.lockedThemeNameRes)
-        assertTrue(model.uiState.value.cards.single { it.theme.id() == CalculatorThemes.GRAPHITE_BLACK.id() }.unlocked)
-        assertEquals(CalculatorThemes.DEFAULT_ID, preferences.selectedThemeId)
-
-        assertFalse(model.requestTheme(CalculatorThemes.PURPLE_MOUNTAIN_MAJESTY.id()))
-        assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
-    }
-
-    @Test fun lockedTapShowsCorrectDialogWithoutChangingSelection() {
-        assertFalse(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
-        assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
-        assertEquals(3, model.uiState.value.daysUntilTappedUnlock)
-        assertEquals(CalculatorThemes.DEFAULT_ID, preferences.selectedThemeId)
+        assertFalse(model.requestTheme("glacier"))
+        assertEquals(CalculatorThemes.GLACIER.nameRes(), model.uiState.value.lockedThemeNameRes)
+        assertEquals(0L, preferences.getThemeExpiry("glacier"))
+        assertEquals("porcelain_white", preferences.selectedThemeId)
         model.dismissLockedTheme()
         assertNull(model.uiState.value.lockedThemeNameRes)
     }
-
-    @Test fun liveUsageUpdatesCardsAndSingularRemainingDay() {
-        val day = java.time.LocalDate.of(2026, 10, 4)
-        preferences.recordThemeUsage(day)
-        preferences.recordThemeUsage(day.plusDays(1))
-        assertFalse(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
-        assertEquals(1, model.uiState.value.daysUntilTappedUnlock)
-        assertEquals(2, model.uiState.value.progress)
-        preferences.recordThemeUsage(day.plusDays(2))
-        assertTrue(model.requestTheme(CalculatorThemes.GRAPHITE_BLACK.id()))
-        assertNull(model.uiState.value.lockedThemeNameRes)
-        assertEquals(4, model.uiState.value.cards.count { it.unlocked })
-        assertEquals(CalculatorThemes.DEFAULT_ID, model.uiState.value.cards.single { it.selected }.theme.id())
+    @Test fun rewardedAccessUpdatesCardsWithoutChangingSelectionUntilRecovery() {
+        assertTrue(preferences.saveThemeReward("glacier", "a", System.currentTimeMillis()))
+        model.refresh()
+        assertTrue(model.uiState.value.cards.single { it.theme.id() == "glacier" }.unlocked)
+        assertEquals("porcelain_white", preferences.selectedThemeId)
+        ThemeManager.refreshAccess(RuntimeEnvironment.getApplication())
+        assertEquals("glacier", model.uiState.value.cards.single { it.selected }.theme.id())
     }
-
-    @Test fun selectingAvailableThemeUpdatesSnapshotAndSharedManager() {
-        assertTrue(model.requestTheme(CalculatorThemes.OYSTER_CREAM.id()))
-        ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.OYSTER_CREAM.id())
-        assertEquals(CalculatorThemes.OYSTER_CREAM.id(), model.uiState.value.cards.single { it.selected }.theme.id())
-        assertEquals(CalculatorThemes.OYSTER_CREAM.id(), ThemeManager.get().id())
-        ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.GRAPHITE_BLACK.id())
-        assertEquals(if (net.smartlogic.unitconverter.BuildConfig.DEBUG) CalculatorThemes.GRAPHITE_BLACK.id()
-            else CalculatorThemes.OYSTER_CREAM.id(), ThemeManager.get().id())
+    @Test fun foregroundRefreshUpdatesUnusedExpiredCardsAndProStatus() {
+        val context = RuntimeEnvironment.getApplication()
+        preferences.saveThemeReward("glacier", "a", System.currentTimeMillis())
+        ThemeManager.refreshAccess(context)
+        ThemeManager.select(context, "oyster_cream")
+        preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", 1).commit()
+        ThemeManager.refreshAccess(context)
+        assertFalse(model.uiState.value.cards.single { it.theme.id() == "glacier" }.unlocked)
+        assertEquals("oyster_cream", preferences.selectedThemeId)
+        assertNull(preferences.consumeThemeNotice())
+        ThemeManager.setProAccessProvider { true }
+        ThemeManager.refreshAccess(context)
+        assertTrue(model.uiState.value.cards.all { it.unlocked })
+        assertTrue(model.uiState.value.cards.all { it.pro })
     }
 }

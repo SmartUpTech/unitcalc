@@ -36,6 +36,7 @@ internal fun rememberGraphyDownload(output: GraphyOutput?, viewportWidth: Int): 
     var pendingFile by rememberSaveable { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     fun failed(error: Exception) {
+        net.smartlogic.unitconverter.helper.UsageAnalytics.event("graphy_export_result", "outcome", "failed")
         val tooLarge = context.getString(R.string.graphy_export_png_too_large)
         Toast.makeText(context, if (error.message == tooLarge) tooLarge else context.getString(R.string.graphy_export_failed), Toast.LENGTH_LONG).show()
     }
@@ -48,6 +49,7 @@ internal fun rememberGraphyDownload(output: GraphyOutput?, viewportWidth: Int): 
                 withContext(NonCancellable + Dispatchers.IO) {
                     if (uri == null) GraphyExportFiles.discard(context, path) else GraphyExportFiles.save(context, path, uri)
                 }
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("graphy_export_result", "outcome", if (uri == null) "cancelled" else "saved")
                 if (uri != null) Toast.makeText(context, R.string.graphy_export_saved, Toast.LENGTH_SHORT).show()
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) { failed(error) }
@@ -59,6 +61,7 @@ internal fun rememberGraphyDownload(output: GraphyOutput?, viewportWidth: Int): 
     return GraphyDownloadState(output != null && !output.isEmpty && !busy && pendingFile == null, busy) { format ->
         val snapshot = output
         if (snapshot != null && !snapshot.isEmpty && !busy && pendingFile == null) scope.launch {
+            net.smartlogic.unitconverter.helper.UsageAnalytics.event("graphy_export_requested", "format", format.extension)
             busy = true
             var prepared: File? = null
             try {

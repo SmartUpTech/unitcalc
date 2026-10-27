@@ -7,20 +7,21 @@ import androidx.preference.PreferenceManager;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.theme.CalculatorThemes;
-import net.smartlogic.unitconverter.theme.ThemeProgression;
+import net.smartlogic.unitconverter.theme.ThemeAccess;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
-import java.util.Objects;
 
 public class Preferences {
 
     public static final String PREFS_SELECTED_THEME = "selected_theme";
-    public static final String PREFS_THEME_USAGE_DAYS = "theme_usage_days";
-    private static final String PREFS_THEME_LAST_USAGE_DATE = "theme_last_usage_date";
-    private static final String PREFS_THEME_PROGRESSION_VERSION = "theme_progression_version";
-    private static final String PREFS_THEME_GRANDFATHERED_ID = "theme_grandfathered_id";
+    public static final String PREFS_THEME_EXPIRY_PREFIX = "theme_expiry_";
+    public static final String PREFS_PENDING_REWARDED_THEME = "pending_rewarded_theme";
+    public static final String PREFS_THEME_ACCESS_VERSION = "theme_access_version";
+    public static final String PREFS_THEME_NOTICE = "theme_access_notice";
+    private static final String REWARD_ATTEMPT_PREFIX = "theme_reward_attempt_";
+    public static final String NOTICE_EXPIRED = "expired";
+    public static final String NOTICE_MIGRATED = "migrated";
     public static final String PREFS_NUMBER_OF_DECIMALS = "number_decimals";
     public static final String PREFS_DECIMAL_SEPARATOR = "decimal_separator";
     public static final String PREFS_GROUP_SEPARATOR = "group_separator";
@@ -38,7 +39,6 @@ public class Preferences {
     private static Preferences mInstance;
     private final SharedPreferences mPrefs;
     private final Context mContext;
-    private final ThemeProgression themeProgression = ThemeProgression.forCurrentBuild();
 
     public static synchronized Preferences getInstance(Context context) {
         if (mInstance == null) {
@@ -82,59 +82,82 @@ public class Preferences {
     }
 
     public synchronized boolean setSelectedThemeId(String themeId) {
-        if (!themeProgression.isThemeUnlocked(themeId, getThemeProgression())) return false;
-        if (themeId.equals(getSelectedThemeId())) return true;
-        mPrefs.edit().putString(PREFS_SELECTED_THEME, themeId).apply();
+        long now = System.currentTimeMillis();
+        reconcileThemeAccess(now, ThemeManager.hasProAccess(),
+                !net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy());
+        if (!isThemeAvailable(themeId, now, ThemeManager.hasProAccess())) return false;
+        // Clear a stale notice even when explicitly selecting the already-visible theme.
+        mPrefs.edit().putString(PREFS_SELECTED_THEME, themeId)
+                .remove(PREFS_THEME_NOTICE).remove(PREFS_PENDING_REWARDED_THEME).apply();
         return true;
     }
 
-    public synchronized ThemeProgression.State getThemeProgression() {
-        return updateThemeProgression(null);
+    public long getThemeExpiry(String themeId) {
+        Object value = mPrefs.getAll().get(PREFS_THEME_EXPIRY_PREFIX + themeId);
+        return value instanceof Long ? Math.max(0L, (Long) value) : 0L;
     }
 
-    public synchronized ThemeProgression.State recordThemeUsage(LocalDate localDate) {
-        return updateThemeProgression(Objects.requireNonNull(localDate));
+    public boolean isThemeAvailable(String themeId, long now, boolean pro) {
+        return ThemeAccess.isAvailable(themeId, pro, getThemeExpiry(themeId), now);
     }
 
-    /** One atomic preference batch for migration + usage. SharedPreferences remains the store. */
-    private ThemeProgression.State updateThemeProgression(LocalDate localDate) {
+    /** Startup/foreground reconciliation. No timer mutates the visible theme. */
+    public synchronized String reconcileThemeAccess(long now, boolean pro, boolean finishPending) {
         Map<String, ?> values = mPrefs.getAll();
-        Object rawDays = values.get(PREFS_THEME_USAGE_DAYS);
-        Object rawVersion = values.get(PREFS_THEME_PROGRESSION_VERSION);
-        Object rawDate = values.get(PREFS_THEME_LAST_USAGE_DATE);
-        Object rawGrandfathered = values.get(PREFS_THEME_GRANDFATHERED_ID);
         Object rawSelected = values.get(PREFS_SELECTED_THEME);
-        LocalDate lastDate = null;
-        if (rawDate instanceof String) {
-            try {
-                lastDate = LocalDate.parse((String) rawDate);
-            } catch (DateTimeParseException invalidDate) {
-                // Corrupt date: resume from the next actual launch without losing earned days.
-            }
+        String selected = getSelectedThemeId();
+        Object version = values.get(PREFS_THEME_ACCESS_VERSION);
+        boolean migration = !(version instanceof Integer) || (Integer) version < ThemeAccess.VERSION;
+        SharedPreferences.Editor editor = mPrefs.edit();
+        boolean changed = false;
+        if (migration) {
+            editor.putInt(PREFS_THEME_ACCESS_VERSION, ThemeAccess.VERSION)
+                    .remove("theme_usage_days").remove("theme_last_usage_date")
+                    .remove("theme_progression_version").remove("theme_grandfathered_id");
+            changed = true;
         }
-        ThemeProgression.State stored = new ThemeProgression.State(
-                rawDays instanceof Integer ? (Integer) rawDays : 0, lastDate,
-                rawVersion instanceof Integer ? (Integer) rawVersion : 0,
-                rawGrandfathered instanceof String ? (String) rawGrandfathered : null);
-        String selectedId = CalculatorThemes.fromId(rawSelected instanceof String ? (String) rawSelected : null).id();
-        ThemeProgression.State updated = themeProgression.migrate(stored, selectedId,
-                rawSelected instanceof String && rawSelected.equals(selectedId));
-        if (localDate != null) updated = themeProgression.registerUsage(updated, localDate);
-        boolean repairSelection = values.containsKey(PREFS_SELECTED_THEME) && !selectedId.equals(rawSelected);
-        if (!updated.equals(stored) || repairSelection) {
-            SharedPreferences.Editor editor = mPrefs.edit()
-                    .putInt(PREFS_THEME_USAGE_DAYS, updated.totalUsageDays())
-                    .putInt(PREFS_THEME_PROGRESSION_VERSION, updated.version());
-            if (updated.lastCountedDate() != null) {
-                editor.putString(PREFS_THEME_LAST_USAGE_DATE, updated.lastCountedDate().toString());
+        Object pending = values.get(PREFS_PENDING_REWARDED_THEME);
+        // Pending must represent a real, unexpired earned reward, not merely Pro access.
+        if (finishPending && pending != null) {
+            if (pending instanceof String && ThemeAccess.isKnown((String) pending)
+                    && getThemeExpiry((String) pending) > now) {
+                selected = (String) pending;
+                editor.putString(PREFS_SELECTED_THEME, selected).remove(PREFS_THEME_NOTICE);
             }
-            if (updated.grandfatheredThemeId() != null) {
-                editor.putString(PREFS_THEME_GRANDFATHERED_ID, updated.grandfatheredThemeId());
-            }
-            if (repairSelection) editor.putString(PREFS_SELECTED_THEME, selectedId);
-            editor.apply();
+            editor.remove(PREFS_PENDING_REWARDED_THEME);
+            changed = true;
         }
-        return updated;
+        if (!isThemeAvailable(selected, now, pro)) {
+            selected = CalculatorThemes.DEFAULT_ID;
+            editor.putString(PREFS_SELECTED_THEME, selected)
+                    .putString(PREFS_THEME_NOTICE, migration ? NOTICE_MIGRATED : NOTICE_EXPIRED);
+            changed = true;
+        } else if (rawSelected != null && !ThemeAccess.isKnown(rawSelected instanceof String ? (String) rawSelected : null)) {
+            editor.putString(PREFS_SELECTED_THEME, selected);
+            changed = true;
+        }
+        if (changed) editor.apply();
+        return selected;
+    }
+
+    /** Call on the serialized reward executor. Commit completes before UI recovery. */
+    public boolean saveThemeReward(String themeId, String attemptId, long rewardTime) {
+        if (!ThemeAccess.isKnown(themeId) || ThemeAccess.isAlwaysFree(themeId)
+                || attemptId == null || attemptId.isEmpty() || rewardTime < 0
+                || rewardTime > Long.MAX_VALUE - ThemeAccess.REWARD_DURATION_MILLIS) return false;
+        Map<String, ?> values = mPrefs.getAll();
+        if (attemptId.equals(values.get(REWARD_ATTEMPT_PREFIX + themeId))) return false;
+        if (getThemeExpiry(themeId) > rewardTime) return false;
+        return mPrefs.edit()
+                .putLong(PREFS_THEME_EXPIRY_PREFIX + themeId, rewardTime + ThemeAccess.REWARD_DURATION_MILLIS)
+                .putString(REWARD_ATTEMPT_PREFIX + themeId, attemptId)
+                .putString(PREFS_PENDING_REWARDED_THEME, themeId).commit();
+    }
+
+    public synchronized String consumeThemeNotice() {
+        Object notice = mPrefs.getAll().get(PREFS_THEME_NOTICE);
+        if (notice != null) mPrefs.edit().remove(PREFS_THEME_NOTICE).apply();
+        return notice instanceof String ? (String) notice : null;
     }
 
     public int getLastConversion() {

@@ -23,7 +23,7 @@ description: Guidelines for UI consistency, component usage, and layout rules. U
 - **Spacing**: Use `@dimen` resources. Follow standard margins/paddings.
 - **Keypad Grid**: Maintain 3 or 4 column structures for consistency.
 - **Keypad text**: Shared text keys use `buttonTextSize` (26sp); the existing larger side-operator/equals role uses `buttonOperatorTextSize` (32sp). Both roles include the requested 4sp increase. Preserve readable text and complete controls within the available viewport; do not add tool-specific size overrides.
-- **Corners/Elevation**: 4dp corners (`@style/RoundedCorners`). Flat design (0dp elevation), except preference theme previews, which use the shared 3dp theme-card elevation and 8dp shadow clearance. Preview backgrounds retain their exact theme colors.
+- **Corners/Elevation**: 4dp corners (`@style/RoundedCorners`). Flat design (0dp elevation), except preference theme previews, which use the shared 3dp theme-card elevation and 8dp shadow clearance. Preview backgrounds retain their exact theme colors. Theme cards use the shared 1dp outline, strengthened to 2dp for the applied card; the locked ad affordance uses Citizen Calculator’s ad/play icon inside a circular outline.
 - **Interactions**: Use `@color/pad_button_ripple_color` for key ripples.
 - **Accessibility**: All `ImageButton` elements MUST have a `contentDescription`.
 

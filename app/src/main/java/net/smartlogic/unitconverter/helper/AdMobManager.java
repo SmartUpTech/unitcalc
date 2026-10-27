@@ -21,11 +21,15 @@ import net.smartlogic.unitconverter.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.LongConsumer;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
 
 /** Consent-gated rewarded inventory. No banner or unsolicited interstitial requests. */
 public final class AdMobManager {
     private static AdMobManager instance;
     private static boolean gamesAdShowing;
+    private static boolean themeAdShowing;
     private static final String GAMES_PRELOAD_ID = "games_rewarded";
     private final Context context;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -164,10 +168,80 @@ public final class AdMobManager {
     }
 
     public static boolean isGamesAdShowing() { return gamesAdShowing; }
+    public static boolean isThemeAdShowing() {
+        return themeAdShowing || net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy();
+    }
+
+    /** A separate reward route; inventory never calls game or ad-free reward handlers. */
+    public boolean showThemeAd(Activity activity, BooleanSupplier stillEligible,
+                               LongConsumer onEarned, java.util.function.Consumer<Boolean> onClosed) {
+        if (themeAdShowing || gamesAdShowing || AppOpenManager.isShowingAd() || InAppReview.isActive()
+                || activity.isFinishing() || activity.isDestroyed()) return false;
+        themeAdShowing = true;
+        java.lang.ref.WeakReference<Activity> host = new java.lang.ref.WeakReference<>(activity);
+        final boolean[] done = {false};
+        final boolean[] presented = {false};
+        Runnable fail = () -> {
+            if (done[0]) return;
+            done[0] = true;
+            themeAdShowing = false;
+            onClosed.accept(true);
+        };
+        Runnable timeout = () -> { if (!presented[0]) fail.run(); };
+        main.postDelayed(timeout, 30_000);
+        Runnable load = () -> {
+            if (done[0]) return;
+            if (!canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+            onSdkReady(() -> {
+                if (done[0]) return;
+                if (!canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+                RewardedAd.load(new AdRequest.Builder(gamesAdUnit()).build(), new AdLoadCallback<RewardedAd>() {
+                    @Override public void onAdFailedToLoad(@NonNull LoadAdError error) { main.post(fail); }
+                    @Override public void onAdLoaded(@NonNull RewardedAd ad) {
+                        main.post(() -> {
+                            Activity target = host.get();
+                            if (done[0]) return;
+                            if (target == null || target.isFinishing() || target.isDestroyed()
+                                    || !canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+                            java.util.concurrent.atomic.AtomicBoolean earned = new java.util.concurrent.atomic.AtomicBoolean();
+                            ad.setAdEventCallback(new RewardedAdEventCallback() {
+                                @Override public void onAdDismissedFullScreenContent() {
+                                    main.post(() -> {
+                                        if (done[0]) return;
+                                        done[0] = true;
+                                        themeAdShowing = false;
+                                        main.removeCallbacks(timeout);
+                                        onClosed.accept(false);
+                                    });
+                                }
+                                @Override public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError error) {
+                                    main.post(fail);
+                                }
+                            });
+                            try {
+                                presented[0] = true;
+                                main.removeCallbacks(timeout);
+                                ad.show(target, reward -> {
+                                    long rewardTime = System.currentTimeMillis();
+                                    if (earned.compareAndSet(false, true)) main.post(() -> onEarned.accept(rewardTime));
+                                });
+                            } catch (RuntimeException error) { fail.run(); }
+                        });
+                    }
+                });
+            });
+        };
+        if (gamesConsentUpdating) { fail.run(); return true; }
+        if (consentRefreshFinished) load.run();
+        else prepareGamesAds(activity, stillEligible, () -> {
+            if (!gamesConsentUpdating && consentRefreshFinished) load.run();
+        });
+        return true;
+    }
 
     /** Only the earned callback unlocks content; dismissal and no-fill never grant a set. */
     public boolean showNewSetAd(Activity activity, Runnable onEarned, Runnable onClosed) {
-        if (!initialized || !canRequestAds() || gamesConsentUpdating || gamesAdShowing || AppOpenManager.isShowingAd()
+        if (!initialized || !canRequestAds() || gamesConsentUpdating || gamesAdShowing || isThemeAdShowing() || AppOpenManager.isShowingAd() || InAppReview.isActive()
                 || activity.isFinishing() || activity.isDestroyed()) return false;
         RewardedAd ad = RewardedAdPreloader.pollAd(GAMES_PRELOAD_ID);
         if (ad == null) { startGamesPreloading(); return false; }

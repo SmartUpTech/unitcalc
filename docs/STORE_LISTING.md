@@ -1,5 +1,11 @@
 # Google Play listing
 
+## Release preparation — 2026-10-27
+
+The full description now includes Graphy PDF/PNG export, calculator history restoration, hosted games and optional rewarded access. Claims follow the current Calculate/Convert/Play navigation and accessible screens. These are factual feature terms, without ranking or download promises. README navigation now matches the current app.
+
+`docs/discovery/calculator-plus.html` is a publish-ready product facts page with SoftwareApplication JSON-LD and visible FAQ content. `docs/discovery/llms.txt` supplies a concise companion index. Publish the HTML on the owned product website, link it from navigation, add its final canonical URL and include it in the sitemap. Publish llms.txt at the website root and change its relative product link to the deployed path. These repository files do not change the live website or Play listing. An llms.txt file does not guarantee AI indexing or recommendations. Validate structured data and request indexing after publication; avoid fabricated ratings, price or review counts.
+
 The English listing copy is maintained in `app/src/main/res/values/strings.xml`:
 
 | Play Console field | Resource |

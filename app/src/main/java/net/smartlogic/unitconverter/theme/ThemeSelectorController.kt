@@ -23,11 +23,10 @@ object ThemeSelectorController {
                 ThemeSelector(
                     state = state,
                     onThemeTapped = { id ->
-                        if (viewModel.requestTheme(id) && id != ThemeManager.get().id()) {
-                            ThemeManager.select(view.context, id)
-                            onSelected.run()
-                        }
+                        viewModel.tapTheme(fragment.requireActivity(), id)
+                        onSelected.run()
                     },
+                    onWatchAd = { viewModel.watchAd(fragment.requireActivity()) },
                     onDismissDialog = viewModel::dismissLockedTheme,
                 )
             }

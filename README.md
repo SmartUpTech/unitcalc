@@ -12,11 +12,9 @@ It features **Calculator+**: the same fast tools you already use, plus a **Graph
 |-----|----------------|
 | **Calculator** | Everyday maths — add, subtract, multiply, divide, percentages, powers, square roots, and more |
 | **Convert** | Change values between units (length, weight, temperature, etc.) and between world currencies |
-| **Explore** | A home for more calculators and tools *(coming soon)* |
-| **Favorites** | Save the calculators you use most *(coming soon)* |
-| **History** | See your past calculator results in one list |
+| **Play** | Hosted daily games; internet access required |
 
-You can open **Settings** from the menu at the top of the screen (three dots).
+You can open **Settings** from the navigation menu at the top of the screen.
 
 ---
 
@@ -36,9 +34,9 @@ Open the **Calculator** tab and type like you would on a normal phone calculator
 **Helpful tips**
 
 - Tap **=** to finish a calculation.
-- Tap the **history icon** on the calculator screen to see recent results from that session.
+- Tap the **history icon** on the calculator screen to open saved calculations.
 - Tap **copy** to copy the answer to your clipboard.
-- Your results are also saved in the **History** tab at the bottom.
+- Open **History** from the menu to inspect and restore saved calculations.
 
 ---
 
@@ -102,7 +100,7 @@ In **Settings** you can:
 > You calculate `2 + 3 × 4` and get `14`.  
 > Tap **Graphy** on the calculator screen to see: first `3 × 4 = 12`, then `2 + 12 = 14`.
 
-After you press **=**, a **Graphy** chip appears in the top-right of the calculator display. Tap it to open the step-by-step flowchart; tap again to hide it.
+Open the **Graphy** workspace tab after a valid calculation. Return to **Calculate** to continue editing.
 
 ---
 

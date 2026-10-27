@@ -553,6 +553,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     public void refreshCurrencyRates(boolean forceRefresh) {
         if (refreshing) return;
+        if (forceRefresh) net.smartlogic.unitconverter.helper.UsageAnalytics.event("currency_refresh_requested", "source", "manual");
         if (!forceRefresh && rateSnapshot != null && "Frankfurter".equals(rateSnapshot.provider)
                 && rateSnapshot.isFresh(System.currentTimeMillis())) {
             updateRateStatus();
@@ -574,6 +575,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             mainHandler.post(() -> {
                 if (generation != viewGeneration || getView() == null || !isAdded() || getContext() == null) return;
                 refreshing = false;
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("currency_refresh_result", "outcome", loaded == null ? "failed" : "available");
                 refresh.clearAnimation();
                 if (loaded != null) {
                     rateSnapshot = loaded;

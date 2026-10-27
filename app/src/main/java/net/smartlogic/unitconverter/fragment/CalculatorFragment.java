@@ -192,6 +192,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 new WorkspaceTabController.Callback() {
                     @Override
                     public void onTabSelected(int position) {
+                        if (position == 1 && lastWorkspaceTab != position) net.smartlogic.unitconverter.helper.UsageAnalytics.event("graphy_opened", "tool_id", CalculatorCatalog.ID_BASIC);
                         lastWorkspaceTab = position;
                         applyWorkspaceTab(position);
                     }
@@ -494,6 +495,22 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     private void handleInput(String input) {
         if (TextUtils.isEmpty(input)) return;
 
+        if (input.equals("√")) {
+            // Unary action on the entered operand, including the canonical result after equals.
+            int end = expression.length();
+            int operandEnd = end;
+            while (operandEnd > 0 && expression.charAt(operandEnd - 1) == '%') operandEnd--;
+            int start = findLastOperandStart(expression, operandEnd);
+            if (start < 0 || start >= operandEnd) return;
+            String operand = expression.substring(start, end);
+            if (!ExpressionEvaluator.evaluate(operand.replace('×', '*').replace('÷', '/')).isValid()) return;
+            expression = expression.substring(0, start) + "sqrt(" + operand + ")";
+            isResultDisplayed = false;
+            updateExpressionDisplay();
+            calculateResult(false);
+            return;
+        }
+
         if (isResultDisplayed) {
             if (input.equals("^") && expression.startsWith("-")) {
                 expression = "(" + expression + ")";
@@ -504,16 +521,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             isResultDisplayed = false;
         }
 
-        if (input.equals("√")) {
-            // Implicit multiplication: 2√ -> 2*sqrt(
-            if (!expression.isEmpty()) {
-                char lastChar = expression.charAt(expression.length() - 1);
-                if (Character.isDigit(lastChar) || lastChar == ')' || lastChar == '%') {
-                    expression += "×";
-                }
-            }
-            expression += "sqrt(";
-        } else if (input.equals("(")) {
+        if (input.equals("(")) {
             if (!expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
                 if (Character.isDigit(lastChar) || lastChar == ')' || lastChar == '%' || lastChar == '.') {

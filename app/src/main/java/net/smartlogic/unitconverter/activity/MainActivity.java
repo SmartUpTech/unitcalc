@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     public void navigateToEntry(@NonNull CalculatorCatalog.Entry entry) {
+        net.smartlogic.unitconverter.helper.UsageAnalytics.event("tool_opened", "tool_id", entry.id);
         switch (entry.destination) {
             case BASIC_CALCULATOR:
                 selectTab(R.id.calculator);
@@ -253,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
+        net.smartlogic.unitconverter.helper.UsageAnalytics.event("history_restore", "source", "history");
         CalculatorCatalog.Entry entry = CalculatorCatalog.getById(item.calculatorId());
         if (entry == null) {
             entry = CalculatorCatalog.getById(CalculatorCatalog.ID_BASIC);
@@ -291,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     private void shareApp() {
+        net.smartlogic.unitconverter.helper.UsageAnalytics.event("share_opened", "content_type", "app");
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_app_subject, getString(R.string.brand_name)));
@@ -421,6 +424,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
 
         transaction.commit();
+        if (fragment != activeFragment) net.smartlogic.unitconverter.helper.UsageAnalytics.event(
+                "screen_view", "screen_name", getResources().getResourceEntryName(itemId));
         activeFragment = fragment;
         if (openWorkspace && itemId == R.id.converter && fragment instanceof ConverterFragment) {
             ((ConverterFragment) fragment).openConvertWorkspace();
@@ -430,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     public void closeHistory() {
+        net.smartlogic.unitconverter.helper.InAppReview.maybeRequest(this);
         selectTab(historyReturnTab == R.id.history ? R.id.calculator : historyReturnTab, false);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
@@ -674,6 +680,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     @Override
     protected void onResume() {
         super.onResume();
+        net.smartlogic.unitconverter.helper.UsageAnalytics.event("theme_active", "theme_id",
+                net.smartlogic.unitconverter.theme.ThemeManager.get().id());
         WindowChrome.apply(this);
         ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
         ThemeApplier.apply(findViewById(R.id.drawer_layout));

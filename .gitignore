@@ -39,3 +39,4 @@ google-services.json
 *.temp
 *.tmp
 *.pyc
+*.ps1

@@ -1,51 +1,64 @@
 package net.smartlogic.unitconverter.theme
 
+import android.app.Activity
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.helper.Preferences
+import net.smartlogic.unitconverter.utils.Utils
 
 @Immutable
-data class ThemeCardState(val theme: CalculatorTheme, val selected: Boolean, val unlocked: Boolean)
+data class ThemeCardState(
+    val theme: CalculatorTheme, val selected: Boolean, val unlocked: Boolean,
+    val alwaysFree: Boolean, val pro: Boolean, val remainingMillis: Long,
+)
 
 @Immutable
 data class ThemeSelectorState(
-    val cards: List<ThemeCardState>,
-    val progress: Int,
-    val cycleDays: Int,
-    val nextThemeNameRes: Int?,
-    val daysUntilNextUnlock: Int,
-    val lockedThemeNameRes: Int?,
-    val daysUntilTappedUnlock: Int,
+    val cards: List<ThemeCardState>, val lockedThemeNameRes: Int?, val busy: Boolean,
 )
 
-/** One derived snapshot for the entire row. Cards never read preferences. */
-class ThemeSelectorViewModel(
-    private val preferences: Preferences,
-    private val progression: ThemeProgression = ThemeProgression.forCurrentBuild(),
-) : ViewModel() {
+/** One derived snapshot. Preview composition never reads preferences or grants access. */
+class ThemeSelectorViewModel(private val preferences: Preferences) : ViewModel() {
     private var lockedThemeId: String? = null
     private val mutableState = MutableStateFlow(buildState())
     val uiState: StateFlow<ThemeSelectorState> = mutableState
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == null || key == Preferences.PREFS_SELECTED_THEME || key == Preferences.PREFS_THEME_USAGE_DAYS) {
-            refresh()
-        }
+        if (key == null || key == Preferences.PREFS_SELECTED_THEME ||
+            key.startsWith(Preferences.PREFS_THEME_EXPIRY_PREFIX)) refresh()
     }
+    private val accessListener = Runnable { refresh() }
 
     init {
         preferences.preferences.registerOnSharedPreferenceChangeListener(preferenceListener)
-        refresh()
+        ThemeManager.addAccessListener(accessListener)
+        viewModelScope.launch { ThemeRewardCoordinator.busy.collect { refresh() } }
     }
 
-    /** True only for an available theme. Selection is committed through the shared ThemeManager. */
+    fun tapTheme(activity: Activity, themeId: String) {
+        if (ThemeRewardCoordinator.isBusy()) return
+        ThemeManager.refreshAccess(activity)
+        if (!preferences.isThemeAvailable(themeId, System.currentTimeMillis(), ThemeManager.hasProAccess()) &&
+            !Utils().isNetworkAvailable(activity)) {
+            dismissLockedTheme()
+            Toast.makeText(activity, R.string.theme_unlock_offline, Toast.LENGTH_LONG).show()
+            return
+        }
+        if (requestTheme(themeId)) ThemeManager.select(activity, themeId)
+    }
+
+    /** True only when available. The shared manager rechecks before committing selection. */
     fun requestTheme(themeId: String): Boolean {
-        val state = preferences.themeProgression
-        if (!progression.isThemeUnlocked(themeId, state)) {
-            lockedThemeId = themeId.takeIf { id -> CalculatorThemes.all().any { it.id() == id } }
+        if (ThemeRewardCoordinator.isBusy()) return false
+        if (!preferences.isThemeAvailable(themeId, System.currentTimeMillis(), ThemeManager.hasProAccess())) {
+            lockedThemeId = themeId.takeIf(ThemeAccess::isKnown)
             refresh()
             return false
         }
@@ -54,41 +67,39 @@ class ThemeSelectorViewModel(
         return true
     }
 
-    fun dismissLockedTheme() {
-        lockedThemeId = null
-        refresh()
+    fun watchAd(activity: Activity) {
+        val id = lockedThemeId ?: return
+        dismissLockedTheme()
+        ThemeRewardCoordinator.unlock(activity, id)
     }
 
-    private fun refresh() {
-        mutableState.value = buildState()
-    }
+    fun dismissLockedTheme() { lockedThemeId = null; refresh() }
+    fun refresh() { mutableState.value = buildState() }
 
     private fun buildState(): ThemeSelectorState {
-        val progressState = preferences.themeProgression
-        val selectedId = preferences.selectedThemeId
-        val nextId = progression.getNextLockedThemeId(progressState)
-        val lockedId = lockedThemeId?.takeUnless { progression.isThemeUnlocked(it, progressState) }
+        val now = System.currentTimeMillis()
+        val pro = ThemeManager.hasProAccess()
+        val selected = preferences.selectedThemeId
+        val locked = lockedThemeId?.takeUnless { preferences.isThemeAvailable(it, now, pro) }
         return ThemeSelectorState(
-            cards = CalculatorThemes.all().map { theme ->
-                ThemeCardState(theme, theme.id() == selectedId, progression.isThemeUnlocked(theme.id(), progressState))
-            },
-            progress = progression.getCurrentProgress(progressState),
-            cycleDays = ThemeProgression.DAYS_PER_UNLOCK,
-            nextThemeNameRes = nextId?.let { CalculatorThemes.fromId(it).nameRes() },
-            daysUntilNextUnlock = progression.getDaysUntilNextUnlock(progressState),
-            lockedThemeNameRes = lockedId?.let { CalculatorThemes.fromId(it).nameRes() },
-            daysUntilTappedUnlock = lockedId?.let { progression.getDaysUntilUnlock(it, progressState) } ?: 0,
+            CalculatorThemes.all().map { theme ->
+                ThemeCardState(theme, theme.id() == selected,
+                    preferences.isThemeAvailable(theme.id(), now, pro),
+                    ThemeAccess.isAlwaysFree(theme.id()), pro,
+                    (preferences.getThemeExpiry(theme.id()) - now).coerceAtLeast(0))
+            }, locked?.let { CalculatorThemes.fromId(it).nameRes() }, ThemeRewardCoordinator.isBusy(),
         )
     }
 
     override fun onCleared() {
         preferences.preferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        ThemeManager.removeAccessListener(accessListener)
     }
 
     class Factory(private val preferences: Preferences) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(ThemeSelectorViewModel::class.java))
-            @Suppress("UNCHECKED_CAST")
             return ThemeSelectorViewModel(preferences) as T
         }
     }

@@ -51,6 +51,10 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   clear the previous result/Graphy and show the existing error message on final evaluation.
 - Square root uses bounded Newton iteration with guard digits using API 26-compatible methods.
   `BigDecimal.sqrt` requires API 33, so production code must not call it directly.
+- The calculator √ key applies immediately to the last complete operand (or the canonical
+  result after `=`). It wraps that operand internally as `sqrt(...)`; plain numeric roots
+  display without brackets. Empty input and input ending in an operator are unchanged.
+  Repeated √ presses nest roots; negative operands use the existing invalid-domain behavior.
 - Linear units use one canonical decimal or rational base definition. Cross-multiply before
   one DECIMAL128 division; do not maintain independently rounded reciprocal factors.
 - Keep the existing 365-day year / 12-month year and US vs Imperial volume distinctions.

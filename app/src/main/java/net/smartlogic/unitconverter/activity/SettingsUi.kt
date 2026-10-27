@@ -74,7 +74,7 @@ object SettingsUi {
         view.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         view.setContent {
             GraphyTheme {
-                SettingsScreen(preferences, themes, onBack) {
+                SettingsScreen(preferences, themes, onBack, fragment.requireActivity()) {
                     WindowChrome.apply(fragment.requireActivity())
                 }
             }
@@ -90,6 +90,7 @@ private fun SettingsScreen(
     preferences: Preferences,
     themes: ThemeSelectorViewModel,
     onBack: Runnable,
+    activity: android.app.Activity,
     onThemeChanged: () -> Unit,
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -102,6 +103,8 @@ private fun SettingsScreen(
     val websiteUrl = stringResource(R.string.url_smartup_website)
     val privacyUrl = stringResource(R.string.url_privacy_policy)
     var revision by remember { mutableIntStateOf(0) }
+    var analyticsEnabled by remember { mutableStateOf(preferences.preferences.getBoolean(
+        net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED, false)) }
     var activeChoiceKey by rememberSaveable { mutableStateOf<String?>(null) }
     val choices = remember {
         listOf(
@@ -124,6 +127,11 @@ private fun SettingsScreen(
         onDispose { preferences.preferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
     revision
+    DisposableEffect(activity) {
+        val listener = ThemeManager.Listener { WindowChrome.apply(activity) }
+        ThemeManager.addListener(listener)
+        onDispose { ThemeManager.removeListener(listener) }
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -158,11 +166,10 @@ private fun SettingsScreen(
                 style = MaterialTheme.typography.bodyLarge)
             androidx.compose.foundation.layout.Box(Modifier.fillMaxWidth().padding(start = spacing.lg)) {
                 ThemeSelector(themeState, onThemeTapped = { id ->
-                    if (themes.requestTheme(id) && id != ThemeManager.get().id()) {
-                        ThemeManager.select(context, id)
-                        onThemeChanged()
-                    }
-                }, onDismissDialog = themes::dismissLockedTheme)
+                    themes.tapTheme(activity, id)
+                    onThemeChanged()
+                }, onDismissDialog = themes::dismissLockedTheme,
+                    onWatchAd = { themes.watchAd(activity) })
             }
 
             SettingsSection(R.string.prefs_title_display)
@@ -192,6 +199,7 @@ private fun SettingsScreen(
             })
             SettingsDivider()
             SettingsRow(shareTitle, onClick = {
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("share_opened", "content_type", "app")
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_SUBJECT, shareSubject)
@@ -201,6 +209,15 @@ private fun SettingsScreen(
             })
 
             SettingsSection(R.string.title_activity_info)
+            SettingsSwitchRow(stringResource(R.string.settings_usage_analytics), analyticsEnabled) {
+                analyticsEnabled = it
+                net.smartlogic.unitconverter.helper.UsageAnalytics.setEnabled(context, it)
+                if (it) net.smartlogic.unitconverter.helper.UsageAnalytics.event("theme_active", "theme_id", ThemeManager.get().id())
+            }
+            Text(stringResource(R.string.settings_usage_analytics_summary),
+                modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
+                style = MaterialTheme.typography.bodySmall)
+            SettingsDivider()
             SettingsRow(stringResource(R.string.pref_website_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl)))
             })
@@ -208,6 +225,14 @@ private fun SettingsScreen(
             SettingsRow(stringResource(R.string.pref_privacy_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl)))
             })
+            val ads = net.smartlogic.unitconverter.helper.AdMobManager.getInstance(context)
+            if (ads.isGamesPrivacyOptionsRequired) {
+                SettingsDivider()
+                SettingsRow(stringResource(R.string.games_privacy_options), onClick = {
+                    if (!net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy())
+                        ads.showGamesPrivacyOptions(activity)
+                })
+            }
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
@@ -219,6 +244,7 @@ private fun SettingsScreen(
             title = stringResource(choice.title), values = values, selected = selected,
             onSelect = { value ->
                 preferences.preferences.edit().putString(choice.key, value).apply()
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("setting_changed", "setting", choice.key)
                 activeChoiceKey = null
             },
             onDismiss = { activeChoiceKey = null },

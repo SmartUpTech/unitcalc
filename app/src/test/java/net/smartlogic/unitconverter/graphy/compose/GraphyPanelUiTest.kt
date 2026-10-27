@@ -50,9 +50,10 @@ import java.time.Duration
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
 class GraphyPanelUiTest {
+    @org.junit.After fun resetAccess() { ThemeManager.setProAccessProvider { false } }
     @Test fun downloadIconTracksThemeWhileCompositionRemainsOpen() {
         val app = RuntimeEnvironment.getApplication()
-        Preferences.getInstance(app).preferences.edit().putInt(Preferences.PREFS_THEME_USAGE_DAYS, Int.MAX_VALUE).commit()
+        ThemeManager.setProAccessProvider { true }
         RuntimeEnvironment.setFontScale(1f)
         val controller = Robolectric.buildActivity(ComponentActivity::class.java).setup().visible()
         val view = ComposeView(controller.get())
@@ -87,8 +88,7 @@ class GraphyPanelUiTest {
 
     @Test fun graphsAllowBothAxesAndResetExplorationInLightDarkAndLargeText() {
         val app = RuntimeEnvironment.getApplication()
-        Preferences.getInstance(app).preferences.edit()
-            .putInt(Preferences.PREFS_THEME_USAGE_DAYS, Int.MAX_VALUE).commit()
+        ThemeManager.setProAccessProvider { true }
         for (theme in listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)) {
             for (scale in listOf(1f, 2f)) {
                 ThemeManager.select(app, theme.id())
@@ -101,10 +101,13 @@ class GraphyPanelUiTest {
                 view.setContent { GraphyTheme { GraphyPanel(output.value, GraphyViewTheme(activity)) } }
                 try {
                     fun measure() {
-                        settle()
-                        view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
-                            View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY))
-                        view.layout(0, 0, 320, 400)
+                        // AndroidView updates request a later native layout pass after recomposition.
+                        repeat(3) {
+                            settle()
+                            view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                                View.MeasureSpec.makeMeasureSpec(400, View.MeasureSpec.EXACTLY))
+                            view.layout(0, 0, 320, 400)
+                        }
                         settle()
                     }
                     measure()
@@ -133,7 +136,13 @@ class GraphyPanelUiTest {
                     measure()
                     val wideScroller = nodes(view).single { it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) }
                     val wideRange = wideScroller.config[SemanticsProperties.HorizontalScrollAxisRange]
-                    assertTrue(wideRange.maxValue() > 0)
+                    val measuredGraph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
+                    assertEquals(output.value.expression,
+                        org.robolectric.util.ReflectionHelpers.getField<net.smartlogic.unitconverter.graphy.model.GraphyOutput>(measuredGraph, "output").expression)
+                    assertTrue("Wide graph must overflow: measured=" + measuredGraph.measuredWidth
+                        + " content=" + org.robolectric.util.ReflectionHelpers.getField<Int>(measuredGraph, "contentWidth")
+                        + " expression=" + org.robolectric.util.ReflectionHelpers.getField<net.smartlogic.unitconverter.graphy.model.GraphyOutput>(measuredGraph, "output").expression,
+                        wideRange.maxValue() > 0)
                     // Real native pointer movement must pan, not just semantic ScrollBy.
                     val wideGraph = descendants(view).filterIsInstance<FlowchartGraphView>().single()
                     val now = android.os.SystemClock.uptimeMillis()
@@ -181,7 +190,11 @@ class GraphyPanelUiTest {
         }
     }
 
-    private fun settle() = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(250))
+    private fun settle() {
+        // State writes occur on the test thread; deliver snapshot notifications before frames.
+        androidx.compose.runtime.snapshots.Snapshot.sendApplyNotifications()
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(250))
+    }
     private fun descendants(view: View): List<View> = listOf(view) +
         if (view is ViewGroup) (0 until view.childCount).flatMap { descendants(view.getChildAt(it)) } else emptyList()
     private fun nodes(view: ComposeView): List<SemanticsNode> {

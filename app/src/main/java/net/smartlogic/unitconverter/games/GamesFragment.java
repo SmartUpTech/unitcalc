@@ -189,7 +189,13 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                 requestBonus(event.date());
                 break;
             case "onGameStarted":
+                if (isPlayingSurfaceVisible()) net.smartlogic.unitconverter.helper.UsageAnalytics.event(
+                        "game_started", "game_id", event.gameId());
+                navigationGeneration++;
+                break;
             case "onGameExited":
+                if (isPlayingSurfaceVisible()) net.smartlogic.unitconverter.helper.UsageAnalytics.event(
+                        "game_exited", "game_id", event.gameId());
                 navigationGeneration++;
                 break;
             case "onGameCompleted":
@@ -200,6 +206,7 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
                 saveCompletion(event);
                 break;
             case "onError":
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("games_load_failed", "reason", "bridge_error");
                 showError(R.string.games_load_error);
                 break;
             default: break;
@@ -253,12 +260,17 @@ public final class GamesFragment extends Fragment implements GamesWebView.Listen
     }
 
     private void saveCompletion(GamesBridge.Event event) {
+        android.content.Context appContext = requireContext().getApplicationContext();
         int page = documentGeneration;
         GamesWebView target = webView;
         int round = configuredRound;
         repository.execute(() -> {
             GamesStateRepository.WriteResult result = repository.recordCompletion(event.gameId(), event.date(), round);
             main.post(() -> {
+                if (result == GamesStateRepository.WriteResult.NEW) {
+                    net.smartlogic.unitconverter.helper.UsageAnalytics.event("game_completed", "game_id", event.gameId());
+                    net.smartlogic.unitconverter.helper.InAppReview.recordUse(appContext);
+                }
                 if (result != GamesStateRepository.WriteResult.FAILED) {
                     if (root != null && target == webView && page == documentGeneration) {
                         configured = null;

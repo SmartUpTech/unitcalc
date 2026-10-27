@@ -326,7 +326,10 @@ public class HistoryFragment extends Fragment {
                     if (a instanceof CalculationHistoryItem x && b instanceof CalculationHistoryItem y) return x.id() == y.id();
                     return a instanceof String && a.equals(b);
                 }
-                @Override public boolean areContentsTheSame(@NonNull Object a, @NonNull Object b) { return a.equals(b); }
+                @Override public boolean areContentsTheSame(@NonNull Object a, @NonNull Object b) {
+                    if (a instanceof CalculationHistoryItem x && b instanceof CalculationHistoryItem y) return x.equals(y);
+                    return a instanceof String title && b instanceof String && title.equals(b);
+                }
             });
             this.reuse = reuse;
             this.options = options;

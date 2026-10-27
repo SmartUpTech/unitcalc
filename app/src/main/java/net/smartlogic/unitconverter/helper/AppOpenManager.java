@@ -111,7 +111,7 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
         startPreload();
         Activity activity = currentActivity.get();
         if (!AdMobManager.getInstance(myApplication).isInitialized() || isShowingAd || activity == null || activity.isFinishing()
-                || activity.isDestroyed() || AdMobManager.isGamesAdShowing()
+                || activity.isDestroyed() || AdMobManager.isGamesAdShowing() || AdMobManager.isThemeAdShowing() || InAppReview.isActive()
                 || !(activity instanceof net.smartlogic.unitconverter.activity.MainActivity mainActivity)
                 || mainActivity.isTimerScreenVisible()
                 || AdMobManager.getInstance(myApplication).isConsentUpdating()
@@ -180,12 +180,12 @@ public class AppOpenManager implements ActivityLifecycleCallbacks, DefaultLifecy
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
-        if (!isShowingAd && !AdMobManager.isGamesAdShowing()) currentActivity = new WeakReference<>(activity);
+        if (!isShowingAd && !AdMobManager.isGamesAdShowing() && !AdMobManager.isThemeAdShowing()) currentActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
-        if (!isShowingAd && !AdMobManager.isGamesAdShowing()) currentActivity = new WeakReference<>(activity);
+        if (!isShowingAd && !AdMobManager.isGamesAdShowing() && !AdMobManager.isThemeAdShowing()) currentActivity = new WeakReference<>(activity);
     }
 
     @Override

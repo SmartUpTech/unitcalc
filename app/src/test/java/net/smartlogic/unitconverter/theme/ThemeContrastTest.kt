@@ -26,6 +26,8 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [28])
 class ThemeContrastTest {
+    @org.junit.Before fun allowPalettesForRendering() { ThemeManager.setProAccessProvider { true } }
+    @org.junit.After fun resetAccess() { ThemeManager.setProAccessProvider { false } }
     @Test fun catalogInkAndFilledControlContentHaveNormalTextContrast() {
         for (theme in CalculatorThemes.all()) {
             // Raw palette roles must be usable without a renderer silently substituting black/white.

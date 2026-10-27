@@ -21,10 +21,10 @@ import static org.junit.Assert.*;
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class GraphyExportTest {
     @Before public void unlockThemes() {
-        Preferences.getInstance(RuntimeEnvironment.getApplication()).getPreferences().edit()
-                .putInt(Preferences.PREFS_THEME_USAGE_DAYS, Integer.MAX_VALUE).apply();
+        ThemeManager.setProAccessProvider(() -> true);
     }
     @After public void restore() {
+        ThemeManager.setProAccessProvider(() -> false);
         RuntimeEnvironment.setFontScale(1f);
         ThemeManager.select(RuntimeEnvironment.getApplication(), CalculatorThemes.DEFAULT_ID);
     }
