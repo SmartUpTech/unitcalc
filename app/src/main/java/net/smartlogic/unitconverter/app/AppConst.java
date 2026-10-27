@@ -18,6 +18,7 @@ public class AppConst {
     public static final String TAG_FAVORITES = "favorites";
     public static final String TAG_HISTORY = "history";
     public static final String TAG_TIMER = "timer";
+    public static final String TAG_AGE = "age_calculator";
 
     /** @deprecated Use {@link #TAG_CONVERTER} with {@link #CONVERTER_TAB}. */
     @Deprecated

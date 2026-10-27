@@ -23,6 +23,7 @@ public final class CalculatorCatalog {
     public static final String ID_UNIT = "unit_converter";
     public static final String ID_CURRENCY = "currency";
     public static final String ID_TIMER = "timer";
+    public static final String ID_AGE = "age_calculator";
     private static final String UNIT_PREFIX = "unit:";
 
     public enum Destination {
@@ -35,6 +36,7 @@ public final class CalculatorCatalog {
         SETTINGS,
         HISTORY,
         TIMER,
+        AGE_CALCULATOR,
         RATE_APP,
         SHARE_APP
     }
@@ -144,6 +146,10 @@ public final class CalculatorCatalog {
         // Append so existing runtime menu IDs remain stable.
         register(entry(unitId(Conversion.ANGLE), R.string.angle, R.drawable.ic_angle,
                 Destination.UNIT_CATEGORY, Conversion.ANGLE));
+        List<Entry> tools = new ArrayList<>();
+        tools.add(register(entry(ID_AGE, R.string.age_calculator, R.drawable.ic_age,
+                Destination.AGE_CALCULATOR, -1)));
+        SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
     }
 
     private CalculatorCatalog() {

@@ -132,12 +132,25 @@ public final class ThemeApplier {
         return drawable;
     }
 
+    /** Shared styling for user-reviewed action dialogs. */
+    public static void applyDialog(@NonNull androidx.appcompat.app.AlertDialog dialog) {
+        CalculatorTheme theme = ThemeManager.get();
+        TextView title = dialog.findViewById(androidx.appcompat.R.id.alertTitle);
+        TextView message = dialog.findViewById(android.R.id.message);
+        if (title != null) title.setTextColor(theme.primaryContentColor());
+        if (message != null) message.setTextColor(theme.primaryContentColor());
+        for (int button : new int[]{-1, -2, -3}) {
+            if (dialog.getButton(button) != null) dialog.getButton(button).setTextColor(theme.accentContentColor());
+        }
+    }
+
     private static void applyRecursive(@NonNull View view, @NonNull CalculatorTheme theme) {
         int id = view.getId();
         if (id == R.id.cl
                 || id == R.id.drawer_layout
                 || id == R.id.settings
                 || id == R.id.calculate_pane
+                || id == R.id.age_calculate_pane
                 || id == R.id.keypad
                 || id == R.id.frame_layout
                 || id == R.id.history_root
@@ -152,6 +165,19 @@ public final class ThemeApplier {
 
         if (view instanceof TabLayout) {
             applyTabLayout((TabLayout) view);
+        }
+        if (view instanceof TextView text) {
+            if ("content_primary".equals(view.getTag())) text.setTextColor(theme.primaryContentColor());
+            if ("content_secondary".equals(view.getTag())) text.setTextColor(theme.secondaryContentColor());
+            if ("content_accent".equals(view.getTag())) text.setTextColor(theme.accentContentColor());
+        }
+        if ("theme_outline_action".equals(view.getTag()) && view instanceof com.google.android.material.button.MaterialButton button) {
+            button.setTextColor(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
+                    new int[]{theme.secondaryContentColor(), theme.accentContentColor()}));
+            button.setBackgroundTintList(ColorStateList.valueOf(theme.background()));
+            button.setStrokeColor(ColorStateList.valueOf(theme.secondaryContentColor()));
+            button.setStrokeWidth(view.getResources().getDimensionPixelSize(R.dimen.theme_outline));
+            button.setRippleColor(ColorStateList.valueOf(withAlpha(theme.accentContentColor(), 0x22)));
         }
         if (id == R.id.converter_divider) {
             view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x33));
