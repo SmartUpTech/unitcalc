@@ -12,6 +12,8 @@ public final class BmiCalculator {
     public static final BigDecimal INCHES_PER_FOOT = new BigDecimal("12");
     private static final BigDecimal HEALTHY_MIN = new BigDecimal("18.5");
     private static final BigDecimal HEALTHY_MAX = new BigDecimal("25");
+    private static final BigDecimal[] BOUNDARIES = {HEALTHY_MIN, HEALTHY_MAX,
+            new BigDecimal("30"), new BigDecimal("35"), new BigDecimal("40")};
 
     public enum Category { UNDERWEIGHT, HEALTHY, OVERWEIGHT, OBESITY_I, OBESITY_II, OBESITY_III }
     public record Result(BigDecimal bmi, Category category, BigDecimal minimumKg,
@@ -40,7 +42,7 @@ public final class BmiCalculator {
         BigDecimal metres = heightCm.movePointLeft(2);
         BigDecimal square = metres.multiply(metres);
         BigDecimal bmi = weightKg.divide(square, PRECISION);
-        Category category = category(bmi);
+        Category category = classify(weightKg, square);
         BigDecimal minimum = square.multiply(HEALTHY_MIN);
         BigDecimal maximum = square.multiply(HEALTHY_MAX);
         BigDecimal difference = category == Category.UNDERWEIGHT ? weightKg.subtract(minimum)
@@ -49,12 +51,17 @@ public final class BmiCalculator {
     }
 
     public static Category category(BigDecimal bmi) {
-        positive(bmi);
-        if (bmi.compareTo(HEALTHY_MIN) < 0) return Category.UNDERWEIGHT;
-        if (bmi.compareTo(HEALTHY_MAX) < 0) return Category.HEALTHY;
-        if (bmi.compareTo(new BigDecimal("30")) < 0) return Category.OVERWEIGHT;
-        if (bmi.compareTo(new BigDecimal("35")) < 0) return Category.OBESITY_I;
-        if (bmi.compareTo(new BigDecimal("40")) < 0) return Category.OBESITY_II;
+        // Calculated DECIMAL128 quotients legitimately have 34 significant digits.
+        // The 30-digit input bound belongs to measurements, not the derived BMI.
+        if (bmi == null || bmi.signum() <= 0) throw new IllegalArgumentException("Invalid BMI");
+        return classify(bmi, BigDecimal.ONE);
+    }
+
+    private static Category classify(BigDecimal mass, BigDecimal heightSquared) {
+        // Exact cross-products also avoid rounding onto a threshold at DECIMAL128 precision.
+        for (int i = 0; i < BOUNDARIES.length; i++) {
+            if (mass.compareTo(heightSquared.multiply(BOUNDARIES[i])) < 0) return Category.values()[i];
+        }
         return Category.OBESITY_III;
     }
 

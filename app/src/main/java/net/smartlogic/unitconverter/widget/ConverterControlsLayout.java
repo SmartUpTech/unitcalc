@@ -20,8 +20,6 @@ public final class ConverterControlsLayout extends LinearLayout {
 
     void setCompactHeading(boolean compact) {
         compactHeading = compact;
-        View title = findViewById(R.id.exchange_rate_title);
-        if (title != null) title.setVisibility(compact ? GONE : VISIBLE);
         forceLayout();
     }
 
@@ -66,8 +64,27 @@ public final class ConverterControlsLayout extends LinearLayout {
                 : icon + textHeight + padding + getResources().getDimensionPixelSize(R.dimen.converter_category_icon_label_gap);
         int headerHeight = Math.max(contentHeight, getResources().getDimensionPixelSize(compactHeading
                 ? R.dimen.converter_touch_target : R.dimen.converter_category_header_height));
-        header.setMinimumHeight(headerHeight);
-        header.getLayoutParams().height = headerHeight;
+        header.setMinimumHeight(header instanceof ConverterValueRow
+                ? getResources().getDimensionPixelSize(R.dimen.converter_touch_target) : headerHeight);
+        if (!(header instanceof ConverterValueRow)) header.getLayoutParams().height = headerHeight;
+        View[] rows = {findViewById(R.id.converter_source_section),
+                findViewById(R.id.converter_target_section), header};
+        int rowHeight = getResources().getDimensionPixelSize(R.dimen.converter_row_height);
+        // Reset each probe so font/viewport compaction can reduce all rows together.
+        for (View row : rows) {
+            if (row instanceof ConverterValueRow) row.setMinimumHeight(rowHeight);
+        }
         super.onMeasure(widthSpec, heightSpec);
+        for (View row : rows) {
+            if (row instanceof ConverterValueRow) rowHeight = Math.max(rowHeight, row.getMeasuredHeight());
+        }
+        boolean needsAlignment = false;
+        for (View row : rows) {
+            if (row instanceof ConverterValueRow) {
+                needsAlignment |= row.getMeasuredHeight() != rowHeight;
+                row.setMinimumHeight(rowHeight);
+            }
+        }
+        if (needsAlignment) super.onMeasure(widthSpec, heightSpec);
     }
 }

@@ -22,6 +22,7 @@
     <string name="bmi_imperial_weight">Pounds (lb)</string>
     <string name="bmi_unit_button">%1$s ▾</string>
     <string name="bmi_label">BMI</string>
+    <string name="bmi_adult_label">BMI · Adults 20+</string>
     <string name="bmi_category">Category</string>
     <string name="bmi_healthy_range">Healthy weight range</string>
     <string name="bmi_difference">Difference</string>
@@ -37,14 +38,15 @@
     <string name="bmi_range_i">30–&lt;35</string>
     <string name="bmi_range_ii">35–&lt;40</string>
     <string name="bmi_range_iii">≥40</string>
-    <string name="bmi_ranges_action">BMI ranges · More info</string>
+    <string name="bmi_ranges_action">Adult BMI ranges · More info</string>
     <string name="bmi_ranges_title">Adult BMI ranges</string>
     <string name="bmi_your_range">%1$s · Your range</string>
     <string name="bmi_screening">BMI is a screening measure.</string>
     <string name="bmi_guidance">For adults aged 20 and over. These ranges are screening guidance, not a diagnosis. BMI does not distinguish muscle from fat and is not suitable for assessing pregnancy. Healthy weight uses BMI 18.5 up to, but not including, 25.</string>
     <string name="bmi_close">Close</string>
     <string name="bmi_empty">Enter height and weight</string>
-    <string name="bmi_invalid">Enter positive height and weight. Feet must be whole; inches must be less than 12.</string>
+    <string name="bmi_invalid">Enter positive height and weight.</string>
+    <string name="bmi_invalid_imperial">Use whole feet and inches below 12.</string>
     <string name="bmi_weight_range">%1$s–&lt;%2$s %3$s</string>
     <string name="bmi_range_result">Healthy: %1$s</string>
     <string name="bmi_within_range">Within range</string>
@@ -56,19 +58,19 @@
     <string name="bmi_feet_inches">%1$s ft %2$s in</string>
     <string name="bmi_history_result">BMI: %1$s · %2$s\nHealthy weight range: %3$s\nDifference: %4$s</string>
     <string name="bmi_reset">Reset BMI calculator</string>
-    <string name="bmi_next_field">Next input field</string>
-    <string name="bmi_done">Save BMI result</string>
-    <string name="bmi_done_key">✓</string>
     <string name="bmi_no_result">—</string>
     <dimen name="bmi_gauge_min_height">88dp</dimen>
+    <dimen name="bmi_gauge_tight_height">80dp</dimen>
     <dimen name="bmi_gauge_height">176dp</dimen>
     <dimen name="bmi_gauge_stroke">12dp</dimen>
     <dimen name="bmi_value_size">36sp</dimen>
     <dimen name="bmi_label_width">64dp</dimen>
     <dimen name="bmi_unit_width">76dp</dimen>
     <dimen name="bmi_wide_width">560dp</dimen>
+    <dimen name="bmi_controls_max_width">320dp</dimen>
     <style name="BmiText" parent="AgeText">
         <item name="android:gravity">start|center_vertical</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
     <style name="BmiCaption" parent="BmiText">
         <item name="android:textSize">@dimen/h3_5</item>
@@ -83,11 +85,16 @@
         <item name="android:textSize">@dimen/h2</item>
         <item name="android:fontFamily">@font/app_text</item>
         <item name="android:singleLine">true</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:inputType">numberDecimal</item>
         <item name="android:selectAllOnFocus">true</item>
         <item name="android:paddingStart">@dimen/converter_spacing</item>
         <item name="android:paddingEnd">@dimen/converter_spacing</item>
-        <item name="android:tag">content_primary</item>
+        <item name="android:paddingTop">@dimen/spacing_0dp</item>
+        <item name="android:paddingBottom">@dimen/spacing_0dp</item>
+        <item name="android:layout_marginEnd">@dimen/converter_spacing</item>
+        <item name="android:tag">converter_amount</item>
         <item name="android:saveEnabled">false</item>
     </style>
 </resources>

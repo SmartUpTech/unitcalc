@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         boolean bmi = activeFragment instanceof BmiCalculatorFragment;
         boolean secondary = history || age || bmi;
         if (bottomNavigationView != null) {
-            bottomNavigationView.setVisibility(history || age ? View.GONE : View.VISIBLE);
+            bottomNavigationView.setVisibility(history ? View.GONE : View.VISIBLE);
             MenuItem selected = bottomNavigationView.getMenu().findItem(resolveMenuIdForTag(AppConst.CURRENT_TAG));
             if (!history && selected != null) selected.setChecked(true);
         }

@@ -11,20 +11,40 @@ import net.smartlogic.unitconverter.R;
 /** One reference-style result panel. Reflows its sections only for short wide windows. */
 public final class AgeResultLayout extends ViewGroup {
     private boolean sideBySide, fits;
+    private boolean hasResult = true;
     private int inset, gap;
     public AgeResultLayout(Context context, AttributeSet attrs) { super(context, attrs); }
     public boolean contentFits() { return fits; }
+    public void showResult(boolean value) {
+        hasResult = value;
+        for (int i = 0; i < 3; i++) getChildAt(i).setVisibility(value ? VISIBLE : GONE);
+        getChildAt(3).setVisibility(value ? GONE : VISIBLE);
+        requestLayout();
+    }
 
     @Override protected void onMeasure(int wSpec, int hSpec) {
         int width = MeasureSpec.getSize(wSpec), height = MeasureSpec.getSize(hSpec);
         inset = getResources().getDimensionPixelSize(R.dimen.graphy_spacing_md);
         gap = getResources().getDimensionPixelSize(R.dimen.converter_spacing);
         sideBySide = false;
-        textRoles(false);
+        if (!hasResult) {
+            natural(getChildAt(3), width - inset * 2);
+            fits = getChildAt(3).getMeasuredHeight() + inset * 2 <= height;
+            setMeasuredDimension(width, height | (fits ? 0 : MEASURED_STATE_TOO_SMALL));
+            return;
+        }
+        textRoles(0);
+        spacing(false);
         measureSections(width - inset * 2);
         if (requiredHeight() > height) {
             inset = gap = getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
-            textRoles(true);
+            textRoles(1);
+            spacing(true);
+            measureSections(width - inset * 2);
+        }
+        if (requiredHeight() > height) {
+            gap = getResources().getDimensionPixelSize(R.dimen.converter_compact_row_spacing);
+            textRoles(2);
             measureSections(width - inset * 2);
         }
         if (requiredHeight() > height && width >= getResources().getDimensionPixelSize(R.dimen.age_result_split_min_width)) {
@@ -37,13 +57,34 @@ public final class AgeResultLayout extends ViewGroup {
         setMeasuredDimension(width, resolveSizeAndState(Math.max(height, requiredHeight()), hSpec, fits ? 0 : MEASURED_STATE_TOO_SMALL));
     }
     private int line() { return getResources().getDimensionPixelSize(R.dimen.theme_outline); }
-    private void textRoles(boolean compact) {
-        role(R.id.age_years, compact ? R.dimen.h1 : R.dimen.resultDisplaySize);
-        role(R.id.age_title, compact ? R.dimen.h2 : R.dimen.h1);
-        role(R.id.age_next_label, compact ? R.dimen.h3 : R.dimen.h2);
-        role(R.id.age_summary_title, compact ? R.dimen.h3 : R.dimen.h2);
+    private void spacing(boolean compact) {
+        int space = getResources().getDimensionPixelSize(compact ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
+        // The next-birthday column contains its caption, decorative icon and date details.
+        View icon = ((ViewGroup) findViewById(R.id.age_next_label).getParent()).getChildAt(1);
+        ViewGroup.MarginLayoutParams iconParams = (ViewGroup.MarginLayoutParams) icon.getLayoutParams();
+        int iconSize = getResources().getDimensionPixelSize(compact ? R.dimen.timer_icon_large : R.dimen.graphy_touch_target);
+        iconParams.width = iconParams.height = iconSize;
+        iconParams.topMargin = iconParams.bottomMargin = space;
+        icon.setLayoutParams(iconParams);
+        icon.setPadding(space, space, space, space);
+        margin(findViewById(R.id.age_summary_title), 0, space);
+        margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(1), 0, 0);
+        margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(2), space, 0);
+        margin(findViewById(R.id.age_note), space, 0);
+    }
+    private void margin(View view, int top, int bottom) {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        params.topMargin = top;
+        params.bottomMargin = bottom;
+        view.setLayoutParams(params);
+    }
+    private void textRoles(int density) {
+        role(R.id.age_years, density == 2 ? R.dimen.h1 : R.dimen.resultDisplaySize);
+        role(R.id.age_title, R.dimen.graphy_value_text_size);
+        role(R.id.age_next_label, R.dimen.graphy_value_text_size);
+        role(R.id.age_summary_title, R.dimen.graphy_value_text_size);
         for (int id : new int[]{R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks,
-                R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes}) role(id, compact ? R.dimen.h3 : R.dimen.h2);
+                R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes}) role(id, density == 2 ? R.dimen.graphy_value_text_size : R.dimen.graphy_result_text_size);
     }
     private void role(int id, int dimen) {
         ((TextView) findViewById(id)).setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(dimen));
@@ -59,6 +100,11 @@ public final class AgeResultLayout extends ViewGroup {
     @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
         View top = getChildAt(0), divider = getChildAt(1), summary = getChildAt(2);
         int height = b - t;
+        if (!hasResult) {
+            View empty = getChildAt(3);
+            place(empty, inset, Math.max(inset, (height - empty.getMeasuredHeight()) / 2));
+            return;
+        }
         if (sideBySide) {
             int x = inset + top.getMeasuredWidth() + gap;
             place(top, inset, inset + Math.max(0, height - inset * 2 - top.getMeasuredHeight()) / 2);

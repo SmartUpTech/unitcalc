@@ -77,4 +77,7 @@
     <dimen name="converter_category_text_size">13sp</dimen>
     <dimen name="converter_category_icon_label_gap">2dp</dimen>
     <dimen name="converter_compact_row_spacing">2dp</dimen>
+    <dimen name="converter_refresh_icon_padding">14dp</dimen>
+    <dimen name="converter_field_content_inset">4dp</dimen>
+    <dimen name="converter_selector_pixel_adjustment">1px</dimen>
 </resources>

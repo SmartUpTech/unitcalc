@@ -45,9 +45,11 @@ class AgeNavigationTest {
             settle()
             activity.navigateToEntry(CalculatorCatalog.getById(CalculatorCatalog.ID_AGE)!!)
             settle()
-            assertEquals(View.GONE, activity.findViewById<View>(R.id.navigation).visibility)
+            assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.navigation).visibility)
+            assertNull(activity.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.navigation).menu.findItem(R.id.age_calculator))
             assertEquals("Age Calculator", activity.findViewById<TextView>(R.id.tv_app_bar_brand).text.toString())
             var age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
+            assertEquals(AgeFormatter(activity).date(java.time.LocalDate.now()), age.requireView().findViewById<TextView>(R.id.age_asof_button).text.toString())
             choose(age, AgeDialogFragment.AS_OF, "2020-01-21")
             choose(age, AgeDialogFragment.BIRTH, "2010-08-16")
             assertEquals("9", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
@@ -67,6 +69,10 @@ class AgeNavigationTest {
             assertEquals(AppConst.TAG_CONVERTER, AppConst.CURRENT_TAG)
             assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.navigation).visibility)
             assertFalse(activity.isFinishing)
+            activity.navigateToEntry(CalculatorCatalog.getById(CalculatorCatalog.ID_AGE)!!)
+            settle()
+            age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
+            assertEquals(AgeFormatter(activity).date(java.time.LocalDate.now()), age.requireView().findViewById<TextView>(R.id.age_asof_button).text.toString())
         } finally { controller.pause().stop().destroy() }
     }
     @Test fun invalidInputClearsResultAndCalendarAlwaysAsksForFrequency() {

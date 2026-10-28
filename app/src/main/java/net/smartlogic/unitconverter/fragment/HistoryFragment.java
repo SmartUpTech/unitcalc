@@ -350,8 +350,11 @@ public class HistoryFragment extends Fragment {
                 String time = HistoryDateLabels.formatTime(item.createdAt());
                 ((TextView) view.findViewById(R.id.tv_history_calculator)).setText(time.isEmpty() ? calculator
                         : context.getString(R.string.history_metadata, calculator, time));
-                ((TextView) view.findViewById(R.id.tv_history_expression)).setText(ExpressionDisplayFormatter.formatSpannable(
-                        item.expression(), Preferences.getInstance(context), ExpressionDisplayFormatter.GraphySemanticTheme.from(context)));
+                // BMI inputs are a labeled description, not a mathematical expression.
+                ((TextView) view.findViewById(R.id.tv_history_expression)).setText(
+                        CalculatorCatalog.ID_BMI.equals(item.calculatorId()) ? item.expression()
+                                : ExpressionDisplayFormatter.formatSpannable(item.expression(),
+                                        Preferences.getInstance(context), ExpressionDisplayFormatter.GraphySemanticTheme.from(context)));
                 ((TextView) view.findViewById(R.id.tv_history_result)).setText(item.result());
                 view.setOnClickListener(v -> reuse.run(item));
                 view.findViewById(R.id.history_item_more).setOnClickListener(v -> options.run(item));

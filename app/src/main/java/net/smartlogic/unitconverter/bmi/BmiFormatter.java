@@ -44,6 +44,6 @@ public final class BmiFormatter {
         return pounds ? kg.divide(BmiCalculator.KG_PER_POUND, BmiCalculator.PRECISION) : kg;
     }
     public static String input(BigDecimal value) {
-        return value.setScale(10, RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString();
+        return value.setScale(3, RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString();
     }
 }

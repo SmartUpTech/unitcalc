@@ -9,4 +9,5 @@
         <item>8sp</item><item>9sp</item><item>11sp</item><item>13sp</item>
         <item>15sp</item><item>17sp</item><item>19sp</item><item>@dimen/h2</item>
     </array>
+    <integer name="converter_compact_value_max_sp">32</integer>
 </resources>

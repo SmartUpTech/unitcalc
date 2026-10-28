@@ -83,13 +83,22 @@ public final class BmiDialogFragment extends DialogFragment {
         }
         if (dialog.getListView() != null) {
             dialog.getListView().setBackgroundColor(ThemeManager.get().background());
-            for (int i = 0; i < dialog.getListView().getChildCount(); i++) {
-                View child = dialog.getListView().getChildAt(i);
-                if (child instanceof TextView text) text.setTextColor(ThemeManager.get().primaryContentColor());
-            }
+            applyListColors(dialog.getListView());
         }
     }
-    @Override public void onStart() { super.onStart(); ThemeManager.addListener(listener); applyTheme(); }
+    private void applyListColors(android.widget.ListView list) {
+        for (int i = 0; i < list.getChildCount(); i++) {
+            View child = list.getChildAt(i);
+            if (child instanceof TextView text) text.setTextColor(ThemeManager.get().primaryContentColor());
+            if (child instanceof android.widget.CheckedTextView checked)
+                checked.setCheckMarkTintList(android.content.res.ColorStateList.valueOf(ThemeManager.get().accentContentColor()));
+        }
+    }
+    @Override public void onStart() {
+        super.onStart(); ThemeManager.addListener(listener); applyTheme();
+        if (requireDialog() instanceof AlertDialog dialog && dialog.getListView() != null)
+            dialog.getListView().addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> applyListColors(dialog.getListView()));
+    }
     @Override public void onStop() { ThemeManager.removeListener(listener); super.onStop(); }
     @Override public void onDestroyView() { content = null; super.onDestroyView(); }
 }

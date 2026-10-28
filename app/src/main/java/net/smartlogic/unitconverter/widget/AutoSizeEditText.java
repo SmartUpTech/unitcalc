@@ -13,7 +13,8 @@ import net.smartlogic.unitconverter.R;
 /** Single-line amount editor; refits from its styled maximum on every measurement. */
 public final class AutoSizeEditText extends AppCompatEditText {
     private final TextPaint measurementPaint = new TextPaint();
-    private final float maximumSp;
+    private float maximumSp;
+    private final float styledMaximumSp;
     private final int styledMinimumHeight;
 
     public AutoSizeEditText(Context context, AttributeSet attrs) {
@@ -22,7 +23,17 @@ public final class AutoSizeEditText extends AppCompatEditText {
                 ? TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_SP, getTextSize(),
                         getResources().getDisplayMetrics())
                 : getTextSize() / getResources().getDisplayMetrics().scaledDensity;
+        styledMaximumSp = maximumSp;
         styledMinimumHeight = getMinimumHeight();
+    }
+
+    void setCompactValue(boolean compact) {
+        float compactSp = getResources().getInteger(R.integer.converter_compact_value_max_sp);
+        float maximum = compact ? Math.min(styledMaximumSp, compactSp) : styledMaximumSp;
+        if (maximumSp != maximum) {
+            maximumSp = maximum;
+            forceLayout();
+        }
     }
 
     @Override protected void onTextChanged(CharSequence text, int start, int before, int count) {

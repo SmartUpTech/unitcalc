@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -41,6 +42,7 @@ import net.smartlogic.unitconverter.helper.HttpHandler;
 import net.smartlogic.unitconverter.helper.IdleHistoryRecorder;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.helper.CurrencyRateStore;
+import net.smartlogic.unitconverter.helper.CurrencyAutoRefresh;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Currency;
@@ -63,8 +65,13 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
     private boolean refreshing;
     private int viewGeneration;
     private CurrencyRateStore.Snapshot rateSnapshot;
+    private CurrencyAutoRefresh automaticRefresh;
 
-    private EditText inputValue, outputValue;
+    private EditText inputValue, outputValue, additionalOutput;
+    private TextView additionalSymbol, additionalISO, additionalCurrency;
+    private ImageView additionalFlag;
+    private RelativeLayout additionalSelector;
+    private int additionalCurrencyIndex;
     private TextView inputSymbol, outputSymbol;
     private Context context;
     private HashMap<String, BigDecimal> currencyRates;
@@ -195,7 +202,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     }
 
-    private void showCurrencyPicker(boolean source) {
+    private void showCurrencyPicker(boolean source) { showCurrencyPicker(source, false); }
+
+    private void showCurrencyPicker(boolean source, boolean additional) {
         ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
         int[] flags = new int[currencies.size()];
         for (int i = 0; i < currencies.size(); i++) {
@@ -207,8 +216,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         }
         String title = getString(source ? R.string.converter_picker_from_title : R.string.converter_picker_to_title,
                 getString(R.string.currency_converter));
-        ConverterPickerDialogFragment.newInstance(title, source, 0,
-                source ? prefs.getFromCurrencyIndex() : prefs.getToCurrencyIndex(),
+        ConverterPickerDialogFragment.newInstance(title, source, additional ? 1 : 0,
+                additional ? additionalCurrencyIndex : source ? prefs.getFromCurrencyIndex() : prefs.getToCurrencyIndex(),
                 labels, details, keywords, flags).showFor(this);
     }
 
@@ -219,7 +228,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                     int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
                     if (index >= 0 && index < currencies.size()) {
                         onChooseCurrency(currencies.get(index),
-                                result.getBoolean(ConverterPickerDialogFragment.SOURCE) ? "FROM" : "TO");
+                                result.getInt(ConverterPickerDialogFragment.GROUP) == 1 ? "ADDITIONAL"
+                                        : result.getBoolean(ConverterPickerDialogFragment.SOURCE) ? "FROM" : "TO");
                     }
                 });
     }
@@ -237,6 +247,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     public void historyVisibilityChanged() {
         if (historyRecorder != null) historyRecorder.visibilityChanged();
+        updateAutomaticRefreshMonitoring();
     }
 
     @Override public void onHiddenChanged(boolean hidden) {
@@ -275,6 +286,11 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         } else if (id == R.id.toUnit) {
             showCurrencyPicker(false);
             InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
+        } else if (id == R.id.reverse_destinations) {
+            int previousTarget = prefs.getToCurrencyIndex();
+            int previousAdditional = additionalCurrencyIndex;
+            onChooseCurrency(currencies.get(previousAdditional), "TO");
+            onChooseCurrency(currencies.get(previousTarget), "ADDITIONAL");
         } else if (id == R.id.reverse) {
             int tempFromIndex = prefs.getFromCurrencyIndex();
             int tempToIndex = prefs.getToCurrencyIndex();
@@ -329,9 +345,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             inputValue.setSelection(inputValue.getText().length());
         }
 
-        if (id == R.id.reverse || id == R.id.refresh || !previous.equals(inputValue.getText().toString())) {
+        if (id == R.id.reverse || id == R.id.reverse_destinations || id == R.id.refresh || !previous.equals(inputValue.getText().toString())) {
             InteractionFeedbackManager.perform(view,
-                    id == R.id.reverse || id == R.id.refresh || id == R.id.backspace || id == R.id.ac
+                    id == R.id.reverse || id == R.id.reverse_destinations || id == R.id.refresh || id == R.id.backspace || id == R.id.ac
                             ? InteractionFeedbackManager.Type.ACTION
                             : InteractionFeedbackManager.Type.INPUT);
         }
@@ -340,6 +356,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     public void convertAndDisplay(String inStr) {
         historyRecorder.invalidate();
+        convertAdditional(inStr);
 
         if (inStr.isEmpty() || inStr.equals("-")) {
             outputValue.setText("");
@@ -361,10 +378,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                 BigDecimal input = NumberUtils.parseDecimal(inStr);
                 BigDecimal out = DecimalMath.currency(input, inRate, outRate);
                 BigDecimal rate = DecimalMath.currency(BigDecimal.ONE, inRate, outRate);
-                NumberFormat format = NumberFormat.getInstance();
-                format.setMaximumFractionDigits(2);
-                format.setGroupingUsed(false);
-                String formattedOut = format.format(out);
+                String formattedOut = formatCurrency(out);
                 outputValue.setText(formattedOut);
                 historyRecorder.update(getString(R.string.history_conversion_input, inStr, inCurrency, outCurrency),
                         getString(R.string.history_conversion_result, formattedOut, outCurrency),
@@ -378,6 +392,29 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         } else {
             outputValue.setText("");
             if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+        }
+    }
+
+    private static String formatCurrency(BigDecimal value) {
+        NumberFormat format = NumberFormat.getInstance();
+        format.setMaximumFractionDigits(2);
+        format.setGroupingUsed(false);
+        return format.format(value);
+    }
+
+    private void convertAdditional(String input) {
+        additionalOutput.setText("");
+        if (input.isEmpty() || input.equals("-")) return;
+        String source = fromCurrencyISO.getText().toString();
+        String target = additionalISO.getText().toString();
+        BigDecimal sourceRate = source.equals(target) ? BigDecimal.ONE : currencyRates.get(source);
+        BigDecimal targetRate = source.equals(target) ? BigDecimal.ONE : currencyRates.get(target);
+        if (sourceRate == null || targetRate == null) return;
+        try {
+            BigDecimal value = DecimalMath.currency(NumberUtils.parseDecimal(input), sourceRate, targetRate);
+            additionalOutput.setText(formatCurrency(value));
+        } catch (IllegalArgumentException | ArithmeticException invalid) {
+            additionalOutput.setText("");
         }
     }
 
@@ -422,6 +459,17 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
+        additionalOutput = view.findViewById(R.id.additionalOutput);
+        additionalSymbol = view.findViewById(R.id.additionalOutputSymbol);
+        additionalISO = view.findViewById(R.id.additionalToCurrencyISO);
+        additionalCurrency = view.findViewById(R.id.additionalToCurrency);
+        additionalFlag = view.findViewById(R.id.additionalToFlag);
+        additionalSelector = view.findViewById(R.id.additionalToUnit);
+        InteractionFeedbackManager.configure(additionalSelector);
+        additionalSelector.setOnClickListener(v -> {
+            showCurrencyPicker(false, true);
+            InteractionFeedbackManager.perform(v, InteractionFeedbackManager.Type.ACTION);
+        });
 
         inputSymbol = view.findViewById(R.id.inputSymbol);
         outputSymbol = view.findViewById(R.id.outputSymbol);
@@ -430,7 +478,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         rlToUnit = view.findViewById(R.id.toUnit);
         for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
-                R.id.dot, R.id.minus, R.id.reverse, R.id.backspace, R.id.ac, R.id.refresh,
+                R.id.dot, R.id.minus, R.id.reverse, R.id.reverse_destinations, R.id.backspace, R.id.ac, R.id.refresh,
                 R.id.fromUnit, R.id.toUnit}) {
             InteractionFeedbackManager.configure(view.findViewById(id));
         }
@@ -463,6 +511,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         dot.setOnClickListener(this);
         double_zero.setOnClickListener(this);
         reverse.setOnClickListener(this);
+        view.findViewById(R.id.reverse_destinations).setOnClickListener(this);
         backspace.setOnClickListener(this);
         ac.setOnClickListener(this);
         copy.setOnClickListener(this);
@@ -501,9 +550,11 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         rateSnapshot = CurrencyRateStore.readCache(prefs.getCurrencyResponse(), prefs.getCurrencyLastUpdateDate());
         if (rateSnapshot != null) currencyRates.putAll(rateSnapshot.rates);
 
+        additionalCurrencyIndex = Math.max(0, Math.min(currencies.size() - 1,
+                prefs.getAdditionalCurrencyIndex()));
+        onChooseCurrency(currencies.get(additionalCurrencyIndex), "ADDITIONAL");
         onChooseCurrency(currencies.get(prefs.getFromCurrencyIndex()), "FROM");
         onChooseCurrency(currencies.get(prefs.getToCurrencyIndex()), "TO");
-        refreshCurrencyRates(false);
         displayRates();
 
         updateRateStatus();
@@ -532,6 +583,10 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         llMain.setLayoutParams(mlp);
         ThemeApplier.apply(view);
 
+        automaticRefresh = new CurrencyAutoRefresh(
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE),
+                mainHandler, () -> rateSnapshot, () -> refreshCurrencyRates(false));
+
         return view;
     }
 
@@ -540,6 +595,23 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         super.onResume();
         ThemeApplier.apply(getView());
         convertAndDisplay(inputValue.getText().toString());
+        updateAutomaticRefreshMonitoring();
+    }
+
+    @Override public void onPause() {
+        if (automaticRefresh != null) automaticRefresh.setActive(false);
+        super.onPause();
+    }
+
+    private void updateAutomaticRefreshMonitoring() {
+        if (automaticRefresh == null) return;
+        for (Fragment current = this; current != null; current = current.getParentFragment()) {
+            if (!current.isResumed() || current.isHidden() || current.getView() == null) {
+                automaticRefresh.setActive(false);
+                return;
+            }
+        }
+        automaticRefresh.setActive(true);
     }
 
     public void startAnimationImageView(ImageView img) {
@@ -581,13 +653,14 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
                     rateSnapshot = loaded;
                     currencyRates.clear();
                     currencyRates.putAll(loaded.rates);
-                } else {
+                } else if (forceRefresh) {
                     Context context = getContext();
                     if (context != null) {
                         Toast.makeText(context, R.string.currency_refresh_failed, Toast.LENGTH_SHORT).show();
                     }
                 }
                 updateRateStatus();
+                if (automaticRefresh != null) automaticRefresh.ratesChanged();
                 displayRates();
                 convertAndDisplay(inputValue.getText().toString());
             });
@@ -606,6 +679,8 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
 
     @Override
     public void onDestroyView() {
+        if (automaticRefresh != null) automaticRefresh.setActive(false);
+        automaticRefresh = null;
         historyRecorder.invalidate();
         viewGeneration++;
         refreshing = false;
@@ -625,6 +700,14 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
             rlFromUnit.setContentDescription(getString(R.string.converter_source_currency, name, c.getCurrencyISOCode()));
             prefs.setFromCurrencyIndex(currencies.indexOf(c));
             inputSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
+        } else if (type.equals("ADDITIONAL")) {
+            additionalCurrencyIndex = currencies.indexOf(c);
+            prefs.setAdditionalCurrencyIndex(additionalCurrencyIndex);
+            additionalFlag.setImageResource(c.getFlagImageResource());
+            additionalCurrency.setText(displayName);
+            additionalISO.setText(c.getCurrencyISOCode());
+            additionalSymbol.setText(symbol != null && !symbol.isEmpty() ? symbol : c.getCurrencyISOCode());
+            additionalSelector.setContentDescription(getString(R.string.converter_destination_currency, name, c.getCurrencyISOCode()));
         } else if (type.equals("TO")) {
             toFlag.setImageResource(c.getFlagImageResource());
             toCurrency.setText(displayName);

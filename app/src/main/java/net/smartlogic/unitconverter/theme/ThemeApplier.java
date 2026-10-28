@@ -37,18 +37,19 @@ public final class ThemeApplier {
             R.id.divide, R.id.multiply, R.id.minus, R.id.plus
     };
     private static final int[] ICON_IDS = {
-            R.id.backspace, R.id.copy, R.id.reverse, R.id.btn_nav_menu,
+            R.id.backspace, R.id.copy, R.id.reverse, R.id.reverse_destinations, R.id.btn_nav_menu,
             R.id.refresh, R.id.catalog_icon,
             R.id.btn_favorite, R.id.fromChevron,
-            R.id.toChevron
+            R.id.toChevron, R.id.additionalToChevron
     };
     private static final int[] MAIN_TEXT_IDS = {
-            R.id.result, R.id.input, R.id.output,
+            R.id.result, R.id.input, R.id.output, R.id.additionalOutput,
+            R.id.additionalToCurrency, R.id.additionalToCurrencyISO,
             R.id.tv_choice_title, R.id.tv_action_title, R.id.tv_info_title,
             R.id.tv_history_result, R.id.textView,
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_section,
-            R.id.exchange_rate_title, R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message,
+            R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message,
             R.id.tv_empty_history, R.id.history_start
     };
     private static final int[] SECONDARY_TEXT_IDS = {
@@ -56,7 +57,7 @@ public final class ThemeApplier {
             R.id.tv_choice_value, R.id.tv_info_value, R.id.tv_history_expression,
             R.id.txtLastUpdateTime, R.id.tv_history_time, R.id.tv_history_calculator,
             R.id.converter_from_label, R.id.converter_to_label,
-            R.id.unit_rate, R.id.txtRate, R.id.inputSymbol, R.id.outputSymbol,
+            R.id.unit_rate, R.id.txtRate, R.id.inputSymbol, R.id.outputSymbol, R.id.additionalOutputSymbol,
             R.id.history_reuse_hint, R.id.history_empty_description, R.id.history_legacy_hint
     };
     private static final int[] CLEAR_BACKGROUND_IDS = {
@@ -180,6 +181,10 @@ public final class ThemeApplier {
         if ("content_accent".equals(view.getTag()) && view instanceof ImageView icon) {
             ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(theme.accentContentColor()));
         }
+        if ("theme_accent_badge".equals(view.getTag()) && view instanceof ImageView icon) {
+            icon.setBackground(roundedFill(theme.accentContentColor(), view.getResources().getDimension(R.dimen.graphy_touch_target)));
+            ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(theme.onAccentColor()));
+        }
         if (("theme_outline_action".equals(view.getTag()) || "theme_text_action".equals(view.getTag())
                 || "theme_filled_action".equals(view.getTag())) && view instanceof com.google.android.material.button.MaterialButton button) {
             boolean filled = "theme_filled_action".equals(view.getTag());
@@ -237,14 +242,18 @@ public final class ThemeApplier {
             view.setPadding(0, 0, 0, 0);
         }
         if ("converter_selector".equals(view.getTag()) || "converter_amount".equals(view.getTag())) {
-            int left = view.getPaddingLeft(), top = view.getPaddingTop();
-            int right = view.getPaddingRight(), bottom = view.getPaddingBottom();
+            int left = view.getPaddingLeft();
+            int right = view.getPaddingRight();
+            if ("converter_selector".equals(view.getTag())) {
+                left = right = view.getResources().getDimensionPixelSize(R.dimen.converter_field_content_inset)
+                        + view.getResources().getDimensionPixelSize(R.dimen.converter_selector_pixel_adjustment);
+            }
             GradientDrawable outline = roundedFill(Color.TRANSPARENT,
                     view.getResources().getDimension(R.dimen.converter_selector_radius));
             outline.setStroke(view.getResources().getDimensionPixelSize(R.dimen.converter_divider_height),
                     theme.secondaryContentColor());
             view.setBackground(outline);
-            view.setPadding(left, top, right, bottom);
+            view.setPadding(left, 0, right, 0);
         }
 
         boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;

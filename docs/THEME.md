@@ -32,6 +32,8 @@ backgrounds.
 
 ## Shared typography
 
+Use regular weight by default. Bold requires an explicit user request; it must not be introduced as automatic field or heading emphasis.
+
 Oswald is the app font. XML Views and Canvas resolve `@font/app_text`, which
 contains the bundled regular (400) and bold (700) weights. Compose uses
 `theme/AppTypography.kt` (`AppFontFamily` and `AppTypography`) with those same

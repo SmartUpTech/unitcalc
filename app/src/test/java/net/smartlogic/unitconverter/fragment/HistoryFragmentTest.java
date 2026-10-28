@@ -24,6 +24,33 @@ import static org.robolectric.Shadows.shadowOf;
 @Config(application = Application.class, sdk = 34)
 @LooperMode(LooperMode.Mode.PAUSED)
 public class HistoryFragmentTest {
+    @Test public void bmiHistoryKeepsHeightWeightUnitsAndDecimalResult() throws Exception {
+        Application app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("UnitCalc.db");
+        Preferences.getInstance(app);
+        ThemeManager.init(app);
+        DatabaseHelper db = new DatabaseHelper(app);
+        String inputs = "Height: 186 cm; Weight: 73 kg";
+        String result = "BMI: 21.10 · Healthy weight";
+        db.addHistory(inputs, result, CalculatorCatalog.ID_BMI);
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup().visible();
+        try {
+            HistoryFragment fragment = HistoryFragment.newInstance();
+            controller.get().getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content, fragment, "history").commitNow();
+            drain();
+            android.view.View page = fragment.requireView();
+            page.measure(android.view.View.MeasureSpec.makeMeasureSpec(360, android.view.View.MeasureSpec.EXACTLY),
+                    android.view.View.MeasureSpec.makeMeasureSpec(700, android.view.View.MeasureSpec.EXACTLY));
+            page.layout(0, 0, 360, 700);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(inputs, ((android.widget.TextView) page.findViewById(R.id.tv_history_expression)).getText().toString());
+            assertEquals(result, ((android.widget.TextView) page.findViewById(R.id.tv_history_result)).getText().toString());
+        } finally { controller.pause().stop().destroy(); drain(); db.close(); }
+    }
+
     private void drain() throws Exception {
         for (int i = 0; i < 4; i++) {
             CountDownLatch idle = new CountDownLatch(1);

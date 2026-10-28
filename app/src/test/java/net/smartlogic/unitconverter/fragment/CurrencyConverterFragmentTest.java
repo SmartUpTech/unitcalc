@@ -22,6 +22,45 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 35, application = Application.class)
 public class CurrencyConverterFragmentTest {
+    public static class OfflineCurrencyFragment extends CurrencyConverterFragment {
+        @Override public void refreshCurrencyRates(boolean forceRefresh) { }
+    }
+
+    @Test public void firstVisitDefaultsToUsdEurInrAndLaterVisitsKeepAllUserSelections() {
+        Preferences prefs = Preferences.getInstance(RuntimeEnvironment.getApplication());
+        prefs.getPreferences().edit().clear().commit();
+        for (int visit = 0; visit < 2; visit++) {
+            var controller = Robolectric.buildActivity(FragmentActivity.class);
+            controller.get().setTheme(R.style.AppTheme);
+            controller.setup();
+            try {
+                FragmentActivity activity = controller.get();
+                FrameLayout container = new FrameLayout(activity);
+                container.setId(12345);
+                activity.setContentView(container);
+                CurrencyConverterFragment fragment = new OfflineCurrencyFragment();
+                activity.getSupportFragmentManager().beginTransaction().add(12345, fragment).commitNow();
+                String[] expected = visit == 0 ? new String[]{"USD", "EUR", "INR"}
+                        : new String[]{"INR", "USD", "EUR"};
+                int[] labels = {R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.additionalToCurrencyISO};
+                for (int i = 0; i < labels.length; i++) {
+                    assertEquals(expected[i], ((TextView) fragment.requireView().findViewById(labels[i])).getText().toString());
+                }
+                if (visit == 0) {
+                    ArrayList<Currency> currencies = ReflectionHelpers.getField(fragment, "currencies");
+                    fragment.onChooseCurrency(currencies.get(11), "FROM");
+                    fragment.onChooseCurrency(currencies.get(31), "TO");
+                    fragment.onChooseCurrency(currencies.get(32), "ADDITIONAL");
+                    assertEquals(11, prefs.getFromCurrencyIndex());
+                    assertEquals(31, prefs.getToCurrencyIndex());
+                    assertEquals(32, prefs.getAdditionalCurrencyIndex());
+                }
+            } finally {
+                controller.pause().stop().destroy();
+            }
+        }
+    }
+
     @Test public void expandedCountryListHasResolvableFlagsAndPreservesLegacySelections() {
         CurrencyConverterFragment fragment = new CurrencyConverterFragment();
         var controller = Robolectric.buildActivity(FragmentActivity.class);
@@ -110,6 +149,30 @@ public class CurrencyConverterFragmentTest {
         EditText output = fragment.requireView().findViewById(R.id.output);
         input.setText("2");
         assertEquals("160", output.getText().toString());
+        ArrayList<Currency> extraCurrencies = ReflectionHelpers.getField(fragment, "currencies");
+        EditText additional = fragment.requireView().findViewById(R.id.additionalOutput);
+        fragment.onChooseCurrency(extraCurrencies.get(33), "ADDITIONAL");
+        assertEquals("8", additional.getText().toString());
+        assertEquals("160", output.getText().toString());
+        fragment.requireView().findViewById(R.id.reverse_destinations).performClick();
+        assertEquals("8", output.getText().toString());
+        assertEquals("160", additional.getText().toString());
+        assertEquals(33, prefs.getToCurrencyIndex());
+        assertEquals(11, prefs.getAdditionalCurrencyIndex());
+        assertEquals(31, prefs.getFromCurrencyIndex());
+        assertEquals("2", input.getText().toString());
+        fragment.requireView().findViewById(R.id.reverse_destinations).performClick();
+        assertEquals("160", output.getText().toString());
+        assertEquals("8", additional.getText().toString());
+        input.setText("-2");
+        assertEquals("-8", additional.getText().toString());
+        input.setText("-");
+        assertEquals("", additional.getText().toString());
+        input.setText("2");
+        fragment.onChooseCurrency(extraCurrencies.get(5), "ADDITIONAL");
+        assertEquals("", additional.getText().toString());
+        fragment.onChooseCurrency(extraCurrencies.get(31), "ADDITIONAL");
+        assertEquals("2", additional.getText().toString());
         assertEquals("$", ((TextView) fragment.requireView().findViewById(R.id.inputSymbol)).getText().toString());
         assertEquals("₹", ((TextView) fragment.requireView().findViewById(R.id.outputSymbol)).getText().toString());
         assertEquals(android.view.View.VISIBLE, fragment.requireView().findViewById(R.id.inputSymbol).getVisibility());

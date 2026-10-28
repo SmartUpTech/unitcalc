@@ -482,8 +482,8 @@
     <string name="graphy_unavailable">A Graphy explanation is unavailable for the current values.</string>
     <string name="currency_unavailable">Rate unavailable</string>
     <string name="currency_refresh_failed">Could not refresh rates.</string>
-    <string name="currency_cached_at">Last refreshed at: %1$s</string>
-    <string name="currency_stale_at">Last refreshed at: %1$s (stale)</string>
+    <string name="currency_cached_at">Last refreshed: %1$s</string>
+    <string name="currency_stale_at">Last refreshed: %1$s (stale)</string>
     <string name="converter_exchange_rate">Exchange rate</string>
     <string name="graphy_expand_stage">Expand stage %1$d, %2$s</string>
     <string name="graphy_collapse_stage">Collapse stage %1$d, %2$s</string>
@@ -995,4 +995,5 @@
     <string name="currency_code_pgk" translatable="false">PGK</string>
     <string name="currency_country_pgk">Papua New Guinea</string>
     <string name="currency_symbol_pgk" translatable="false">K</string>
+    <string name="currency_swap_destinations">Swap second and third currencies</string>
 </resources>

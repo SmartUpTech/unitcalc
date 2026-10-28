@@ -17,6 +17,24 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 34)
 public class AgeDateDialogTest {
+    @Test public void comparisonDateCanBeChangedWithoutAResetAction() {
+        var controller = Robolectric.buildActivity(AppCompatActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        try {
+            var activity = controller.get();
+            Bundle[] received = new Bundle[1];
+            activity.getSupportFragmentManager().setFragmentResultListener(AgeDialogFragment.RESULT, activity,
+                    (key, value) -> received[0] = value);
+            var dialog = AgeDialogFragment.create(AgeDialogFragment.AS_OF, LocalDate.of(2020, 1, 21));
+            dialog.showNow(activity.getSupportFragmentManager(), AgeDialogFragment.TAG);
+            assertEquals(android.view.View.GONE, ((androidx.appcompat.app.AlertDialog) dialog.requireDialog()).getButton(-3).getVisibility());
+            ((androidx.appcompat.app.AlertDialog) dialog.requireDialog()).getButton(-1).performClick();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(AgeDialogFragment.AS_OF, received[0].getString("mode"));
+            assertEquals("2020-01-21", received[0].getString("date"));
+        } finally { controller.pause().stop().destroy(); }
+    }
     @Test public void existingPickerClampsDayAndRestoresUncommittedDate() {
         var controller = Robolectric.buildActivity(AppCompatActivity.class);
         controller.get().setTheme(R.style.AppTheme);

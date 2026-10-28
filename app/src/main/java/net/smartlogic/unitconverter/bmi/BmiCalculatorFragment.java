@@ -1,6 +1,5 @@
 package net.smartlogic.unitconverter.bmi;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +25,8 @@ import net.smartlogic.unitconverter.theme.ThemeManager;
 
 /** Single-screen adult BMI tool, using the canonical converter keypad and history recorder. */
 public final class BmiCalculatorFragment extends Fragment {
+    private static final int MAX_INPUT_CHARACTERS = 12;
+    private static final int MAX_INPUT_FRACTION_DIGITS = 3;
     private EditText height, inches, weight, active;
     private boolean imperialHeight, pounds, binding;
     private BigDecimal canonicalHeight, canonicalWeight;
@@ -63,28 +63,37 @@ public final class BmiCalculatorFragment extends Fragment {
         binding = false;
         for (EditText field : new EditText[]{height, inches, weight}) {
             field.setShowSoftInputOnFocus(false);
-            field.setFilters(new InputFilter[]{new InputFilter.LengthFilter(30), (source, start, end, dest, dstart, dend) -> {
+            field.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+                if (binding) return null; // Preserve exact magnitude when converting stored measurements.
                 String next = dest.subSequence(0, dstart).toString() + source.subSequence(start, end) + dest.subSequence(dend, dest.length());
-                return next.matches("[0-9]*(\\.[0-9]*)?") ? null : "";
+                if (end == start && next.matches("[0-9]*(\\.[0-9]*)?")) return null;
+                int decimal = next.indexOf('.');
+                boolean wholeFeet = imperialHeight && field == height;
+                boolean valid = next.length() <= MAX_INPUT_CHARACTERS && next.matches("[0-9]*(\\.[0-9]*)?")
+                        && (!wholeFeet || decimal < 0)
+                        && (decimal < 0 || next.length() - decimal - 1 <= MAX_INPUT_FRACTION_DIGITS);
+                return valid ? null : dest.subSequence(dstart, dend);
             }});
             field.setOnFocusChangeListener((v, focus) -> {
                 if (focus) { active = field; activeIndex = field == height ? 0 : field == inches ? 1 : 2; }
                 render();
             });
             field.addTextChangedListener(new TextWatcher() {
+                private String lastText = field.getText().toString();
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
                 public void onTextChanged(CharSequence s, int start, int before, int count) { }
                 public void afterTextChanged(Editable value) {
+                    String next = value.toString();
+                    if (next.equals(lastText)) return;
+                    lastText = next;
                     if (binding) return;
                     if (field == weight) canonicalWeight = null; else canonicalHeight = null;
                     render(); persist();
                 }
             });
         }
-        view.<ImageButton>findViewById(R.id.copy).setImageResource(R.drawable.ic_bmi_next);
-        view.findViewById(R.id.copy).setContentDescription(getString(R.string.bmi_next_field));
-        TextView done = view.findViewById(R.id.minus);
-        done.setId(R.id.equal); done.setText(R.string.bmi_done_key); done.setContentDescription(getString(R.string.bmi_done));
+        removeKey(view.findViewById(R.id.copy));
+        removeKey(view.findViewById(R.id.minus));
         int[] digits = {R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine};
         for (int i = 0; i < digits.length; i++) { String value = Integer.toString(i); action(digits[i], () -> insert(value)); }
         action(R.id.double_zero, () -> insert("00")); action(R.id.dot, () -> insert("."));
@@ -94,11 +103,6 @@ public final class BmiCalculatorFragment extends Fragment {
             if (a != b) active.getText().delete(Math.min(a, b), Math.max(a, b));
             else if (a > 0) active.getText().delete(a - 1, a);
         });
-        action(R.id.copy, () -> {
-            EditText next = active == height && imperialHeight ? inches : active == weight ? height : weight;
-            next.requestFocus(); next.selectAll(); persist();
-        });
-        action(R.id.equal, () -> { history.saveNow(); persist(); });
         action(R.id.bmi_ranges, () -> openDialog(BmiDialogFragment.RANGES, result == null ? -1 : result.category().ordinal()));
         action(R.id.bmi_height_unit, () -> openDialog(BmiDialogFragment.HEIGHT, imperialHeight ? 1 : 0));
         action(R.id.bmi_weight_unit, () -> openDialog(BmiDialogFragment.WEIGHT, pounds ? 1 : 0));
@@ -112,6 +116,14 @@ public final class BmiCalculatorFragment extends Fragment {
     }
     private static BigDecimal decimalOrNull(String value) {
         try { return value.isEmpty() ? null : new BigDecimal(value); } catch (NumberFormatException e) { return null; }
+    }
+    private void removeKey(View key) {
+        ViewGroup row = (ViewGroup) key.getParent();
+        int index = row.indexOfChild(key);
+        ViewGroup.LayoutParams params = key.getLayoutParams();
+        row.removeView(key);
+        // Retain canonical number-key column positions, without an invisible interactive key.
+        row.addView(new android.widget.Space(requireContext()), index, params);
     }
     private void action(int id, Runnable run) {
         View control = requireView().findViewById(id); InteractionFeedbackManager.configure(control);
@@ -141,7 +153,7 @@ public final class BmiCalculatorFragment extends Fragment {
                 if (imperial) {
                     BigDecimal total = cm.divide(BmiCalculator.CM_PER_INCH, BmiCalculator.PRECISION);
                     BigDecimal feet = total.divideToIntegralValue(BmiCalculator.INCHES_PER_FOOT);
-                    BigDecimal remaining = total.subtract(feet.multiply(BmiCalculator.INCHES_PER_FOOT)).setScale(10, java.math.RoundingMode.HALF_EVEN);
+                    BigDecimal remaining = total.subtract(feet.multiply(BmiCalculator.INCHES_PER_FOOT)).setScale(3, java.math.RoundingMode.HALF_EVEN);
                     if (remaining.compareTo(BmiCalculator.INCHES_PER_FOOT) >= 0) { feet = feet.add(BigDecimal.ONE); remaining = BigDecimal.ZERO; }
                     height.setText(feet.toPlainString()); inches.setText(BmiFormatter.input(remaining));
                 } else { height.setText(BmiFormatter.input(cm)); inches.setText(""); }
@@ -171,6 +183,10 @@ public final class BmiCalculatorFragment extends Fragment {
         weight.setContentDescription(getString(pounds ? R.string.bmi_weight_lb : R.string.bmi_weight_kg));
         text(R.id.bmi_height_unit, getString(R.string.bmi_unit_button, getString(imperialHeight ? R.string.bmi_in : R.string.bmi_cm)));
         text(R.id.bmi_weight_unit, getString(R.string.bmi_unit_button, getString(pounds ? R.string.bmi_lb : R.string.bmi_kg)));
+        requireView().findViewById(R.id.bmi_height_unit).setContentDescription(getString(R.string.bmi_measurement,
+                getString(R.string.bmi_height_unit), getString(imperialHeight ? R.string.bmi_imperial_height : R.string.bmi_metric_height)));
+        requireView().findViewById(R.id.bmi_weight_unit).setContentDescription(getString(R.string.bmi_measurement,
+                getString(R.string.bmi_weight_unit), getString(pounds ? R.string.bmi_imperial_weight : R.string.bmi_metric_weight)));
     }
     private void render() {
         if (getView() == null || height == null) return;
@@ -180,18 +196,24 @@ public final class BmiCalculatorFragment extends Fragment {
         requireView().setBackgroundColor(theme.background()); ThemeApplier.apply(requireView());
         for (EditText field : new EditText[]{height, inches, weight}) {
             field.setTextColor(theme.primaryContentColor()); field.setHintTextColor(theme.secondaryContentColor());
-            field.setBackgroundTintList(ColorStateList.valueOf(field.hasFocus() ? theme.accentContentColor() : theme.secondaryContentColor()));
+            // The shared converter_amount tag owns the outline and its semantic color.
+            field.setBackgroundTintList(null);
         }
         BmiFormatter f = new BmiFormatter(requireContext());
+        ((BmiSummaryLayout) requireView().findViewById(R.id.bmi_summary)).setHasResult(result != null);
         ((BmiGaugeView) requireView().findViewById(R.id.bmi_gauge)).setResult(result);
         text(R.id.bmi_value, result == null ? getString(R.string.bmi_no_result) : f.number(result.bmi()));
         boolean empty = height.length() == 0 || weight.length() == 0;
-        text(R.id.bmi_category_value, result == null ? getString(empty ? R.string.bmi_empty : R.string.bmi_invalid) : f.category(result));
+        boolean invalidImperialHeight = false;
+        if (imperialHeight && height.length() > 0) {
+            try { heightCm(); } catch (IllegalArgumentException ignored) { invalidImperialHeight = true; }
+        }
+        int prompt = empty ? R.string.bmi_empty : invalidImperialHeight ? R.string.bmi_invalid_imperial : R.string.bmi_invalid;
+        text(R.id.bmi_category_value, result == null ? getString(prompt) : f.category(result));
         text(R.id.bmi_range_value, result == null ? getString(R.string.bmi_no_result) : getString(R.string.bmi_range_result, f.range(result, pounds)));
         text(R.id.bmi_difference_value, result == null ? getString(R.string.bmi_no_result) : f.difference(result, pounds));
         int color = result == null ? theme.secondaryContentColor() : BmiGaugeView.color(result.category());
         for (int id : new int[]{R.id.bmi_value, R.id.bmi_category_value, R.id.bmi_difference_value}) requireView().<TextView>findViewById(id).setTextColor(color);
-        requireView().findViewById(R.id.equal).setEnabled(result != null);
         if (result == null) history.invalidate();
         else {
             String h = imperialHeight ? getString(R.string.bmi_feet_inches, height.getText(), inches.length() == 0 ? "0" : inches.getText())

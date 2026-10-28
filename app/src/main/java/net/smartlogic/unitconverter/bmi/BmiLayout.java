@@ -15,28 +15,32 @@ public final class BmiLayout extends ViewGroup {
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
         int width = MeasureSpec.getSize(widthSpec), height = MeasureSpec.getSize(heightSpec);
         wide = width >= getResources().getDimensionPixelSize(R.dimen.bmi_wide_width) && width > height;
-        int required = measureContent(width, height, false);
-        if (required > height) required = measureContent(width, height, true);
+        int required = measureContent(width, height, false, false);
+        if (required > height) required = measureContent(width, height, true, false);
+        if (required > height) required = measureContent(width, height, true, true);
         fits = required <= height;
         setMeasuredDimension(width, resolveSizeAndState(Math.max(height, required), heightSpec, fits ? 0 : MEASURED_STATE_TOO_SMALL));
     }
-    private int measureContent(int width, int height, boolean compact) {
-        inset = gap = getResources().getDimensionPixelSize(compact ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
+    private int measureContent(int width, int height, boolean compact, boolean tight) {
+        inset = gap = getResources().getDimensionPixelSize(tight ? R.dimen.converter_compact_row_spacing
+                : compact ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
         contentWidth = wide ? (width - inset * 2 - gap) / 2 : width - inset * 2;
         View controls = getChildAt(0), actions = getChildAt(2), keypad = getChildAt(3);
         int padding = compact ? 0 : inset;
         keypad.setPadding(padding, padding, padding, padding);
         BmiResultLayout results = (BmiResultLayout) getChildAt(1);
-        natural(controls, contentWidth); natural(actions, contentWidth);
+        natural(controls, Math.min(contentWidth, getResources().getDimensionPixelSize(R.dimen.bmi_controls_max_width)));
+        natural(actions, contentWidth);
         int touch = getResources().getDimensionPixelSize(R.dimen.converter_touch_target);
         int minimumKeys = 4 * touch + keypad.getPaddingTop() + keypad.getPaddingBottom();
         int preferredGauge = getResources().getDimensionPixelSize(R.dimen.bmi_gauge_height);
-        results.configure(wide, getResources().getDimensionPixelSize(R.dimen.bmi_gauge_min_height));
+        int minimumGauge = getResources().getDimensionPixelSize(tight ? R.dimen.bmi_gauge_tight_height : R.dimen.bmi_gauge_min_height);
+        results.configure(wide, minimumGauge, compact, tight);
         natural(results, contentWidth);
         int minimumContent = controls.getMeasuredHeight() + results.getMeasuredHeight() + actions.getMeasuredHeight() + gap * 2;
         int extra = Math.max(0, height - inset * 2 - minimumContent - (wide ? 0 : minimumKeys + gap));
-        int growGauge = Math.min(extra / 2, preferredGauge - getResources().getDimensionPixelSize(R.dimen.bmi_gauge_min_height));
-        results.configure(wide, getResources().getDimensionPixelSize(R.dimen.bmi_gauge_min_height) + growGauge);
+        int growGauge = Math.min(extra / 2, preferredGauge - minimumGauge);
+        results.configure(wide, minimumGauge + growGauge, compact, tight);
         natural(results, contentWidth);
         int content = controls.getMeasuredHeight() + results.getMeasuredHeight() + actions.getMeasuredHeight() + gap * 2;
         int keysHeight = Math.max(minimumKeys, wide ? height - inset * 2 : height - inset * 2 - content - gap);
@@ -52,7 +56,7 @@ public final class BmiLayout extends ViewGroup {
         int y = inset;
         for (int i = 0; i < 3; i++) {
             View child = getChildAt(i);
-            place(child, inset, y);
+            place(child, inset + (contentWidth - child.getMeasuredWidth()) / 2, y);
             y += child.getMeasuredHeight() + gap;
         }
         place(getChildAt(3), wide ? inset + contentWidth + gap : inset, wide ? inset : y);

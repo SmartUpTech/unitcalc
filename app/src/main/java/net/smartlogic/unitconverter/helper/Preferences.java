@@ -236,6 +236,16 @@ public class Preferences {
         return mPrefs.getInt(PREFS_CURR_FROM_INDEX, 31);
     }
 
+    private static final String PREFS_CURR_ADDITIONAL_INDEX = "additional_currency_index";
+
+    public int getAdditionalCurrencyIndex() {
+        return mPrefs.getInt(PREFS_CURR_ADDITIONAL_INDEX, 11);
+    }
+
+    public void setAdditionalCurrencyIndex(int index) {
+        mPrefs.edit().putInt(PREFS_CURR_ADDITIONAL_INDEX, index).apply();
+    }
+
     public void setToCurrencyIndex(int index) {
         mPrefs.edit().putInt(PREFS_CURR_TO_INDEX, index).apply();
     }

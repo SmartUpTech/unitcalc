@@ -149,7 +149,7 @@ public final class CalculatorCatalog {
         register(entry(unitId(Conversion.ANGLE), R.string.angle, R.drawable.ic_angle,
                 Destination.UNIT_CATEGORY, Conversion.ANGLE));
         List<Entry> tools = new ArrayList<>();
-        tools.add(register(entry(ID_AGE, R.string.age_calculator, R.drawable.ic_age,
+        tools.add(register(entry(ID_AGE, R.string.age_calculator, R.drawable.ic_birthday,
                 Destination.AGE_CALCULATOR, -1)));
         tools.add(register(entry(ID_BMI, R.string.bmi_calculator, R.drawable.ic_bmi,
                 Destination.BMI_CALCULATOR, -1)));

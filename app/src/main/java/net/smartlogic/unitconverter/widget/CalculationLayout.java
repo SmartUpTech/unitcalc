@@ -82,7 +82,7 @@ public final class CalculationLayout extends LinearLayout {
             sections.add((LinearLayout) view);
         }
         if ("currency_detail".equals(view.getTag()) || view.getId() == R.id.fromCurrency
-                || view.getId() == R.id.toCurrency) currencyDetails.add(view);
+                || view.getId() == R.id.toCurrency || view.getId() == R.id.additionalToCurrency) currencyDetails.add(view);
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) collect(group.getChildAt(i));
@@ -105,6 +105,7 @@ public final class CalculationLayout extends LinearLayout {
             minimumResultHeight = resultLineHeight(resultDisplay.getAutoSizeMinTextSize());
             setResultHeight(resultLineHeight(resultDisplay.getAutoSizeMaxTextSize()));
         }
+        setCompactValues(false);
         arrangePanes(false);
         configure(false, false);
         int needed = measureRequired(widthMeasureSpec, preferredRow);
@@ -137,6 +138,10 @@ public final class CalculationLayout extends LinearLayout {
             card.setPadding(card.getPaddingLeft(), 0, card.getPaddingRight(), 0);
             MarginLayoutParams target = (MarginLayoutParams) findViewById(R.id.converter_target_section).getLayoutParams();
             target.topMargin = dimension(R.dimen.converter_compact_row_spacing);
+            needed = measureRequired(widthMeasureSpec, minimumRow);
+        }
+        if (needed > viewportHeight && controls instanceof ConverterControlsLayout) {
+            setCompactValues(true);
             needed = measureRequired(widthMeasureSpec, minimumRow);
         }
         if (needed > viewportHeight && minimumResultHeight > 0 && !sideBySide) {
@@ -228,7 +233,7 @@ public final class CalculationLayout extends LinearLayout {
         // ISO codes still identify selected currencies; full names remain in their pickers
         // and the existing selector content descriptions. Keep flags at icon size.
         for (View detail : currencyDetails) detail.setVisibility(inline ? GONE : VISIBLE);
-        for (int id : new int[]{R.id.fromFlag, R.id.toFlag}) {
+        for (int id : new int[]{R.id.fromFlag, R.id.toFlag, R.id.additionalToFlag}) {
             View flag = findViewById(id);
             if (flag != null) flag.getLayoutParams().width = dimension(inline
                     ? R.dimen.converter_flag_height : R.dimen.converter_flag_width);
@@ -268,6 +273,14 @@ public final class CalculationLayout extends LinearLayout {
             if (section.getMeasuredWidth() / 2 < needed) return false;
         }
         return true;
+    }
+
+    private void setCompactValues(boolean compact) {
+        if (!(controls instanceof ConverterControlsLayout)) return;
+        for (int id : new int[]{R.id.input, R.id.output, R.id.additionalOutput}) {
+            View value = findViewById(id);
+            if (value instanceof AutoSizeEditText amount) amount.setCompactValue(compact);
+        }
     }
 
     private int dimension(int resource) { return getResources().getDimensionPixelSize(resource); }

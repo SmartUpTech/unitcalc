@@ -30,6 +30,13 @@ public class BmiCalculatorTest {
         assertEquals(0, new BigDecimal("45.359237").compareTo(BmiCalculator.weightKg("100", true)));
         assertEquals(0, new BigDecimal("2.54").compareTo(BmiCalculator.heightCm("0", "1", true)));
     }
+    @Test public void classificationDoesNotRoundOntoAnInternalPrecisionBoundary() {
+        // Height squared includes a positive 1e-40 term; mass omits that term.
+        assertEquals(BmiCalculator.Category.HEALTHY,
+                metric("100.000000000000000001", "25.0000000000000000005").category());
+        assertEquals(BmiCalculator.Category.UNDERWEIGHT,
+                metric("100.000000000000000001", "18.50000000000000000037").category());
+    }
     @Test public void invalidAndIncompleteInputsAreRejected() {
         for (String value : new String[]{"", ".", "0", "-1", "NaN", "Infinity", "1,234", "1e5"}) {
             try { BmiCalculator.heightCm(value, "", false); fail(value); } catch (IllegalArgumentException expected) { }

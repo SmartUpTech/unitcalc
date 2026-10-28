@@ -1,7 +1,6 @@
 <net.smartlogic.unitconverter.bmi.BmiLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bmi_root" android:layout_width="match_parent" android:layout_height="match_parent">
     <LinearLayout android:id="@+id/bmi_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-        <TextView style="@style/BmiCaption" android:text="@string/bmi_adults" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:paddingEnd="@dimen/converter_small_spacing">
             <TextView style="@style/BmiText" android:text="@string/bmi_height" android:labelFor="@id/bmi_height_input" />
@@ -25,15 +24,15 @@
         <FrameLayout android:id="@+id/bmi_gauge_container" android:layout_width="match_parent" android:layout_height="wrap_content">
             <net.smartlogic.unitconverter.bmi.BmiGaugeView android:id="@+id/bmi_gauge" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="no" />
             <LinearLayout android:id="@+id/bmi_gauge_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="bottom" android:gravity="center" android:orientation="vertical" android:paddingBottom="@dimen/converter_spacing">
-                <TextView style="@style/BmiCaption" android:gravity="center" android:text="@string/bmi_label" />
+                <TextView style="@style/BmiCaption" android:gravity="center" android:text="@string/bmi_adult_label" />
                 <TextView android:id="@+id/bmi_value" style="@style/BmiText" android:textSize="@dimen/bmi_value_size" android:gravity="center" android:text="@string/bmi_no_result" />
             </LinearLayout>
         </FrameLayout>
-        <LinearLayout android:id="@+id/bmi_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:accessibilityLiveRegion="polite">
+        <net.smartlogic.unitconverter.bmi.BmiSummaryLayout android:id="@+id/bmi_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:accessibilityLiveRegion="polite">
             <TextView android:id="@+id/bmi_category_value" style="@style/BmiText" android:textStyle="bold" android:gravity="center" android:text="@string/bmi_empty" />
-            <TextView android:id="@+id/bmi_range_value" style="@style/BmiText" android:gravity="center" android:text="@string/bmi_no_result" />
-            <TextView android:id="@+id/bmi_difference_value" style="@style/BmiText" android:gravity="center" android:text="@string/bmi_no_result" />
-        </LinearLayout>
+            <TextView android:id="@+id/bmi_range_value" style="@style/BmiCaption" android:tag="content_primary" android:gravity="center" android:text="@string/bmi_no_result" />
+            <TextView android:id="@+id/bmi_difference_value" style="@style/BmiCaption" android:gravity="center" android:text="@string/bmi_no_result" />
+        </net.smartlogic.unitconverter.bmi.BmiSummaryLayout>
     </net.smartlogic.unitconverter.bmi.BmiResultLayout>
     <LinearLayout android:id="@+id/bmi_actions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
         <com.google.android.material.button.MaterialButton android:id="@+id/bmi_ranges" style="@style/AgeDateButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/bmi_ranges_action" />

@@ -53,24 +53,8 @@ public class CalculationLayoutTest {
                             if (fits) {
                                 assertKeys(root, true);
                             } else {
-                                // Compare against the previous order before classifying a
-                                // physically constrained configuration as an existing limit.
-                                LinearLayout controls = root.findViewById(R.id.calculation_controls);
-                                View strip = root.findViewById(R.id.category_selector);
-                                controls.removeView(strip);
-                                controls.addView(strip, 0);
-                                measure(root, size[0], size[1]);
-                                assertEquals("previous order must have the same space limit",
-                                        View.INVISIBLE, viewport(root).getChildAt(0).getVisibility());
-                                controls.removeView(strip);
-                                controls.addView(strip, 1);
-                                measure(root, size[0], size[1]);
                                 assertEquals(View.VISIBLE, root.findViewById(R.id.tool_space_message).getVisibility());
                             }
-                        }
-                        for (int id : new int[]{R.id.converter_source_section, R.id.converter_target_section, R.id.keypad}) {
-                            assertEquals("theme=" + themeIndex + " scale=" + scale + " size=" + size[0],
-                                    bounds(unit, unit.findViewById(id)), bounds(currency, currency.findViewById(id)));
                         }
                         for (ViewGroup root : new ViewGroup[]{unit, currency}) {
                             assertTrue(bounds(root, root.findViewById(R.id.category_selector)).top
@@ -103,16 +87,68 @@ public class CalculationLayoutTest {
         }
     }
 
-    @Test public void previousCurrencyOrderHasSameLimitAtLargeDisplayDensity() {
-        ViewGroup root = (ViewGroup) inflate(R.layout.fragment_currency_converter, 1f, 520);
-        measure(root, 1080, 1185);
-        int reorderedVisibility = viewport(root).getChildAt(0).getVisibility();
-        LinearLayout controls = root.findViewById(R.id.calculation_controls);
-        View strip = root.findViewById(R.id.category_selector);
-        controls.removeView(strip);
-        controls.addView(strip, 0);
-        measure(root, 1080, 1185);
-        assertEquals(reorderedVisibility, viewport(root).getChildAt(0).getVisibility());
+    @Test public void additionalCurrencyRowAlignsAndRefreshFollowsTimestamp() throws Exception {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            for (CalculatorTheme theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    ViewGroup root = (ViewGroup) inflate(R.layout.fragment_currency_converter, scale);
+                    measure(root, 412, 700);
+                    assertKeys(root, true);
+                    ViewGroup row = root.findViewById(R.id.category_selector);
+                    View amount = row.getChildAt(0);
+                    View selector = root.findViewById(R.id.additionalToUnit);
+                    assertEquals(root.findViewById(R.id.converter_source_section).getHeight(), row.getHeight());
+                    assertEquals(root.findViewById(R.id.converter_target_section).getHeight(), row.getHeight());
+                    assertEquals(bounds(root, amount).top, bounds(root, selector).top);
+                    assertEquals(bounds(root, amount).bottom, bounds(root, selector).bottom);
+                    assertEquals(0, amount.getPaddingTop());
+                    assertEquals(0, amount.getPaddingBottom());
+                    assertEquals(0, selector.getPaddingTop());
+                    assertEquals(0, selector.getPaddingBottom());
+                    assertInside(root, selector);
+                    View swap = root.findViewById(R.id.reverse_destinations);
+                    assertInside(root, swap);
+                    assertTrue(bounds(root, swap).top >= bounds(root, root.findViewById(R.id.reverse)).bottom);
+                    assertTrue(swap.getHeight() >= root.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
+                    assertEquals(root.getContext().getString(R.string.currency_swap_destinations), swap.getContentDescription());
+                    assertTrue(bounds(root, root.findViewById(R.id.refresh)).left
+                            >= bounds(root, root.findViewById(R.id.txtLastUpdateTime)).right);
+                    assertInside(root, root.findViewById(R.id.refresh));
+                    if (theme == CalculatorThemes.PORCELAIN_WHITE || theme == CalculatorThemes.GRAPHITE_BLACK) {
+                        android.graphics.Bitmap preview = android.graphics.Bitmap.createBitmap(412, 700,
+                                android.graphics.Bitmap.Config.ARGB_8888);
+                        root.draw(new android.graphics.Canvas(preview));
+                        java.io.File directory = new java.io.File("build/reports/converter-layout");
+                        assertTrue(directory.isDirectory() || directory.mkdirs());
+                        try (java.io.FileOutputStream stream = new java.io.FileOutputStream(new java.io.File(directory,
+                                "currency-" + theme.id() + "-" + scale + ".png"))) {
+                            preview.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+                        }
+                        preview.recycle();
+                    }
+                }
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
+        }
+    }
+
+    @Test public void compactCurrencyAmountsRestoreTheirNormalHeightWhenSpaceReturns() {
+        ViewGroup root = (ViewGroup) inflate(R.layout.fragment_currency_converter, 1f);
+        measure(root, 412, 700);
+        int normalHeight = root.findViewById(R.id.converter_source_section).getHeight();
+        measure(root, 320, 400);
+        assertKeys(root, true);
+        int compactHeight = root.findViewById(R.id.converter_source_section).getHeight();
+        assertTrue(compactHeight < normalHeight);
+        assertEquals(compactHeight, root.findViewById(R.id.converter_target_section).getHeight());
+        assertEquals(compactHeight, root.findViewById(R.id.category_selector).getHeight());
+        measure(root, 412, 700);
+        assertEquals(normalHeight, root.findViewById(R.id.converter_source_section).getHeight());
+        assertEquals(normalHeight, root.findViewById(R.id.converter_target_section).getHeight());
+        assertEquals(normalHeight, root.findViewById(R.id.category_selector).getHeight());
     }
 
     @Test public void converterBordersAlignAndCategoriesFollowValueRows() {
@@ -123,6 +159,7 @@ public class CalculationLayoutTest {
                 for (float scale : new float[]{1f, 1.3f}) {
                     for (int layout : new int[]{R.layout.fragment_unit_converter, R.layout.fragment_currency_converter}) {
                         ViewGroup root = (ViewGroup) inflate(layout, scale);
+                        ThemeApplier.apply(root); // Reapplying a theme must not accumulate padding.
                         measure(root, 360, 460);
                         assertKeys(root, true);
                         for (int[] ids : new int[][]{{R.id.converter_source_section, R.id.fromUnit},
@@ -131,8 +168,21 @@ public class CalculationLayoutTest {
                             View amount = row.getChildAt(0);
                             View selector = root.findViewById(ids[1] == R.id.fromUnit ? R.id.from_selector : R.id.to_selector);
                             if (selector == null) selector = root.findViewById(ids[1]);
+                            int selectorInset = root.getResources().getDimensionPixelSize(R.dimen.converter_field_content_inset)
+                                    + root.getResources().getDimensionPixelSize(R.dimen.converter_selector_pixel_adjustment);
+                            assertEquals(selectorInset, selector.getPaddingLeft());
+                            assertEquals(selectorInset, selector.getPaddingRight());
+                            assertEquals(0, selector.getPaddingTop());
+                            assertEquals(0, selector.getPaddingBottom());
+                            if (root.findViewById(ids[1]) instanceof Spinner spinner) {
+                                View selected = spinner.getSelectedView();
+                                int verticalInset = Math.max(0, root.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing)
+                                        - root.getResources().getDimensionPixelSize(R.dimen.converter_selector_pixel_adjustment));
+                                assertEquals(verticalInset, selected.getPaddingTop());
+                                assertEquals(verticalInset, selected.getPaddingBottom());
+                            }
                             assertNotNull("layout=" + layout + " amount=" + amount.getId() + " tag=" + amount.getTag(), amount.getBackground());
-                            assertTrue(amount.getPaddingRight() >= root.getResources().getDimensionPixelSize(R.dimen.converter_spacing));
+                            assertTrue(amount.getPaddingRight() == root.getResources().getDimensionPixelSize(R.dimen.converter_field_content_inset));
                             assertEquals(bounds(root, amount).top, bounds(root, selector).top);
                             assertEquals(bounds(root, amount).bottom, bounds(root, selector).bottom);
                         }
@@ -303,18 +353,6 @@ public class CalculationLayoutTest {
                     assertTrue(bounds(root, converter.findViewById(R.id.category_selector)).top
                             - bounds(root, converter.findViewById(R.id.converter_target_section)).bottom
                             >= converter.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing));
-                }
-                assertEquals("keypad parity " + size[0] + "x" + size[1] + " scale=" + scale,
-                        bounds((ViewGroup) unit, unit.findViewById(R.id.keypad)),
-                        bounds((ViewGroup) currency, currency.findViewById(R.id.keypad)));
-                for (int id : new int[]{R.id.seven, R.id.nine, R.id.ac, R.id.zero, R.id.minus}) {
-                    assertEquals(bounds((ViewGroup) unit, unit.findViewById(id)),
-                            bounds((ViewGroup) currency, currency.findViewById(id)));
-                }
-                for (int id : new int[]{R.id.converter_source_section, R.id.converter_target_section}) {
-                    assertEquals("value row alignment at scale=" + scale,
-                            bounds((ViewGroup) unit, unit.findViewById(id)),
-                            bounds((ViewGroup) currency, currency.findViewById(id)));
                 }
                 ViewGroup keypad = unit.findViewById(R.id.keypad);
                 for (int row = 0; row < keypad.getChildCount(); row++) {
@@ -566,6 +604,9 @@ public class CalculationLayoutTest {
             ((TextView) root.findViewById(R.id.outputSymbol)).setText("₹");
             ((TextView) root.findViewById(R.id.fromCurrencyISO)).setText("USD");
             ((TextView) root.findViewById(R.id.toCurrencyISO)).setText("INR");
+            ((TextView) root.findViewById(R.id.additionalToCurrencyISO)).setText("EUR");
+            ((TextView) root.findViewById(R.id.additionalOutputSymbol)).setText("€");
+            ((TextView) root.findViewById(R.id.additionalOutput)).setText("91.25");
             ((TextView) root.findViewById(R.id.fromCurrency)).setText("United States Dollar");
             ((TextView) root.findViewById(R.id.toCurrency)).setText("An exceptionally long currency name");
             ((TextView) root.findViewById(R.id.txtRate)).setText("1 USD = 83.50 INR");

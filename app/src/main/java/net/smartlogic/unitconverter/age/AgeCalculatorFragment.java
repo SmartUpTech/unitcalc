@@ -78,7 +78,8 @@ public final class AgeCalculatorFragment extends Fragment {
                 return;
             }
             if (AgeDialogFragment.BIRTH.equals(mode)) birth = date;
-            else { asOf = date; followsToday = false; }
+            else if (AgeDialogFragment.AS_OF.equals(mode)) { asOf = date; followsToday = false; }
+            else return;
             render();
             scheduleMidnight();
         });
@@ -90,7 +91,6 @@ public final class AgeCalculatorFragment extends Fragment {
                 calculatePage = page;
                 action(R.id.age_birth_button, () -> openDialog(AgeDialogFragment.BIRTH, birth == null ? asOf : birth));
                 action(R.id.age_asof_button, () -> openDialog(AgeDialogFragment.AS_OF, asOf));
-                action(R.id.age_today_button, () -> { followsToday = true; render(); scheduleMidnight(); });
                 action(R.id.age_share, this::share);
                 action(R.id.age_calendar, () -> { if (result != null) openDialog(AgeDialogFragment.CALENDAR, result.birth()); });
             } else {
@@ -140,6 +140,9 @@ public final class AgeCalculatorFragment extends Fragment {
             if (tab != null) { tab.view.setEnabled(result != null); tab.view.setAlpha(result == null ? 0.5f : 1f); }
         }
         if (calculatePage == null) return;
+        ((AgeResultLayout) calculatePage.findViewById(R.id.age_result_card)).showResult(result != null);
+        text(R.id.age_empty_title, getString(birth == null ? R.string.age_empty_title : R.string.age_check_dates));
+        text(R.id.age_empty_description, getString(birth == null ? R.string.age_empty : R.string.age_invalid));
         text(R.id.age_birth_button, birth == null ? getString(R.string.age_select_date) : f.date(birth));
         text(R.id.age_asof_button, f.date(asOf));
         calculatePage.findViewById(R.id.age_birth_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_birth), birth == null ? getString(R.string.age_select_date) : f.date(birth)));
@@ -152,8 +155,9 @@ public final class AgeCalculatorFragment extends Fragment {
         text(R.id.age_years, result == null ? getString(R.string.age_placeholder) : f.number(result.age().years()));
         text(R.id.age_year_unit, getResources().getQuantityString(R.plurals.age_year_unit, result == null ? 0 : result.age().years()));
         text(R.id.age_remainder, result == null ? getString(R.string.age_placeholder) : getString(R.string.age_remaining, f.months(result.age().months()), f.days(result.age().days())));
-        text(R.id.age_birthday_details, result == null ? getString(R.string.age_placeholder) : getString(R.string.age_birthday_details,
-                f.date(result.nextBirthday()), f.weekday(result.nextBirthday()), f.countdown(result)));
+        text(R.id.age_birthday_details, result == null ? "" : getString(R.string.age_birthday_when,
+                f.weekday(result.nextBirthday()), f.date(result.nextBirthday())));
+        text(R.id.age_birthday_countdown, result == null ? "" : f.countdown(result));
         calculatePage.findViewById(R.id.age_calendar).setEnabled(result != null);
         calculatePage.findViewById(R.id.age_share).setEnabled(result != null);
         ThemeApplier.apply(calculatePage);
@@ -176,7 +180,7 @@ public final class AgeCalculatorFragment extends Fragment {
     }
     @Override public void onResume() { super.onResume(); render(); updateBack(); scheduleMidnight(); }
     @Override public void onPause() { handler.removeCallbacks(midnight); super.onPause(); updateBack(); }
-    @Override public void onHiddenChanged(boolean hidden) { super.onHiddenChanged(hidden); updateBack(); if (hidden) handler.removeCallbacks(midnight); else { render(); scheduleMidnight(); } }
+    @Override public void onHiddenChanged(boolean hidden) { super.onHiddenChanged(hidden); updateBack(); if (hidden) handler.removeCallbacks(midnight); else { asOf = LocalDate.now(); followsToday = true; render(); scheduleMidnight(); } }
     @Override public void onSaveInstanceState(@NonNull Bundle out) {
         super.onSaveInstanceState(out);
         if (birth != null) out.putString("birth", birth.toString());

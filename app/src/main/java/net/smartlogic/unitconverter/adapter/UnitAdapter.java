@@ -50,6 +50,10 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         //String s = context.getString(units.get(position).getLabelResource());
         //Log.d("SHRIKI", "unit: " + s);
 
+        int verticalPadding = Math.max(0, context.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing)
+                - context.getResources().getDimensionPixelSize(R.dimen.converter_selector_pixel_adjustment));
+        holder.textView.setPadding(holder.textView.getPaddingLeft(), verticalPadding,
+                holder.textView.getPaddingRight(), verticalPadding);
         Unit unit = units.get(position);
         String label = context.getString(unit.getLabelResource());
         String symbol = unit.getSymbol();

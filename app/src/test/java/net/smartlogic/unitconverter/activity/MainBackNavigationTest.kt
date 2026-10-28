@@ -58,6 +58,37 @@ class MainBackNavigationTest {
             assertEquals(restoredActivity.getString(R.string.app_bar_brand), restoredActivity.findViewById<android.widget.TextView>(R.id.tv_app_bar_brand).text.toString())
         } finally { controller.pause().stop().destroy() }
     }
+    @Test fun historyActionReceivesTouchAtItsVisibleCenter() {
+        val app = RuntimeEnvironment.getApplication()
+        ThemeManager.init(app)
+        AppConst.CURRENT_TAG = AppConst.TAG_CALC
+        RuntimeEnvironment.setQualifiers("w360dp-h800dp-mdpi")
+        val controller = Robolectric.buildActivity(MainActivity::class.java).setup().visible()
+        try {
+            val activity = controller.get()
+            shadowOf(Looper.getMainLooper()).idle()
+            val decor = activity.window.decorView
+            decor.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY))
+            decor.layout(0, 0, 360, 800)
+            val action = activity.findViewById<View>(R.id.menu_history)
+            assertNotNull(action)
+            assertTrue(action.isShown)
+            val location = IntArray(2)
+            action.getLocationInWindow(location)
+            val x = location[0] + action.width / 2f
+            val y = location[1] + action.height / 2f
+            val now = android.os.SystemClock.uptimeMillis()
+            for (type in intArrayOf(android.view.MotionEvent.ACTION_DOWN, android.view.MotionEvent.ACTION_UP)) {
+                val event = android.view.MotionEvent.obtain(now, now + 10, type, x, y, 0)
+                activity.dispatchTouchEvent(event)
+                event.recycle()
+            }
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(AppConst.TAG_HISTORY, AppConst.CURRENT_TAG)
+        } finally { controller.pause().stop().destroy() }
+    }
+
     @Test fun rootBackRequiresSecondPressWithinTwoSeconds() {
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit().clear().commit()
