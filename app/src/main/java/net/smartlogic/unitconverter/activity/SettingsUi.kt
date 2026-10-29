@@ -104,8 +104,6 @@ private fun SettingsScreen(
     val websiteUrl = stringResource(R.string.url_smartup_website)
     val privacyUrl = stringResource(R.string.url_privacy_policy)
     var revision by remember { mutableIntStateOf(0) }
-    var analyticsEnabled by remember { mutableStateOf(preferences.preferences.getBoolean(
-        net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED, false)) }
     var activeChoiceKey by rememberSaveable { mutableStateOf<String?>(null) }
     val choices = remember {
         listOf(
@@ -119,7 +117,8 @@ private fun SettingsScreen(
     }
     DisposableEffect(preferences) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
+            if (key == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED ||
+                key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
                 key == Preferences.PREFS_KEY_SOUNDS || key == Preferences.PREFS_KEY_VIBRATION) {
                 revision++
             }
@@ -217,14 +216,9 @@ private fun SettingsScreen(
             })
 
             SettingsSection(R.string.title_activity_info)
-            SettingsSwitchRow(stringResource(R.string.settings_usage_analytics), analyticsEnabled) {
-                analyticsEnabled = it
-                net.smartlogic.unitconverter.helper.UsageAnalytics.setEnabled(context, it)
-                if (it) net.smartlogic.unitconverter.helper.UsageAnalytics.event("theme_active", "theme_id", ThemeManager.get().id())
-            }
-            Text(stringResource(R.string.settings_usage_analytics_summary),
-                modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
-                style = MaterialTheme.typography.bodySmall)
+            SettingsRow(stringResource(R.string.settings_privacy_choices), onClick = {
+                activeChoiceKey = net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED
+            })
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_website_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl)))
@@ -244,6 +238,25 @@ private fun SettingsScreen(
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
+    }
+    if (activeChoiceKey == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED) {
+        val allow = stringResource(R.string.settings_analytics_allow)
+        val decline = stringResource(R.string.settings_analytics_decline)
+        val enabled = preferences.preferences.getBoolean(
+            net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED, false)
+        SettingsSelectionDialog(
+            title = stringResource(R.string.settings_privacy_choices),
+            description = stringResource(R.string.settings_usage_analytics_summary),
+            values = arrayOf(allow, decline), selected = if (enabled) allow else decline,
+            onSelect = { value ->
+                val granted = value == allow
+                net.smartlogic.unitconverter.helper.UsageAnalytics.setEnabled(context, granted)
+                if (granted && !enabled) net.smartlogic.unitconverter.helper.UsageAnalytics.event(
+                    "theme_active", "theme_id", ThemeManager.get().id())
+                activeChoiceKey = null
+            },
+            onDismiss = { activeChoiceKey = null },
+        )
     }
     if (activeChoiceKey == Preferences.PREFS_STARTUP_SCREEN) {
         val ids = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
@@ -333,6 +346,7 @@ private fun SettingsDivider() {
 private fun SettingsSelectionDialog(
     title: String, values: Array<String>, selected: String?,
     onSelect: (String) -> Unit, onDismiss: () -> Unit,
+    description: String? = null,
 ) {
     val spacing = GraphyThemeTokens.spacing
     AlertDialog(
@@ -341,6 +355,10 @@ private fun SettingsSelectionDialog(
         text = {
             Column(Modifier.heightIn(max = dimensionResource(R.dimen.settings_dialog_max_height))
                 .verticalScroll(rememberScrollState()).selectableGroup()) {
+                if (description != null) {
+                    Text(description, style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = spacing.sm))
+                }
                 values.forEach { value ->
                     Row(
                         modifier = Modifier.fillMaxWidth()

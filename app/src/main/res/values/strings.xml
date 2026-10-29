@@ -1,6 +1,9 @@
 <resources>
     <string name="settings_usage_analytics">Share usage analytics</string>
-    <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Optional; turn off anytime to reset analytics data on this device.</string>
+    <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Sharing is optional and off by default. You can change your choice here anytime. Choosing Do not allow stops collection and resets analytics data on this device.</string>
+    <string name="settings_privacy_choices">Privacy choices</string>
+    <string name="settings_analytics_allow">Allow usage analytics</string>
+    <string name="settings_analytics_decline">Do not allow usage analytics</string>
     <string name="launcher_name">Calculator+</string>
     <string name="brand_name">Calculator+</string>
     <string name="app_name">@string/brand_name</string>
