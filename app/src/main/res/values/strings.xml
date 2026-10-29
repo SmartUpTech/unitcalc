@@ -1,7 +1,7 @@
 <resources>
     <string name="settings_usage_analytics">Share usage analytics</string>
     <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Sharing is optional and off by default. You can change your choice here anytime. Choosing Do not allow stops collection and resets analytics data on this device.</string>
-    <string name="settings_privacy_choices">Privacy choices</string>
+    <string name="settings_privacy_choices">Usage analytics</string>
     <string name="settings_analytics_allow">Allow usage analytics</string>
     <string name="settings_analytics_decline">Do not allow usage analytics</string>
     <string name="launcher_name">Calculator+</string>
@@ -46,9 +46,9 @@
     <string name="games_offline_title">Internet connection needed</string>
     <string name="games_offline_message">You are offline. Games need an Internet connection.</string>
     <string name="games_offline_action">OK</string>
-    <string name="prefs_key_sounds_title">Key Sounds</string>
+    <string name="prefs_key_sounds_title">Keypad sounds</string>
     <string name="prefs_key_sounds_summary">Play subtle sounds when using calculator keys</string>
-    <string name="prefs_key_vibration_title">Key Vibration</string>
+    <string name="prefs_key_vibration_title">Keypad vibration</string>
     <string name="prefs_key_vibration_summary">Use subtle vibration when using calculator keys</string>
     <string name="games_loading">Getting your games ready…</string>
     <string name="games_load_error">Games couldn’t load. Check your connection and try again.</string>
@@ -366,24 +366,24 @@
     </plurals>
     <string name="prefs_title_formatting">Customization</string>
     <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>
-    <string name="prefs_title_number_decimals">Number of Decimals</string>
+    <string name="prefs_title_number_decimals">Decimal places</string>
     <string name="prefs_summary_group_separator">Set the group separator to be shown in result</string>
-    <string name="prefs_title_group_separator">Group Separator</string>
+    <string name="prefs_title_group_separator">Thousands separator</string>
     <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
-    <string name="prefs_title_decimal_separator">Decimal Separator</string>
+    <string name="prefs_title_decimal_separator">Decimal separator</string>
     <string name="settings_open">Open settings</string>
 
-    <string name="pref_rate_title">Rate us on Google Play</string>
+    <string name="pref_rate_title">Rate on Google Play</string>
     <string name="pref_rate_summary">You seem to be liking our app. Why not rate us 5 stars?</string>
 
-    <string name="pref_share_title">Spread a word</string>
+    <string name="pref_share_title">Share app</string>
     <string name="pref_share_summary">Please help us by sharing this app with your friends, family and WhatsApp groups.</string>
 
-    <string name="pref_website_title">Find us on Web</string>
+    <string name="pref_website_title">Developer website</string>
     <string name="pref_website_summary">Visit our website to know more about us.</string>
-    <string name="pref_privacy_title">Privacy Policy</string>
+    <string name="pref_privacy_title">Privacy policy</string>
     <string name="pref_privacy_summary">Because your privacy is important to us.</string>
-    <string name="pref_version_title">Version</string>
+    <string name="pref_version_title">App version</string>
 
     <string name="group_separator_none">None</string>
 

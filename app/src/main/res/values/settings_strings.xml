@@ -1,4 +1,17 @@
 <resources>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_number_format">Number format</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_section_rate_share">Rate &amp; share</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_analytics_allowed">Allowed</string>
+    <string name="settings_analytics_not_allowed">Not allowed</string>
+    <string name="settings_decimal_point_example">Point — 1.23</string>
+    <string name="settings_decimal_comma_example">Comma — 1,23</string>
+    <string name="settings_group_comma_example">Comma — 1,234</string>
+    <string name="settings_group_point_example">Point — 1.234</string>
+    <string name="settings_group_space_example">Space — 1 234</string>
+    <string name="settings_group_none_example">None — 1234</string>
     <string name="settings_section_appearance">Appearance</string>
     <string name="settings_section_interaction">Interaction</string>
     <string name="settings_navigate_back">Back</string>

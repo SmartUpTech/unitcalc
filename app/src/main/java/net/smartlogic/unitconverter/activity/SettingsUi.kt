@@ -109,10 +109,10 @@ private fun SettingsScreen(
         listOf(
             Choice(R.string.prefs_title_number_decimals, Preferences.PREFS_NUMBER_OF_DECIMALS,
                 R.array.number_decimals, R.string.default_number_decimals),
-            Choice(R.string.prefs_title_group_separator, Preferences.PREFS_GROUP_SEPARATOR,
-                R.array.group_separators, R.string.default_group_separator),
             Choice(R.string.prefs_title_decimal_separator, Preferences.PREFS_DECIMAL_SEPARATOR,
                 R.array.decimal_separators, R.string.default_decimal_separator),
+            Choice(R.string.prefs_title_group_separator, Preferences.PREFS_GROUP_SEPARATOR,
+                R.array.group_separators, R.string.default_group_separator),
         )
     }
     DisposableEffect(preferences) {
@@ -160,6 +160,20 @@ private fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = spacing.lg),
         ) {
+            SettingsSection(R.string.settings_section_general)
+            val startupLabels = arrayOf(stringResource(R.string.calculator),
+                stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
+            val startupIds = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
+            SettingsRow(stringResource(R.string.prefs_startup_screen),
+                value = startupLabels[startupIds.indexOf(preferences.startupScreen)],
+                onClick = { activeChoiceKey = Preferences.PREFS_STARTUP_SCREEN })
+            SettingsDivider()
+            SettingsSwitchRow(stringResource(R.string.prefs_key_sounds_title),
+                preferences.isKeySoundsEnabled(), preferences::setKeySoundsEnabled)
+            SettingsDivider()
+            SettingsSwitchRow(stringResource(R.string.prefs_key_vibration_title),
+                preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
+
             SettingsSection(R.string.settings_section_appearance)
             Text(stringResource(R.string.prefs_title_theme),
                 modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
@@ -172,35 +186,40 @@ private fun SettingsScreen(
                     onWatchAd = { themes.watchAd(activity) })
             }
 
-            SettingsSection(R.string.prefs_title_display)
+            SettingsSection(R.string.settings_section_number_format)
             choices.forEachIndexed { index, choice ->
                 val value = preferences.preferences.getString(choice.key, stringResource(choice.defaultValue))
                     ?: stringResource(choice.defaultValue)
                 SettingsRow(
                     title = stringResource(choice.title),
-                    value = if (choice.key == Preferences.PREFS_GROUP_SEPARATOR &&
-                        (value == "None" || value.isEmpty())) stringResource(R.string.group_separator_none)
-                        else value,
+                    value = if (choice.key == Preferences.PREFS_NUMBER_OF_DECIMALS) value else null,
+                    summary = if (choice.key != Preferences.PREFS_NUMBER_OF_DECIMALS)
+                        separatorLabel(choice.key, value) else null,
                     onClick = { activeChoiceKey = choice.key },
                 )
                 if (index < choices.lastIndex) SettingsDivider()
             }
 
-            SettingsSection(R.string.settings_section_interaction)
-            val startupLabels = arrayOf(stringResource(R.string.calculator),
-                stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
-            val startupIds = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
-            SettingsRow(stringResource(R.string.prefs_startup_screen),
-                value = startupLabels[startupIds.indexOf(preferences.startupScreen)],
-                onClick = { activeChoiceKey = Preferences.PREFS_STARTUP_SCREEN })
+            SettingsSection(R.string.settings_section_privacy)
+            SettingsRow(stringResource(R.string.settings_privacy_choices),
+                summary = stringResource(if (preferences.preferences.getBoolean(
+                    net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED, false))
+                    R.string.settings_analytics_allowed else R.string.settings_analytics_not_allowed),
+                onClick = { activeChoiceKey = net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED })
+            val ads = net.smartlogic.unitconverter.helper.AdMobManager.getInstance(context)
+            if (ads.isGamesPrivacyOptionsRequired) {
+                SettingsDivider()
+                SettingsRow(stringResource(R.string.games_privacy_options), onClick = {
+                    if (!net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy())
+                        ads.showGamesPrivacyOptions(activity)
+                })
+            }
             SettingsDivider()
-            SettingsSwitchRow(stringResource(R.string.prefs_key_vibration_title),
-                preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
-            SettingsDivider()
-            SettingsSwitchRow(stringResource(R.string.prefs_key_sounds_title),
-                preferences.isKeySoundsEnabled(), preferences::setKeySoundsEnabled)
+            SettingsRow(stringResource(R.string.pref_privacy_title), onClick = {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl)))
+            })
 
-            SettingsSection(R.string.title_activity_feedback)
+            SettingsSection(R.string.settings_section_rate_share)
             SettingsRow(stringResource(R.string.pref_rate_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rateUrl)))
             })
@@ -215,26 +234,10 @@ private fun SettingsScreen(
                 context.startActivity(Intent.createChooser(intent, shareTitle))
             })
 
-            SettingsSection(R.string.title_activity_info)
-            SettingsRow(stringResource(R.string.settings_privacy_choices), onClick = {
-                activeChoiceKey = net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED
-            })
-            SettingsDivider()
+            SettingsSection(R.string.settings_section_about)
             SettingsRow(stringResource(R.string.pref_website_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl)))
             })
-            SettingsDivider()
-            SettingsRow(stringResource(R.string.pref_privacy_title), onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl)))
-            })
-            val ads = net.smartlogic.unitconverter.helper.AdMobManager.getInstance(context)
-            if (ads.isGamesPrivacyOptionsRequired) {
-                SettingsDivider()
-                SettingsRow(stringResource(R.string.games_privacy_options), onClick = {
-                    if (!net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy())
-                        ads.showGamesPrivacyOptions(activity)
-                })
-            }
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
@@ -277,6 +280,7 @@ private fun SettingsScreen(
         val selected = preferences.preferences.getString(choice.key, stringResource(choice.defaultValue))
         SettingsSelectionDialog(
             title = stringResource(choice.title), values = values, selected = selected,
+            valueLabels = values.map { separatorLabel(choice.key, it) }.toTypedArray(),
             onSelect = { value ->
                 preferences.preferences.edit().putString(choice.key, value).apply()
                 net.smartlogic.unitconverter.helper.UsageAnalytics.event("setting_changed", "setting", choice.key)
@@ -296,7 +300,8 @@ private fun SettingsSection(title: Int) {
 }
 
 @Composable
-private fun SettingsRow(title: String, value: String? = null, onClick: (() -> Unit)? = null) {
+private fun SettingsRow(title: String, value: String? = null, summary: String? = null,
+    onClick: (() -> Unit)? = null) {
     val spacing = GraphyThemeTokens.spacing
     Row(
         modifier = Modifier.fillMaxWidth().heightIn(min = dimensionResource(R.dimen.converter_touch_target))
@@ -304,7 +309,11 @@ private fun SettingsRow(title: String, value: String? = null, onClick: (() -> Un
             .padding(horizontal = spacing.lg, vertical = spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(title, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            if (summary != null) Text(summary, style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
         if (value != null) {
             Spacer(Modifier.width(spacing.sm))
             Text(value, color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -347,6 +356,7 @@ private fun SettingsSelectionDialog(
     title: String, values: Array<String>, selected: String?,
     onSelect: (String) -> Unit, onDismiss: () -> Unit,
     description: String? = null,
+    valueLabels: Array<String> = values,
 ) {
     val spacing = GraphyThemeTokens.spacing
     AlertDialog(
@@ -359,7 +369,7 @@ private fun SettingsSelectionDialog(
                     Text(description, style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = spacing.sm))
                 }
-                values.forEach { value ->
+                values.forEachIndexed { index, value ->
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .heightIn(min = dimensionResource(R.dimen.converter_touch_target))
@@ -369,7 +379,7 @@ private fun SettingsSelectionDialog(
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     ) {
                         RadioButton(selected = value == selected, onClick = null)
-                        Text(value, style = MaterialTheme.typography.bodyLarge)
+                        Text(valueLabels[index], style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
@@ -377,4 +387,25 @@ private fun SettingsSelectionDialog(
         confirmButton = {},
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } },
     )
+}
+
+/** Display-only examples; selections and persistence always use the original raw value. */
+@Composable
+private fun separatorLabel(key: String, value: String): String {
+    return when (key) {
+        Preferences.PREFS_DECIMAL_SEPARATOR -> when (value) {
+            "." -> stringResource(R.string.settings_decimal_point_example)
+            "," -> stringResource(R.string.settings_decimal_comma_example)
+            else -> value
+        }
+        Preferences.PREFS_GROUP_SEPARATOR -> when (value) {
+            "," -> stringResource(R.string.settings_group_comma_example)
+            "." -> stringResource(R.string.settings_group_point_example)
+            " " -> stringResource(R.string.settings_group_space_example)
+            "", "None", stringResource(R.string.group_separator_none) ->
+                stringResource(R.string.settings_group_none_example)
+            else -> value
+        }
+        else -> value
+    }
 }
