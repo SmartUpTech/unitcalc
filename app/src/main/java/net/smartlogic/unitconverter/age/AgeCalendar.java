@@ -22,8 +22,9 @@ public final class AgeCalendar {
         Intent intent = new Intent(Intent.ACTION_INSERT).setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.Events.TITLE, context.getString(R.string.age_birthday))
                 .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
+        // Let the insert editor infer one all-day date. Supplying next midnight as
+        // an end extra makes Google Calendar include that following date in its draft.
         if (yearly) intent.putExtra(CalendarContract.Events.RRULE, recurrence(birth));
         return intent;
     }

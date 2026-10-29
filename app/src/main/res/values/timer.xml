@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="timer_preset_minutes">%1$d min</string>
+    <string name="timer_ends_at">Ends at %1$s</string>
+    <string name="timer_paused">Paused</string>
+    <string name="timer_empty_recents">Your recent timers will appear here.</string>
+    <string name="timer_label_save">Save</string>
+    <integer-array name="timer_preset_minutes">
+        <item>1</item><item>5</item><item>10</item>
+        <item>15</item><item>25</item><item>30</item>
+    </integer-array>
+    <dimen name="timer_compact_gap">4dp</dimen>
+    <dimen name="timer_corner_radius">4dp</dimen>
+    <dimen name="timer_wide_breakpoint">480dp</dimen>
+    <dimen name="timer_countdown_size">40sp</dimen>
+    <dimen name="timer_picker_size">24sp</dimen>
+</resources>

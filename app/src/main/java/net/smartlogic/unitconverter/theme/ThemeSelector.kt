@@ -104,6 +104,7 @@ fun ThemeSelector(
 
 @Composable
 private fun themeStatus(card: ThemeCardState): String = when {
+    net.smartlogic.unitconverter.BuildConfig.DEBUG -> stringResource(R.string.theme_debug_unlocked)
     card.alwaysFree -> stringResource(R.string.theme_always_free)
     card.pro -> stringResource(R.string.theme_included_pro)
     !card.unlocked -> stringResource(R.string.theme_watch_seven_days)

@@ -1,6 +1,7 @@
 <resources>
     <!-- Two result sections need at least 200dp each before horizontal reflow. -->
     <dimen name="age_result_split_min_width">400dp</dimen>
+    <dimen name="age_summary_value_size">20sp</dimen>
     <item name="age_calculator" type="id" />
     <string name="age_calculator">Age Calculator</string>
     <string name="drawer_section_tools">Tools</string>
@@ -30,7 +31,10 @@
     <string name="age_invalid">Date of birth must be on or before Age as of.</string>
     <string name="age_totals_note">Calendar totals · 24-hour days</string>
     <string name="age_breakdown">%1$s, %2$s, %3$s</string>
-    <string name="age_remaining">%1$s · %2$s</string>
+    <string name="age_remaining">%1$s | %2$s</string>
+    <string name="age_graphy_step_years">Years</string>
+    <string name="age_graphy_step_months">Months</string>
+    <string name="age_graphy_step_days">Days</string>
     <string name="age_birthday_details">%1$s\n%2$s\n%3$s</string>
     <string name="age_birthday_when">%1$s · %2$s</string>
     <string name="age_add_calendar">Add to Calendar</string>
@@ -88,7 +92,7 @@
         <item name="android:tag">theme_outline_action</item>
     </style>
     <style name="AgeInlineDate" parent="AgeDateButton">
-        <item name="android:tag">theme_outline_action</item>
+        <item name="android:tag">theme_outline_field</item>
         <item name="cornerRadius">@dimen/converter_selector_radius</item>
         <item name="android:gravity">end|center_vertical</item>
         <item name="android:textSize">@dimen/graphy_value_text_size</item>

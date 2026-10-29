@@ -996,4 +996,5 @@
     <string name="currency_country_pgk">Papua New Guinea</string>
     <string name="currency_symbol_pgk" translatable="false">K</string>
     <string name="currency_swap_destinations">Swap second and third currencies</string>
+    <string name="theme_debug_unlocked">Available in debug</string>
 </resources>

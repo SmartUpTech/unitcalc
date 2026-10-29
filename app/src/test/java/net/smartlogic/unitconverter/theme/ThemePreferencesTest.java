@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.theme;
 
 import android.app.Application;
+import net.smartlogic.unitconverter.BuildConfig;
 import android.content.SharedPreferences;
 import net.smartlogic.unitconverter.helper.Preferences;
 import org.junit.Before;
@@ -36,18 +37,18 @@ public class ThemePreferencesTest {
             assertEquals(0, preferences.getThemeExpiry(id));
         }
     }
-    @Test public void freshInstallHasNoNoticeAndRejectsLockedThemesEvenInDebug() {
+    @Test public void freshInstallUsesBuildSpecificThemeAccess() {
         ThemeManager.init(RuntimeEnvironment.getApplication());
         assertNull(preferences.consumeThemeNotice());
-        assertFalse(preferences.setSelectedThemeId("glacier"));
+        assertEquals(BuildConfig.DEBUG, preferences.setSelectedThemeId("glacier"));
         assertTrue(preferences.setSelectedThemeId("titanium_gray"));
         assertFalse(preferences.setSelectedThemeId("removed"));
     }
     @Test public void migrationRevokesProgressionAndGrandfatheredAccessWithoutGrace() {
         selected("glacier");
         store.edit().putInt("theme_usage_days", 1000).putString("theme_grandfathered_id", "glacier").commit();
-        assertEquals("porcelain_white", reconcile(NOW, false));
-        assertEquals(Preferences.NOTICE_MIGRATED, preferences.consumeThemeNotice());
+        assertEquals(BuildConfig.DEBUG ? "glacier" : "porcelain_white", reconcile(NOW, false));
+        assertEquals(BuildConfig.DEBUG ? null : Preferences.NOTICE_MIGRATED, preferences.consumeThemeNotice());
         assertNull(preferences.consumeThemeNotice());
         assertEquals(0, preferences.getThemeExpiry("glacier"));
         assertFalse(store.contains("theme_grandfathered_id"));
@@ -59,9 +60,9 @@ public class ThemePreferencesTest {
         assertTrue(preferences.saveThemeReward("sage_green", "sage", NOW));
         reconcile(NOW, true);
         selected("glacier");
-        assertEquals("porcelain_white", reconcile(NOW + 1, false));
+        assertEquals(BuildConfig.DEBUG ? "glacier" : "porcelain_white", reconcile(NOW + 1, false));
         assertTrue(preferences.isThemeAvailable("sage_green", NOW + 1, false));
-        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
+        assertEquals(BuildConfig.DEBUG ? null : Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
     }
     @Test public void independentRewardsDoNotRenewStackOrPauseWhenSwitching() {
         reconcile(NOW, false);
@@ -76,7 +77,7 @@ public class ThemePreferencesTest {
         selected("porcelain_white");
         assertEquals("porcelain_white", reconcile(expiry, false));
         assertNull(preferences.consumeThemeNotice());
-        assertFalse(preferences.isThemeAvailable("glacier", expiry, false));
+        assertEquals(BuildConfig.DEBUG, preferences.isThemeAvailable("glacier", expiry, false));
         assertTrue(preferences.isThemeAvailable("sage_green", expiry, false));
         assertTrue(preferences.saveThemeReward("glacier", "new-period", expiry));
         assertEquals(expiry + ThemeAccess.REWARD_DURATION_MILLIS, preferences.getThemeExpiry("glacier"));
@@ -111,9 +112,9 @@ public class ThemePreferencesTest {
         preferences.saveThemeReward("sage_green", "b", NOW + 1000);
         reconcile(NOW + 1000, false);
         selected("glacier");
-        assertEquals("porcelain_white", reconcile(NOW + ThemeAccess.REWARD_DURATION_MILLIS, false));
+        assertEquals(BuildConfig.DEBUG ? "glacier" : "porcelain_white", reconcile(NOW + ThemeAccess.REWARD_DURATION_MILLIS, false));
         assertTrue(preferences.isThemeAvailable("sage_green", NOW + ThemeAccess.REWARD_DURATION_MILLIS, false));
-        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
+        assertEquals(BuildConfig.DEBUG ? null : Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
         reconcile(NOW + ThemeAccess.REWARD_DURATION_MILLIS, false);
         assertNull(preferences.consumeThemeNotice());
     }
@@ -130,8 +131,8 @@ public class ThemePreferencesTest {
         ThemeManager.init(RuntimeEnvironment.getApplication());
         store.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", now - 1).commit();
         ThemeManager.select(RuntimeEnvironment.getApplication(), "glacier");
-        assertEquals("porcelain_white", ThemeManager.get().id());
-        assertEquals(Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
+        assertEquals(BuildConfig.DEBUG ? "glacier" : "porcelain_white", ThemeManager.get().id());
+        assertEquals(BuildConfig.DEBUG ? null : Preferences.NOTICE_EXPIRED, preferences.consumeThemeNotice());
     }
     @Test public void corruptAndRemovedIdsFallbackEvenForProAndInvalidPendingIsDiscarded() {
         for (boolean pro : new boolean[]{false, true}) {
@@ -143,12 +144,24 @@ public class ThemePreferencesTest {
             assertFalse(store.contains(Preferences.PREFS_PENDING_REWARDED_THEME));
         }
         store.edit().putString(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", "bad").commit();
-        assertFalse(preferences.isThemeAvailable("glacier", NOW, false));
+        assertEquals(BuildConfig.DEBUG, preferences.isThemeAvailable("glacier", NOW, false));
     }
     @Test public void invalidRewardsCannotUnlockFreeOrUnknownThemes() {
         assertFalse(preferences.saveThemeReward("porcelain_white", "a", NOW));
         assertFalse(preferences.saveThemeReward("removed", "a", NOW));
         assertFalse(preferences.saveThemeReward("glacier", "", NOW));
         assertFalse(preferences.saveThemeReward("glacier", "a", Long.MAX_VALUE));
+    }
+    @Test public void debugAccessDoesNotExpireOrGrantProOrWriteRewards() {
+        org.junit.Assume.assumeTrue(BuildConfig.DEBUG);
+        for (var theme : CalculatorThemes.all()) {
+            assertTrue(preferences.setSelectedThemeId(theme.id()));
+            assertEquals(theme.id(), reconcile(Long.MAX_VALUE, false));
+            assertTrue(preferences.isThemeAvailable(theme.id(), Long.MAX_VALUE, false));
+            assertEquals(0L, preferences.getThemeExpiry(theme.id()));
+        }
+        assertFalse(ThemeManager.hasProAccess());
+        assertFalse(preferences.isThemeAvailable("removed", Long.MAX_VALUE, true));
+        assertNull(preferences.consumeThemeNotice());
     }
 }

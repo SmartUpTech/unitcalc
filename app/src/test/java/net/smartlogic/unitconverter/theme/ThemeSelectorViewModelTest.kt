@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.theme
 
 import android.app.Application
+import net.smartlogic.unitconverter.BuildConfig
 import androidx.lifecycle.ViewModelStore
 import net.smartlogic.unitconverter.helper.Preferences
 import org.junit.Assert.*
@@ -34,8 +35,8 @@ class ThemeSelectorViewModelTest {
             assertEquals(0L, it.remainingMillis)
             assertTrue(model.requestTheme(it.theme.id()))
         }
-        assertFalse(model.requestTheme("glacier"))
-        assertEquals(CalculatorThemes.GLACIER.nameRes(), model.uiState.value.lockedThemeNameRes)
+        assertEquals(BuildConfig.DEBUG, model.requestTheme("glacier"))
+        assertEquals(if (BuildConfig.DEBUG) null else CalculatorThemes.GLACIER.nameRes(), model.uiState.value.lockedThemeNameRes)
         assertEquals(0L, preferences.getThemeExpiry("glacier"))
         assertEquals("porcelain_white", preferences.selectedThemeId)
         model.dismissLockedTheme()
@@ -56,7 +57,7 @@ class ThemeSelectorViewModelTest {
         ThemeManager.select(context, "oyster_cream")
         preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + "glacier", 1).commit()
         ThemeManager.refreshAccess(context)
-        assertFalse(model.uiState.value.cards.single { it.theme.id() == "glacier" }.unlocked)
+        assertEquals(BuildConfig.DEBUG, model.uiState.value.cards.single { it.theme.id() == "glacier" }.unlocked)
         assertEquals("oyster_cream", preferences.selectedThemeId)
         assertNull(preferences.consumeThemeNotice())
         ThemeManager.setProAccessProvider { true }

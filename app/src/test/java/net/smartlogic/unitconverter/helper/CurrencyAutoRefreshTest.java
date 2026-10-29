@@ -63,9 +63,9 @@ public class CurrencyAutoRefreshTest {
     }
 
     private NetworkCapabilities capabilities(boolean validated) {
-        NetworkCapabilities capabilities = new NetworkCapabilities()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        if (validated) capabilities.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        NetworkCapabilities capabilities = new NetworkCapabilities();
+        shadowOf(capabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        if (validated) shadowOf(capabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         return capabilities;
     }
 
@@ -104,6 +104,7 @@ public class CurrencyAutoRefreshTest {
         connect(true);
         rates.set(snapshot(now.get()));
         monitor.setActive(true);
+        shadowOf(Looper.getMainLooper()).idle();
         assertEquals(0, attempts.get());
         now.addAndGet(CurrencyRateStore.REFRESH_INTERVAL);
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(CurrencyRateStore.REFRESH_INTERVAL));

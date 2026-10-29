@@ -22,6 +22,42 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 35, application = Application.class)
 public class CurrencyConverterFragmentTest {
+    @Test public void networkObservationStopsForHiddenCurrencyHiddenParentAndBackground() {
+        android.net.ConnectivityManager connectivity = (android.net.ConnectivityManager)
+                RuntimeEnvironment.getApplication().getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
+        var networks = org.robolectric.Shadows.shadowOf(connectivity);
+        networks.setActiveNetworkInfo(null);
+        net.smartlogic.unitconverter.app.AppConst.CONVERTER_TAB = ConverterFragment.TAB_CURRENCY;
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        try {
+            FragmentActivity activity = controller.get();
+            FrameLayout container = new FrameLayout(activity);
+            container.setId(12345);
+            activity.setContentView(container);
+            ConverterFragment parent = new ConverterFragment();
+            activity.getSupportFragmentManager().beginTransaction().add(12345, parent).commitNow();
+            parent.getChildFragmentManager().executePendingTransactions();
+            var currency = parent.getChildFragmentManager().findFragmentByTag("converter_currency");
+            assertNotNull(currency);
+            assertFalse(currency.isHidden());
+            assertEquals(1, networks.getNetworkCallbacks().size());
+            parent.getChildFragmentManager().beginTransaction().hide(currency).commitNow();
+            assertTrue(networks.getNetworkCallbacks().isEmpty());
+            parent.getChildFragmentManager().beginTransaction().show(currency).commitNow();
+            assertEquals(1, networks.getNetworkCallbacks().size());
+            activity.getSupportFragmentManager().beginTransaction().hide(parent).commitNow();
+            assertTrue(networks.getNetworkCallbacks().isEmpty());
+            activity.getSupportFragmentManager().beginTransaction().show(parent).commitNow();
+            assertEquals(1, networks.getNetworkCallbacks().size());
+            controller.pause();
+            assertTrue(networks.getNetworkCallbacks().isEmpty());
+        } finally {
+            controller.stop().destroy();
+        }
+    }
+
     public static class OfflineCurrencyFragment extends CurrencyConverterFragment {
         @Override public void refreshCurrencyRates(boolean forceRefresh) { }
     }

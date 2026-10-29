@@ -47,7 +47,7 @@ fun TimerRecentsSection(
         )
         if (recents.isEmpty()) {
             Text(
-                text = stringResource(R.string.timer_default_label),
+                text = stringResource(R.string.timer_empty_recents),
                 color = semantic.secondaryText,
                 fontSize = 14.sp,
             )

@@ -22,7 +22,8 @@ public class CalculatorCatalogTest {
         assertEquals(R.string.drawer_section_converter, sections.get(1).titleRes);
         assertEquals(R.string.drawer_section_tools, sections.get(2).titleRes);
         assertEquals(CalculatorCatalog.ID_AGE, sections.get(2).entries.get(0).id);
-        assertEquals(2, sections.get(2).entries.size());
+        assertEquals(3, sections.get(2).entries.size());
+        assertEquals(CalculatorCatalog.ID_TIMER, sections.get(2).entries.get(2).id);
         assertEquals(CalculatorCatalog.ID_BMI, sections.get(2).entries.get(1).id);
         assertEquals(CalculatorCatalog.Destination.BMI_CALCULATOR, sections.get(2).entries.get(1).destination);
         assertEquals(R.string.drawer_section_general, sections.get(3).titleRes);

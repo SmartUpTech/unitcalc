@@ -1,7 +1,49 @@
 <resources>
+    <item type="id" name="bmi_reference_tabs" />
+    <item type="id" name="bmi_reference_scroll" />
+    <string name="bmi_months_zero">0 mo ▾</string>
+    <string name="bmi_months_button">%1$d mo ▾</string>
+    <string name="bmi_months_choice">%1$d months</string>
+    <string name="bmi_additional_months">Additional months (0–11)</string>
+    <string name="bmi_age_full">%1$s years %2$d months</string>
+    <string name="bmi_age_required">Enter age in years and months.</string>
+    <string name="bmi_infant_category">BMI classification not recommended</string>
+    <string name="bmi_infant_note">Under 2: use WHO weight-for-length assessment.</string>
+    <string name="bmi_child_note">CDC BMI-for-age · ages 2–19</string>
+    <string name="bmi_child_range">Reference BMI: %1$s–&lt;%2$s</string>
+    <string name="bmi_child_obesity">Obesity</string>
+    <string name="bmi_child_severe">Severe obesity</string>
+    <string name="bmi_child_low_band">Below 5th percentile</string>
+    <string name="bmi_child_healthy_band">5th–&lt;85th percentile</string>
+    <string name="bmi_child_over_band">85th–&lt;95th percentile</string>
+    <string name="bmi_child_obesity_band">At or above 95th percentile</string>
+    <string name="bmi_child_severe_band">≥95th percentile · severe</string>
+    <string name="bmi_child_severe_rule" formatted="false">≥120% of 95th percentile or BMI ≥35</string>
+    <string name="bmi_child_history">BMI: %1$s · %2$s\nBMI-for-age: %3$s\n%4$s\nCDC reference; screening only.</string>
+    <string name="bmi_infant_history">BMI: %1$s · Classification not recommended under 2. Use WHO weight-for-length assessment.</string>
+    <string name="bmi_group_infants">Under 2</string>
+    <string name="bmi_group_children">2–19</string>
+    <string name="bmi_group_adults">20+</string>
+    <string name="bmi_reference_title">BMI ranges and guidance</string>
+    <string name="bmi_infant_guidance">Under 2 years\nBMI-for-age classification is not recommended in this calculator. Infants should be assessed using WHO growth standards, including weight-for-length, with a healthcare professional. No adult category or weight target is shown.</string>
+    <string name="bmi_child_guidance">Children and teens, ages 2–19\nCDC BMI-for-age categories depend on age in months and sex used by the growth reference. The BMI number alone cannot be compared with adult cutoffs. The reference range is not a weight-loss target; growth and health need professional assessment.</string>
+    <string name="bmi_adult_guidance">Adults, ages 20 and over\nCDC adult cutoffs apply regardless of age or sex. BMI is a screening measure, not a diagnosis, and does not distinguish muscle from fat. Older adults need interpretation alongside muscle mass, nutrition and overall health. Pregnancy requires different assessment.</string>
+    <string name="bmi_child_current">Current reference: %1$s · %2$s</string>
+    <string name="bmi_child_reference_values">BMI at the 5th percentile: %1$s\n85th percentile: %2$s\n95th percentile: %3$s</string>
+    <string name="bmi_sources">Sources: CDC BMI categories and growth-reference data; CDC guidance on WHO infant growth standards. The CDC BMI-for-age reference population is the United States.</string>
+    <string name="bmi_read_source">Read official guidance</string>
+    <string name="bmi_infant_source_url" translatable="false">https://www.cdc.gov/growth-chart-training/hcp/using-growth-charts/who-using.html</string>
+    <string name="bmi_child_source_url" translatable="false">https://www.cdc.gov/bmi/child-teen-calculator/bmi-categories.html</string>
+    <string name="bmi_adult_source_url" translatable="false">https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html</string>
+    <string name="bmi_done_symbol">✓</string>
+    <string name="bmi_done">Calculate BMI and close keypad</string>
     <item type="id" name="bmi_calculator" />
     <string name="bmi_calculator">BMI Calculator</string>
-    <string name="bmi_adults">Adults 20+</string>
+    <string name="bmi_age">Age · years</string>
+    <string name="bmi_age_input">Age in years</string>
+    <string name="bmi_gender">Gender</string>
+    <string name="bmi_gender_male">Male</string>
+    <string name="bmi_gender_female">Female</string>
     <string name="bmi_height">Height</string>
     <string name="bmi_weight">Weight</string>
     <string name="bmi_height_cm">Height in centimetres</string>
@@ -26,6 +68,7 @@
     <string name="bmi_category">Category</string>
     <string name="bmi_healthy_range">Healthy weight range</string>
     <string name="bmi_difference">Difference</string>
+    <string name="bmi_under_20_notice">Adult ranges apply from age 20.</string>
     <string name="bmi_underweight">Underweight</string>
     <string name="bmi_healthy">Healthy weight</string>
     <string name="bmi_overweight">Overweight</string>
@@ -38,7 +81,9 @@
     <string name="bmi_range_i">30–&lt;35</string>
     <string name="bmi_range_ii">35–&lt;40</string>
     <string name="bmi_range_iii">≥40</string>
-    <string name="bmi_ranges_action">Adult BMI ranges · More info</string>
+    <string name="bmi_ranges_action">BMI ranges by age · More info</string>
+    <string name="bmi_ranges_short">Ranges · info</string>
+    <string name="bmi_result_accessibility">BMI %1$s. %2$s. %3$s. %4$s. Show BMI ranges by age.</string>
     <string name="bmi_ranges_title">Adult BMI ranges</string>
     <string name="bmi_your_range">%1$s · Your range</string>
     <string name="bmi_screening">BMI is a screening measure.</string>
@@ -52,29 +97,78 @@
     <string name="bmi_within_range">Within range</string>
     <string name="bmi_below_range">%1$s %2$s below range</string>
     <string name="bmi_above_range">%1$s %2$s above range</string>
-    <string name="bmi_history_input">Height: %1$s; Weight: %2$s</string>
-    <string name="bmi_history_hint">Opens BMI Calculator with your latest inputs. This record remains available here.</string>
+    <string name="bmi_history_input">A:%1$s, G:%2$s, H:%3$s, W:%4$s</string>
+    <string name="bmi_history_age">%1$sY %2$dM</string>
+    <string name="bmi_history_male">M</string>
+    <string name="bmi_history_female">F</string>
+    <string name="bmi_history_measurement">%1$s%2$s</string>
+    <string name="bmi_history_feet_inches">%1$sft %2$sin</string>
+    <string name="bmi_history_hint">Opens BMI Calculator with the inputs from this record.</string>
     <string name="bmi_measurement">%1$s %2$s</string>
     <string name="bmi_feet_inches">%1$s ft %2$s in</string>
     <string name="bmi_history_result">BMI: %1$s · %2$s\nHealthy weight range: %3$s\nDifference: %4$s</string>
     <string name="bmi_reset">Reset BMI calculator</string>
     <string name="bmi_no_result">—</string>
-    <dimen name="bmi_gauge_min_height">88dp</dimen>
-    <dimen name="bmi_gauge_tight_height">80dp</dimen>
-    <dimen name="bmi_gauge_height">176dp</dimen>
-    <dimen name="bmi_gauge_stroke">12dp</dimen>
-    <dimen name="bmi_value_size">36sp</dimen>
+    <dimen name="bmi_gauge_min_height">72dp</dimen>
+    <dimen name="bmi_gauge_tight_height">64dp</dimen>
+    <dimen name="bmi_gauge_edit_height">56dp</dimen>
+    <dimen name="bmi_gauge_height">120dp</dimen>
+    <dimen name="bmi_gauge_stroke">10dp</dimen>
+    <dimen name="bmi_value_size">28sp</dimen>
     <dimen name="bmi_label_width">64dp</dimen>
     <dimen name="bmi_unit_width">76dp</dimen>
     <dimen name="bmi_wide_width">560dp</dimen>
     <dimen name="bmi_controls_max_width">320dp</dimen>
-    <style name="BmiText" parent="AgeText">
-        <item name="android:gravity">start|center_vertical</item>
+    <dimen name="bmi_summary_columns_width">240dp</dimen>
+    <dimen name="bmi_measurement_row_min_width">260dp</dimen>
+    <dimen name="bmi_demographics_row_min_width">240dp</dimen>
+    <dimen name="bmi_gender_icon_size">24dp</dimen>
+    <dimen name="bmi_message_slot_height">40dp</dimen>
+    <dimen name="bmi_keypad_row_height">48dp</dimen>
+    <style name="BmiText" parent="Widget.Graphy.TextView">
+        <item name="android:textStyle">normal</item>
         <item name="android:includeFontPadding">false</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/graphy_value_text_size</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:tag">content_primary</item>
     </style>
     <style name="BmiCaption" parent="BmiText">
         <item name="android:textSize">@dimen/h3_5</item>
         <item name="android:tag">content_secondary</item>
+    </style>
+    <style name="BmiFieldLabel" parent="BmiCaption">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginBottom">@dimen/converter_compact_row_spacing</item>
+    </style>
+    <style name="BmiUnitButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/h3</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
+        <item name="android:minWidth">@dimen/converter_touch_target</item>
+        <item name="android:insetTop">@dimen/spacing_0dp</item>
+        <item name="android:insetBottom">@dimen/spacing_0dp</item>
+        <item name="android:paddingLeft">@dimen/converter_spacing</item>
+        <item name="android:paddingRight">@dimen/converter_spacing</item>
+        <item name="cornerRadius">@dimen/graphy_node_corner_radius</item>
+        <item name="android:tag">theme_outline_action</item>
+    </style>
+    <style name="BmiGenderIconButton" parent="BmiUnitButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/spacing_0dp</item>
+        <item name="iconSize">@dimen/bmi_gender_icon_size</item>
+        <item name="iconTintMode">src_in</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text"></item>
+        <item name="android:paddingLeft">@dimen/spacing_0dp</item>
+        <item name="android:paddingRight">@dimen/spacing_0dp</item>
     </style>
     <style name="BmiInput" parent="Widget.AppCompat.EditText">
         <item name="android:layout_width">0dp</item>
@@ -88,7 +182,6 @@
         <item name="android:gravity">right|center_vertical</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:inputType">numberDecimal</item>
-        <item name="android:selectAllOnFocus">true</item>
         <item name="android:paddingStart">@dimen/converter_spacing</item>
         <item name="android:paddingEnd">@dimen/converter_spacing</item>
         <item name="android:paddingTop">@dimen/spacing_0dp</item>
@@ -96,5 +189,28 @@
         <item name="android:layout_marginEnd">@dimen/converter_spacing</item>
         <item name="android:tag">converter_amount</item>
         <item name="android:saveEnabled">false</item>
+    </style>
+    <style name="BmiAgeInput" parent="BmiInput">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">0</item>
+        <item name="android:inputType">number</item>
+        <item name="android:gravity">end|center_vertical</item>
+        <item name="android:layout_marginEnd">@dimen/spacing_0dp</item>
+    </style>
+    <style name="BmiRangesCornerButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@font/app_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/h3_5</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
+        <item name="android:minWidth">@dimen/converter_touch_target</item>
+        <item name="android:insetTop">@dimen/spacing_0dp</item>
+        <item name="android:insetBottom">@dimen/spacing_0dp</item>
+        <item name="android:paddingLeft">@dimen/converter_small_spacing</item>
+        <item name="android:paddingRight">@dimen/converter_small_spacing</item>
+        <item name="android:layout_margin">@dimen/converter_compact_row_spacing</item>
+        <item name="cornerRadius">@dimen/graphy_node_corner_radius</item>
+        <item name="android:tag">theme_outline_action</item>
     </style>
 </resources>

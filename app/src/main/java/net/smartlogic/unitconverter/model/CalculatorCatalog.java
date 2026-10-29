@@ -133,8 +133,7 @@ public final class CalculatorCatalog {
         List<Entry> utilities = new ArrayList<>();
         utilities.add(register(entry(ID_TIMER, R.string.timer, R.drawable.ic_timer,
                 Destination.TIMER, -1)));
-        // Keep Timer registered for existing favorites, widgets and notifications.
-        // The complete utilities group is intentionally absent from main navigation.
+        // Register once here to preserve existing menu IDs and stored favorites.
 
         List<Entry> general = new ArrayList<>();
         general.add(register(entry("explore", R.string.nav_explore, R.drawable.ic_explore, Destination.EXPLORE, -1)));
@@ -153,6 +152,7 @@ public final class CalculatorCatalog {
                 Destination.AGE_CALCULATOR, -1)));
         tools.add(register(entry(ID_BMI, R.string.bmi_calculator, R.drawable.ic_bmi,
                 Destination.BMI_CALCULATOR, -1)));
+        tools.add(BY_ID.get(ID_TIMER));
         SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
     }
 

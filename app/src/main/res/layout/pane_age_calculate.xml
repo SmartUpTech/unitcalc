@@ -15,50 +15,50 @@
 
     <net.smartlogic.unitconverter.age.AgeResultLayout android:id="@+id/age_result_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_converter_card" android:tag="theme_outlined_surface">
     <LinearLayout android:id="@+id/age_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:gravity="top">
-        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="start">
-            <TextView android:id="@+id/age_title" style="@style/AgeText" android:gravity="start" android:text="@string/age_result" android:tag="content_secondary" />
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="bottom" android:baselineAligned="false">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+            <TextView android:id="@+id/age_title" style="@style/AgeCaption" android:gravity="center" android:text="@string/age_result" android:tag="content_secondary" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="bottom|center_horizontal" android:baselineAligned="false">
                 <TextView android:id="@+id/age_years" style="@style/ResultDisplay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:tag="content_accent" android:accessibilityLiveRegion="polite" />
-                <TextView android:id="@+id/age_year_unit" style="@style/AgeCaption" android:textSize="@dimen/converter_unit_text_size" android:layout_width="wrap_content" android:layout_marginStart="@dimen/converter_spacing" android:layout_marginBottom="@dimen/converter_spacing" />
+                <TextView android:id="@+id/age_year_unit" style="@style/AgeCaption" android:textSize="@dimen/converter_unit_text_size" android:layout_width="wrap_content" android:layout_marginStart="@dimen/converter_small_spacing" android:layout_marginBottom="@dimen/converter_small_spacing" />
             </LinearLayout>
-            <TextView android:id="@+id/age_remainder" style="@style/AgeText" android:gravity="start" android:tag="content_secondary" />
+            <TextView android:id="@+id/age_remainder" style="@style/AgeCaption" android:gravity="center" android:tag="content_secondary" />
         </LinearLayout>
         <View android:layout_width="@dimen/theme_outline" android:layout_height="match_parent" android:layout_marginHorizontal="@dimen/converter_spacing" android:tag="theme_divider" />
-        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
             <TextView android:id="@+id/age_next_label" style="@style/AgeText" android:text="@string/age_next_birthday" android:tag="content_accent" />
-            <ImageView android:layout_width="@dimen/converter_picker_row_height" android:layout_height="@dimen/converter_picker_row_height" android:layout_marginVertical="@dimen/converter_spacing" android:padding="@dimen/converter_spacing" android:src="@drawable/ic_birthday" android:tag="theme_accent_badge" android:importantForAccessibility="no" />
-            <TextView android:id="@+id/age_birthday_details" style="@style/AgeCaption" />
-            <TextView android:id="@+id/age_birthday_countdown" style="@style/AgeCaption" android:textSize="@dimen/converter_unit_text_size" android:layout_marginTop="@dimen/converter_small_spacing" />
+            <ImageView android:layout_width="@dimen/converter_picker_row_height" android:layout_height="@dimen/converter_picker_row_height" android:layout_marginVertical="@dimen/converter_small_spacing" android:padding="@dimen/converter_small_spacing" android:src="@drawable/ic_birthday" android:tag="theme_accent_badge" android:importantForAccessibility="no" />
+            <TextView android:id="@+id/age_birthday_details" style="@style/AgeCaption" android:gravity="center" />
+            <TextView android:id="@+id/age_birthday_countdown" style="@style/AgeCaption" android:textSize="@dimen/converter_unit_text_size" android:gravity="center" android:layout_marginTop="@dimen/converter_small_spacing" />
         </LinearLayout>
     </LinearLayout>
 
     <View android:layout_width="match_parent" android:layout_height="@dimen/theme_outline" android:tag="theme_divider" />
 
     <LinearLayout android:id="@+id/age_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-        <TextView android:id="@+id/age_summary_title" style="@style/AgeText" android:text="@string/age_summary" android:tag="content_accent" android:layout_marginBottom="@dimen/converter_spacing" />
+        <TextView android:id="@+id/age_summary_title" style="@style/AgeText" android:text="@string/age_summary" android:tag="content_accent" android:gravity="center" android:layout_marginBottom="@dimen/converter_small_spacing" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_years_label" /><TextView android:id="@+id/age_total_years" style="@style/AgeValue" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_years_label" /><TextView android:id="@+id/age_total_years" style="@style/AgeValue" android:gravity="center" />
             </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_months_label" /><TextView android:id="@+id/age_total_months" style="@style/AgeValue" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_months_label" /><TextView android:id="@+id/age_total_months" style="@style/AgeValue" android:gravity="center" />
             </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_weeks_label" /><TextView android:id="@+id/age_total_weeks" style="@style/AgeValue" />
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:layout_marginTop="@dimen/converter_spacing">
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_days_label" /><TextView android:id="@+id/age_total_days" style="@style/AgeValue" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_hours_label" /><TextView android:id="@+id/age_total_hours" style="@style/AgeValue" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView style="@style/AgeCaption" android:text="@string/age_minutes_label" /><TextView android:id="@+id/age_total_minutes" style="@style/AgeValue" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_weeks_label" /><TextView android:id="@+id/age_total_weeks" style="@style/AgeValue" android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
-        <TextView android:id="@+id/age_note" style="@style/AgeCaption" android:layout_marginTop="@dimen/converter_spacing" android:text="@string/age_totals_note" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false" android:layout_marginTop="@dimen/converter_small_spacing">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_days_label" /><TextView android:id="@+id/age_total_days" style="@style/AgeValue" android:gravity="center" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_hours_label" /><TextView android:id="@+id/age_total_hours" style="@style/AgeValue" android:gravity="center" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView style="@style/AgeCaption" android:gravity="center" android:text="@string/age_minutes_label" /><TextView android:id="@+id/age_total_minutes" style="@style/AgeValue" android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/age_note" style="@style/AgeCaption" android:gravity="center" android:layout_marginTop="@dimen/converter_small_spacing" android:text="@string/age_totals_note" />
     </LinearLayout>
     <LinearLayout android:id="@+id/age_empty_state" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:visibility="gone">
         <ImageView android:layout_width="@dimen/timer_button_large" android:layout_height="@dimen/timer_button_large" android:padding="@dimen/graphy_spacing_md" android:src="@drawable/ic_birthday" android:tag="content_accent" android:importantForAccessibility="no" />
@@ -68,7 +68,7 @@
     </net.smartlogic.unitconverter.age.AgeResultLayout>
 
     <LinearLayout android:id="@+id/age_actions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
-        <com.google.android.material.button.MaterialButton android:id="@+id/age_calendar" style="@style/AgeDateButton" android:tag="theme_text_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/graphy_value_text_size" android:text="@string/age_add_calendar" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/age_share" style="@style/AgeDateButton" android:tag="theme_filled_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/graphy_value_text_size" android:text="@string/share" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/age_calendar" style="@style/AgeDateButton" android:tag="theme_text_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/h3" android:text="@string/age_add_calendar" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/age_share" style="@style/AgeDateButton" android:tag="theme_filled_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/h3" android:text="@string/share" />
     </LinearLayout>
 </net.smartlogic.unitconverter.age.AgeCalculateLayout>

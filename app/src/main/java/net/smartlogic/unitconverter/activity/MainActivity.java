@@ -283,6 +283,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         switch (targetEntry.destination) {
             case BMI_CALCULATOR:
                 selectTab(R.id.bmi_calculator);
+                findViewById(R.id.frame_layout).post(() -> {
+                    Fragment fragment = tabFragments.get(R.id.bmi_calculator);
+                    if (fragment instanceof BmiCalculatorFragment bmi) bmi.restoreFromHistory(item.expression());
+                });
                 break;
             case BASIC_CALCULATOR:
                 selectTab(R.id.calculator);

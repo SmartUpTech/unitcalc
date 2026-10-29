@@ -88,10 +88,40 @@ class AgeLayoutTest {
                         assertTrue("$name ${if (v is TextView) v.text else v.javaClass.simpleName} fits parent: ${v.left},${v.top},${v.right},${v.bottom} in ${parent.width}x${parent.height}", v.left >= 0 && v.top >= 0 && v.right <= parent.width && v.bottom <= parent.height)
                     }
                     if (v is TextView && v.text.isNotEmpty()) {
+                        val surface = if (v is com.google.android.material.button.MaterialButton && v.backgroundTintList != null)
+                            androidx.core.graphics.ColorUtils.compositeColors(v.backgroundTintList!!.getColorForState(v.drawableState, v.backgroundTintList!!.defaultColor), ThemeManager.get().background())
+                            else ThemeManager.get().background()
+                        assertTrue("$name readable text and button colors: ${v.text}", androidx.core.graphics.ColorUtils.calculateContrast(v.currentTextColor, surface) >= 4.5)
+                        assertFalse("$name regular typography: ${v.text}", v.typeface.isBold)
+
                         assertTrue("$name ${v.id} has unclipped text", v.layout.getLineBottom(v.layout.lineCount - 1) <= v.height - v.compoundPaddingTop - v.compoundPaddingBottom)
                         if (v.isClickable) assertTrue("$name ${v.id} touch target", v.width >= 48 && v.height >= 48)
                         if (ids.contains(v.id)) assertEquals("$name summary totals stay on one line", 1, v.layout.lineCount)
                     }
+                }
+                if (!empty) {
+                    for (id in intArrayOf(R.id.age_title, R.id.age_remainder)) {
+                        val field = pane.findViewById<TextView>(id)
+                        for (line in 0 until field.layout.lineCount) {
+                            assertEquals("$name age text stays centered", field.layout.width / 2f,
+                                (field.layout.getLineLeft(line) + field.layout.getLineRight(line)) / 2f, 1f)
+                        }
+                    }
+                    val years = pane.findViewById<TextView>(R.id.age_years)
+                    val unit = pane.findViewById<TextView>(R.id.age_year_unit)
+                    assertEquals("$name age value and unit stay centered together", (years.parent as View).width / 2f,
+                        (years.left + unit.right) / 2f, 1f)
+                }
+                for (id in intArrayOf(R.id.age_birth_button, R.id.age_asof_button)) {
+                    val dropdown = pane.findViewById<com.google.android.material.button.MaterialButton>(id)
+                    assertTrue("$name dropdown outline is visible", dropdown.strokeWidth > 0)
+                    assertEquals("$name dropdown outline follows theme", ThemeManager.get().secondaryContentColor(), dropdown.strokeColor!!.defaultColor)
+                    assertTrue("$name dropdown icon is readable", androidx.core.graphics.ColorUtils.calculateContrast(dropdown.iconTint!!.defaultColor, ThemeManager.get().background()) >= 3.0)
+                }
+                for (icon in descendants(pane).filterIsInstance<android.widget.ImageView>().filter { shown(it) }) {
+                    val tint = androidx.core.widget.ImageViewCompat.getImageTintList(icon) ?: continue
+                    val surface = if (icon.tag == "theme_accent_badge") ThemeManager.get().accentContentColor() else ThemeManager.get().background()
+                    assertTrue("$name birthday icon is readable", androidx.core.graphics.ColorUtils.calculateContrast(tint.defaultColor, surface) >= 3.0)
                 }
                 assertEquals(ThemeManager.get().accentContentColor(), pane.findViewById<TextView>(R.id.age_years).currentTextColor)
             }
@@ -109,6 +139,7 @@ class AgeLayoutTest {
         }
     }
     @Test fun narrowPortraitKeepsTheWholeWorkflowVisible() = render(320, 432, 1f, "porcelain_white")
+    @Test fun narrowScaledPortraitKeepsTheWholeWorkflowVisible() = render(320, 432, 1.3f, "graphite_black")
     @Test fun scaledPortraitKeepsTheWholeWorkflowVisible() = render(360, 480, 1.3f, "graphite_black")
     @Test fun shortLandscapeKeepsTheWholeWorkflowVisible() = render(640, 300, 1f, "porcelain_white")
     @Test fun scaledLandscapeKeepsTheWholeWorkflowVisible() = render(720, 360, 1.3f, "graphite_black")

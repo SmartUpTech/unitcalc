@@ -32,8 +32,8 @@ fun TimerProgressRing(
         val arcSize = Size(diameter, diameter)
         drawArc(
             color = semantic.connector.copy(alpha = 0.35f),
-            startAngle = -90f,
-            sweepAngle = 360f,
+            startAngle = 135f,
+            sweepAngle = 270f,
             useCenter = false,
             topLeft = topLeft,
             size = arcSize,
@@ -41,8 +41,8 @@ fun TimerProgressRing(
         )
         drawArc(
             color = semantic.equal,
-            startAngle = -90f,
-            sweepAngle = 360f * progress,
+            startAngle = 135f,
+            sweepAngle = 270f * progress,
             useCenter = false,
             topLeft = topLeft,
             size = arcSize,

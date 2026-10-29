@@ -34,6 +34,7 @@ class AgeNavigationTest {
         settle()
     }
     @Test fun ageRestoresDatesAndGraphyAndBackReturnsToTheOriginalDestination() {
+        ThemeManager.setProAccessProvider { true }
         val app = RuntimeEnvironment.getApplication()
         Preferences.getInstance(app).preferences.edit().clear().commit()
         ThemeManager.init(app)
@@ -53,8 +54,17 @@ class AgeNavigationTest {
             choose(age, AgeDialogFragment.AS_OF, "2020-01-21")
             choose(age, AgeDialogFragment.BIRTH, "2010-08-16")
             assertEquals("9", age.requireView().findViewById<TextView>(R.id.age_years).text.toString())
+            ThemeManager.select(app, "graphite_black")
+            settle()
+            assertEquals("graphite_black", ThemeManager.get().id())
+            val dateField = age.requireView().findViewById<com.google.android.material.button.MaterialButton>(R.id.age_asof_button)
+            assertEquals(ThemeManager.get().secondaryContentColor(), dateField.strokeColor!!.defaultColor)
+            assertTrue(dateField.strokeWidth > 0)
+            assertFalse(requireNotNull(dateField.typeface).isBold)
+
             age.requireView().findViewById<TabLayout>(R.id.workspace_tabs).getTabAt(1)!!.select()
             settle()
+            assertEquals(View.GONE, age.requireView().findViewById<View>(R.id.graphy_context).visibility)
             activity = controller.recreate().get()
             settle()
             age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
@@ -73,7 +83,7 @@ class AgeNavigationTest {
             settle()
             age = activity.supportFragmentManager.findFragmentByTag(AppConst.TAG_AGE) as AgeCalculatorFragment
             assertEquals(AgeFormatter(activity).date(java.time.LocalDate.now()), age.requireView().findViewById<TextView>(R.id.age_asof_button).text.toString())
-        } finally { controller.pause().stop().destroy() }
+        } finally { controller.pause().stop().destroy(); ThemeManager.setProAccessProvider { false } }
     }
     @Test fun invalidInputClearsResultAndCalendarAlwaysAsksForFrequency() {
         val app = RuntimeEnvironment.getApplication()

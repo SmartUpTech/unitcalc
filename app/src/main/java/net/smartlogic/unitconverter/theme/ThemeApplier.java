@@ -173,9 +173,10 @@ public final class ThemeApplier {
             if ("content_accent".equals(view.getTag())) text.setTextColor(theme.accentContentColor());
         }
         if ("theme_outlined_surface".equals(view.getTag())) {
+            int outline = view.getResources().getDimensionPixelSize(R.dimen.theme_outline);
             GradientDrawable surface = roundedFill(theme.background(), view.getResources().getDimension(R.dimen.converter_card_padding));
-            surface.setStroke(view.getResources().getDimensionPixelSize(R.dimen.theme_outline), withAlpha(theme.secondaryContentColor(), 0x66));
-            view.setBackground(surface);
+            surface.setStroke(outline, withAlpha(theme.secondaryContentColor(), 0x66));
+            view.setBackground(new android.graphics.drawable.InsetDrawable(surface, outline, outline, outline, outline));
         }
         if ("theme_divider".equals(view.getTag())) view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x44));
         if ("content_accent".equals(view.getTag()) && view instanceof ImageView icon) {
@@ -185,10 +186,10 @@ public final class ThemeApplier {
             icon.setBackground(roundedFill(theme.accentContentColor(), view.getResources().getDimension(R.dimen.graphy_touch_target)));
             ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(theme.onAccentColor()));
         }
-        if (("theme_outline_action".equals(view.getTag()) || "theme_text_action".equals(view.getTag())
+        if (("theme_outline_action".equals(view.getTag()) || "theme_outline_field".equals(view.getTag()) || "theme_text_action".equals(view.getTag())
                 || "theme_filled_action".equals(view.getTag())) && view instanceof com.google.android.material.button.MaterialButton button) {
             boolean filled = "theme_filled_action".equals(view.getTag());
-            int ink = filled ? theme.onAccentColor() : theme.accentContentColor();
+            int ink = filled ? theme.onAccentColor() : "theme_outline_field".equals(view.getTag()) ? theme.primaryContentColor() : theme.accentContentColor();
             int disabledSurface = androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x18), theme.background());
             button.setTextColor(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
                     new int[]{CalculatorTheme.readableColor(theme.secondaryContentColor(), filled ? disabledSurface : theme.background()), ink}));
@@ -196,7 +197,7 @@ public final class ThemeApplier {
             button.setBackgroundTintList(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
                     new int[]{filled ? disabledSurface : theme.background(), filled ? theme.accentContentColor() : theme.background()}));
             button.setStrokeColor(ColorStateList.valueOf(theme.secondaryContentColor()));
-            button.setStrokeWidth("theme_outline_action".equals(view.getTag()) ? view.getResources().getDimensionPixelSize(R.dimen.theme_outline) : 0);
+            button.setStrokeWidth(("theme_outline_action".equals(view.getTag()) || "theme_outline_field".equals(view.getTag())) ? view.getResources().getDimensionPixelSize(R.dimen.theme_outline) : 0);
             button.setRippleColor(ColorStateList.valueOf(withAlpha(ink, 0x22)));
         }
         if (id == R.id.converter_divider) {
@@ -282,8 +283,9 @@ public final class ThemeApplier {
             tv.setTextColor(theme.secondaryContentColor());
         }
 
-        if (contains(ICON_IDS, id) && view instanceof ImageView iv) {
-            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.primaryContentColor()));
+        if ((contains(ICON_IDS, id) || id == R.id.equal) && view instanceof ImageView iv) {
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(id == R.id.equal
+                    ? theme.accentContentColor() : theme.primaryContentColor()));
         }
         if (id == R.id.history_item_more && view instanceof ImageView iv) {
             ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.secondaryContentColor()));

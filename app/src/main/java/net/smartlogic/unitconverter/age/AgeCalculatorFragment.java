@@ -94,6 +94,7 @@ public final class AgeCalculatorFragment extends Fragment {
                 action(R.id.age_share, this::share);
                 action(R.id.age_calendar, () -> { if (result != null) openDialog(AgeDialogFragment.CALENDAR, result.birth()); });
             } else {
+                // The shared Graphy metadata header already displays the date interval.
                 page.findViewById(R.id.graphy_context).setVisibility(View.GONE);
                 graphy = new GraphyPanelController((ComposeView) page.findViewById(R.id.graphy_panel), this, new GraphyViewTheme(requireContext()));
             }
@@ -143,8 +144,12 @@ public final class AgeCalculatorFragment extends Fragment {
         ((AgeResultLayout) calculatePage.findViewById(R.id.age_result_card)).showResult(result != null);
         text(R.id.age_empty_title, getString(birth == null ? R.string.age_empty_title : R.string.age_check_dates));
         text(R.id.age_empty_description, getString(birth == null ? R.string.age_empty : R.string.age_invalid));
+        View birthButton = calculatePage.findViewById(R.id.age_birth_button);
+        View asofButton = calculatePage.findViewById(R.id.age_asof_button);
         text(R.id.age_birth_button, birth == null ? getString(R.string.age_select_date) : f.date(birth));
         text(R.id.age_asof_button, f.date(asOf));
+        birthButton.setTag(birth != null ? "theme_outline_action" : "theme_outline_field");
+        asofButton.setTag("theme_outline_field");
         calculatePage.findViewById(R.id.age_birth_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_birth), birth == null ? getString(R.string.age_select_date) : f.date(birth)));
         calculatePage.findViewById(R.id.age_asof_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_as_of), f.date(asOf)));
         text(R.id.age_note, getString(result != null ? R.string.age_totals_note : birth == null ? R.string.age_empty : R.string.age_invalid));

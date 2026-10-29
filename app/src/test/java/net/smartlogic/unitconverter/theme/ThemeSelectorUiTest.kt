@@ -1,6 +1,7 @@
 package net.smartlogic.unitconverter.theme
 
 import android.app.Application
+import net.smartlogic.unitconverter.BuildConfig
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -92,13 +93,19 @@ class ThemeSelectorUiTest {
             tap(CalculatorThemes.OYSTER_CREAM.nameRes())
             assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
             tap(CalculatorThemes.GRAPHITE_BLACK.nameRes())
-            assertEquals(CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
-            assertEquals(CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
+            assertEquals(if (BuildConfig.DEBUG) CalculatorThemes.GRAPHITE_BLACK.id() else CalculatorThemes.OYSTER_CREAM.id(), preferences.selectedThemeId)
+            assertEquals(if (BuildConfig.DEBUG) null else CalculatorThemes.GRAPHITE_BLACK.nameRes(), model.uiState.value.lockedThemeNameRes)
         }
     }
 
     @Test fun sharedHintExplainsUnlocksAndConfirmationCanBeCancelled() {
         render(800, 1f) { view, model ->
+            if (BuildConfig.DEBUG) {
+                cards(view).forEach { assertEquals(view.context.getString(R.string.theme_debug_unlocked), it.config[SemanticsProperties.StateDescription]) }
+                assertTrue(model.uiState.value.cards.all { it.unlocked })
+                assertNull(model.uiState.value.lockedThemeNameRes)
+                return@render
+            }
             val locked = cards(view).first { it.config[SemanticsProperties.StateDescription].contains("Watch ad") }
             assertEquals(view.context.getString(R.string.theme_watch_seven_days), locked.config[SemanticsProperties.StateDescription])
             assertEquals(1, nodes(view).count {

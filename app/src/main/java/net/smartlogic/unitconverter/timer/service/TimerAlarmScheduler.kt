@@ -48,7 +48,9 @@ class TimerAlarmScheduler(private val context: Context) {
     }
 
     fun cancel() {
-        val intent = Intent(context, TimerAlarmReceiver::class.java)
+        val intent = Intent(context, TimerAlarmReceiver::class.java).apply {
+            action = TimerAlarmReceiver.ACTION_TIMER_ALARM
+        }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             REQUEST_CODE,

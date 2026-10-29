@@ -57,10 +57,13 @@ public class Preferences {
         return mPrefs;
     }
 
-    private static final String PREFS_BMI_STATE = "bmi_state_v1";
+    private static final String PREFS_BMI_STATE = "bmi_state_v2";
+    private static final String PREFS_BMI_STATE_LEGACY = "bmi_state_v1";
     public String getBmiState() {
-        try { return mPrefs.getString(PREFS_BMI_STATE, ""); }
-        catch (ClassCastException invalid) { return ""; }
+        try {
+            if (mPrefs.contains(PREFS_BMI_STATE)) return mPrefs.getString(PREFS_BMI_STATE, "");
+            return mPrefs.getString(PREFS_BMI_STATE_LEGACY, "");
+        } catch (ClassCastException invalid) { return ""; }
     }
     public void setBmiState(String state) { mPrefs.edit().putString(PREFS_BMI_STATE, state).apply(); }
 
@@ -105,7 +108,8 @@ public class Preferences {
     }
 
     public boolean isThemeAvailable(String themeId, long now, boolean pro) {
-        return ThemeAccess.isAvailable(themeId, pro, getThemeExpiry(themeId), now);
+        return net.smartlogic.unitconverter.BuildConfig.DEBUG && ThemeAccess.isKnown(themeId)
+                || ThemeAccess.isAvailable(themeId, pro, getThemeExpiry(themeId), now);
     }
 
     /** Startup/foreground reconciliation. No timer mutates the visible theme. */
@@ -141,6 +145,10 @@ public class Preferences {
             changed = true;
         } else if (rawSelected != null && !ThemeAccess.isKnown(rawSelected instanceof String ? (String) rawSelected : null)) {
             editor.putString(PREFS_SELECTED_THEME, selected);
+            changed = true;
+        }
+        if (net.smartlogic.unitconverter.BuildConfig.DEBUG && values.containsKey(PREFS_THEME_NOTICE)) {
+            editor.remove(PREFS_THEME_NOTICE);
             changed = true;
         }
         if (changed) editor.apply();

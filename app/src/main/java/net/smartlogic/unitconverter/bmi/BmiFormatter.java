@@ -13,6 +13,10 @@ public final class BmiFormatter {
             R.string.bmi_overweight, R.string.bmi_obesity_i, R.string.bmi_obesity_ii, R.string.bmi_obesity_iii};
     public static final int[] RANGES = {R.string.bmi_range_low, R.string.bmi_range_healthy,
             R.string.bmi_range_over, R.string.bmi_range_i, R.string.bmi_range_ii, R.string.bmi_range_iii};
+    public static final int[] CHILD_CATEGORIES = {R.string.bmi_underweight, R.string.bmi_healthy,
+            R.string.bmi_overweight, R.string.bmi_child_obesity, R.string.bmi_child_severe};
+    public static final int[] CHILD_BANDS = {R.string.bmi_child_low_band, R.string.bmi_child_healthy_band,
+            R.string.bmi_child_over_band, R.string.bmi_child_obesity_band, R.string.bmi_child_severe_band};
     private final Context context;
     public BmiFormatter(Context context) { this.context = context; }
     public String number(BigDecimal value) {
@@ -25,6 +29,16 @@ public final class BmiFormatter {
         return index < 0 ? formatted + separator + "00" : formatted.length() - index == 2 ? formatted + "0" : formatted;
     }
     public String category(BmiCalculator.Result result) { return context.getString(CATEGORIES[result.category().ordinal()]); }
+    public String childCategory(BmiAgeAssessment.Assessment assessment) { return context.getString(CHILD_CATEGORIES[assessment.category()]); }
+    public String childBand(BmiAgeAssessment.Assessment assessment) { return context.getString(CHILD_BANDS[assessment.category()]); }
+    public String childRange(BmiAgeAssessment.Assessment assessment) {
+        return context.getString(R.string.bmi_child_range, number(assessment.reference().p5()), number(assessment.reference().p85()));
+    }
+    public String summary(BmiAgeAssessment.Assessment assessment, boolean pounds) {
+        return assessment.group() == BmiAgeAssessment.Group.CHILD
+                ? context.getString(R.string.bmi_child_history, number(assessment.result().bmi()), childCategory(assessment), childBand(assessment), childRange(assessment))
+                : summary(assessment.result(), pounds);
+    }
     public String range(BmiCalculator.Result result, boolean pounds) {
         return context.getString(R.string.bmi_weight_range, number(mass(result.minimumKg(), pounds)),
                 number(mass(result.upperExclusiveKg(), pounds)), unit(pounds));

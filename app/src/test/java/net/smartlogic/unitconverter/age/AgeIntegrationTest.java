@@ -3,6 +3,8 @@ package net.smartlogic.unitconverter.age;
 import android.app.Application;
 import android.content.Intent;
 import android.provider.CalendarContract;
+import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.graphy.model.GraphyNodeType;
 import net.smartlogic.unitconverter.graphy.model.GraphyTopology;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
@@ -26,6 +28,8 @@ public class AgeIntegrationTest {
         var graph = AgeGraphBuilder.build(context, r);
         assertEquals(CalculatorCatalog.ID_AGE, graph.getCalculatorId());
         assertEquals(f.breakdown(r.age()), graph.getResult());
+        assertEquals(context.getString(R.string.age_date_interval, f.date(r.birth()), f.date(r.asOf())),
+                graph.getMetadata().get(GraphyOutput.METADATA_CONTEXT));
         assertEquals(1, graph.getNodes().stream().filter(n -> n.type() == GraphyNodeType.RESULT).count());
         assertEquals(graph.getNodes().size(), GraphyTopology.orderedNodes(graph).size());
         assertTrue(graph.getNodes().stream().anyMatch(n -> n.id().equals("years") && n.displayValue().contains(f.date(LocalDate.of(2019, 8, 16)))));
@@ -43,10 +47,18 @@ public class AgeIntegrationTest {
                 assertEquals(CalendarContract.Events.CONTENT_URI, intent.getData());
                 assertTrue(intent.getBooleanExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false));
                 assertEquals(LocalDate.of(2027, 8, 16).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(), intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, -1));
-                assertEquals(86400000, intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, -1) - intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, -1));
+                assertFalse("The insert editor must infer a single all-day date", intent.hasExtra(CalendarContract.EXTRA_EVENT_END_TIME));
                 assertFalse(intent.hasExtra(CalendarContract.Events.RRULE));
             }
         } finally { TimeZone.setDefault(previous); }
+    }
+    @Test public void birthdaysOnComparisonDatesHaveZeroDaysRatherThanAMisleadingTodayLabel() {
+        var f = new AgeFormatter(RuntimeEnvironment.getApplication());
+        for (int year : new int[]{2020, 2026, 2030}) {
+            var r = AgeCalculator.calculate(LocalDate.of(2000, 8, 16), LocalDate.of(year, 8, 16));
+            assertEquals(f.days(0), f.countdown(r));
+            assertTrue(f.share(r).contains("Countdown: " + f.days(0)));
+        }
     }
     @Test public void yearlyBirthdayIncludesTheRequestedRecurrence() {
         var birth = LocalDate.of(2000, 2, 29);

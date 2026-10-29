@@ -29,14 +29,21 @@ public class BmiNavigationTest {
         var controller = Robolectric.buildActivity(MainActivity.class).setup().visible();
         try {
             MainActivity activity = controller.get(); settle();
+            activity.restoreFromHistory(new CalculationHistoryItem("Age: 9 years 6 months; Gender: Female; Height: 100 cm; Weight: 21.2 kg", "BMI: 21.20", 1L, CalculatorCatalog.ID_BMI)); settle();
+            assertEquals("9", ((android.widget.EditText) activity.findViewById(R.id.bmi_age_input)).getText().toString());
+            assertEquals("21.2", ((android.widget.EditText) activity.findViewById(R.id.bmi_weight_input)).getText().toString());
             activity.navigateToEntry(CalculatorCatalog.getById(CalculatorCatalog.ID_BMI)); settle();
             assertEquals("BMI Calculator", activity.<TextView>findViewById(R.id.tv_app_bar_brand).getText().toString());
             assertEquals(View.VISIBLE, activity.findViewById(R.id.navigation).getVisibility());
             activity.navigateToEntry(CalculatorCatalog.getById("history")); settle();
             activity.closeHistory(); settle();
             assertEquals(AppConst.TAG_BMI, AppConst.CURRENT_TAG);
-            activity.restoreFromHistory(new CalculationHistoryItem("old inputs", "old BMI", 1L, CalculatorCatalog.ID_BMI)); settle();
+            activity.restoreFromHistory(new CalculationHistoryItem("A:40Y 1M, G:M, H:186cm, W:90kg", "BMI: 26.01", 1L, CalculatorCatalog.ID_BMI)); settle();
             assertEquals(AppConst.TAG_BMI, AppConst.CURRENT_TAG);
+            assertEquals("40", ((android.widget.EditText) activity.findViewById(R.id.bmi_age_input)).getText().toString());
+            assertEquals("186", ((android.widget.EditText) activity.findViewById(R.id.bmi_height_input)).getText().toString());
+            assertEquals("90", ((android.widget.EditText) activity.findViewById(R.id.bmi_weight_input)).getText().toString());
+            assertEquals("26.01", ((android.widget.TextView) activity.findViewById(R.id.bmi_value)).getText().toString());
             activity = controller.recreate().get(); settle();
             assertEquals(AppConst.TAG_BMI, AppConst.CURRENT_TAG);
             assertEquals(View.VISIBLE, activity.findViewById(R.id.navigation).getVisibility());

@@ -34,17 +34,23 @@ public final class AgeResultLayout extends ViewGroup {
             return;
         }
         textRoles(0);
-        spacing(false);
+        spacing(0);
         measureSections(width - inset * 2);
         if (requiredHeight() > height) {
             inset = gap = getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
             textRoles(1);
-            spacing(true);
+            spacing(1);
             measureSections(width - inset * 2);
         }
         if (requiredHeight() > height) {
             gap = getResources().getDimensionPixelSize(R.dimen.converter_compact_row_spacing);
             textRoles(2);
+            measureSections(width - inset * 2);
+        }
+        if (requiredHeight() > height) {
+            inset = gap = getResources().getDimensionPixelSize(R.dimen.converter_compact_row_spacing);
+            textRoles(3);
+            spacing(2);
             measureSections(width - inset * 2);
         }
         if (requiredHeight() > height && width >= getResources().getDimensionPixelSize(R.dimen.age_result_split_min_width)) {
@@ -57,16 +63,20 @@ public final class AgeResultLayout extends ViewGroup {
         setMeasuredDimension(width, resolveSizeAndState(Math.max(height, requiredHeight()), hSpec, fits ? 0 : MEASURED_STATE_TOO_SMALL));
     }
     private int line() { return getResources().getDimensionPixelSize(R.dimen.theme_outline); }
-    private void spacing(boolean compact) {
-        int space = getResources().getDimensionPixelSize(compact ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
+    private void spacing(int level) {
+        int space = getResources().getDimensionPixelSize(level == 2 ? R.dimen.converter_compact_row_spacing
+                : level == 1 ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
         // The next-birthday column contains its caption, decorative icon and date details.
         View icon = ((ViewGroup) findViewById(R.id.age_next_label).getParent()).getChildAt(1);
         ViewGroup.MarginLayoutParams iconParams = (ViewGroup.MarginLayoutParams) icon.getLayoutParams();
-        int iconSize = getResources().getDimensionPixelSize(compact ? R.dimen.timer_icon_large : R.dimen.graphy_touch_target);
+        int iconSize = getResources().getDimensionPixelSize(level == 2 ? R.dimen.timer_icon_medium
+                : level == 1 ? R.dimen.timer_icon_large : R.dimen.converter_picker_row_height);
         iconParams.width = iconParams.height = iconSize;
         iconParams.topMargin = iconParams.bottomMargin = space;
         icon.setLayoutParams(iconParams);
         icon.setPadding(space, space, space, space);
+        margin(findViewById(R.id.age_birthday_countdown), level == 2 ? 0
+                : getResources().getDimensionPixelSize(R.dimen.converter_small_spacing), 0);
         margin(findViewById(R.id.age_summary_title), 0, space);
         margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(1), 0, 0);
         margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(2), space, 0);
@@ -79,12 +89,13 @@ public final class AgeResultLayout extends ViewGroup {
         view.setLayoutParams(params);
     }
     private void textRoles(int density) {
-        role(R.id.age_years, density == 2 ? R.dimen.h1 : R.dimen.resultDisplaySize);
-        role(R.id.age_title, R.dimen.graphy_value_text_size);
-        role(R.id.age_next_label, R.dimen.graphy_value_text_size);
-        role(R.id.age_summary_title, R.dimen.graphy_value_text_size);
+        role(R.id.age_years, density >= 2 ? R.dimen.h1 : R.dimen.resultDisplaySize);
+        int heading = density >= 3 ? R.dimen.graphy_label_text_size : R.dimen.graphy_value_text_size;
+        role(R.id.age_title, heading);
+        role(R.id.age_next_label, heading);
+        role(R.id.age_summary_title, heading);
         for (int id : new int[]{R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks,
-                R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes}) role(id, density == 2 ? R.dimen.graphy_value_text_size : R.dimen.graphy_result_text_size);
+                R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes}) role(id, density >= 2 ? R.dimen.graphy_value_text_size : R.dimen.age_summary_value_size);
     }
     private void role(int id, int dimen) {
         ((TextView) findViewById(id)).setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(dimen));

@@ -2,6 +2,7 @@ package net.smartlogic.unitconverter.theme
 
 import android.app.Activity
 import android.app.Application
+import net.smartlogic.unitconverter.BuildConfig
 import android.os.Looper
 import net.smartlogic.unitconverter.helper.Preferences
 import org.junit.After
@@ -58,6 +59,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun onlyEarnedRewardPersistsAndApplicationWaitsForClosure() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         assertTrue(eligible())
         assertEquals(0, preferences.getThemeExpiry("glacier"))
@@ -78,6 +81,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun rapidTapsCannotStartAnotherRewardAttempt() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         ThemeRewardCoordinator.unlock(activity, "sage_green")
         assertEquals(1, presentations)
@@ -88,6 +93,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun dismissalAndPresentationFailureGrantNothingAndAllowRetry() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         closed(false)
         flush()
@@ -101,6 +108,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun closeBeforeRewardDeliveryDoesNotLoseTheReward() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         closed(false)
         earned(System.currentTimeMillis())
@@ -110,6 +119,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun offlineAndAlreadyUnlockedThemesNeverStartAnAd() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.connected = { false }
         ThemeRewardCoordinator.unlock(activity, "glacier")
         assertEquals(0, presentations)
@@ -120,6 +131,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun accessAndConnectivityAreRecheckedBeforePresentation() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         ThemeRewardCoordinator.connected = { false }
         assertFalse(eligible())
@@ -133,6 +146,8 @@ class ThemeRewardCoordinatorTest {
     }
 
     @Test fun recreationDoesNotLoseEarnedAccess() {
+        // Reward flows are release-only; debug never needs an ad.
+        org.junit.Assume.assumeFalse(BuildConfig.DEBUG)
         ThemeRewardCoordinator.unlock(activity, "glacier")
         earned(System.currentTimeMillis())
         activity.finish()
@@ -142,5 +157,13 @@ class ThemeRewardCoordinatorTest {
         flush()
         ThemeManager.init(RuntimeEnvironment.getApplication())
         assertEquals("glacier", ThemeManager.get().id())
+    }
+    @Test fun debugThemesNeverPresentRewardAds() {
+        org.junit.Assume.assumeTrue(BuildConfig.DEBUG)
+        CalculatorThemes.all().forEach { ThemeRewardCoordinator.unlock(activity, it.id()) }
+        flush()
+        assertEquals(0, presentations)
+        CalculatorThemes.all().forEach { assertEquals(0L, preferences.getThemeExpiry(it.id())) }
+        assertFalse(ThemeManager.hasProAccess())
     }
 }

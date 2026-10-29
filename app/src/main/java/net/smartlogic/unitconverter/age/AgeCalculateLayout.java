@@ -23,6 +23,10 @@ public final class AgeCalculateLayout extends ViewGroup {
             inset = gap = getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
             measurePortrait(width, height);
         }
+        if (!fits) {
+            inset = gap = getResources().getDimensionPixelSize(R.dimen.converter_compact_row_spacing);
+            measurePortrait(width, height);
+        }
         if (!fits && width >= getResources().getDimensionPixelSize(R.dimen.calculation_pane_min_width) * 2) {
             wide = true;
             leftWidth = (width - inset * 2 - gap) / 3;
