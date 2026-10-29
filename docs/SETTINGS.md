@@ -4,6 +4,7 @@
 - Borderless sections: Appearance, Display, Interaction, Feedback, Information. SettingsRow and SettingsSwitchRow share row spacing/touch targets. SettingsSelectionDialog handles the three simple display choices.
 - ThemeSelector and ThemeSelectorViewModel retain the compact theme cards, access states and opt-in rewarded-theme dialog. ThemeManager selection updates GraphyTheme and WindowChrome immediately without Activity recreation.
 - Preferences helper retains all existing keys and defaults. The screen listens for SharedPreferences changes so values and switches update even when storage changes elsewhere.
+- Interaction includes Start-up screen: Calculator (default), Unit Converter or Currency Converter. `Preferences` stores stable catalog IDs in `startup_screen`. Fresh MainActivity launches apply the chosen screen/mode; saved-instance restoration and explicit Timer launches retain priority. Returning from Preferences does not redirect the current workspace.
 - Actions: Rate (URL), Share (Intent), Website (URL), Privacy (URL).
 - Back/Up finish SettingsActivity. The screen is vertically scrollable and its selection dialogs dismiss on Back, outside tap or Cancel.
 
