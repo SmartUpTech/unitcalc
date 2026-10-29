@@ -4,6 +4,13 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class TimerDurationFormatterTest {
+    @Test fun countdownRoundsPositiveFractionsUp() {
+        assertEquals("0:01", TimerDurationFormatter.formatCountdown(1L))
+        assertEquals("0:01", TimerDurationFormatter.formatCountdown(999L))
+        assertEquals("0:01", TimerDurationFormatter.formatCountdown(1000L))
+        assertEquals("0:02", TimerDurationFormatter.formatCountdown(1001L))
+        assertEquals("0:00", TimerDurationFormatter.formatCountdown(-1L))
+    }
     @Test
     fun formatDuration_withHours() {
         assertEquals("2:00:00", TimerDurationFormatter.formatDuration(7_200_000L))

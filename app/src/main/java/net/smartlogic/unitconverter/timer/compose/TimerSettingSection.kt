@@ -8,13 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.timer.TimerDurationFormatter
@@ -37,7 +38,8 @@ fun TimerSettingSection(draft: TimerDraft, onDraftChange: (TimerDraft) -> Unit, 
     @Composable fun label() {
         TextButton(onClick = { labelInput = draft.label; editLabel = true },
             modifier = Modifier.fillMaxWidth().heightIn(min = rowHeight)) {
-            Text(draft.label.ifEmpty { stringResource(R.string.timer_label_hint) },
+            Text(draft.label.ifEmpty { stringResource(R.string.timer_default_label) },
+                maxLines = 1, overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
                 color = GraphyThemeTokens.semanticColors.secondaryText)
         }
@@ -53,7 +55,7 @@ fun TimerSettingSection(draft: TimerDraft, onDraftChange: (TimerDraft) -> Unit, 
         }
     }
     @Composable fun presets() {
-        val presets = LocalContext.current.resources.getIntArray(R.array.timer_preset_minutes)
+        val presets = LocalResources.current.getIntArray(R.array.timer_preset_minutes)
         Column(verticalArrangement = Arrangement.spacedBy(gap)) {
             presets.toList().chunked(3).forEach { group ->
                 Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
@@ -69,7 +71,8 @@ fun TimerSettingSection(draft: TimerDraft, onDraftChange: (TimerDraft) -> Unit, 
     }
     @Composable fun start() {
         TimerActionButton(stringResource(R.string.timer_start), onStart,
-            Modifier.fillMaxWidth(), primary = true, enabled = !draft.isZero)
+            Modifier.fillMaxWidth(), primary = true, enabled = !draft.isZero,
+            text = stringResource(R.string.timer_action_start))
     }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wide = maxWidth >= wideAt && maxHeight < wideAt

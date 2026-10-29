@@ -14,6 +14,25 @@ import java.util.Map;
 
 public class Preferences {
 
+    public static final String PREFS_STARTUP_SCREEN = "startup_screen";
+
+    public String getStartupScreen() {
+        Object value = mPrefs.getAll().get(PREFS_STARTUP_SCREEN);
+        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(value)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(value)) {
+            return (String) value;
+        }
+        return net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC;
+    }
+
+    public void setStartupScreen(String screen) {
+        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC.equals(screen)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(screen)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(screen)) {
+            mPrefs.edit().putString(PREFS_STARTUP_SCREEN, screen).apply();
+        }
+    }
+
     public static final String PREFS_SELECTED_THEME = "selected_theme";
     public static final String PREFS_THEME_EXPIRY_PREFIX = "theme_expiry_";
     public static final String PREFS_PENDING_REWARDED_THEME = "pending_rewarded_theme";

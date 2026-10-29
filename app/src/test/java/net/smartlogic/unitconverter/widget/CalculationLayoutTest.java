@@ -321,6 +321,39 @@ public class CalculationLayoutTest {
         return count;
     }
 
+    @Test public void converterModeSwitchPreservesEveryKeyBounds() {
+        CalculatorTheme original = ThemeManager.get();
+        try {
+            for (CalculatorTheme theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    ViewGroup unit = (ViewGroup) inflate(R.layout.fragment_unit_converter, scale);
+                    ViewGroup currency = (ViewGroup) inflate(R.layout.fragment_currency_converter, scale);
+                    for (int[] size : new int[][]{{412, 600}, {360, 460}, {412, 600}}) {
+                        measure(unit, size[0], size[1]);
+                        measure(currency, size[0], size[1]);
+                        assertKeys(unit, true);
+                        assertKeys(currency, true);
+                        assertEquals("Keypad bounds " + theme.id() + " scale=" + scale,
+                                bounds(unit, unit.findViewById(R.id.keypad)),
+                                bounds(currency, currency.findViewById(R.id.keypad)));
+                        ViewGroup keypad = unit.findViewById(R.id.keypad);
+                        for (int row = 0; row < keypad.getChildCount(); row++) {
+                            ViewGroup keys = (ViewGroup) keypad.getChildAt(row);
+                            for (int key = 0; key < keys.getChildCount(); key++) {
+                                View unitKey = keys.getChildAt(key);
+                                assertEquals(bounds(unit, unitKey),
+                                        bounds(currency, currency.findViewById(unitKey.getId())));
+                            }
+                        }
+                    }
+                }
+            }
+        } finally {
+            ReflectionHelpers.setStaticField(ThemeManager.class, "current", original);
+        }
+    }
+
     @Test public void convertersKeepKeypadGeometryStableAcrossModes() {
         for (float scale : new float[]{1f, 1.3f}) {
             for (int[] size : new int[][]{{320, 400}, {360, 460}, {412, 600}}) {

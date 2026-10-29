@@ -62,6 +62,7 @@ class TimerEngine private constructor(
     }
 
     fun startFromDraft() {
+        if (_uiState.value.phase !is TimerPhase.Setting) return
         val draft = currentDraft()
         if (draft.isZero) {
             return
@@ -90,6 +91,10 @@ class TimerEngine private constructor(
     fun pause() {
         val phase = _uiState.value.phase as? TimerPhase.Running ?: return
         val remainingMs = remainingForRunning(phase).coerceAtLeast(0L)
+        if (remainingMs == 0L) {
+            completeTimer(phase.label, phase.originalDurationMs)
+            return
+        }
         backgroundCoordinator.stopRunning()
         val paused = TimerPhase.Paused(
             label = phase.label,
@@ -143,6 +148,7 @@ class TimerEngine private constructor(
             return
         }
         stopAlarmIfNeeded()
+        stopBackgroundExecution()
         val draft = TimerDurationFormatter.draftFromDuration(phase.originalDurationMs, phase.label)
         publishSetting(draft)
     }
@@ -151,9 +157,9 @@ class TimerEngine private constructor(
         if (token != completionToken || token == lastFiredCompletionToken) {
             return
         }
-        lastFiredCompletionToken = token
         val phase = _uiState.value.phase
-        if (phase is TimerPhase.Running) {
+        if (phase is TimerPhase.Running && remainingForRunning(phase) <= 0L) {
+            lastFiredCompletionToken = token
             completeTimer(phase.label, phase.originalDurationMs, playAlarm = true)
         }
     }
@@ -184,7 +190,6 @@ class TimerEngine private constructor(
     }
 
     private fun completeTimer(label: String, originalDurationMs: Long, playAlarm: Boolean = true) {
-        stopBackgroundExecution()
         val completed = TimerPhase.Completed(
             label = label,
             originalDurationMs = originalDurationMs,
@@ -196,6 +201,10 @@ class TimerEngine private constructor(
         if (playAlarm && alarmPlayerEnabled) {
             alarmPlayer.start()
         }
+    }
+
+    fun ensureCompletedAlarm() {
+        if (_uiState.value.phase is TimerPhase.Completed && alarmPlayerEnabled) alarmPlayer.start()
     }
 
     private fun reconcileActivePhase() {
@@ -277,7 +286,7 @@ class TimerEngine private constructor(
             label = running.label,
             remainingMs = remainingMs,
             completionToken = completionToken,
-            triggerAtMillis = clock.currentTimeMillis() + remainingMs,
+            triggerAtMillis = running.endElapsedRealtime,
         )
     }
 
@@ -308,15 +317,9 @@ class TimerEngine private constructor(
                         endElapsedRealtime = snapshot.endElapsedRealtime,
                     )
                     remaining = running.endElapsedRealtime - clock.elapsedRealtime()
-                    phase = if (remaining <= 0L) {
-                        TimerPhase.Completed(
-                            label = snapshot.label,
-                            originalDurationMs = snapshot.originalDurationMs,
-                            completionToken = snapshot.completionToken,
-                        )
-                    } else {
-                        running
-                    }
+                    // Keep the running snapshot until reconciliation/receiver completes it.
+                    // Converting here would swallow the completion alarm after process death.
+                    phase = running
                 }
                 "paused" -> {
                     phase = TimerPhase.Paused(

@@ -23,6 +23,8 @@
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
     <string name="calculator">Calculator</string>
+    <string name="prefs_startup_screen">Start-up screen</string>
+    <string name="startup_currency_converter">Currency Converter</string>
     <string name="nav_calculator">Calculate</string>
     <string name="tab_calculate">Calculate</string>
     <string name="tab_convert">Convert</string>
@@ -63,7 +65,7 @@
     <string name="timer">Timer</string>
     <string name="timer_recent">Recent Timers</string>
     <string name="timer_label_hint">Label (optional)</string>
-    <string name="timer_default_label">Timer</string>
+    <string name="timer_default_label">Focus</string>
     <string name="timer_hours">hours</string>
     <string name="timer_min">min</string>
     <string name="timer_sec">sec</string>

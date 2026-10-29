@@ -128,6 +128,7 @@ public final class CalculationLayout extends LinearLayout {
             needed = measureRequired(widthMeasureSpec, minimumRow);
         }
         if (needed > viewportHeight && controls instanceof ConverterControlsLayout) {
+            ((ConverterControlsLayout) controls).setTightSpacing(true);
             // Keep a visible strip margin even in the smallest supported windows.
             // Reclaim secondary gaps only after the regular arrangements fail.
             View heading = findViewById(R.id.category_selector);
@@ -225,7 +226,10 @@ public final class CalculationLayout extends LinearLayout {
     }
 
     private void configure(boolean compact, boolean inline) {
-        if (controls instanceof ConverterControlsLayout converter) converter.setCompactHeading(false);
+        if (controls instanceof ConverterControlsLayout converter) {
+            converter.setCompactHeading(false);
+            converter.setTightSpacing(false);
+        }
         // Both converter modes use the same inline rows and header allocation.
         // This keeps their shared keypad stationary when switching modes.
         if (!sections.isEmpty()) inline = true;

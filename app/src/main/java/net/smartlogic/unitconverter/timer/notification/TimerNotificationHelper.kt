@@ -34,16 +34,21 @@ class TimerNotificationHelper(private val context: Context) {
     }
 
     fun showCompleted(label: String) {
+        notificationManager.notify(NOTIFICATION_ID, buildCompletedNotification(label))
+    }
+
+    fun buildCompletedNotification(label: String): Notification {
         val openIntent = openTimerIntent()
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_timer)
             .setContentTitle(context.getString(R.string.timer_times_up))
             .setContentText(context.getString(R.string.timer_notification_complete, displayLabel(label)))
             .setContentIntent(openIntent)
-            .setAutoCancel(true)
+            .addAction(0, context.getString(R.string.timer_dismiss), actionIntent(ACTION_STOP))
+            .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
-        notificationManager.notify(NOTIFICATION_ID, notification)
+        return notification
     }
 
     fun buildRunningNotification(label: String, remainingMs: Long, paused: Boolean): Notification {
@@ -62,6 +67,11 @@ class TimerNotificationHelper(private val context: Context) {
             .setOngoing(!paused)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+
+        if (!paused) {
+            builder.setWhen(System.currentTimeMillis() + remainingMs)
+                .setUsesChronometer(true).setChronometerCountDown(true)
+        }
 
         if (paused) {
             builder.addAction(0, context.getString(R.string.timer_resume), actionIntent(ACTION_RESUME))

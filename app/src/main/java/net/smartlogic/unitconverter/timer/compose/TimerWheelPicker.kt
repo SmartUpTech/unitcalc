@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,7 +36,6 @@ import androidx.compose.ui.semantics.setProgress
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.R
 
@@ -48,9 +48,10 @@ fun TimerWheelPicker(
     modifier: Modifier = Modifier,
 ) {
     val semantic = GraphyThemeTokens.semanticColors
+    val locale = LocalConfiguration.current.locales[0]
     val values = range.toList()
     val itemHeight = maxOf(dimensionResource(R.dimen.timer_wheel_row_height),
-        with(LocalDensity.current) { dimensionResource(R.dimen.timer_picker_size).toSp().toDp() })
+        with(LocalDensity.current) { MaterialTheme.typography.headlineSmall.lineHeight.toDp() })
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = values.indexOf(value).coerceAtLeast(0))
     val currentValue by rememberUpdatedState(value)
     val currentOnValueChange by rememberUpdatedState(onValueChange)
@@ -124,7 +125,7 @@ fun TimerWheelPicker(
                     val itemValue = values[index]
                     val isSelected = index == centerIndex
                     Text(
-                        text = itemValue.toString(),
+                        text = String.format(locale, "%02d", itemValue),
                         modifier = Modifier
                             .height(itemHeight)
                             .semantics { contentDescription = "$itemValue $unitLabel" }

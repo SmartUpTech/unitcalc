@@ -25,21 +25,21 @@ class TimerAlarmScheduler(private val context: Context) {
         ) {
             // The timer's elapsed-realtime state remains authoritative. An inexact
             // alarm still completes it when exact-alarm access is unavailable.
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
         } else {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
+                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
                         triggerAtMillis,
                         pendingIntent,
                     )
                 } else {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+                    alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
                 }
             } catch (denied: SecurityException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent)
                 } else {
                     throw denied
                 }

@@ -4,12 +4,12 @@ import net.smartlogic.unitconverter.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 
 @Composable
 fun TimerProgressRing(
@@ -17,7 +17,7 @@ fun TimerProgressRing(
     totalMs: Long,
     modifier: Modifier = Modifier,
 ) {
-    val semantic = GraphyThemeTokens.semanticColors
+    val colors = MaterialTheme.colorScheme
     val progress = if (totalMs <= 0L) {
         0f
     } else {
@@ -31,7 +31,7 @@ fun TimerProgressRing(
         val topLeft = Offset((size.width - diameter) / 2f, (size.height - diameter) / 2f)
         val arcSize = Size(diameter, diameter)
         drawArc(
-            color = semantic.connector.copy(alpha = 0.35f),
+            color = colors.outline.copy(alpha = 0.35f),
             startAngle = 135f,
             sweepAngle = 270f,
             useCenter = false,
@@ -40,7 +40,7 @@ fun TimerProgressRing(
             style = Stroke(width = stroke, cap = StrokeCap.Round),
         )
         drawArc(
-            color = semantic.equal,
+            color = colors.primary,
             startAngle = 135f,
             sweepAngle = 270f * progress,
             useCenter = false,

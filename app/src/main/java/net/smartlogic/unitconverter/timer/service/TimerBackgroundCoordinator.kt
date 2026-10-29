@@ -38,7 +38,9 @@ class AndroidTimerBackgroundCoordinator(context: Context) : TimerBackgroundCoord
     }
 
     override fun showCompleted(label: String) {
+        alarmScheduler.cancel()
         notificationHelper.showCompleted(label)
+        TimerForegroundService.start(appContext)
     }
 
     override fun cancelNotification() {

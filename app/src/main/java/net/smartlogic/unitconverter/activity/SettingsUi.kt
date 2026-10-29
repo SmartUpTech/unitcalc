@@ -58,6 +58,7 @@ import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.helper.Preferences
+import net.smartlogic.unitconverter.model.CalculatorCatalog
 import net.smartlogic.unitconverter.theme.ThemeManager
 import net.smartlogic.unitconverter.theme.ThemeSelector
 import net.smartlogic.unitconverter.theme.ThemeSelectorViewModel
@@ -118,7 +119,7 @@ private fun SettingsScreen(
     }
     DisposableEffect(preferences) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (choices.any { it.key == key } ||
+            if (key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
                 key == Preferences.PREFS_KEY_SOUNDS || key == Preferences.PREFS_KEY_VIBRATION) {
                 revision++
             }
@@ -187,6 +188,13 @@ private fun SettingsScreen(
             }
 
             SettingsSection(R.string.settings_section_interaction)
+            val startupLabels = arrayOf(stringResource(R.string.calculator),
+                stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
+            val startupIds = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
+            SettingsRow(stringResource(R.string.prefs_startup_screen),
+                value = startupLabels[startupIds.indexOf(preferences.startupScreen)],
+                onClick = { activeChoiceKey = Preferences.PREFS_STARTUP_SCREEN })
+            SettingsDivider()
             SettingsSwitchRow(stringResource(R.string.prefs_key_vibration_title),
                 preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
             SettingsDivider()
@@ -236,6 +244,20 @@ private fun SettingsScreen(
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
+    }
+    if (activeChoiceKey == Preferences.PREFS_STARTUP_SCREEN) {
+        val ids = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
+        val labels = arrayOf(stringResource(R.string.calculator),
+            stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
+        SettingsSelectionDialog(
+            title = stringResource(R.string.prefs_startup_screen), values = labels,
+            selected = labels[ids.indexOf(preferences.startupScreen)],
+            onSelect = { label ->
+                preferences.setStartupScreen(ids[labels.indexOf(label)])
+                activeChoiceKey = null
+            },
+            onDismiss = { activeChoiceKey = null },
+        )
     }
     choices.firstOrNull { it.key == activeChoiceKey }?.let { choice ->
         val values = stringArrayResource(choice.entries)

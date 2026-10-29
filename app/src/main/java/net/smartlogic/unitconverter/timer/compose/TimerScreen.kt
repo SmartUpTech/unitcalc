@@ -19,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
@@ -39,11 +37,9 @@ fun TimerScreen(viewModel: TimerViewModel) {
             .fillMaxSize()
             .padding(horizontal = spacing.md),
     ) {
-        val minimumHeight = dimensionResource(R.dimen.converter_touch_target) * 2 +
-            dimensionResource(R.dimen.timer_button_large) +
-            with(LocalDensity.current) { 56.sp.toDp() } + spacing.sm * 4 +
-            dimensionResource(R.dimen.converter_divider_height)
-        if (maxHeight < minimumHeight || maxWidth < dimensionResource(R.dimen.calculation_pane_min_width)) {
+        val minimumWidth = dimensionResource(R.dimen.converter_touch_target) * 3 +
+            dimensionResource(R.dimen.timer_compact_gap) * 2
+        if (maxWidth < minimumWidth) {
             Text(stringResource(R.string.tool_more_space), color = semantic.primaryText,
                 modifier = Modifier.align(Alignment.Center))
             return@BoxWithConstraints

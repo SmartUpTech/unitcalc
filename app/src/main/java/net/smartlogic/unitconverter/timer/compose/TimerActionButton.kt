@@ -23,6 +23,7 @@ internal fun TimerActionButton(
     modifier: Modifier = Modifier,
     primary: Boolean = false,
     enabled: Boolean = true,
+    text: String = label,
 ) {
     val shape = RoundedCornerShape(dimensionResource(R.dimen.timer_corner_radius))
     val padding = PaddingValues(horizontal = dimensionResource(R.dimen.timer_compact_gap))
@@ -31,12 +32,12 @@ internal fun TimerActionButton(
     if (primary) {
         Button(onClick, modifier = bounds, enabled = enabled, shape = shape,
             contentPadding = padding, colors = ButtonDefaults.buttonColors()) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(text, style = MaterialTheme.typography.bodyLarge)
         }
     } else {
         OutlinedButton(onClick, modifier = bounds, enabled = enabled, shape = shape,
             contentPadding = padding) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(text, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

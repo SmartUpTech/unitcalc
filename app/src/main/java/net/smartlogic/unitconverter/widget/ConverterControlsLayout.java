@@ -13,6 +13,12 @@ import net.smartlogic.unitconverter.R;
 public final class ConverterControlsLayout extends LinearLayout {
     private final Paint measurementPaint = new Paint();
     private boolean compactHeading;
+    private boolean tightSpacing;
+
+    void setTightSpacing(boolean tight) {
+        tightSpacing = tight;
+        forceLayout();
+    }
 
     public ConverterControlsLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,8 +59,9 @@ public final class ConverterControlsLayout extends LinearLayout {
         status.set(rate().getPaint());
         Paint.FontMetricsInt metrics = status.getFontMetricsInt();
         metadata.setMinimumHeight(Math.max(getResources().getDimensionPixelSize(
-                R.dimen.converter_metadata_height), metrics.bottom - metrics.top
-                + metrics.descent - metrics.ascent));
+                R.dimen.converter_metadata_height), Math.max(getResources().getDimensionPixelSize(
+                R.dimen.converter_touch_target), metrics.bottom - metrics.top
+                + metrics.descent - metrics.ascent)));
         status.setTextSize(getResources().getDimension(R.dimen.converter_category_text_size));
         metrics = status.getFontMetricsInt();
         int textHeight = metrics.bottom - metrics.top;
@@ -86,5 +93,16 @@ public final class ConverterControlsLayout extends LinearLayout {
             }
         }
         if (needsAlignment) super.onMeasure(widthSpec, heightSpec);
+        // Both modes reserve the larger secondary slot. Their weighted keypad
+        // must receive the same spare space despite having different controls.
+        int stripMargins = 2 * getResources().getDimensionPixelSize(tightSpacing
+                ? R.dimen.converter_compact_row_spacing : R.dimen.converter_spacing);
+        int tabsSlot = headerHeight + stripMargins;
+        // The third row is constrained below row two inside the card: only its
+        // top margin participates. Tabs are outside the card and use both.
+        int currencySlot = rowHeight + stripMargins / 2;
+        int ownSlot = header instanceof ConverterValueRow ? currencySlot : tabsSlot;
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight()
+                + Math.max(tabsSlot, currencySlot) - ownSlot);
     }
 }

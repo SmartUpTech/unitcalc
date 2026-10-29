@@ -146,6 +146,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, true);
         Preferences.getInstance(this).getPreferences().registerOnSharedPreferenceChangeListener(this);
 
+        if (savedInstanceState == null) {
+            String startupScreen = Preferences.getInstance(this).getStartupScreen();
+            AppConst.CURRENT_TAG = CalculatorCatalog.ID_BASIC.equals(startupScreen)
+                    ? AppConst.TAG_CALC : AppConst.TAG_CONVERTER;
+            AppConst.CONVERTER_TAB = CalculatorCatalog.ID_CURRENCY.equals(startupScreen)
+                    ? ConverterFragment.TAB_CURRENCY : ConverterFragment.TAB_UNIT;
+        }
         restoreFragmentsIfNeeded(savedInstanceState);
         getOnBackPressedDispatcher().addCallback(this, timerBackCallback);
         setUpBottomNavigation();
@@ -385,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             timerBackCallback.setEnabled(timerVisible);
             if (timerVisible) {
                 activeFragment = restoredTimer;
+                updateHistoryChrome(false);
             }
         }
     }
@@ -496,7 +504,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         android.widget.TextView title = findViewById(R.id.tv_app_bar_brand);
         ImageButton navigation = findViewById(R.id.btn_nav_menu);
-        if (title != null) title.setText(bmi ? R.string.bmi_calculator : age ? R.string.age_calculator : history ? R.string.nav_history : R.string.app_bar_brand);
+        if (title != null) title.setText(timerVisible ? R.string.timer : bmi ? R.string.bmi_calculator : age ? R.string.age_calculator : history ? R.string.nav_history : R.string.app_bar_brand);
         if (navigation != null) {
             navigation.setImageResource(secondary ? R.drawable.ic_settings_back : R.drawable.ic_menu);
             navigation.setContentDescription(getString(secondary ? R.string.history_back : R.string.nav_open_drawer));
@@ -631,6 +639,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         getOnBackPressedDispatcher().addCallback(this, timerBackCallback);
         timerBackCallback.setEnabled(true);
         activeFragment = timerFragment;
+        updateHistoryChrome(false);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
@@ -651,6 +660,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         transaction.commit();
         timerVisible = false;
         timerBackCallback.setEnabled(false);
+        updateHistoryChrome(activeFragment instanceof HistoryFragment);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
@@ -664,7 +674,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         boolean history = activeFragment instanceof HistoryFragment;
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
-            item.setVisible(!(activeFragment instanceof AgeCalculatorFragment) && item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
+            item.setVisible(!(activeFragment instanceof AgeCalculatorFragment)
+                    && !(activeFragment instanceof TimerFragment)
+                    && !(activeFragment instanceof GamesFragment)
+                    && item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
             if (item.getItemId() == R.id.menu_bmi_reset) item.setVisible(activeFragment instanceof BmiCalculatorFragment);
             if (item.getItemId() == R.id.menu_clear_history) item.setEnabled(history && ((HistoryFragment) activeFragment).hasHistory());
             if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().primaryContentColor());

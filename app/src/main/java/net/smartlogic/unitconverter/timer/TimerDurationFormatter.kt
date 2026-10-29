@@ -16,7 +16,9 @@ object TimerDurationFormatter {
         }
     }
 
-    fun formatCountdown(remainingMs: Long): String = formatDuration(remainingMs)
+    // Do not display 0:00 while a positive fraction of the final second remains.
+    fun formatCountdown(remainingMs: Long): String =
+        formatDuration((remainingMs.coerceAtLeast(0L) / 1000L + if (remainingMs % 1000L > 0L) 1L else 0L) * 1000L)
 
     fun normalizeLabel(label: String): String = label.trim().take(MAX_LABEL_LENGTH)
 
