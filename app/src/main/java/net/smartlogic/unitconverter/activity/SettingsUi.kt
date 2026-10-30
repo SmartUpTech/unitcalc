@@ -59,6 +59,9 @@ import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyThemeTokens
 import net.smartlogic.unitconverter.helper.Preferences
 import net.smartlogic.unitconverter.model.CalculatorCatalog
+import net.smartlogic.unitconverter.theme.Appearance
+import net.smartlogic.unitconverter.theme.ButtonsDialog
+import net.smartlogic.unitconverter.theme.TextFontDialog
 import net.smartlogic.unitconverter.theme.ThemeManager
 import net.smartlogic.unitconverter.theme.ThemeSelector
 import net.smartlogic.unitconverter.theme.ThemeSelectorViewModel
@@ -117,7 +120,7 @@ private fun SettingsScreen(
     }
     DisposableEffect(preferences) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED ||
+            if (Appearance.isPreference(key) || key == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED ||
                 key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
                 key == Preferences.PREFS_KEY_SOUNDS || key == Preferences.PREFS_KEY_VIBRATION) {
                 revision++
@@ -175,6 +178,10 @@ private fun SettingsScreen(
                 preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
 
             SettingsSection(R.string.settings_section_appearance)
+            Text(stringResource(R.string.appearance_customise),
+                modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(stringResource(R.string.prefs_title_theme),
                 modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
                 style = MaterialTheme.typography.bodyLarge)
@@ -185,6 +192,15 @@ private fun SettingsScreen(
                 }, onDismissDialog = themes::dismissLockedTheme,
                     onWatchAd = { themes.watchAd(activity) })
             }
+
+            SettingsRow(stringResource(R.string.appearance_buttons),
+                summary = stringResource(Appearance.style(context).label),
+                onClick = { activeChoiceKey = Appearance.STYLE })
+            SettingsDivider()
+            SettingsRow(stringResource(R.string.appearance_font), value = Appearance.font(context).label,
+                onClick = { activeChoiceKey = Appearance.FONT })
+            SettingsRow(stringResource(R.string.appearance_reset),
+                onClick = { activeChoiceKey = "appearance_reset" })
 
             SettingsSection(R.string.settings_section_number_format)
             choices.forEachIndexed { index, choice ->
@@ -241,6 +257,19 @@ private fun SettingsScreen(
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_version_title), value = BuildConfig.VERSION_NAME)
         }
+    }
+    if (activeChoiceKey == Appearance.STYLE) ButtonsDialog { activeChoiceKey = null }
+    if (activeChoiceKey == Appearance.FONT) TextFontDialog { activeChoiceKey = null }
+    if (activeChoiceKey == "appearance_reset") {
+        AlertDialog(onDismissRequest = { activeChoiceKey = null },
+            title = { Text(stringResource(R.string.appearance_reset)) },
+            text = { Text(stringResource(R.string.appearance_reset_message)) },
+            confirmButton = { TextButton(onClick = { Appearance.reset(context); activeChoiceKey = null }) {
+                Text(stringResource(R.string.appearance_reset))
+            } },
+            dismissButton = { TextButton(onClick = { activeChoiceKey = null }) {
+                Text(stringResource(android.R.string.cancel))
+            } })
     }
     if (activeChoiceKey == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED) {
         val allow = stringResource(R.string.settings_analytics_allow)

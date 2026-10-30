@@ -148,7 +148,7 @@ public final class BmiDialogFragment extends DialogFragment {
     }
     private TextView addText(String value, boolean selected) {
         TextView text = new TextView(requireContext(), null, 0, R.style.BmiText);
-        text.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(requireContext(), R.font.app_text));
+        text.setTypeface(net.smartlogic.unitconverter.theme.AppearanceTypography.typeface(requireContext()));
         text.setText(value); text.setTag(selected ? "bmi_selected" : "content_primary");
         int gap = getResources().getDimensionPixelSize(R.dimen.converter_spacing);
         text.setPadding(0, gap, 0, gap);

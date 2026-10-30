@@ -140,7 +140,7 @@ public final class GraphyViewTheme {
     }
 
     public android.graphics.Typeface getTypeface() {
-        return androidx.core.content.res.ResourcesCompat.getFont(context, R.font.app_text);
+        return net.smartlogic.unitconverter.theme.AppearanceTypography.typeface(context);
     }
 
     public android.content.res.Resources getResources() { return context.getResources(); }

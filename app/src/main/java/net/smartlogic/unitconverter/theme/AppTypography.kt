@@ -8,41 +8,44 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import net.smartlogic.unitconverter.R
 
-/** Compose counterpart of @font/app_text, using the same bundled Oswald weights. */
-val AppFontFamily = FontFamily(
-    Font(R.font.oswald_regular, FontWeight.Normal),
-    Font(R.font.oswald_bold, FontWeight.Bold),
-)
+/** Compose and XML share the bundled font registry and Android language fallback. */
+fun appFontFamily(font: Appearance.Font) = FontFamily(Font(font.resource, FontWeight.Normal))
+val AppFontFamily = appFontFamily(Appearance.Font.OSWALD)
 
 private val defaults = Typography()
 
-/** Every Material role uses Oswald, including app bars and dialog headlines. */
-val AppTypography = Typography(
-    displayLarge = defaults.displayLarge.copy(fontFamily = AppFontFamily),
-    displayMedium = defaults.displayMedium.copy(fontFamily = AppFontFamily),
-    displaySmall = defaults.displaySmall.copy(fontFamily = AppFontFamily),
-    headlineLarge = defaults.headlineLarge.copy(fontFamily = AppFontFamily),
-    headlineMedium = defaults.headlineMedium.copy(fontFamily = AppFontFamily),
-    headlineSmall = defaults.headlineSmall.copy(fontFamily = AppFontFamily),
-    titleLarge = defaults.titleLarge.copy(fontFamily = AppFontFamily),
-    titleMedium = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
-    titleSmall = defaults.titleSmall.copy(fontFamily = AppFontFamily),
-    labelLarge = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Medium, fontSize = 14.sp),
-    labelMedium = defaults.labelMedium.copy(fontFamily = AppFontFamily),
-    labelSmall = defaults.labelSmall.copy(fontFamily = AppFontFamily),
+/** Oswald remains the default; the selected family covers every Material role. */
+val AppTypography = appTypography(Appearance.Font.OSWALD)
+fun appTypography(font: Appearance.Font): Typography {
+    val family = appFontFamily(font)
+    return Typography(
+    displayLarge = defaults.displayLarge.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    displayMedium = defaults.displayMedium.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    displaySmall = defaults.displaySmall.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    headlineLarge = defaults.headlineLarge.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    headlineMedium = defaults.headlineMedium.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    headlineSmall = defaults.headlineSmall.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    titleLarge = defaults.titleLarge.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    titleMedium = TextStyle(fontFamily = family, fontWeight = FontWeight.Normal, fontSize = 16.sp),
+    titleSmall = defaults.titleSmall.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    labelLarge = TextStyle(fontFamily = family, fontWeight = FontWeight.Normal, fontSize = 14.sp),
+    labelMedium = defaults.labelMedium.copy(fontFamily = family, fontWeight = FontWeight.Normal),
+    labelSmall = defaults.labelSmall.copy(fontFamily = family, fontWeight = FontWeight.Normal),
     bodyLarge = TextStyle(
-        fontFamily = AppFontFamily,
+        fontFamily = family,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = AppFontFamily,
+        fontFamily = family,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
     ),
     bodySmall = TextStyle(
-        fontFamily = AppFontFamily,
+        fontFamily = family,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
     ),
 )
+
+}

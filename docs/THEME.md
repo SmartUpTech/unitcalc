@@ -1,7 +1,7 @@
 # THEME SYSTEM
 - Engine: ThemeApplier (View propagation). CalculatorTheme (model). CalculatorThemes (registry).
 - Colors (Semantic): background (surface), mainText (content), functions (utility keys), operators (math), equal (accent/result).
-- Logic: No hex in UI. Use background/transparent for keys. Font=@font/app_text. Text=@style/TextAppearance.Graphy.*.
+- Logic: No hex in UI. Use the shared appearance renderer for numeric keys; Flat keeps labels on the background and Equal/BMI Done always use accent fill. Font=@font/app_text. Text=@style/TextAppearance.Graphy.*.
 - Propagation: Recursive ThemeApplier.apply(). Constraint: MaterialButtonToggleGroup buttons must keep background (don't set null). WindowChrome syncs status/nav bars.
 - Ext: Add to CalculatorThemes for auto-support.
 
@@ -34,15 +34,14 @@ backgrounds.
 
 Use regular weight by default. Bold requires an explicit user request; it must not be introduced as automatic field or heading emphasis.
 
-Oswald is the app font. XML Views and Canvas resolve `@font/app_text`, which
+Oswald is the default app font; Appearance → Text Font also offers bundled Roboto, Open Sans, Lato and Roboto Mono. XML Views and Canvas resolve `@font/app_text`, which
 contains the bundled regular (400) and bold (700) weights. Compose uses
 `theme/AppTypography.kt` (`AppFontFamily` and `AppTypography`) with those same
 bundled files. `GraphyTheme` supplies this complete Material type scale to every
 Compose host, including Settings and Timer. Define every text role, not only
 body text: app bars use `titleLarge` and dialogs use headline styles. The XML
 theme similarly maps all Material text appearances and sets both framework and
-AppCompat font-family attributes. Keep font sizes/weights semantic; do not fix
-individual screens with font overrides or recursive runtime typeface changes.
+AppCompat font-family attributes. Keep font sizes/weights semantic. AppearanceTypography owns the shared View/font boundary and Canvas lookup; GraphyTheme resolves the same selected family for Compose. Do not add screen-specific font overrides. See APPEARANCE.md.
 
 ## Theme preferences and access
 - Porcelain White (`porcelain_white`), Oyster Cream (`oyster_cream`) and Titanium Gray (`titanium_gray`) are permanently free. Porcelain White remains the default; names and IDs do not change. Other themes require Pro or an independent rewarded expiry later than the current epoch-millisecond time. Temporary ad-free access is unrelated.
