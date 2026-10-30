@@ -19,6 +19,7 @@ public class UnitConverter extends Application {
 
         ThemeHelper.lockResourceNightMode();
         ThemeManager.init(this);
+        net.smartlogic.unitconverter.theme.AppearanceTypography.install(this);
         ThemeAccessLifecycle.install(this);
     }
 }

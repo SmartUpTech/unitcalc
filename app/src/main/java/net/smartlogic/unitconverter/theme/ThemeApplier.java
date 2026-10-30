@@ -71,7 +71,8 @@ public final class ThemeApplier {
         if (root == null) {
             return;
         }
-        applyRecursive(root, ThemeManager.get());
+        AppearanceTypography.apply(root);
+        applyRecursive(root, ThemeManager.get(), Appearance.style(root.getContext()), Appearance.shape(root.getContext()));
     }
 
     public static void applyNavigation(
@@ -136,6 +137,7 @@ public final class ThemeApplier {
     /** Shared styling for user-reviewed action dialogs. */
     public static void applyDialog(@NonNull androidx.appcompat.app.AlertDialog dialog) {
         CalculatorTheme theme = ThemeManager.get();
+        AppearanceTypography.bind(dialog.getWindow().getDecorView());
         TextView title = dialog.findViewById(androidx.appcompat.R.id.alertTitle);
         TextView message = dialog.findViewById(android.R.id.message);
         if (title != null) title.setTextColor(theme.primaryContentColor());
@@ -145,7 +147,8 @@ public final class ThemeApplier {
         }
     }
 
-    private static void applyRecursive(@NonNull View view, @NonNull CalculatorTheme theme) {
+    private static void applyRecursive(@NonNull View view, @NonNull CalculatorTheme theme,
+            Appearance.Style style, Appearance.Shape shape) {
         int id = view.getId();
         if (id == R.id.cl
                 || id == R.id.drawer_layout
@@ -257,9 +260,10 @@ public final class ThemeApplier {
             view.setPadding(left, 0, right, 0);
         }
 
-        boolean isKey = contains(NUMBER_IDS, id) || contains(FUNCTION_IDS, id) || contains(OPERATOR_IDS, id) || contains(ICON_IDS, id) || id == R.id.equal;
+        KeyAppearanceDrawable.Role keyRole = keyRole(id);
+        boolean isKey = keyRole != null;
 
-        if (isKey || contains(CLEAR_BACKGROUND_IDS, id)) {
+        if (contains(ICON_IDS, id) || contains(CLEAR_BACKGROUND_IDS, id)) {
             if (view instanceof com.google.android.material.button.MaterialButton mb
                     && mb.getParent() instanceof com.google.android.material.button.MaterialButtonToggleGroup) {
                 mb.setBackgroundTintList(null);
@@ -268,24 +272,18 @@ public final class ThemeApplier {
             }
         }
 
-        if (contains(NUMBER_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.primaryContentColor());
-        } else if (contains(FUNCTION_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.secondaryContentColor());
-        } else if (contains(OPERATOR_IDS, id) && view instanceof TextView tv) {
-            tv.setTextColor(theme.operatorContentColor());
-        } else if (id == R.id.equal && view instanceof TextView tv) {
-            tv.setTextColor(theme.accentContentColor());
-        } else if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView tv) {
+        if (contains(MAIN_TEXT_IDS, id) && view instanceof TextView tv) {
             tv.setTextColor(theme.primaryContentColor());
             tv.setHintTextColor(theme.secondaryContentColor());
         } else if (contains(SECONDARY_TEXT_IDS, id) && view instanceof TextView tv) {
             tv.setTextColor(theme.secondaryContentColor());
         }
 
-        if ((contains(ICON_IDS, id) || id == R.id.equal) && view instanceof ImageView iv) {
-            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(id == R.id.equal
-                    ? theme.accentContentColor() : theme.primaryContentColor()));
+        if (contains(ICON_IDS, id) && !isKey && view instanceof ImageView iv) {
+            ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.primaryContentColor()));
+        }
+        if (isKey) {
+            applyKey(view, theme, style, shape, keyRole);
         }
         if (id == R.id.history_item_more && view instanceof ImageView iv) {
             ImageViewCompat.setImageTintList(iv, ColorStateList.valueOf(theme.secondaryContentColor()));
@@ -299,9 +297,32 @@ public final class ThemeApplier {
 
         if (view instanceof ViewGroup group) {
             for (int i = 0; i < group.getChildCount(); i++) {
-                applyRecursive(group.getChildAt(i), theme);
+                applyRecursive(group.getChildAt(i), theme, style, shape);
             }
         }
+    }
+
+    /** Canonical semantic roles for every numeric keypad and its previews. */
+    @Nullable public static KeyAppearanceDrawable.Role keyRole(int id) {
+        if (id == R.id.equal) return KeyAppearanceDrawable.Role.EQUAL;
+        if (contains(NUMBER_IDS, id)) return KeyAppearanceDrawable.Role.NUMBER;
+        if (contains(FUNCTION_IDS, id)) return KeyAppearanceDrawable.Role.FUNCTION;
+        if (contains(OPERATOR_IDS, id)) return KeyAppearanceDrawable.Role.OPERATOR;
+        if (id == R.id.backspace || id == R.id.copy) return KeyAppearanceDrawable.Role.UTILITY;
+        return null;
+    }
+
+    /** Used by both live keys and native previews; retains existing click/feedback listeners. */
+    public static void applyKey(View view, CalculatorTheme theme, Appearance.Style style,
+            Appearance.Shape shape, KeyAppearanceDrawable.Role role) {
+        KeyAppearanceDrawable drawable = new KeyAppearanceDrawable(view.getResources(), theme, style, shape, role);
+        androidx.core.view.ViewCompat.setBackgroundTintList(view, null);
+        view.setBackground(drawable);
+        view.setForeground(new android.graphics.drawable.RippleDrawable(
+                ColorStateList.valueOf(withAlpha(drawable.foreground(), 0x22)), null,
+                new KeyAppearanceDrawable(view.getResources(), theme, Appearance.Style.SOFT_FILL, shape, role)));
+        if (view instanceof TextView text) text.setTextColor(drawable.foreground());
+        if (view instanceof ImageView icon) ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(drawable.foreground()));
     }
 
     private static int withAlpha(@ColorInt int color, int alpha) {

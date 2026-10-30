@@ -1,0 +1,33 @@
+<resources>
+    <string name="appearance_customise">Customise</string>
+    <string name="appearance_buttons">Buttons</string>
+    <string name="appearance_font">Text Font</string>
+    <string name="appearance_reset">Reset customisation</string>
+    <string name="appearance_reset_message">Restore Flat (Borderless), Rounded and Oswald? Your theme will stay selected.</string>
+    <string name="appearance_style">Button Style</string>
+    <string name="appearance_shape">Button Shape</string>
+    <string name="appearance_flat_shape">Not applicable for Flat style.</string>
+    <string name="appearance_apply">Apply</string>
+    <string name="appearance_preview">Live keypad preview</string>
+    <string name="appearance_font_sample">0123456789  + − × ÷ = √ π %</string>
+    <string name="button_style_flat">Flat (Borderless)</string>
+    <string name="button_style_soft_fill">Soft Fill</string>
+    <string name="button_style_outline">Outline</string>
+    <string name="button_style_tonal">Tonal</string>
+    <string name="button_style_raised">Raised</string>
+    <string name="button_style_inset">Inset</string>
+    <string name="button_style_bevel">Bevel</string>
+    <string name="button_style_satin">Satin</string>
+    <string name="button_shape_square">Square</string>
+    <string name="button_shape_rounded">Rounded</string>
+    <string name="button_shape_squircle">Squircle</string>
+    <string name="button_shape_circle">Circle</string>
+    <dimen name="appearance_key_gap">4dp</dimen>
+    <dimen name="appearance_key_radius">10dp</dimen>
+    <dimen name="appearance_preview_height">64dp</dimen>
+    <dimen name="appearance_preview_text">20sp</dimen>
+    <dimen name="appearance_scroll_track_width">96dp</dimen>
+    <dimen name="appearance_scroll_track_height">4dp</dimen>
+    <item type="id" name="appearance_font_applied" />
+    <item type="id" name="appearance_typography_bound" />
+</resources>

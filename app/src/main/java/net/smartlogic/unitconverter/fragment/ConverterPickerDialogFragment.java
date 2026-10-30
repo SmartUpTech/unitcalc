@@ -170,6 +170,7 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         window.setTitle(requireArguments().getString(TITLE));
         removeVisibleFrameListener();
         dialogDecor = window.getDecorView();
+        net.smartlogic.unitconverter.theme.AppearanceTypography.bind(dialogDecor);
         Rect visibleFrame = new Rect();
         // Floating windows may pan instead of resizing for the IME. Bound the
         // whole dialog to the visible frame so its list never extends behind it.

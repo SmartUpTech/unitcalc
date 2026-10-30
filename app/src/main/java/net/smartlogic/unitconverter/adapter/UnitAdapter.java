@@ -64,6 +64,7 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
             holder.textView.setText(label);
         }
 
+        net.smartlogic.unitconverter.theme.AppearanceTypography.apply(convertView);
         return convertView;
     }
 
@@ -88,6 +89,7 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         } else {
             holder.textView.setText(label);
         }
+        net.smartlogic.unitconverter.theme.AppearanceTypography.apply(convertView);
         return convertView;
     }
 

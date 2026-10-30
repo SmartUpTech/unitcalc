@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import net.smartlogic.unitconverter.theme.ThemeManager
-import net.smartlogic.unitconverter.theme.AppTypography
+import net.smartlogic.unitconverter.theme.appTypography
+
+val LocalCalculatorTheme = androidx.compose.runtime.staticCompositionLocalOf { ThemeManager.get() }
 
 @Composable
 fun GraphyTheme(
@@ -24,6 +26,15 @@ fun GraphyTheme(
         val listener = ThemeManager.Listener { revision++ }
         ThemeManager.addListener(listener)
         onDispose { ThemeManager.removeListener(listener) }
+    }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    DisposableEffect(context) {
+        val prefs = net.smartlogic.unitconverter.helper.Preferences.getInstance(context).preferences
+        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (net.smartlogic.unitconverter.theme.Appearance.isPreference(key)) revision++
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
     revision
 
@@ -36,12 +47,13 @@ fun GraphyTheme(
         dimensionResource(R.dimen.graphy_spacing_md), dimensionResource(R.dimen.graphy_spacing_lg))
     val shape = RoundedCornerShape(dimensionResource(R.dimen.graphy_node_corner_radius))
     CompositionLocalProvider(
+        LocalCalculatorTheme provides theme,
         LocalGraphySemanticColors provides semanticColors,
         LocalGraphySpacing provides spacing,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = AppTypography,
+            typography = appTypography(net.smartlogic.unitconverter.theme.Appearance.font(context)),
             shapes = Shapes(small = shape, medium = shape, large = shape),
             content = content,
         )
