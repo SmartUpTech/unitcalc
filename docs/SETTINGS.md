@@ -13,7 +13,7 @@
 
 - Appearance drafts, shared renderers, defaults and review captures: see [APPEARANCE.md](APPEARANCE.md). Reset affects only button style/remembered shape/font; Theme and Number format retain their existing behavior.
 
-- Text Font now mirrors Buttons: one live keypad row, a “This is <font name>”
+- Text Font now mirrors Buttons: one live keypad row, an “A fresh look with <font name>”
   sample and a horizontal selector with each font name in its own font. All
   preview changes stay local until Apply; cancellation and dismissal preserve the
   applied font. Both dialogs share the selector and native preview component.

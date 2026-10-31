@@ -9,8 +9,7 @@
     <string name="appearance_flat_shape">Not applicable for Flat style.</string>
     <string name="appearance_apply">Apply</string>
     <string name="appearance_preview">Live keypad preview</string>
-    <string name="appearance_font_sample">0123456789  + − × ÷ = √ π %</string>
-    <string name="appearance_font_preview_text">This is %1$s.</string>
+    <string name="appearance_font_preview_text">A fresh look with %1$s.</string>
     <string name="appearance_font_choice">Font</string>
     <string name="button_style_flat">Flat (Borderless)</string>
     <string name="button_style_soft_fill">Soft Fill</string>

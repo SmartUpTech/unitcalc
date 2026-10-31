@@ -19,7 +19,7 @@ popup may scroll vertically in constrained windows; tool layouts are unchanged.
 
 Text Font uses the same preview row and horizontal selector. Each choice's name
 uses its own regular font. Selecting a choice updates the native key labels,
-“This is <font name>” text and mathematical sample together, without writing the
+“A fresh look with <font name>” caption together, without writing the
 font preference. The preview retains the applied button style, remembered shape
 and theme. Apply saves the selected font; Cancel, Back and outside taps discard
 the draft. Drafts survive saved-state restoration like the Buttons dialog.

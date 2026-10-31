@@ -177,8 +177,6 @@ fun TextFontDialog(onDismiss: () -> Unit) {
                     fontFamily = family, style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(vertical = spacing.sm))
                 Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) {
-                    Text(stringResource(R.string.appearance_font_sample),
-                        fontFamily = family, style = MaterialTheme.typography.bodyLarge)
                     Text(stringResource(R.string.appearance_font_choice),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(vertical = spacing.sm))

@@ -28,7 +28,7 @@ Apply; Flat still disables shape choices and remembers the last shape.
 The comparison sheets are review-only, not additional previews in the popup.
 
 The Text Font dialog now follows the same pattern: one live row of keys, a
-“This is <font name>” sentence, a mathematical sample and one horizontal selector.
+“A fresh look with <font name>” caption and one horizontal selector.
 Names in the selector each use their own font; only the preview text and key
 labels change while editing. The applied theme, button style and shape stay in
 place, and the font is saved only on Apply.
@@ -38,6 +38,11 @@ section. Equal remains accent-filled in every style; the Equal/BMI sheets use
 Circle to demonstrate the remembered shape in Flat.
 
 ## Validation scope
+
+Caption simplification (2026-10-31): removed the separate number/symbol sample
+line and changed the caption to “A fresh look with <font name>.” Debug assembly,
+all 11 appearance UI tests and lint passed again (0 lint errors). Updated captures
+include the simplified layout in light/dark themes and at 2× text.
 
 Font-dialog follow-up (2026-10-31): **55 targeted tests passed, zero failures**.
 Debug assembly succeeded; Android lint reported **0 errors, 406 warnings**.
