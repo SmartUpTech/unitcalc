@@ -110,10 +110,7 @@ class AppearanceUiTest {
     }
     private fun assertSinglePreview(style: Appearance.Style, shape: Appearance.Shape) {
         compose.runOnIdle {
-            fun previews(v: android.view.View): List<KeypadPreviewView> =
-                if (v is KeypadPreviewView) listOf(v) else if (v is android.view.ViewGroup)
-                    (0 until v.childCount).flatMap { previews(v.getChildAt(it)) } else emptyList()
-            val preview = previews(ShadowDialog.getLatestDialog().window!!.decorView).single()
+            val preview = singlePreview()
             assertEquals(android.widget.LinearLayout.HORIZONTAL, preview.orientation)
             assertEquals(5, preview.childCount)
             for (i in 0 until preview.childCount) {
@@ -127,20 +124,20 @@ class AppearanceUiTest {
             assertEquals("=", (preview.getChildAt(4) as android.widget.TextView).text.toString())
         }
     }
-    @Test fun backAndOutsideTapDiscardDrafts() {
-        open("buttons")
-        tap(R.string.button_style_satin)
+    private fun singlePreview(): KeypadPreviewView {
+        fun previews(v: android.view.View): List<KeypadPreviewView> =
+            if (v is KeypadPreviewView) listOf(v) else if (v is android.view.ViewGroup)
+                (0 until v.childCount).flatMap { previews(v.getChildAt(it)) } else emptyList()
+        return previews(ShadowDialog.getLatestDialog().window!!.decorView).single()
+    }
+    private fun pressSystemBack() {
         compose.runOnIdle {
-            // Exercise Android's system Back dispatcher; injecting a key into Compose
-            // does not simulate the platform Back gesture on API 34.
             (ShadowDialog.getLatestDialog() as androidx.activity.ComponentDialog)
                 .onBackPressedDispatcher.onBackPressed()
         }
         compose.waitForIdle()
-        compose.onNodeWithText(app.getString(R.string.appearance_buttons)).assertDoesNotExist()
-        assertEquals(Appearance.Style.FLAT, Appearance.style(app))
-        open("buttons")
-        tap(R.string.button_style_bevel)
+    }
+    private fun tapOutsideDialog() {
         compose.runOnIdle {
             val window = ShadowDialog.getLatestDialog()
             val downTime = android.os.SystemClock.uptimeMillis()
@@ -150,6 +147,16 @@ class AppearanceUiTest {
             }
         }
         compose.waitForIdle()
+    }
+    @Test fun backAndOutsideTapDiscardDrafts() {
+        open("buttons")
+        tap(R.string.button_style_satin)
+        pressSystemBack()
+        compose.onNodeWithText(app.getString(R.string.appearance_buttons)).assertDoesNotExist()
+        assertEquals(Appearance.Style.FLAT, Appearance.style(app))
+        open("buttons")
+        tap(R.string.button_style_bevel)
+        tapOutsideDialog()
         compose.onNodeWithText(app.getString(R.string.appearance_buttons)).assertDoesNotExist()
         assertEquals(Appearance.Style.FLAT, Appearance.style(app))
         assertEquals(Appearance.Shape.ROUNDED, Appearance.shape(app))
@@ -199,13 +206,7 @@ class AppearanceUiTest {
             compose.onNodeWithText(app.getString(android.R.string.cancel)).assertIsDisplayed()
             assertSinglePreview(Appearance.Style.INSET, Appearance.Shape.CIRCLE)
             compose.runOnIdle {
-                val root = ShadowDialog.getLatestDialog().window!!.decorView
-                fun find(v: android.view.View): KeypadPreviewView? {
-                    if (v is KeypadPreviewView) return v
-                    if (v is android.view.ViewGroup) for (i in 0 until v.childCount) find(v.getChildAt(i))?.let { return it }
-                    return null
-                }
-                val preview = requireNotNull(find(root))
+                val preview = singlePreview()
                 for (i in 0 until preview.childCount) {
                     val key = preview.getChildAt(i)
                     if (key is android.widget.TextView) {
@@ -228,6 +229,89 @@ class AppearanceUiTest {
         compose.onNodeWithText("Roboto Mono").assertIsSelected()
         tap(android.R.string.cancel, false)
     }
+    private fun assertTextFamily(label: String, font: Appearance.Font) {
+        val node = compose.onNodeWithText(label)
+        val visibleHeight = node.fetchSemanticsNode().boundsInRoot.height
+        node.performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { action ->
+            val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+            assertTrue(action(layouts))
+            assertEquals(appFontFamily(font), layouts.single().layoutInput.style.fontFamily)
+            assertTrue("Clipped text: $label", layouts.single().size.height <= visibleHeight + 1)
+        }
+    }
+    private fun assertFontPreview(font: Appearance.Font) {
+        val text = app.getString(R.string.appearance_font_preview_text, font.label)
+        compose.onNodeWithText(text).assertIsDisplayed()
+        assertTextFamily(text, font)
+        assertTextFamily(font.label, font)
+        assertSinglePreview(Appearance.style(app), Appearance.shape(app))
+        compose.runOnIdle {
+            val preview = singlePreview()
+            val expected = androidx.core.content.res.ResourcesCompat.getFont(renderContext, font.resource)
+            for (i in 0 until preview.childCount) {
+                val key = preview.getChildAt(i)
+                if (key is android.widget.TextView) {
+                    assertEquals(expected, key.typeface)
+                    assertFalse(key.typeface.isBold)
+                    assertTrue("$font clipped numeric preview", key.paint.measureText(key.text.toString()) <= key.width)
+                    assertTrue("$font clipped numeric height", key.layout.height <= key.height)
+                }
+            }
+        }
+    }
+    @Test fun fontNamesAndLiveTextAndKeysUseEachDraftFontWithoutSaving() {
+        compose.runOnIdle { Appearance.applyButtons(app, Appearance.Style.SATIN, Appearance.Shape.CIRCLE) }
+        open("fonts")
+        for (font in Appearance.Font.entries) {
+            tapText(font.label)
+            compose.onNodeWithText(font.label).assertIsSelected()
+            assertFontPreview(font)
+            assertEquals(Appearance.Font.OSWALD, Appearance.font(app))
+        }
+        tapText("Oswald")
+        compose.onNodeWithText("Roboto Mono").performScrollTo()
+        assertTextFamily("Roboto Mono", Appearance.Font.ROBOTO_MONO)
+        tap(android.R.string.cancel, false)
+        assertEquals(Appearance.Font.OSWALD, Appearance.font(app))
+        assertEquals(Appearance.Style.SATIN, Appearance.style(app))
+        assertEquals(Appearance.Shape.CIRCLE, Appearance.shape(app))
+    }
+    @Test fun fontDraftRestoresAndBackAndOutsideTapDiscardIt() {
+        open("fonts"); tapText("Lato")
+        restoration.emulateSavedInstanceStateRestore(); compose.waitForIdle()
+        compose.onNodeWithText("Lato").assertIsSelected().assertIsDisplayed()
+        assertFontPreview(Appearance.Font.LATO)
+        assertEquals(Appearance.Font.OSWALD, Appearance.font(app))
+        pressSystemBack()
+        compose.onNodeWithText(app.getString(R.string.appearance_font)).assertDoesNotExist()
+        open("fonts"); tapText("Roboto")
+        assertFontPreview(Appearance.Font.ROBOTO)
+        tapOutsideDialog()
+        compose.onNodeWithText(app.getString(R.string.appearance_font)).assertDoesNotExist()
+        assertEquals(Appearance.Font.OSWALD, Appearance.font(app))
+    }
+    @Test fun fontPreviewAndActionsFitAtDoubleTextInBothDirections() {
+        for (layoutDirection in listOf(LayoutDirection.Ltr, LayoutDirection.Rtl)) {
+            compose.runOnIdle {
+                direction = layoutDirection
+                val config = android.content.res.Configuration(renderContext.resources.configuration).apply { fontScale = 2f }
+                @Suppress("DEPRECATION")
+                renderContext.resources.updateConfiguration(config, renderContext.resources.displayMetrics)
+                scale = 2f
+                Appearance.applyFont(app, Appearance.Font.ROBOTO_MONO)
+            }
+            open("fonts")
+            compose.onNodeWithText("Roboto Mono").assertIsSelected().assertIsDisplayed()
+            for (font in Appearance.Font.entries) {
+                tapText(font.label)
+                assertFontPreview(font)
+                compose.onNodeWithText(app.getString(R.string.appearance_apply)).assertIsDisplayed()
+                compose.onNodeWithText(app.getString(android.R.string.cancel)).assertIsDisplayed()
+            }
+            tap(android.R.string.cancel, false)
+            assertEquals(Appearance.Font.ROBOTO_MONO, Appearance.font(app))
+        }
+    }
     @Test fun nativeReviewScreenshotsInLightDarkAndLargeText() {
         for (theme in listOf(CalculatorThemes.PORCELAIN_WHITE, CalculatorThemes.GRAPHITE_BLACK)) {
             compose.runOnIdle { ThemeManager.select(app, theme.id()) }
@@ -248,6 +332,9 @@ class AppearanceUiTest {
                 tap(android.R.string.cancel, false)
                 open("fonts")
                 screenshot("fonts-${theme.id()}-320-$fontScale")
+                tapText("Roboto Mono")
+                screenshot("fonts-live-${theme.id()}-320-$fontScale")
+                assertEquals(Appearance.Font.OSWALD, Appearance.font(app))
                 tap(android.R.string.cancel, false)
             }
         }
