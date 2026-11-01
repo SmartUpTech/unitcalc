@@ -344,7 +344,7 @@ public final class BmiCalculatorFragment extends Fragment {
             String h = imperialHeight ? getString(R.string.bmi_history_feet_inches, height.getText(), inches.length() == 0 ? "0" : inches.getText())
                     : getString(R.string.bmi_history_measurement, height.getText(), getString(R.string.bmi_cm));
             String w = getString(R.string.bmi_history_measurement, weight.getText(), f.unit(pounds));
-            history.update(getString(R.string.bmi_history_input, ageText, getString(gender == Gender.MALE ? R.string.bmi_history_male : R.string.bmi_history_female), h, w), f.summary(assessment, pounds), CalculatorCatalog.ID_BMI);
+            history.update(getString(R.string.bmi_history_input, ageText, getString(gender == Gender.MALE ? R.string.bmi_history_male : R.string.bmi_history_female), h, w), getString(R.string.bmi_history_value, f.number(result.bmi())), CalculatorCatalog.ID_BMI);
         }
     }
     private void text(int id, String value) { requireView().<TextView>findViewById(id).setText(value); }

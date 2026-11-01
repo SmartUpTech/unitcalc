@@ -48,6 +48,12 @@ public class HistoryFragmentTest {
             shadowOf(Looper.getMainLooper()).idle();
             assertEquals(inputs, ((android.widget.TextView) page.findViewById(R.id.tv_history_expression)).getText().toString());
             assertEquals(result, ((android.widget.TextView) page.findViewById(R.id.tv_history_result)).getText().toString());
+            android.view.View expressionView = page.findViewById(R.id.tv_history_expression);
+            android.view.View resultView = page.findViewById(R.id.tv_history_result);
+            android.view.View menu = page.findViewById(R.id.history_item_more);
+            assertEquals(expressionView.getBottom(), resultView.getTop());
+            assertEquals(expressionView.getRight(), resultView.getRight());
+            assertTrue(resultView.getRight() <= menu.getLeft());
         } finally { controller.pause().stop().destroy(); drain(); db.close(); }
     }
 

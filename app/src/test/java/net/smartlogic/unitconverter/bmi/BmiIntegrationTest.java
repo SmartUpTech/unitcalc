@@ -49,7 +49,7 @@ public class BmiIntegrationTest {
             try (DatabaseHelper db = new DatabaseHelper(app)) {
                 assertEquals(1, db.getAllHistory().size());
                 assertEquals("bmi_calculator", db.getAllHistory().get(0).calculatorId());
-                assertTrue(db.getAllHistory().get(0).result().contains("21.10"));
+                assertEquals("BMI: 21.10", db.getAllHistory().get(0).result());
             }
             shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(4)); drain();
             try (DatabaseHelper db = new DatabaseHelper(app)) { assertEquals(1, db.getAllHistory().size()); }

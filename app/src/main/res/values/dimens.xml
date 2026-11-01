@@ -33,6 +33,7 @@
     <dimen name="converter_value_text_size">36sp</dimen>
     <dimen name="converter_unit_text_size">14sp</dimen>
     <dimen name="converter_card_margin">16dp</dimen>
+    <dimen name="converter_refresh_end_margin">8dp</dimen>
     <dimen name="converter_card_padding">16dp</dimen>
 
     <!-- Converter spacing and minimum touch sizes shared by both modes. -->

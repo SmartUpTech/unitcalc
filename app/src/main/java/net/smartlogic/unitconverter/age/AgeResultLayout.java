@@ -66,17 +66,21 @@ public final class AgeResultLayout extends ViewGroup {
     private void spacing(int level) {
         int space = getResources().getDimensionPixelSize(level == 2 ? R.dimen.converter_compact_row_spacing
                 : level == 1 ? R.dimen.converter_small_spacing : R.dimen.converter_spacing);
-        // The next-birthday column contains its caption, decorative icon and date details.
-        View icon = ((ViewGroup) findViewById(R.id.age_next_label).getParent()).getChildAt(1);
-        ViewGroup.MarginLayoutParams iconParams = (ViewGroup.MarginLayoutParams) icon.getLayoutParams();
+        View icon = findViewById(R.id.age_birthday_icon);
+        ViewGroup.LayoutParams iconParams = icon.getLayoutParams();
         int iconSize = getResources().getDimensionPixelSize(level == 2 ? R.dimen.timer_icon_medium
-                : level == 1 ? R.dimen.timer_icon_large : R.dimen.converter_picker_row_height);
+                : R.dimen.timer_icon_large);
         iconParams.width = iconParams.height = iconSize;
-        iconParams.topMargin = iconParams.bottomMargin = space;
         icon.setLayoutParams(iconParams);
-        icon.setPadding(space, space, space, space);
-        margin(findViewById(R.id.age_birthday_countdown), level == 2 ? 0
-                : getResources().getDimensionPixelSize(R.dimen.converter_small_spacing), 0);
+        int iconPadding = getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
+        icon.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        ViewGroup results = findViewById(R.id.age_results);
+        int headerSpace = level == 2 ? 0 : getResources().getDimensionPixelSize(R.dimen.converter_small_spacing);
+        margin(results.getChildAt(0), headerSpace, 0);
+        margin((View) findViewById(R.id.age_years).getParent(), headerSpace, 0);
+        for (int i = 1; i < results.getChildCount(); i++) {
+            margin(results.getChildAt(i), level == 2 ? 0 : space, 0);
+        }
         margin(findViewById(R.id.age_summary_title), 0, space);
         margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(1), 0, 0);
         margin(((ViewGroup) findViewById(R.id.age_summary)).getChildAt(2), space, 0);

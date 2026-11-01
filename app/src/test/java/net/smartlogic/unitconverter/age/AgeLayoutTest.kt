@@ -75,6 +75,16 @@ class AgeLayoutTest {
             file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
             bitmap.recycle()
             if (verify) {
+                if (!empty) {
+                    val years = pane.findViewById<TextView>(R.id.age_years)
+                    val remainder = pane.findViewById<TextView>(R.id.age_remainder)
+                    val countdown = pane.findViewById<TextView>(R.id.age_birthday_countdown)
+                    val unit = pane.findViewById<TextView>(R.id.age_year_unit)
+                    assertEquals((years.parent as View).width / 2f, (years.left + years.right) / 2f, 1f)
+                    assertEquals(remainder.top + remainder.baseline, countdown.top + countdown.baseline)
+                    assertEquals(remainder.textSize, countdown.textSize, 0f)
+                    assertEquals(View.GONE, pane.findViewById<View>(R.id.age_note).visibility)
+                }
                 if (!pane.contentFits()) File("build/reports/age/$name-bounds.txt").writeText(
                     descendants(pane).joinToString("\n") { v ->
                         "${v.javaClass.simpleName} ${if (v is TextView) v.text else v.id}: ${v.left},${v.top},${v.right},${v.bottom}; measured=${v.measuredWidth}x${v.measuredHeight}" +
@@ -109,8 +119,16 @@ class AgeLayoutTest {
                     }
                     val years = pane.findViewById<TextView>(R.id.age_years)
                     val unit = pane.findViewById<TextView>(R.id.age_year_unit)
-                    assertEquals("$name age value and unit stay centered together", (years.parent as View).width / 2f,
-                        (years.left + unit.right) / 2f, 1f)
+                    val birthday = pane.findViewById<TextView>(R.id.age_birthday_details)
+                    assertSame(unit.parent, birthday.parent)
+                    assertEquals(unit.top + unit.baseline, birthday.top + birthday.baseline)
+                    assertEquals(unit.textSize, birthday.textSize, 0f)
+                    assertEquals(0f, years.translationY, 0f)
+                    assertEquals(0f, unit.translationY, 0f)
+                    assertEquals(0f, birthday.translationY, 0f)
+                    val header = pane.findViewById<ViewGroup>(R.id.age_results).getChildAt(0)
+                    val remainder = pane.findViewById<View>(R.id.age_remainder_row)
+                    assertTrue(header.bottom <= remainder.top)
                 }
                 for (id in intArrayOf(R.id.age_birth_button, R.id.age_asof_button)) {
                     val dropdown = pane.findViewById<com.google.android.material.button.MaterialButton>(id)

@@ -152,7 +152,8 @@ public final class AgeCalculatorFragment extends Fragment {
         asofButton.setTag("theme_outline_field");
         calculatePage.findViewById(R.id.age_birth_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_birth), birth == null ? getString(R.string.age_select_date) : f.date(birth)));
         calculatePage.findViewById(R.id.age_asof_button).setContentDescription(getString(R.string.age_date_button, getString(R.string.age_as_of), f.date(asOf)));
-        text(R.id.age_note, getString(result != null ? R.string.age_totals_note : birth == null ? R.string.age_empty : R.string.age_invalid));
+        text(R.id.age_note, result != null ? "" : getString(birth == null ? R.string.age_empty : R.string.age_invalid));
+        calculatePage.findViewById(R.id.age_note).setVisibility(result != null ? View.GONE : View.VISIBLE);
         calculatePage.findViewById(R.id.age_note).setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         int[] totals = {R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks, R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes};
         long[] values = result == null ? new long[6] : new long[]{result.age().years(), result.totalMonths(), result.totalWeeks(), result.totalDays(), result.totalHours(), result.totalMinutes()};

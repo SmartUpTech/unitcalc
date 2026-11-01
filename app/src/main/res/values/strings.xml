@@ -1,4 +1,5 @@
 <resources>
+    <string name="bmi_history_value">BMI: %1$s</string>
     <string name="settings_usage_analytics">Share usage analytics</string>
     <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Sharing is optional and off by default. You can change your choice here anytime. Choosing Do not allow stops collection and resets analytics data on this device.</string>
     <string name="settings_privacy_choices">Usage analytics</string>

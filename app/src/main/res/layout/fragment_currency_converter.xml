@@ -420,6 +420,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/converter_refresh_end_margin"
+                    android:layout_marginStart="@dimen/converter_card_margin"
                     android:minHeight="@dimen/converter_metadata_height"
                     android:layout_marginHorizontal="@dimen/converter_card_margin"
                     android:orientation="horizontal"
