@@ -161,6 +161,7 @@
                     <ImageButton
                         android:id="@+id/reverse_destinations"
                         style="@style/ConverterIconButton"
+                        android:paddingHorizontal="@dimen/converter_swap_horizontal_padding"
                         android:contentDescription="@string/currency_swap_destinations"
                         android:src="@drawable/ic_reverse"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -433,6 +434,7 @@
                     <TextView
                         android:id="@+id/txtLastUpdateTime"
                         style="@style/ConverterLabel"
+                        android:textSize="@dimen/converter_timestamp_text_size"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.5"

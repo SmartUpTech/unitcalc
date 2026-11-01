@@ -3,12 +3,15 @@
     <dimen name="theme_selected_outline">2dp</dimen>
     <dimen name="theme_card_elevation">3dp</dimen>
     <dimen name="theme_card_shadow_padding">8dp</dimen>
-    <dimen name="theme_card_width">104dp</dimen>
-    <dimen name="theme_swatch_height">40dp</dimen>
+    <dimen name="theme_card_width">136dp</dimen>
+    <dimen name="theme_swatch_height">24dp</dimen>
     <dimen name="theme_swatch_color_size">16dp</dimen>
     <!-- Two label lines, scaled uniformly for all cards with the system font size. -->
     <dimen name="theme_card_label_height">40sp</dimen>
     <dimen name="theme_state_icon_size">20dp</dimen>
+    <dimen name="theme_access_slot_height">48dp</dimen>
+    <dimen name="theme_access_badge_size">40dp</dimen>
+    <dimen name="theme_access_icon_size">24dp</dimen>
 
     <dimen name="h1">32sp</dimen>
     <dimen name="resultDisplaySize">56sp</dimen>
@@ -42,6 +45,8 @@
     <dimen name="converter_flag_width">32dp</dimen>
     <dimen name="converter_flag_height">24dp</dimen>
     <dimen name="converter_label_text_size">12sp</dimen>
+    <dimen name="converter_timestamp_text_size">10sp</dimen>
+    <dimen name="converter_swap_horizontal_padding">2dp</dimen>
     <dimen name="converter_row_height">48dp</dimen>
     <dimen name="converter_label_width">32dp</dimen>
     <dimen name="converter_metadata_height">28sp</dimen>
@@ -56,8 +61,8 @@
     <dimen name="converter_mode_margin_top">6dp</dimen>
     <dimen name="converter_mode_margin_bottom">2dp</dimen>
     <dimen name="converter_selector_radius">8dp</dimen>
-    <dimen name="converter_swap_end_margin">6dp</dimen>
-    <dimen name="converter_selector_extra_width">10dp</dimen>
+    <dimen name="converter_swap_end_margin">2dp</dimen>
+    <dimen name="converter_selector_extra_width">12dp</dimen>
     <!-- Minimum useful width per pane before moving controls beside the keypad. -->
     <dimen name="calculation_pane_min_width">280dp</dimen>
     <!-- Shared spacing extracted from existing layouts; geometry is preserved. -->

@@ -77,7 +77,12 @@ public class AppearanceTest {
         }
     }
     private void assertTabFonts(View view, android.graphics.Typeface expected) {
-        if (view instanceof TextView text) assertEquals(text.getText().toString(), expected, text.getTypeface());
+        if (view instanceof TextView text) {
+            android.graphics.Typeface styled = text.isSelected()
+                    ? android.graphics.Typeface.create(expected, android.graphics.Typeface.BOLD) : expected;
+            assertEquals(text.getText().toString(), styled, text.getTypeface());
+            assertEquals(text.getText().toString(), text.isSelected(), text.getTypeface().isBold());
+        }
         if (view instanceof android.view.ViewGroup group) {
             for (int i = 0; i < group.getChildCount(); i++) assertTabFonts(group.getChildAt(i), expected);
         }
@@ -275,6 +280,11 @@ public class AppearanceTest {
             assertTrue(done.getBackground() instanceof KeyAppearanceDrawable);
             assertEquals(((KeyAppearanceDrawable)equal.getBackground()).surface(),
                     ((KeyAppearanceDrawable)done.getBackground()).surface());
+            View converter = inflate(context, R.layout.converter_keypad);
+            ThemeApplier.apply(converter);
+            KeyAppearanceDrawable clear = (KeyAppearanceDrawable) converter.findViewById(R.id.ac).getBackground();
+            assertEquals(((KeyAppearanceDrawable) equal.getBackground()).surface(), clear.surface());
+            assertEquals(((KeyAppearanceDrawable) equal.getBackground()).foreground(), clear.foreground());
             assertEquals(Appearance.Font.ROBOTO_MONO, equal.getTag(R.id.appearance_font_applied));
         }
     }

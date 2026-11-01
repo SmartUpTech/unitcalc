@@ -139,7 +139,12 @@ class ThemeSelectorUiTest {
                     val selected = visible.single { it.config[SemanticsProperties.Selected] }
                     assertEquals(listOf(view.context.getString(theme.nameRes())),
                         selected.config[SemanticsProperties.ContentDescription])
-                    visible.forEach { assertEquals(selected.size.height, it.size.height) }
+                    visible.forEach {
+                        assertEquals(selected.size.height, it.size.height)
+                        assertEquals(selected.size.width, it.size.width)
+                    }
+                    if (scale == 1f) assertTrue("Compact theme card should be nearly square",
+                        selected.size.height <= selected.size.width * 1.25f)
                     val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
                     view.draw(Canvas(bitmap))
                     val file = File("../.artifacts/theme-picker/${theme.id()}-$scale.png")
@@ -172,10 +177,13 @@ class ThemeSelectorUiTest {
     }
 
     @Test fun renderLightAndDarkSettingsSnapshots() {
-        for (theme in listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)) {
+        val combinations = listOf(CalculatorThemes.TITANIUM_GRAY, CalculatorThemes.GRAPHITE_BLACK)
+            .flatMap { theme -> Appearance.Font.entries.map { font -> theme to font } }
+        for ((theme, font) in combinations) {
             // Persist a valid rewarded entitlement for the dark preview.
             preferences.preferences.edit().clear()
-                .putString(Preferences.PREFS_SELECTED_THEME, theme.id()).commit()
+                .putString(Preferences.PREFS_SELECTED_THEME, theme.id())
+                .putString(Appearance.FONT, font.name).commit()
             preferences.preferences.edit().putLong(Preferences.PREFS_THEME_EXPIRY_PREFIX + preferences.selectedThemeId,
             System.currentTimeMillis() + ThemeAccess.REWARD_DURATION_MILLIS).commit()
         ThemeManager.init(RuntimeEnvironment.getApplication())
@@ -191,7 +199,7 @@ class ThemeSelectorUiTest {
                 settle()
                 val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
                 view.draw(Canvas(bitmap))
-                val file = File("../.artifacts/settings-${theme.id()}.png")
+                val file = File("../.artifacts/settings-${theme.id()}-${font.name.lowercase()}.png")
                 file.parentFile?.mkdirs()
                 file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
                 bitmap.recycle()
@@ -240,6 +248,18 @@ class ThemeSelectorUiTest {
 
     private fun assertComposeSettingsAppBar(activity: SettingsActivity) {
         val view = activity.findViewById<android.view.ViewGroup>(R.id.settings).getChildAt(0) as ComposeView
+        val headings = listOf(R.string.settings_section_general, R.string.settings_section_appearance,
+            R.string.settings_section_number_format, R.string.settings_section_rate_share,
+            R.string.settings_section_privacy, R.string.settings_section_about).map { activity.getString(it) }
+        val sectionNodes = headings.map { heading -> nodes(view).single {
+            it.config.getOrNull(SemanticsProperties.Text)?.any { text -> text.text == heading } == true
+        } }
+        sectionNodes.forEach { node ->
+            val results = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+            assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(results))
+            assertEquals(androidx.compose.ui.text.font.FontWeight.Bold, results.single().layoutInput.style.fontWeight)
+        }
+        assertTrue("Feedback must precede Privacy", sectionNodes[3].positionInRoot.y < sectionNodes[4].positionInRoot.y)
         assertTrue(nodes(view).any {
             it.config.getOrNull(SemanticsProperties.Text)?.any { text ->
                 text.text == activity.getString(R.string.title_activity_settings)
@@ -292,7 +312,26 @@ class ThemeSelectorUiTest {
         bitmap.recycle()
     }
 
-    private fun render(width: Int, fontScale: Float, rtl: Boolean = false, inspect: (ComposeView, ThemeSelectorViewModel) -> Unit) {
+    @Test fun lockedThemeCardShowsAdDisclosureAndRendersReviewImage() {
+        render(1000, 1f, transformState = { state -> state.copy(cards = state.cards.map {
+            if (it.theme.id() == CalculatorThemes.GRAPHITE_BLACK.id()) it.copy(unlocked = false) else it
+        }) }) { view, _ ->
+            val locked = cards(view).single {
+                it.config[SemanticsProperties.ContentDescription].single() == view.context.getString(CalculatorThemes.GRAPHITE_BLACK.nameRes())
+            }
+            assertEquals(view.context.getString(R.string.theme_watch_seven_days), locked.config[SemanticsProperties.StateDescription])
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            view.draw(Canvas(bitmap))
+            val file = File("../.artifacts/theme-picker/locked-ad-affordance.png")
+            file.parentFile?.mkdirs()
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            bitmap.recycle()
+        }
+    }
+
+    private fun render(width: Int, fontScale: Float, rtl: Boolean = false,
+        transformState: (ThemeSelectorState) -> ThemeSelectorState = { it },
+        inspect: (ComposeView, ThemeSelectorViewModel) -> Unit) {
         RuntimeEnvironment.setQualifiers("w${width}dp-h640dp-mdpi")
         val resources = RuntimeEnvironment.getApplication().resources
         val configuration = Configuration(resources.configuration).apply { this.fontScale = fontScale }
@@ -310,7 +349,7 @@ class ThemeSelectorUiTest {
                 Surface {
                     Column {
                         Text(stringResource(R.string.prefs_title_theme))
-                        ThemeSelector(state, { id ->
+                        ThemeSelector(transformState(state), { id ->
                             if (model.requestTheme(id)) ThemeManager.select(activity, id)
                         }, model::dismissLockedTheme)
                     }

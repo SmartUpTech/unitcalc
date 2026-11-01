@@ -15,6 +15,7 @@
     <ImageButton
         android:id="@+id/reverse"
         style="@style/ConverterIconButton"
+        android:paddingHorizontal="@dimen/converter_swap_horizontal_padding"
         android:layout_gravity="end|center_vertical"
         android:contentDescription="@string/str_swap_units"
         android:src="@drawable/ic_reverse" />

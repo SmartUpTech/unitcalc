@@ -71,6 +71,10 @@ fun ThemeSelector(
         statuses.maxOf { textMeasurer.measure(it, style = statusStyle,
             constraints = Constraints(maxWidth = labelWidth)).size.height }.toDp()
     }
+    val cardHeight = maxOf(cardWidth,
+        spacing.sm * 2 + dimensionResource(R.dimen.theme_swatch_height) +
+            dimensionResource(R.dimen.theme_access_slot_height) +
+            labelHeight + statusHeight + spacing.xs / 2 * 3)
     Column {
         if (state.cards.any { !it.unlocked }) Text(stringResource(R.string.theme_unlock_hint),
             style = MaterialTheme.typography.bodySmall,
@@ -82,7 +86,7 @@ fun ThemeSelector(
             horizontalArrangement = Arrangement.spacedBy(spacing.sm),
         ) {
             items(state.cards, key = { it.theme.id() }) { card ->
-                ThemeCard(card, labelHeight, statusHeight, !state.busy, onThemeTapped)
+                ThemeCard(card, cardHeight, labelHeight, statusHeight, !state.busy, onThemeTapped)
             }
         }
         if (state.busy) Text(stringResource(R.string.theme_ad_loading),
@@ -104,7 +108,7 @@ fun ThemeSelector(
 
 @Composable
 private fun themeStatus(card: ThemeCardState): String = when {
-    net.smartlogic.unitconverter.BuildConfig.DEBUG -> stringResource(R.string.theme_debug_unlocked)
+    net.smartlogic.unitconverter.BuildConfig.DEBUG && card.unlocked -> stringResource(R.string.theme_debug_unlocked)
     card.alwaysFree -> stringResource(R.string.theme_always_free)
     card.pro -> stringResource(R.string.theme_included_pro)
     !card.unlocked -> stringResource(R.string.theme_watch_seven_days)
@@ -121,7 +125,7 @@ private fun themeStatus(card: ThemeCardState): String = when {
 
 @Composable
 private fun ThemeCard(
-    card: ThemeCardState, labelHeight: Dp, statusHeight: Dp, enabled: Boolean,
+    card: ThemeCardState, cardHeight: Dp, labelHeight: Dp, statusHeight: Dp, enabled: Boolean,
     onThemeTapped: (String) -> Unit,
 ) {
     val theme = card.theme
@@ -131,7 +135,7 @@ private fun ThemeCard(
     val iconSize = dimensionResource(R.dimen.theme_state_icon_size)
     val borderWidth = dimensionResource(if (card.selected) R.dimen.theme_selected_outline else R.dimen.theme_outline)
     Surface(
-        modifier = Modifier.width(dimensionResource(R.dimen.theme_card_width))
+        modifier = Modifier.width(dimensionResource(R.dimen.theme_card_width)).height(cardHeight)
             .selectable(selected = card.selected, enabled = enabled, role = Role.RadioButton,
                 onClick = { onThemeTapped(theme.id()) })
             .semantics { contentDescription = name; stateDescription = status },
@@ -141,42 +145,46 @@ private fun ThemeCard(
         border = BorderStroke(borderWidth, Color(if (card.selected) theme.accentContentColor() else theme.secondaryContentColor())),
         shadowElevation = dimensionResource(R.dimen.theme_card_elevation),
     ) {
-        Column(
-            modifier = Modifier.padding(spacing.sm).clearAndSetSemantics { },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(spacing.xs),
-        ) {
-            Box(Modifier.fillMaxWidth().height(iconSize)) {
-                if (!card.unlocked) Icon(painterResource(R.drawable.ic_theme_lock), null,
-                    Modifier.size(iconSize).align(Alignment.TopEnd))
-                if (card.selected) Icon(painterResource(R.drawable.ic_theme_check), null,
-                    Modifier.size(iconSize).align(Alignment.TopStart))
-            }
-            Surface(
-                color = Color(theme.background()), shape = MaterialTheme.shapes.small,
-                shadowElevation = dimensionResource(R.dimen.theme_card_elevation),
-                modifier = Modifier.fillMaxWidth().height(dimensionResource(R.dimen.theme_swatch_height)),
+        Box(Modifier.clearAndSetSemantics { }) {
+            Column(
+                modifier = Modifier.padding(spacing.sm),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(spacing.xs / 2),
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    ThemeColorDot(Color(theme.primaryContentColor()))
-                    ThemeColorDot(Color(theme.secondaryContentColor()))
-                    ThemeColorDot(Color(theme.accentContentColor()))
+                Surface(
+                    color = Color(theme.background()), shape = MaterialTheme.shapes.small,
+                    shadowElevation = dimensionResource(R.dimen.theme_card_elevation),
+                    modifier = Modifier.fillMaxWidth().height(dimensionResource(R.dimen.theme_swatch_height)),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                        ThemeColorDot(Color(theme.primaryContentColor()))
+                        ThemeColorDot(Color(theme.secondaryContentColor()))
+                        ThemeColorDot(Color(theme.accentContentColor()))
+                    }
+                }
+                Box(Modifier.fillMaxWidth().height(dimensionResource(R.dimen.theme_access_slot_height)),
+                    contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(dimensionResource(R.dimen.theme_access_badge_size)).then(
+                        if (!card.unlocked) Modifier.background(Color(theme.accentContentColor()), CircleShape)
+                            .border(dimensionResource(R.dimen.theme_outline), Color(theme.primaryContentColor()), CircleShape)
+                        else Modifier), contentAlignment = Alignment.Center) {
+                        Icon(painterResource(if (card.unlocked) R.drawable.ic_theme_trophy else R.drawable.ic_play_button_ad),
+                            null, Modifier.size(dimensionResource(R.dimen.theme_access_icon_size)),
+                            tint = Color(if (card.unlocked) theme.primaryContentColor() else theme.onAccentColor()))
+                    }
+                }
+                Box(Modifier.fillMaxWidth().height(labelHeight), contentAlignment = Alignment.TopCenter) {
+                    Text(name, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
+                }
+                Box(Modifier.fillMaxWidth().height(statusHeight), contentAlignment = Alignment.Center) {
+                    Text(status, color = Color(theme.secondaryContentColor()),
+                        style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
                 }
             }
-            Box(Modifier.size(iconSize + spacing.sm * 2).then(
-                if (!card.unlocked) Modifier.border(dimensionResource(R.dimen.theme_outline),
-                    Color(theme.primaryContentColor()), CircleShape) else Modifier),
-                contentAlignment = Alignment.Center) {
-                Icon(painterResource(if (card.unlocked) R.drawable.ic_theme_trophy else R.drawable.ic_play_button_ad),
-                    null, Modifier.size(iconSize))
-            }
-            Box(Modifier.fillMaxWidth().height(labelHeight), contentAlignment = Alignment.Center) {
-                Text(name, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
-            }
-            Box(Modifier.fillMaxWidth().height(statusHeight), contentAlignment = Alignment.Center) {
-                Text(status, color = Color(theme.secondaryContentColor()),
-                    style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
-            }
+            if (card.selected || !card.unlocked) Icon(
+                painterResource(if (card.selected) R.drawable.ic_theme_check else R.drawable.ic_theme_lock), null,
+                Modifier.align(Alignment.TopEnd).padding(spacing.xs).size(iconSize),
+            )
         }
     }
 }

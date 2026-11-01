@@ -305,7 +305,7 @@ public final class ThemeApplier {
 
     /** Canonical semantic roles for every numeric keypad and its previews. */
     @Nullable public static KeyAppearanceDrawable.Role keyRole(int id) {
-        if (id == R.id.equal) return KeyAppearanceDrawable.Role.EQUAL;
+        if (id == R.id.equal || id == R.id.ac) return KeyAppearanceDrawable.Role.EQUAL;
         if (contains(NUMBER_IDS, id)) return KeyAppearanceDrawable.Role.NUMBER;
         if (contains(FUNCTION_IDS, id)) return KeyAppearanceDrawable.Role.FUNCTION;
         if (contains(OPERATOR_IDS, id)) return KeyAppearanceDrawable.Role.OPERATOR;

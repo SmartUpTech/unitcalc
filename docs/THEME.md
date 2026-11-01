@@ -17,7 +17,7 @@ ink; filled converter segments pair that accent with on-accent content.
 
 All catalog palettes supply readable primary, secondary and accent ink directly.
 Glacier, Sage Green and Golden Poppy use dark accents on their lighter surfaces;
-Purple Mountain Majesty uses deep-purple ink. Burnt Orange uses the deeper
+Purple Majesty uses deep-purple ink. Burnt Orange uses the deeper
 approved background to retain warm light text. Theme IDs, unlock ranks and
 catalog order remain permanent. System-bar icon mode chooses the higher-contrast
 black/white foreground, rather than using a fixed brightness threshold.
@@ -29,10 +29,19 @@ mapped to the app palette instead of inheriting unrelated Material defaults.
 Theme-card labels reserve the maximum measured wrapped-name height equally
 across the catalog, while retaining the shared card elevation and exact preview
 backgrounds.
+Theme cards share a 136dp width and one measured height, at least their width.
+Color swatches sit at the top, with the selected check or lock overlaid at the
+top-right; a shared 48dp slot centers the trophy or ad/play control between
+swatches and the theme name. Locked themes use a 40dp accent-filled circular
+badge with the 24dp ad/play glyph and retain their Watch ad status.
+Larger text grows every card equally to preserve complete names and statuses.
 
 ## Shared typography
 
 Use regular weight by default. Bold requires an explicit user request; it must not be introduced as automatic field or heading emphasis.
+Settings group headings explicitly use bold in every selected font and theme.
+Workspace tab labels use the selected app font, with bold for the selected tab
+and regular weight for the other tabs, including after swipe/restoration updates.
 
 Oswald is the default app font; Appearance → Text Font also offers bundled Roboto, Open Sans, Lato and Roboto Mono. XML Views and Canvas resolve `@font/app_text`, which
 contains the bundled regular (400) and bold (700) weights. Compose uses

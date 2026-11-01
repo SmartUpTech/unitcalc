@@ -212,6 +212,21 @@ private fun SettingsScreen(
                 if (index < choices.lastIndex) SettingsDivider()
             }
 
+            SettingsSection(R.string.settings_section_rate_share)
+            SettingsRow(stringResource(R.string.pref_rate_title), onClick = {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rateUrl)))
+            })
+            SettingsDivider()
+            SettingsRow(shareTitle, onClick = {
+                net.smartlogic.unitconverter.helper.UsageAnalytics.event("share_opened", "content_type", "app")
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, shareSubject)
+                    putExtra(Intent.EXTRA_TEXT, shareBody)
+                }
+                context.startActivity(Intent.createChooser(intent, shareTitle))
+            })
+
             SettingsSection(R.string.settings_section_privacy)
             SettingsRow(stringResource(R.string.settings_privacy_choices),
                 summary = stringResource(if (preferences.preferences.getBoolean(
@@ -229,21 +244,6 @@ private fun SettingsScreen(
             SettingsDivider()
             SettingsRow(stringResource(R.string.pref_privacy_title), onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(privacyUrl)))
-            })
-
-            SettingsSection(R.string.settings_section_rate_share)
-            SettingsRow(stringResource(R.string.pref_rate_title), onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rateUrl)))
-            })
-            SettingsDivider()
-            SettingsRow(shareTitle, onClick = {
-                net.smartlogic.unitconverter.helper.UsageAnalytics.event("share_opened", "content_type", "app")
-                val intent = Intent(Intent.ACTION_SEND).apply {
-                    type = "text/plain"
-                    putExtra(Intent.EXTRA_SUBJECT, shareSubject)
-                    putExtra(Intent.EXTRA_TEXT, shareBody)
-                }
-                context.startActivity(Intent.createChooser(intent, shareTitle))
             })
 
             SettingsSection(R.string.settings_section_about)
@@ -321,7 +321,9 @@ private fun SettingsSection(title: Int) {
     val spacing = GraphyThemeTokens.spacing
     Text(stringResource(title), modifier = Modifier.fillMaxWidth()
         .padding(start = spacing.lg, end = spacing.lg, top = spacing.lg, bottom = spacing.sm),
-        style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary)
 }
 
 @Composable

@@ -21,6 +21,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,15 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 35, qualifiers = "mdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class WorkspaceTabControllerTest {
+    private void assertTabWeights(View view) {
+        if (view instanceof TextView text) assertEquals(text.getText().toString(),
+                text.isSelected(), text.getTypeface().isBold());
+        if (view instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) assertTabWeights(group.getChildAt(i));
+        }
+    }
     @Test public void disabledGraphyRejectsSwipesAndSelectionWithoutReentrantDispatch() {
         var activity = Robolectric.buildActivity(FragmentActivity.class);
         activity.get().setTheme(R.style.AppTheme);
@@ -38,6 +47,7 @@ public class WorkspaceTabControllerTest {
         LinearLayout root = new LinearLayout(activity.get());
         root.setOrientation(LinearLayout.VERTICAL);
         TabLayout tabs = new TabLayout(activity.get());
+        tabs.setId(R.id.workspace_tabs);
         ViewPager2 pager = new ViewPager2(activity.get());
         root.addView(tabs);
         root.addView(pager, new LinearLayout.LayoutParams(-1, 0, 1));
@@ -79,12 +89,14 @@ public class WorkspaceTabControllerTest {
         assertEquals("tab highlight must match the page after settling", 0, tabs.getSelectedTabPosition());
         assertTrue(tabs.getTabAt(0).view.isSelected());
         assertFalse(tabs.getTabAt(1).view.isSelected());
+        assertTabWeights(tabs);
         assertFalse(selected.contains(1));
         enabled.set(true);
         controller.selectTab(1);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(1, pager.getCurrentItem());
         assertEquals(1, tabs.getSelectedTabPosition());
+        assertTabWeights(tabs);
         assertTrue(selected.contains(1));
         enabled.set(false);
         tabs.getTabAt(0).select();

@@ -303,6 +303,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 handleSignToggle();
             } else if (id == R.id.dot) {
                 handleDotInput();
+            } else if (id == R.id.power) {
+                handleInput(getString(R.string.calculator_power_key));
+            } else if (id == R.id.sqrt) {
+                handleInput(getString(R.string.calculator_square_root_key));
             } else {
                 handleInput(v instanceof Button ? ((Button) v).getText().toString() : "");
             }

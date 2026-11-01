@@ -42,6 +42,7 @@ public final class WorkspaceTabController {
             // onPageScrolled can move the visual highlight without selecting a
             // Tab object, even after a rejected swipe has restored the pager.
             tabLayout.setScrollPosition(current, 0f, true);
+            net.smartlogic.unitconverter.theme.AppearanceTypography.apply(tabLayout);
             return;
         }
         int fallback = lastValidPosition;
@@ -59,6 +60,7 @@ public final class WorkspaceTabController {
             TabLayout.Tab tab = tabLayout.getTabAt(fallback);
             if (tab != null && tabLayout.getSelectedTabPosition() != fallback) tab.select();
             tabLayout.setScrollPosition(fallback, 0f, true);
+            net.smartlogic.unitconverter.theme.AppearanceTypography.apply(tabLayout);
         } finally {
             suppressPageCallback = false;
         }
@@ -106,10 +108,12 @@ public final class WorkspaceTabController {
                 if (!callback.isTabEnabled(position)) {
                     revertToLastValidTab();
                 }
+                net.smartlogic.unitconverter.theme.AppearanceTypography.apply(tabLayout);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                net.smartlogic.unitconverter.theme.AppearanceTypography.apply(tabLayout);
             }
 
             @Override
@@ -121,6 +125,7 @@ public final class WorkspaceTabController {
         mediator = new TabLayoutMediator(tabLayout, pager, (tab, position) ->
                 tab.setText(tabTitleResIds[position]));
         mediator.attach();
+        net.smartlogic.unitconverter.theme.AppearanceTypography.bind(tabLayout);
     }
 
     public void selectTab(int position) {

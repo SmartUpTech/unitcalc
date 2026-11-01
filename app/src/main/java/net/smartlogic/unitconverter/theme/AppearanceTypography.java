@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 import androidx.core.content.res.ResourcesCompat;
 import net.smartlogic.unitconverter.R;
@@ -23,16 +24,24 @@ public final class AppearanceTypography {
     }
     private static void apply(View view, Appearance.Font font, Typeface selected) {
         if (view instanceof TextView text) {
+            Typeface expected = text.isSelected() && isWorkspaceTabLabel(text)
+                    ? Typeface.create(selected, Typeface.BOLD) : selected;
             // Material widgets can restore their text appearance after a font was applied.
             if (text.getTag(R.id.appearance_font_applied) != font
-                    || !selected.equals(text.getTypeface())) {
-                text.setTypeface(selected, Typeface.NORMAL);
+                    || !expected.equals(text.getTypeface())) {
+                text.setTypeface(expected);
                 text.setTag(R.id.appearance_font_applied, font);
             }
         }
         if (view instanceof ViewGroup group) {
             for (int i = 0; i < group.getChildCount(); i++) apply(group.getChildAt(i), font, selected);
         }
+    }
+    private static boolean isWorkspaceTabLabel(TextView text) {
+        for (ViewParent parent = text.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (((View) parent).getId() == R.id.workspace_tabs) return true;
+        }
+        return false;
     }
     public static void bind(View root) {
         if (root.getTag(R.id.appearance_typography_bound) == null) {

@@ -329,7 +329,7 @@
     <string name="theme_oyster_cream">Oyster Cream</string>
     <string name="theme_titanium_gray">Titanium Gray</string>
     <string name="theme_graphite_black">Graphite Black</string>
-    <string name="theme_purple_mountain_majesty">Purple Mountain Majesty</string>
+    <string name="theme_purple_mountain_majesty">Purple Majesty</string>
     <string name="theme_glacier">Glacier</string>
     <string name="theme_burgundy">Burgundy</string>
     <string name="theme_sage_green">Sage Green</string>
@@ -558,6 +558,8 @@
     <string name="calculator_input_limit">Expression limit: %1$d characters</string>
     <string name="calculator_power_key" translatable="false">^</string>
     <string name="calculator_square_root_key" translatable="false">√</string>
+    <string name="calculator_sqrt_description">Square root of x</string>
+    <string name="calculator_power_description">x raised to y</string>
     <string name="calculator_open_parenthesis_key" translatable="false">(</string>
     <string name="calculator_close_parenthesis_key" translatable="false">)</string>
     <string name="calculator_percent_key" translatable="false">%</string>

@@ -63,14 +63,16 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
-                <Button
+                <ImageButton
                     android:id="@+id/power"
-                    style="@style/CalculatorKey.Function"
-                    android:text="@string/calculator_power_key"/>
-                <Button
+                    style="@style/CalculatorKey.Icon"
+                    android:contentDescription="@string/calculator_power_description"
+                    android:src="@drawable/ic_calculator_x_power_y"/>
+                <ImageButton
                     android:id="@+id/sqrt"
-                    style="@style/CalculatorKey.Function"
-                    android:text="@string/calculator_square_root_key"/>
+                    style="@style/CalculatorKey.Icon"
+                    android:contentDescription="@string/calculator_sqrt_description"
+                    android:src="@drawable/ic_calculator_sqrt_x"/>
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
