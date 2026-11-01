@@ -17,6 +17,13 @@ bring the selected choice into view and update that single preview immediately.
 Flat disables shape choices while preserving the remembered shape. Only the
 popup may scroll vertically in constrained windows; tool layouts are unchanged.
 
+Text Font uses the same preview row and horizontal selector. Each choice's name
+uses its own regular font. Selecting a choice updates the native key labels,
+“A fresh look with <font name>” caption together, without writing the
+font preference. The preview retains the applied button style, remembered shape
+and theme. Apply saves the selected font; Cancel, Back and outside taps discard
+the draft. Drafts survive saved-state restoration like the Buttons dialog.
+
 `KeyAppearanceDrawable` is shared by real numeric keys, Equal, BMI Done and the
 native Views inside Compose previews. Shapes fit within each existing key's touch
 bounds; Circle uses the smaller dimension for its diameter. Style spacing stays

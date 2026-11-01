@@ -30,7 +30,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
@@ -57,8 +56,8 @@ fun ButtonsDialog(onDismiss: () -> Unit) {
                     Text(stringResource(R.string.appearance_style), style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(vertical = spacing.sm))
                     AppearanceChoiceStrip(
-                        Appearance.Style.entries.map { it.name to it.label }, styleName,
-                        onSelect = { styleName = it },
+                        Appearance.Style.entries, style,
+                        onSelect = { styleName = it.name }, label = { stringResource(it.label) },
                     )
                     Text(stringResource(R.string.appearance_shape), style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(vertical = spacing.sm))
@@ -66,8 +65,8 @@ fun ButtonsDialog(onDismiss: () -> Unit) {
                     if (!enabled) Text(stringResource(R.string.appearance_flat_shape),
                         style = MaterialTheme.typography.bodyMedium)
                     AppearanceChoiceStrip(
-                        Appearance.Shape.entries.map { it.name to it.label }, shapeName, enabled,
-                        onSelect = { shapeName = it },
+                        Appearance.Shape.entries, shape, enabled,
+                        onSelect = { shapeName = it.name }, label = { stringResource(it.label) },
                     )
                 }
             }
@@ -82,10 +81,11 @@ fun ButtonsDialog(onDismiss: () -> Unit) {
     )
 }
 
-/** A shared, single-choice horizontal strip; the only keypad preview lives above both strips. */
+/** Shared single-choice horizontal strip for styles, shapes and font names. */
 @Composable
-private fun AppearanceChoiceStrip(options: List<Pair<String, Int>>, selected: String,
-    enabled: Boolean = true, onSelect: (String) -> Unit) {
+private fun <T> AppearanceChoiceStrip(options: List<T>, selected: T,
+    enabled: Boolean = true, onSelect: (T) -> Unit, label: @Composable (T) -> String,
+    fontFamily: (T) -> FontFamily? = { null }) {
     val spacing = GraphyThemeTokens.spacing
     val scroll = rememberScrollState()
     val colors = MaterialTheme.colorScheme
@@ -96,8 +96,8 @@ private fun AppearanceChoiceStrip(options: List<Pair<String, Int>>, selected: St
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().horizontalScroll(scroll).selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-            options.forEach { (id, label) ->
-                val isSelected = selected == id
+            options.forEach { option ->
+                val isSelected = selected == option
                 val bringIntoView = remember { BringIntoViewRequester() }
                 LaunchedEffect(isSelected) {
                     if (isSelected) {
@@ -110,14 +110,15 @@ private fun AppearanceChoiceStrip(options: List<Pair<String, Int>>, selected: St
                     .clip(shape).background(fill)
                     .border(outline, if (isSelected) colors.primary else Color.Transparent, shape)
                     .selectable(isSelected, enabled = enabled, role = Role.RadioButton,
-                        onClick = { onSelect(id) })
+                        onClick = { onSelect(option) })
                     .padding(horizontal = spacing.md, vertical = spacing.sm),
                     horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     verticalAlignment = Alignment.CenterVertically) {
                     if (isSelected) Icon(painterResource(R.drawable.ic_theme_check), null,
                         Modifier.size(dimensionResource(R.dimen.converter_chevron_size)),
                         tint = if (enabled) colors.primary else colors.onSurfaceVariant)
-                    Text(stringResource(label), maxLines = 1, style = MaterialTheme.typography.bodyLarge,
+                    Text(label(option), maxLines = 1, style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = fontFamily(option),
                         color = if (enabled) colors.onSurface else colors.onSurfaceVariant)
                 }
             }
@@ -141,9 +142,9 @@ private fun AppearanceChoiceStrip(options: List<Pair<String, Int>>, selected: St
 
 /** Native renderer shared with actual keypads: includes the accent-filled Equal exception. */
 @Composable
-internal fun KeypadPreview(style: Appearance.Style, shape: Appearance.Shape) {
+internal fun KeypadPreview(style: Appearance.Style, shape: Appearance.Shape,
+    font: Appearance.Font = Appearance.font(LocalContext.current)) {
     val theme = net.smartlogic.unitconverter.graphy.compose.theme.LocalCalculatorTheme.current
-    val font = Appearance.font(LocalContext.current)
     val context = LocalContext.current
     val density = androidx.compose.ui.platform.LocalDensity.current
     val gap = dimensionResource(R.dimen.appearance_key_gap)
@@ -164,28 +165,28 @@ internal fun KeypadPreview(style: Appearance.Style, shape: Appearance.Shape) {
 fun TextFontDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     var draft by rememberSaveable { mutableStateOf(Appearance.font(context).name) }
+    val font = Appearance.Font.valueOf(draft)
+    val family = appFontFamily(font)
     val spacing = GraphyThemeTokens.spacing
     AlertDialog(onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.appearance_font)) },
         text = {
-            Column(Modifier.heightIn(max = dimensionResource(R.dimen.settings_dialog_max_height))
-                .verticalScroll(rememberScrollState()).selectableGroup()) {
-                Appearance.Font.entries.forEach { font ->
-                    Column(Modifier.fillMaxWidth().selectable(draft == font.name,
-                        role = Role.RadioButton, onClick = { draft = font.name })
-                        .padding(bottom = spacing.sm)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            RadioButton(draft == font.name, onClick = null)
-                            Text(font.label, fontFamily = FontFamily(Font(font.resource)))
-                        }
-                        Text(stringResource(R.string.appearance_font_sample),
-                            fontFamily = FontFamily(Font(font.resource)), style = MaterialTheme.typography.bodyLarge)
-                    }
+            Column(Modifier.heightIn(max = dimensionResource(R.dimen.settings_dialog_max_height))) {
+                KeypadPreview(Appearance.style(context), Appearance.shape(context), font)
+                Text(stringResource(R.string.appearance_font_preview_text, font.label),
+                    fontFamily = family, style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(vertical = spacing.sm))
+                Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) {
+                    Text(stringResource(R.string.appearance_font_choice),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(vertical = spacing.sm))
+                    AppearanceChoiceStrip(Appearance.Font.entries, font,
+                        onSelect = { draft = it.name }, label = { it.label }, fontFamily = ::appFontFamily)
                 }
             }
         },
         confirmButton = { TextButton(onClick = {
-            Appearance.applyFont(context, Appearance.Font.valueOf(draft)); onDismiss()
+            Appearance.applyFont(context, font); onDismiss()
         }) { Text(stringResource(R.string.appearance_apply)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) } })
 }

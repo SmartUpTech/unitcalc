@@ -15,9 +15,11 @@ physical-device screenshots.
 | All eight styles and four shapes | [Light](appearance-review/styles-shapes-light.png) | [Dark](appearance-review/styles-shapes-dark.png) |
 | Shape selection in popup | [Light](appearance-review/shapes-light.png) | [Dark](appearance-review/shapes-dark.png) |
 | Text Font selection | [Light](appearance-review/fonts-light.png) | [Dark](appearance-review/fonts-dark.png) |
+| Text Font live draft (Roboto Mono) | [Light](appearance-review/fonts-live-light.png) | [Dark](appearance-review/fonts-live-dark.png) |
 | Equal and BMI Done across all styles | [Light](appearance-review/equal-bmi-light.png) | [Dark](appearance-review/equal-bmi-dark.png) |
 
-Additional constrained-screen capture: [320dp at 2× text](appearance-review/buttons-large-text.png).
+Additional constrained-screen captures: [Buttons at 2× text](appearance-review/buttons-large-text.png)
+and [Text Font live preview at 2× text](appearance-review/fonts-large-text.png).
 
 The Buttons popup now uses exactly one five-key live preview row. Style and shape
 choices are separate horizontal strips with selected checkmarks, outlines and
@@ -25,11 +27,30 @@ scroll indicators. Both selectors update the same preview without saving until
 Apply; Flat still disables shape choices and remembers the last shape.
 The comparison sheets are review-only, not additional previews in the popup.
 
+The Text Font dialog now follows the same pattern: one live row of keys, a
+“A fresh look with <font name>” caption and one horizontal selector.
+Names in the selector each use their own font; only the preview text and key
+labels change while editing. The applied theme, button style and shape stay in
+place, and the font is saved only on Apply.
+
 The style sheets use Rounded for comparisons and include a separate four-shape
 section. Equal remains accent-filled in every style; the Equal/BMI sheets use
 Circle to demonstrate the remembered shape in Flat.
 
 ## Validation scope
+
+Caption simplification (2026-10-31): removed the separate number/symbol sample
+line and changed the caption to “A fresh look with <font name>.” Debug assembly,
+all 11 appearance UI tests and lint passed again (0 lint errors). Updated captures
+include the simplified layout in light/dark themes and at 2× text.
+
+Font-dialog follow-up (2026-10-31): **55 targeted tests passed, zero failures**.
+Debug assembly succeeded; Android lint reported **0 errors, 406 warnings**.
+New UI checks confirm every font name uses its own family, each draft updates
+both the sample and native key labels without saving, restored font drafts retain
+their selection, Back/outside dismissal discard changes, and all fonts fit the
+live preview with Apply/Cancel visible at 2× text in LTR and RTL. The existing
+Buttons dialog, theme access, calculation accuracy and BMI checks also pass.
 
 Latest revalidation (2026-10-30): **52 targeted tests passed, zero failures**.
 Debug assembly succeeded and lint completed with **0 errors, 406 warnings**.
