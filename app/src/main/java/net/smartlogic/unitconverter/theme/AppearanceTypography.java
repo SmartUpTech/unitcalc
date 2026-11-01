@@ -18,17 +18,20 @@ public final class AppearanceTypography {
         return ResourcesCompat.getFont(context, Appearance.font(context).resource);
     }
     public static void apply(View view) {
-        apply(view, Appearance.font(view.getContext()));
+        Appearance.Font font = Appearance.font(view.getContext());
+        apply(view, font, ResourcesCompat.getFont(view.getContext(), font.resource));
     }
-    private static void apply(View view, Appearance.Font font) {
+    private static void apply(View view, Appearance.Font font, Typeface selected) {
         if (view instanceof TextView text) {
-            if (text.getTag(R.id.appearance_font_applied) != font) {
-                text.setTypeface(ResourcesCompat.getFont(view.getContext(), font.resource), Typeface.NORMAL);
+            // Material widgets can restore their text appearance after a font was applied.
+            if (text.getTag(R.id.appearance_font_applied) != font
+                    || !selected.equals(text.getTypeface())) {
+                text.setTypeface(selected, Typeface.NORMAL);
                 text.setTag(R.id.appearance_font_applied, font);
             }
         }
         if (view instanceof ViewGroup group) {
-            for (int i = 0; i < group.getChildCount(); i++) apply(group.getChildAt(i), font);
+            for (int i = 0; i < group.getChildCount(); i++) apply(group.getChildAt(i), font, selected);
         }
     }
     public static void bind(View root) {

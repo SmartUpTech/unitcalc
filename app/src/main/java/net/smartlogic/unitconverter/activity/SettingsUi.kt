@@ -178,10 +178,6 @@ private fun SettingsScreen(
                 preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
 
             SettingsSection(R.string.settings_section_appearance)
-            Text(stringResource(R.string.appearance_customise),
-                modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(stringResource(R.string.prefs_title_theme),
                 modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
                 style = MaterialTheme.typography.bodyLarge)

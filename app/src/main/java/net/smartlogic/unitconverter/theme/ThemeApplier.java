@@ -124,6 +124,7 @@ public final class ThemeApplier {
         tabLayout.setBackgroundColor(theme.background());
         tabLayout.setTabTextColors(theme.secondaryContentColor(), theme.accentContentColor());
         tabLayout.setSelectedTabIndicatorColor(theme.accentContentColor());
+        AppearanceTypography.apply(tabLayout);
     }
 
     @NonNull

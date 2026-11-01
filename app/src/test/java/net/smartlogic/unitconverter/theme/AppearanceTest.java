@@ -47,6 +47,41 @@ public class AppearanceTest {
         });
         return inflater.inflate(layout, null);
     }
+    @Test public void typographyRepairsWidgetTypefaceResetsWithoutChangingThePreference() {
+        TextView text = new TextView(context);
+        for (Appearance.Font font : Appearance.Font.values()) {
+            Appearance.applyFont(context, font);
+            AppearanceTypography.apply(text);
+            text.setTypeface(android.graphics.Typeface.DEFAULT);
+            AppearanceTypography.apply(text);
+            assertEquals(font.name(), AppearanceTypography.typeface(context), text.getTypeface());
+        }
+    }
+    @Test public void workspaceTabsKeepSelectedFontAfterThemeAndSelectionUpdates() {
+        com.google.android.material.tabs.TabLayout tabs = inflate(context, R.layout.fragment_calculator)
+                .findViewById(R.id.workspace_tabs);
+        tabs.addTab(tabs.newTab().setText("Calculate"));
+        tabs.addTab(tabs.newTab().setText("Graphy"));
+        for (Appearance.Font font : Appearance.Font.values()) {
+            Appearance.applyFont(context, font);
+            for (CalculatorTheme theme : new CalculatorTheme[]{CalculatorThemes.PORCELAIN_WHITE, CalculatorThemes.GRAPHITE_BLACK}) {
+                ThemeManager.select(context, theme.id());
+                for (int selected = 0; selected < tabs.getTabCount(); selected++) {
+                    tabs.selectTab(tabs.getTabAt(selected));
+                    ThemeApplier.apply(tabs);
+                    assertTabFonts(tabs, AppearanceTypography.typeface(context));
+                    ThemeApplier.applyTabLayout(tabs);
+                    assertTabFonts(tabs, AppearanceTypography.typeface(context));
+                }
+            }
+        }
+    }
+    private void assertTabFonts(View view, android.graphics.Typeface expected) {
+        if (view instanceof TextView text) assertEquals(text.getText().toString(), expected, text.getTypeface());
+        if (view instanceof android.view.ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) assertTabFonts(group.getChildAt(i), expected);
+        }
+    }
     @Test public void defaultsPersistenceRememberedShapeAndResetPreserveOtherPreferences() {
         Preferences prefs = Preferences.getInstance(context);
         prefs.getPreferences().edit().putString(Preferences.PREFS_SELECTED_THEME, "titanium_gray")

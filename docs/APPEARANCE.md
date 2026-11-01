@@ -1,6 +1,6 @@
 # Appearance customisation
 
-Settings → Appearance → Customise keeps the existing Theme selector in place,
+Settings → Appearance keeps the existing Theme selector in place,
 then adds Buttons and Text Font. Number format remains in its existing section.
 Theme palettes, theme IDs, availability, reward handling and selection are unchanged.
 
