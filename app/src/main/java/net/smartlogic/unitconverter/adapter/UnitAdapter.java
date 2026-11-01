@@ -50,34 +50,47 @@ public class UnitAdapter extends ArrayAdapter<Unit> {
         //String s = context.getString(units.get(position).getLabelResource());
         //Log.d("SHRIKI", "unit: " + s);
 
+        int verticalPadding = Math.max(0, context.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing)
+                - context.getResources().getDimensionPixelSize(R.dimen.converter_selector_pixel_adjustment));
+        holder.textView.setPadding(holder.textView.getPaddingLeft(), verticalPadding,
+                holder.textView.getPaddingRight(), verticalPadding);
         Unit unit = units.get(position);
         String label = context.getString(unit.getLabelResource());
         String symbol = unit.getSymbol();
 
         if (symbol != null && !symbol.isEmpty()) {
-            holder.textView.setText(String.format("%s (%s)", label, symbol));
+            holder.textView.setText(holder.textView.getContext().getString(R.string.unit_label_symbol_format, label, symbol));
         } else {
             holder.textView.setText(label);
         }
 
+        net.smartlogic.unitconverter.theme.AppearanceTypography.apply(convertView);
         return convertView;
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        View v = super.getDropDownView(position, convertView, parent);
-        TextView tv = v.findViewById(R.id.textView);
+        Holder holder;
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.spinner_unit_dropdown_item, parent, false);
+            holder = new Holder();
+            holder.textView = convertView.findViewById(R.id.textView);
+            convertView.setTag(holder);
+        } else {
+            holder = (Holder) convertView.getTag();
+        }
 
         Unit unit = units.get(position);
         String label = context.getString(unit.getLabelResource());
         String symbol = unit.getSymbol();
 
         if (symbol != null && !symbol.isEmpty()) {
-            tv.setText(String.format("%s (%s)", label, symbol));
+            holder.textView.setText(holder.textView.getContext().getString(R.string.unit_label_symbol_format, label, symbol));
         } else {
-            tv.setText(label);
+            holder.textView.setText(label);
         }
-        return v;
+        net.smartlogic.unitconverter.theme.AppearanceTypography.apply(convertView);
+        return convertView;
     }
 
     private static class Holder {

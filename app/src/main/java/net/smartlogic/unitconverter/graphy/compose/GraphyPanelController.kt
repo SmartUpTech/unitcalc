@@ -1,0 +1,58 @@
+package net.smartlogic.unitconverter.graphy.compose
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.Fragment
+import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
+import net.smartlogic.unitconverter.graphy.compose.ui.GraphyPanel
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme
+
+/**
+ * Java-friendly bridge for hosting Graphy Compose UI inside existing View/XML screens.
+ */
+class GraphyPanelController(
+    private val composeView: ComposeView,
+    private val fragment: Fragment,
+    private val viewTheme: GraphyViewTheme,
+) {
+    private var output by mutableStateOf<GraphyOutput?>(null)
+    private var compositionInstalled = false
+
+    init {
+        composeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed,
+        )
+        composeView.post { installCompositionIfNeeded() }
+    }
+
+    fun update(output: GraphyOutput?) {
+        this.output = output
+        installCompositionIfNeeded()
+    }
+
+    private fun installCompositionIfNeeded() {
+        if (compositionInstalled || !fragment.isAdded) {
+            return
+        }
+        if (!composeView.isAttachedToWindow) {
+            composeView.post { installCompositionIfNeeded() }
+            return
+        }
+        compositionInstalled = true
+        composeView.setContent {
+            GraphyTheme {
+                GraphyPanel(
+                    output = output,
+                    viewTheme = viewTheme,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+    }
+}

@@ -1,290 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/calculator_accent_color">
-
-    <LinearLayout
+    android:background="@color/screen_background">
+    <net.smartlogic.unitconverter.widget.CalculationViewport
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".fragment.UnitConverterFragment">
-
-        <net.smartlogic.unitconverter.helper.HorizontalListView
-            android:id="@+id/horizontal_list"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="5dp" />
-
-        <LinearLayout
+        android:clipToPadding="false">
+        <net.smartlogic.unitconverter.widget.CalculationLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:weightSum="9">
-
-            <!-- From Section -->
-            <LinearLayout
+            android:paddingBottom="@dimen/converter_spacing">
+            <net.smartlogic.unitconverter.widget.ConverterControlsLayout
+                android:id="@+id/calculation_controls"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <TextView
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/converter_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="2dp"
-                    android:text="@string/str_from"
-                    android:textColor="@color/display_result_text_color" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/spinnerHeight"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="10dp">
-
-                    <EditText
-                        android:id="@+id/input"
+                    android:layout_marginStart="@dimen/converter_card_margin"
+                    android:layout_marginEnd="@dimen/converter_swap_end_margin"
+                    android:paddingVertical="@dimen/converter_spacing">
+                    <net.smartlogic.unitconverter.widget.ConverterValueRow
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="2dp"
-                        android:layout_weight="0.8"
-                        android:background="@null"
-                        android:gravity="center_vertical|end"
-                        android:importantForAutofill="no"
-                        android:inputType="textMultiLine"
-                        android:maxLength="12"
-                        android:padding="5dp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/display_result_text_color"
-                        android:textIsSelectable="true"
-                        android:textSize="@dimen/h2" />
-
-                    <TextView
-                        android:id="@+id/inputSymbol"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_0dp"
+                        android:id="@+id/converter_source_section"
+                        android:tag="calculation_section"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/reverse_container"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_row_height">
+                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                            android:id="@+id/input"
+                            android:tag="converter_amount"
+                            android:paddingStart="@dimen/converter_field_content_inset"
+                            android:paddingEnd="@dimen/converter_field_content_inset"
+                            style="@style/ConverterValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_input_amount" android:hint="@string/zero"
+                            android:maxLength="12"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/converter_spacing"
+                            android:gravity="right|center_vertical" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_weight="1.25">
+                            <TextView
+                                style="@style/ConverterLabel"
+                                android:id="@+id/converter_from_label"
+                                android:visibility="gone"
+                                android:layout_width="@dimen/converter_label_width"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_spacing"
+                                android:labelFor="@id/fromUnit"
+                                android:text="@string/str_from" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:tag="converter_selector"
+                                android:paddingHorizontal="@dimen/converter_field_content_inset"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:id="@+id/from_selector"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <net.smartlogic.unitconverter.widget.ConverterPickerSpinner
+                                    android:id="@+id/fromUnit"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:minHeight="@dimen/converter_touch_target"
+                                    android:background="@null"
+                                    android:dropDownWidth="match_parent"
+                                    android:spinnerMode="dropdown" />
+                                <ImageView
+                                    android:id="@+id/fromChevron"
+                                    android:layout_width="@dimen/converter_chevron_size"
+                                    android:layout_height="@dimen/converter_chevron_size"
+                                    android:src="@drawable/ic_chevron_down"
+                                    android:importantForAccessibility="no"
+                                    android:contentDescription="@null" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </net.smartlogic.unitconverter.widget.ConverterValueRow>
+                    <include
+                        layout="@layout/converter_swap"
+                        android:id="@+id/reverse_container"
+                        android:layout_width="@dimen/converter_touch_target"
+                        android:layout_height="@dimen/converter_touch_target"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                    <net.smartlogic.unitconverter.widget.ConverterValueRow
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:gravity="center_vertical|start"
-                        android:padding="2dp"
-                        android:textColor="@color/display_result_text_color"
-                        android:textSize="@dimen/h3" />
-
-                    <Spinner
-                        android:id="@+id/fromUnit"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="2dp"
-                        android:layout_weight="1"
-                        android:backgroundTint="@color/colorNewGrey" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- To Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="2"
-                android:orientation="vertical">
-
-                <TextView
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_0dp"
+                        android:id="@+id/converter_target_section"
+                        android:layout_marginTop="@dimen/converter_small_spacing"
+                        android:tag="calculation_section"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/reverse_container"
+                        app:layout_constraintTop_toBottomOf="@id/converter_source_section"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_row_height">
+                        <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                            android:id="@+id/output"
+                            android:tag="converter_amount"
+                            android:paddingStart="@dimen/converter_field_content_inset"
+                            android:paddingEnd="@dimen/converter_field_content_inset"
+                            style="@style/ConverterValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/converter_output_amount"
+                            android:focusable="false"
+                            android:textIsSelectable="false"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/converter_spacing"
+                            android:gravity="right|center_vertical" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_weight="1.25">
+                            <TextView
+                                style="@style/ConverterLabel"
+                                android:id="@+id/converter_to_label"
+                                android:visibility="gone"
+                                android:layout_width="@dimen/converter_label_width"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/converter_spacing"
+                                android:labelFor="@id/toUnit"
+                                android:text="@string/str_to" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:tag="converter_selector"
+                                android:paddingHorizontal="@dimen/converter_field_content_inset"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:id="@+id/to_selector"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <net.smartlogic.unitconverter.widget.ConverterPickerSpinner
+                                    android:id="@+id/toUnit"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:minHeight="@dimen/converter_touch_target"
+                                    android:background="@null"
+                                    android:dropDownWidth="match_parent"
+                                    android:spinnerMode="dropdown" />
+                                <ImageView
+                                    android:id="@+id/toChevron"
+                                    android:layout_width="@dimen/converter_chevron_size"
+                                    android:layout_height="@dimen/converter_chevron_size"
+                                    android:src="@drawable/ic_chevron_down"
+                                    android:importantForAccessibility="no"
+                                    android:contentDescription="@null" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </net.smartlogic.unitconverter.widget.ConverterValueRow>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/category_selector"
+                    style="@style/WorkspaceTabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="2dp"
-                    android:text="@string/str_to"
-                    android:textColor="@color/display_result_text_color" />
-
-                <LinearLayout
+                    android:minHeight="@dimen/converter_touch_target"
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:layout_marginTop="@dimen/converter_spacing"
+                    android:layout_marginBottom="@dimen/converter_spacing"
+                    app:tabMinWidth="@dimen/converter_category_min_width"
+                    app:tabPaddingStart="@dimen/converter_spacing"
+                    app:tabPaddingEnd="@dimen/converter_spacing"
+                    app:tabTextAppearance="@style/ConverterCategoryText"
+                    app:tabMode="scrollable"
+                    app:tabGravity="start"
+                    app:tabInlineLabel="false"
+                    app:tabIndicatorHeight="@dimen/converter_category_indicator_height"
+                    app:tabIconTint="@null" />
+                <TextView
+                    android:id="@+id/inputSymbol"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/outputSymbol"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/unit_rate"
+                    style="@style/ConverterLabel"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/spinnerHeight"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="10dp">
-
-                    <EditText
-                        android:id="@+id/output"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="2dp"
-                        android:layout_weight="0.8"
-                        android:background="@null"
-                        android:focusable="false"
-                        android:gravity="center_vertical|end"
-                        android:importantForAutofill="no"
-                        android:inputType="textMultiLine"
-                        android:padding="5dp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/display_result_text_color"
-                        android:textIsSelectable="true"
-                        android:textSize="@dimen/h2" />
-
-                    <TextView
-                        android:id="@+id/outputSymbol"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2"
-                        android:gravity="center_vertical|start"
-                        android:padding="2dp"
-                        android:textColor="@color/display_result_text_color"
-                        android:textSize="@dimen/h3" />
-
-                    <Spinner
-                        android:id="@+id/toUnit"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="2dp"
-                        android:layout_weight="1"
-                        android:backgroundTint="@color/colorNewGrey" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Keypad Section -->
-            <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/converter_card_margin"
+                    android:minHeight="@dimen/converter_metadata_height"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/converter_unit_text_size" />
+            </net.smartlogic.unitconverter.widget.ConverterControlsLayout>
+            <include
+                layout="@layout/converter_keypad"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:weightSum="4">
-
-                <TableLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:stretchColumns="*">
-
-                    <TableRow
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <Button
-                            android:id="@+id/seven"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/seven" />
-                        <Button
-                            android:id="@+id/eight"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/eight" />
-                        <Button
-                            android:id="@+id/nine"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/nine" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <Button
-                            android:id="@+id/four"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/four" />
-                        <Button
-                            android:id="@+id/five"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/five" />
-                        <Button
-                            android:id="@+id/six"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/six" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <Button
-                            android:id="@+id/one"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/one" />
-                        <Button
-                            android:id="@+id/two"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/two" />
-                        <Button
-                            android:id="@+id/three"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/three" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <Button
-                            android:id="@+id/zero"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/zero" />
-                        <Button
-                            android:id="@+id/double_zero"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/double_zero" />
-                        <Button
-                            android:id="@+id/dot"
-                            style="@style/ButtonStyle.Number"
-                            android:text="@string/dot" />
-                    </TableRow>
-                </TableLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="4">
-
-                    <ImageButton
-                        android:id="@+id/reverse"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
-                        android:contentDescription="@string/cd_reverse"
-                        android:src="@drawable/ic_reverse"
-                        app:tint="@color/display_result_text_color" />
-
-                    <ImageButton
-                        android:id="@+id/backspace"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
-                        android:contentDescription="@string/cd_backspace"
-                        android:src="@drawable/backspace"
-                        app:tint="@color/display_result_text_color" />
-
-                    <ImageButton
-                        android:id="@+id/copy"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/pad_button_background"
-                        android:contentDescription="@string/cd_copy"
-                        android:src="@drawable/ic_copy"
-                        app:tint="@color/display_result_text_color" />
-
-                    <Button
-                        android:id="@+id/minus"
-                        style="@style/ButtonStyle.Number"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="@string/minus"
-                        android:textColor="@color/colorHighlighter" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
+                android:layout_weight="1"
+                android:id="@+id/keypad" />
+        </net.smartlogic.unitconverter.widget.CalculationLayout>
+    </net.smartlogic.unitconverter.widget.CalculationViewport>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

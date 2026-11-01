@@ -9,64 +9,88 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.helper.DatabaseHelper;
+import net.smartlogic.unitconverter.graphy.compose.GraphyPanelController;
+import net.smartlogic.unitconverter.graphy.integration.CalculationSnapshot;
+import net.smartlogic.unitconverter.graphy.integration.GraphyBridge;
+import net.smartlogic.unitconverter.graphy.integration.GraphyPanelHost;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
+import net.smartlogic.unitconverter.graphy.renderer.FlowchartRenderer;
+import net.smartlogic.unitconverter.graphy.renderer.GraphyRenderer;
+import net.smartlogic.unitconverter.graphy.theme.GraphyViewTheme;
+import net.smartlogic.unitconverter.helper.IdleHistoryRecorder;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
+import net.smartlogic.unitconverter.helper.WorkspacePagerAdapter;
+import net.smartlogic.unitconverter.helper.WorkspaceTabController;
+import net.smartlogic.unitconverter.model.CalculationHistoryItem;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.utils.EvaluationResult;
+import net.smartlogic.unitconverter.utils.ExpressionDisplayFormatter;
+import net.smartlogic.unitconverter.utils.ExpressionEvaluator;
+import net.smartlogic.unitconverter.utils.NumberUtils;
 import net.smartlogic.unitconverter.utils.GenericFunctions;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-public class CalculatorFragment extends Fragment implements View.OnClickListener {
+public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
     private TextView tvExpression, tvResult;
+    private static final int MAX_INPUT_LENGTH = 30;
+    private boolean inputChangeInProgress;
+    private boolean recalculateAfterInput;
     private String expression = "";
-    private String symZero, symDot, symSqrt, symExponent, symPercent;
-    private String symPlus, symMinus, symMultiply, symDivide;
-    private String symParenOpen, symParenClose;
-    private String funcSqrt, funcSqrtParen;
+    private String lastEvaluatedExpression = "";
     private Preferences mPrefs;
     private CoordinatorLayout mCoordinatorLayout;
     private boolean isResultDisplayed = false;
     
-    private LinearLayout historyLayout;
-    private RecyclerView rvHistory;
-    private HistoryAdapter historyAdapter;
-    private final List<HistoryItem> historyList = new ArrayList<>();
-    private DatabaseHelper dbHelper;
+    private TextView graphyEmpty;
+    private TextView graphyContext;
+    private IdleHistoryRecorder historyRecorder;
     private OnBackPressedCallback onBackPressedCallback;
+    private final GraphyBridge graphyBridge = new GraphyBridge(
+            net.smartlogic.unitconverter.graphy.builder.ExpressionGraphBuilder.decimalFormatted(
+                    value -> formatResult(value)));
+    private final GraphyRenderer graphyRenderer = new FlowchartRenderer();
+    private GraphyViewTheme graphyTheme;
+    private ExpressionDisplayFormatter.GraphySemanticTheme semanticTheme;
+    private GraphyOutput latestGraphyOutput;
 
-    public static class HistoryItem {
-        public String expression;
-        public String result;
+    private TabLayout workspaceTabs;
+    private ViewPager2 workspacePager;
+    private WorkspaceTabController workspaceTabController;
+    private ComposeView graphyPanel;
+    private GraphyPanelController graphyPanelController;
+    private boolean graphyVisible = false;
+    private int lastWorkspaceTab = 0;
+    private boolean calculatePageBound;
+    private boolean graphyPageBound;
 
-        public HistoryItem(String expression, String result) {
-            this.expression = expression;
-            this.result = result;
-        }
-    }
+    private static final int[] WORKSPACE_LAYOUTS = {
+            R.layout.pane_calculator_calculate,
+            R.layout.pane_calculator_graphy
+    };
 
-    public CalculatorFragment() {
-        // Required empty public constructor
-    }
+    private static final int[] WORKSPACE_TAB_TITLES = {
+            R.string.tab_calculate,
+            R.string.graphy
+    };
 
     public static CalculatorFragment newInstance() {
         return new CalculatorFragment();
@@ -76,7 +100,21 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPrefs = Preferences.getInstance(getActivity());
-        dbHelper = new DatabaseHelper(getContext());
+        historyRecorder = new IdleHistoryRecorder(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            expression = savedInstanceState.getString("calculator_expression", "");
+            lastEvaluatedExpression = savedInstanceState.getString("calculator_last_expression", "");
+            isResultDisplayed = savedInstanceState.getBoolean("calculator_result_displayed", false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("calculator_expression", expression);
+        outState.putString("calculator_last_expression", lastEvaluatedExpression);
+        outState.putBoolean("calculator_result_displayed", isResultDisplayed);
+        historyRecorder.saveState(outState);
     }
 
     @Override
@@ -94,65 +132,155 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         onBackPressedCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                toggleHistory(false);
+                selectWorkspaceTab(0);
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), onBackPressedCallback);
+        updateWorkspaceBackCallback();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
+        if (getView() != null) {
+            ThemeApplier.apply(getView());
+        }
+        if (tvResult != null) {
+            updateExpressionDisplay();
+            calculateResult(false);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        historyRecorder.invalidate();
+        if (workspaceTabController != null) {
+            workspaceTabController.detach();
+            workspaceTabController = null;
+        }
+        calculatePageBound = false;
+        tvExpression = null;
+        tvResult = null;
+        graphyPageBound = false;
+        graphyPanelController = null;
+        graphyPanel = null;
+        graphyEmpty = null;
+        graphyContext = null;
+        super.onDestroyView();
     }
 
     private void initViews(View view) {
-        initSymbols();
-
-        tvExpression = view.findViewById(R.id.expression);
-        tvResult = view.findViewById(R.id.result);
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
         mCoordinatorLayout = view.findViewById(R.id.cl);
-        historyLayout = view.findViewById(R.id.history_layout);
-        rvHistory = view.findViewById(R.id.rv_history);
+        workspaceTabs = view.findViewById(R.id.workspace_tabs);
+        workspacePager = view.findViewById(R.id.workspace_pager);
+        graphyTheme = new GraphyViewTheme(requireContext());
+        semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
+        ThemeApplier.apply(view);
+
+        WorkspacePagerAdapter pagerAdapter = new WorkspacePagerAdapter(
+                WORKSPACE_LAYOUTS,
+                this::bindWorkspacePage
+        );
+        workspacePager.setAdapter(pagerAdapter);
+
+        workspaceTabController = new WorkspaceTabController(
+                workspacePager,
+                workspaceTabs,
+                WORKSPACE_TAB_TITLES,
+                new WorkspaceTabController.Callback() {
+                    @Override
+                    public void onTabSelected(int position) {
+                        if (position == 1 && lastWorkspaceTab != position) net.smartlogic.unitconverter.helper.UsageAnalytics.event("graphy_opened", "tool_id", CalculatorCatalog.ID_BASIC);
+                        lastWorkspaceTab = position;
+                        applyWorkspaceTab(position);
+                    }
+
+                    @Override
+                    public boolean isTabEnabled(int position) {
+                        return position != 1 || hasGraphyContent();
+                    }
+                }
+        );
+        updateGraphyTabState();
+    }
+
+    private void bindWorkspacePage(int position, @NonNull View pageView) {
+        ThemeApplier.apply(pageView);
+        if (position == 0) {
+            bindCalculatePage(pageView);
+        } else if (position == 1) {
+            bindGraphyPage(pageView);
+        }
+    }
+
+    private void bindCalculatePage(@NonNull View pageView) {
+        if (calculatePageBound) {
+            return;
+        }
+        calculatePageBound = true;
+
+        tvExpression = pageView.findViewById(R.id.expression);
+        tvResult = pageView.findViewById(R.id.result);
 
         int[] ids = {
                 R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
                 R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine,
                 R.id.dot, R.id.plus, R.id.minus, R.id.multiply, R.id.divide,
-                R.id.equal, R.id.clear, R.id.backspace, R.id.copy,
-                R.id.parenthesis_open, R.id.parenthesis_close, R.id.power, 
-                R.id.sqrt, R.id.percent, R.id.btn_history,
-                R.id.btn_close_history, R.id.btn_clear_history
+                R.id.equal, R.id.backspace, R.id.sign_toggle,
+                R.id.parenthesis_open, R.id.parenthesis_close, R.id.power,
+                R.id.sqrt, R.id.percent
         };
 
         for (int id : ids) {
-            View v = view.findViewById(id);
-            if (v != null) v.setOnClickListener(this);
+            View v = pageView.findViewById(id);
+            if (v != null) {
+                InteractionFeedbackManager.configure(v);
+                v.setOnClickListener(this);
+            }
         }
 
-        historyAdapter = new HistoryAdapter(historyList, item -> {
-            expression = item.result.replace(",", "");
-            tvExpression.setText("");
-            tvResult.setText(item.result);
-            isResultDisplayed = true;
-            toggleHistory(false);
-        });
-        rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvHistory.setAdapter(historyAdapter);
+        View backspace = pageView.findViewById(R.id.backspace);
+        if (backspace != null) {
+            backspace.setOnLongClickListener(this);
+        }
+        tvExpression.setOnLongClickListener(this);
+        tvResult.setOnLongClickListener(this);
+        ThemeApplier.apply(pageView);
 
         tvExpression.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
             @Override
             public void afterTextChanged(Editable s) {
                 GenericFunctions.adjustTextSize(tvExpression, 21);
             }
         });
+        updateExpressionDisplay();
+        calculateResult(false);
+    }
 
-        tvResult.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                GenericFunctions.adjustTextSize(tvResult, 32);
+    private void bindGraphyPage(@NonNull View pageView) {
+        if (graphyPageBound) {
+            return;
+        }
+        graphyPageBound = true;
+
+        graphyEmpty = pageView.findViewById(R.id.graphy_empty);
+        graphyContext = pageView.findViewById(R.id.graphy_context);
+        graphyPanel = pageView.findViewById(R.id.graphy_panel);
+        pageView.post(() -> {
+            if (!isAdded() || graphyPanel == null || graphyPanelController != null) {
+                return;
+            }
+            graphyPanelController = new GraphyPanelController(graphyPanel, this, graphyTheme);
+            if (latestGraphyOutput != null) {
+                graphyPanelController.update(latestGraphyOutput);
             }
         });
     }
@@ -176,33 +304,168 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int id = v.getId();
-
-        if (id == R.id.clear) {
-            expression = "";
-            tvExpression.setText("");
-            tvResult.setText(symZero);
-            isResultDisplayed = false;
-        } else if (id == R.id.backspace) {
-            handleBackspace();
-        } else if (id == R.id.copy) {
-            copyToClipboard();
-        } else if (id == R.id.equal) {
+        if (id == R.id.equal) {
             calculateResult(true);
-        } else if (id == R.id.btn_history) {
-            toggleHistory(true);
-        } else if (id == R.id.btn_close_history) {
-            toggleHistory(false);
-        } else if (id == R.id.btn_clear_history) {
-            clearHistory();
-        } else if (id == R.id.dot) {
-            handleDotInput();
-        } else {
-            String input = "";
-            if (v instanceof Button) {
-                input = ((Button) v).getText().toString();
-            }
-            handleInput(input);
+            return;
         }
+        String before = expression;
+        boolean resultWasDisplayed = isResultDisplayed;
+        inputChangeInProgress = true;
+        recalculateAfterInput = false;
+        try {
+            if (id == R.id.backspace) {
+                handleBackspace();
+            } else if (id == R.id.sign_toggle) {
+                handleSignToggle();
+            } else if (id == R.id.dot) {
+                handleDotInput();
+            } else if (id == R.id.power) {
+                handleInput(getString(R.string.calculator_power_key));
+            } else if (id == R.id.sqrt) {
+                handleInput(getString(R.string.calculator_square_root_key));
+            } else {
+                handleInput(v instanceof Button ? ((Button) v).getText().toString() : "");
+            }
+        } finally {
+            inputChangeInProgress = false;
+        }
+        // Validate the whole edit, including implicit multiplication and sqrt tokens.
+        // Preserve longer restored history/results and allow edits that shorten them.
+        if (expression.length() > MAX_INPUT_LENGTH && expression.length() > before.length()) {
+            expression = before;
+            isResultDisplayed = resultWasDisplayed;
+            showToast(getString(R.string.calculator_input_limit, MAX_INPUT_LENGTH));
+            return;
+        }
+        updateExpressionDisplay();
+        if (recalculateAfterInput) calculateResult(false);
+        if (!before.equals(expression)) {
+            InteractionFeedbackManager.perform(v,
+                    id == R.id.backspace || id == R.id.sign_toggle
+                            ? InteractionFeedbackManager.Type.ACTION
+                            : InteractionFeedbackManager.Type.INPUT);
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+        if (id == R.id.backspace) {
+            boolean hadInput = !expression.isEmpty();
+            clearAll();
+            if (hadInput) InteractionFeedbackManager.perform(v, InteractionFeedbackManager.Type.ACTION);
+        } else if (id == R.id.expression || id == R.id.result) {
+            copyExpressionAndResult();
+        }
+        return true;
+    }
+
+    private void clearAll() {
+        historyRecorder.invalidate();
+        expression = "";
+        lastEvaluatedExpression = "";
+        updateExpressionDisplay();
+        tvResult.setText(R.string.zero);
+        isResultDisplayed = false;
+        latestGraphyOutput = null;
+        hideGraphy();
+        updateGraphyTabState();
+    }
+
+    public void restoreFromHistory(@NonNull CalculationHistoryItem item) {
+        expression = item.expression();
+        lastEvaluatedExpression = item.expression();
+        isResultDisplayed = false;
+        updateExpressionDisplay();
+        tvResult.setText(item.result());
+        calculateResult(false);
+        historyRecorder.markCurrentAsSaved();
+        updateGraphyTabState();
+        selectWorkspaceTab(0);
+    }
+
+    private void handleSignToggle() {
+        if (isResultDisplayed) {
+            String result = expression;
+            if (result.startsWith("-")) {
+                expression = result.substring(1);
+            } else {
+                expression = "-" + result;
+            }
+            isResultDisplayed = false;
+            updateExpressionDisplay();
+            calculateResult(false);
+            return;
+        }
+
+        if (expression.isEmpty()) {
+            expression = "-";
+            updateExpressionDisplay();
+            return;
+        }
+
+        int end = expression.length();
+        int start = findLastOperandStart(expression, end);
+        if (start < 0) {
+            return;
+        }
+
+        String operand = expression.substring(start, end);
+        String negated = negateOperand(operand);
+        expression = expression.substring(0, start) + negated;
+        updateExpressionDisplay();
+        calculateResult(false);
+    }
+
+    private int findLastOperandStart(@NonNull String expr, int end) {
+        if (end == 0) {
+            return -1;
+        }
+        int i = end - 1;
+        if (expr.charAt(i) == ')') {
+            int depth = 1;
+            i--;
+            while (i >= 0 && depth > 0) {
+                if (expr.charAt(i) == ')') {
+                    depth++;
+                } else if (expr.charAt(i) == '(') {
+                    depth--;
+                }
+                i--;
+            }
+            if (i >= 3 && expr.substring(i - 3, i + 1).equals("sqrt")) i -= 4;
+            if (i >= 0 && expr.charAt(i) == '-') {
+                char before = i > 0 ? expr.charAt(i - 1) : '\0';
+                if (i == 0 || before == '(' || isOperatorChar(before) || before == '^') {
+                    return i;
+                }
+            }
+            return i + 1;
+        }
+
+        while (i >= 0) {
+            char c = expr.charAt(i);
+            if (Character.isDigit(c) || c == '.' || c == '%') {
+                i--;
+                continue;
+            }
+            break;
+        }
+        if (i >= 0 && expr.charAt(i) == '-') {
+            char before = i > 0 ? expr.charAt(i - 1) : '\0';
+            if (i == 0 || before == '(' || isOperatorChar(before) || before == '^') {
+                return i;
+            }
+        }
+        return i + 1;
+    }
+
+    @NonNull
+    private String negateOperand(@NonNull String operand) {
+        if (operand.startsWith("-")) {
+            return operand.substring(1);
+        }
+        return "-" + operand;
     }
 
     private void handleBackspace() {
@@ -216,7 +479,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 expression = expression.substring(0, expression.length() - 1);
             }
         }
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
         calculateResult(false);
     }
 
@@ -246,31 +509,39 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
             }
         }
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
     }
 
     private void handleInput(String input) {
         if (TextUtils.isEmpty(input)) return;
 
+        if (input.equals("√")) {
+            // Unary action on the entered operand, including the canonical result after equals.
+            int end = expression.length();
+            int operandEnd = end;
+            while (operandEnd > 0 && expression.charAt(operandEnd - 1) == '%') operandEnd--;
+            int start = findLastOperandStart(expression, operandEnd);
+            if (start < 0 || start >= operandEnd) return;
+            String operand = expression.substring(start, end);
+            if (!ExpressionEvaluator.evaluate(operand.replace('×', '*').replace('÷', '/')).isValid()) return;
+            expression = expression.substring(0, start) + "sqrt(" + operand + ")";
+            isResultDisplayed = false;
+            updateExpressionDisplay();
+            calculateResult(false);
+            return;
+        }
+
         if (isResultDisplayed) {
-            if (isOperatorChar(input.charAt(0)) || input.equals(symExponent) || input.equals(symPercent)) {
-                expression = tvResult.getText().toString().replace(",", "");
-            } else {
+            if (input.equals("^") && expression.startsWith("-")) {
+                expression = "(" + expression + ")";
+            }
+            if (!(isOperatorChar(input.charAt(0)) || input.equals("^") || input.equals("%"))) {
                 expression = "";
             }
             isResultDisplayed = false;
         }
 
-        if (input.equals(symSqrt)) {
-            // Implicit multiplication: 2√ -> 2*sqrt(
-            if (!expression.isEmpty()) {
-                char lastChar = expression.charAt(expression.length() - 1);
-                if (Character.isDigit(lastChar) || lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0)) {
-                    expression += symMultiply;
-                }
-            }
-            expression += funcSqrtParen;
-        } else if (input.equals(symParenOpen)) {
+        if (input.equals("(")) {
             if (!expression.isEmpty()) {
                 char lastChar = expression.charAt(expression.length() - 1);
                 if (Character.isDigit(lastChar) || lastChar == symParenClose.charAt(0) || lastChar == symPercent.charAt(0) || lastChar == symDot.charAt(0)) {
@@ -317,7 +588,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             expression += input;
         }
         
-        tvExpression.setText(expression);
+        updateExpressionDisplay();
         calculateResult(false);
     }
 
@@ -333,45 +604,87 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         return c == symPlus.charAt(0) || c == symMinus.charAt(0) || c == symMultiply.charAt(0) || c == symDivide.charAt(0);
     }
 
-    private void toggleHistory(boolean show) {
-        historyLayout.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (onBackPressedCallback != null) {
-            onBackPressedCallback.setEnabled(show);
+    private void updateExpressionDisplay() {
+        if (inputChangeInProgress) return;
+        if (tvExpression == null) {
+            return;
         }
-        
-        if (show) {
-            historyList.clear();
-            historyList.addAll(dbHelper.getAllHistory());
-            if (getView() != null) {
-                getView().findViewById(R.id.tv_empty_history).setVisibility(historyList.isEmpty() ? View.VISIBLE : View.GONE);
-            }
-            historyAdapter.notifyDataSetChanged();
+        if (isResultDisplayed || expression.isEmpty()) {
+            tvExpression.setText("");
+            GenericFunctions.resetTextSize(tvExpression, 21);
+            return;
+        }
+        tvExpression.setText(
+                ExpressionDisplayFormatter.formatSpannable(expression, mPrefs, semanticTheme)
+        );
+        GenericFunctions.adjustTextSize(tvExpression, 21);
+    }
+
+    private boolean hasGraphyContent() {
+        return latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput);
+    }
+
+    private void updateGraphyTabState() {
+        TabLayout.Tab graphyTab = workspaceTabs.getTabAt(1);
+        if (graphyTab == null) {
+            return;
+        }
+        boolean enabled = hasGraphyContent();
+        View tabView = graphyTab.view;
+        tabView.setEnabled(enabled);
+        tabView.setAlpha(enabled ? 1f : 0.4f);
+    }
+
+    private void selectWorkspaceTab(int index) {
+        if (workspaceTabController != null) {
+            workspaceTabController.selectTab(index);
         }
     }
 
-    private void clearHistory() {
-        dbHelper.clearHistory();
-        historyList.clear();
-        historyAdapter.notifyDataSetChanged();
-        if (getView() != null) {
-            getView().findViewById(R.id.tv_empty_history).setVisibility(View.VISIBLE);
+    @Override public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (historyRecorder != null) historyRecorder.visibilityChanged();
+        updateWorkspaceBackCallback();
+    }
+
+    private void updateWorkspaceBackCallback() {
+        if (onBackPressedCallback != null) {
+            onBackPressedCallback.setEnabled(!isHidden() && workspaceTabController != null
+                    && workspaceTabController.getCurrentTab() != 0);
         }
-        showToast(getString(R.string.history_cleared));
+    }
+
+    private void applyWorkspaceTab(int position) {
+        updateWorkspaceBackCallback();
+        if (position == 1) {
+            if (!hasGraphyContent()) {
+                selectWorkspaceTab(0);
+                return;
+            }
+            showGraphy(latestGraphyOutput);
+        }
     }
 
     private void calculateResult(boolean isFinal) {
+        if (inputChangeInProgress) { recalculateAfterInput = true; return; }
+        historyRecorder.invalidate();
         if (expression.isEmpty()) {
-            tvResult.setText(symZero);
+            tvResult.setText(R.string.zero);
+            latestGraphyOutput = null;
+            hideGraphy();
+            updateGraphyTabState();
             return;
         }
 
         try {
-            String sanitized = expression.replace(symMultiply.charAt(0), '*').replace(symDivide.charAt(0), '/').replace(symSqrt, funcSqrt);
+            String sourceExpression = isResultDisplayed && !lastEvaluatedExpression.isEmpty()
+                    ? lastEvaluatedExpression : expression;
+            String sanitized = sourceExpression.replace('×', '*').replace('÷', '/').replace("√", "sqrt");
             
             // Auto-close parentheses for final calculation
-            if (isFinal) {
-                int openCount = countOccurrences(sanitized, symParenOpen.charAt(0));
-                int closeCount = countOccurrences(sanitized, symParenClose.charAt(0));
+            if (isFinal || isResultDisplayed) {
+                int openCount = countOccurrences(sanitized, '(');
+                int closeCount = countOccurrences(sanitized, ')');
                 while (openCount > closeCount) {
                     sanitized += symParenClose;
                     openCount--;
@@ -382,173 +695,136 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            double res = eval(sanitized);
-            if (Double.isNaN(res) || Double.isInfinite(res)) {
-                if (isFinal) showToast(getString(R.string.invalid_expression));
+            EvaluationResult evaluationResult = ExpressionEvaluator.evaluate(sanitized);
+            if (!evaluationResult.isValid()) {
+                tvResult.setText("");
+                latestGraphyOutput = null;
+                hideGraphy();
+                updateGraphyTabState();
+                if (isFinal) {
+                    showToast(getString(R.string.invalid_expression));
+                    feedbackFinal(InteractionFeedbackManager.Type.ERROR);
+                }
                 return;
             }
 
-            String formatted = formatResult(res);
+            String formatted = formatResult(evaluationResult.getDecimalValue());
             tvResult.setText(formatted);
-            
+
+            CalculationSnapshot snapshot = CalculationSnapshot.create(
+                    CalculationSnapshot.BASIC_CALCULATOR_ID,
+                    sourceExpression,
+                    sanitized,
+                    formatted,
+                    evaluationResult
+            );
+            latestGraphyOutput = graphyBridge.build(snapshot);
+            updateGraphyTabState();
+            if (graphyVisible && latestGraphyOutput != null && graphyRenderer.supports(latestGraphyOutput)) {
+                renderGraphy(latestGraphyOutput);
+            }
+
+            historyRecorder.update(sourceExpression, formatted, CalculatorCatalog.ID_BASIC);
             if (isFinal) {
-                dbHelper.addHistory(expression, formatted);
-                expression = formatted.replace(",", "");
-                tvExpression.setText("");
+                lastEvaluatedExpression = sourceExpression;
+                historyRecorder.saveNow();
+                expression = evaluationResult.getDecimalValue().stripTrailingZeros().toPlainString();
                 isResultDisplayed = true;
+                updateExpressionDisplay();
+                feedbackFinal(InteractionFeedbackManager.Type.CONFIRM);
             }
         } catch (Exception e) {
+            tvResult.setText("");
+            latestGraphyOutput = null;
+            hideGraphy();
+            updateGraphyTabState();
             if (isFinal) {
                 showToast(getString(R.string.invalid_expression));
+                feedbackFinal(InteractionFeedbackManager.Type.ERROR);
             }
         }
     }
 
-    private String formatResult(double value) {
-        DecimalFormat df = new DecimalFormat("#,###.########");
-        df.setMaximumFractionDigits(mPrefs.getNumberDecimals());
-        return df.format(value);
+    private void feedbackFinal(InteractionFeedbackManager.Type type) {
+        if (tvExpression != null) InteractionFeedbackManager.perform(tvExpression, type);
     }
 
-    private void copyToClipboard() {
-        String textToCopy = tvResult.getText().toString();
-        if (textToCopy.equals(symZero) && expression.isEmpty()) {
-            showToast(getString(R.string.toast_no_results_to_copy));
+    private String formatResult(java.math.BigDecimal value) {
+        String group = mPrefs.getGroupSeparator();
+        boolean grouping = !group.isEmpty() && !group.equals(getString(R.string.group_separator_none));
+        return NumberUtils.formatCalculator(value, mPrefs.getNumberDecimals(),
+                mPrefs.getDecimalSeparator().charAt(0), grouping ? group.charAt(0) : ',', grouping);
+    }
+
+    private void copyExpressionAndResult() {
+        String result = tvResult.getText().toString();
+        if (result.equals("0") && expression.isEmpty() && lastEvaluatedExpression.isEmpty()) {
             return;
         }
+
+        String exprPart;
+        if (!expression.isEmpty() && !isResultDisplayed) {
+            exprPart = expression;
+        } else if (!lastEvaluatedExpression.isEmpty()) {
+            exprPart = lastEvaluatedExpression;
+        } else {
+            exprPart = result;
+        }
+
+        String textToCopy = exprPart + " = " + result;
         ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText(getString(R.string.clip_label_calculator_result), textToCopy);
+        ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), textToCopy);
         clipboard.setPrimaryClip(clip);
-        showToast(getString(R.string.toast_result_copied));
+        showToast(getString(R.string.toast_copied));
     }
 
     private void showToast(String message) {
         Snackbar.make(mCoordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    // Advanced Parser with implicit multiplication support
-    public double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) return Double.NaN;
-                return x;
-            }
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if (eat('+')) x += parseTerm();
-                    else if (eat('-')) x -= parseTerm();
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if (eat('*')) x *= parseFactor();
-                    else if (eat('/')) {
-                        double divisor = parseFactor();
-                        if (divisor == 0) return Double.NaN;
-                        x /= divisor;
-                    } else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return +parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) {
-                    x = parseExpression();
-                    if (!eat(')')) return Double.NaN;
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    try {
-                        x = Double.parseDouble(str.substring(startPos, this.pos));
-                    } catch (NumberFormatException e) {
-                        return Double.NaN;
-                    }
-                } else if (ch >= 'a' && ch <= 'z') {
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    if (eat('(')) {
-                        x = parseExpression();
-                        if (!eat(')')) return Double.NaN;
-                    } else {
-                        x = parseFactor();
-                    }
-                    if (func.equals(funcSqrt)) x = Math.sqrt(x);
-                    else return Double.NaN;
-                } else {
-                    return Double.NaN;
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor());
-                if (eat('%')) x = x / 100.0;
-
-                return x;
-            }
-        }.parse();
+    GraphyOutput getLatestGraphyOutput() {
+        return latestGraphyOutput;
     }
 
-    private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-        private final List<HistoryItem> items;
-        private final OnItemClickListener listener;
-
-        interface OnItemClickListener {
-            void onItemClick(HistoryItem item);
+    @Override
+    public void showGraphy(@NonNull GraphyOutput output) {
+        if (!graphyRenderer.supports(output)) {
+            return;
         }
-
-        HistoryAdapter(List<HistoryItem> items, OnItemClickListener listener) {
-            this.items = items;
-            this.listener = listener;
+        graphyVisible = true;
+        if (graphyEmpty != null) {
+            graphyEmpty.setVisibility(View.GONE);
         }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, parent, false);
-            return new ViewHolder(v);
+        if (graphyPanel != null) {
+            graphyPanel.setVisibility(View.VISIBLE);
         }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            HistoryItem item = items.get(position);
-            holder.tvExpression.setText(item.expression);
-            holder.tvResult.setText(item.result);
-            holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
+        if (graphyContext != null) {
+            graphyContext.setVisibility(View.GONE);
         }
+        renderGraphy(output);
+    }
 
-        @Override
-        public int getItemCount() { return items.size(); }
-
-        static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvExpression, tvResult;
-            ViewHolder(View v) {
-                super(v);
-                tvExpression = v.findViewById(R.id.tv_history_expression);
-                tvResult = v.findViewById(R.id.tv_history_result);
-            }
+    @Override
+    public void hideGraphy() {
+        graphyVisible = false;
+        if (graphyPanelController != null) {
+            graphyPanelController.update(null);
         }
+    }
+
+    @Override
+    public boolean isGraphyVisible() {
+        return graphyVisible;
+    }
+
+    private void renderGraphy(@NonNull GraphyOutput output) {
+        if (graphyPanelController == null) {
+            return;
+        }
+        String expression = output.getExpression();
+        if (expression == null) {
+            expression = "";
+        }
+        graphyPanelController.update(output);
     }
 }

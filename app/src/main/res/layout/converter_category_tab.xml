@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:importantForAccessibility="noHideDescendants">
+    <ImageView
+        android:id="@+id/converter_category_tab_icon"
+        android:layout_width="@dimen/converter_flag_height"
+        android:layout_height="@dimen/converter_flag_height"
+        android:layout_marginBottom="@dimen/converter_category_icon_label_gap"
+        android:duplicateParentState="true"
+        android:contentDescription="@null" />
+    <TextView
+        android:id="@+id/converter_category_tab_label"
+        style="@style/ConverterCategoryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:includeFontPadding="false"
+        android:gravity="center"
+        android:singleLine="true" />
+</LinearLayout>

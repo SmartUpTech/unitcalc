@@ -21,6 +21,7 @@ public final class Conversion {
     public static final int ENERGY = 12;
     public static final int TORQUE = 13;
     public static final int CURRENCY = 14;
+    public static final int ANGLE = 15;
 
     private int id;
     private int labelResource;

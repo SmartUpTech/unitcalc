@@ -1,0 +1,18 @@
+---
+name: calculator-accuracy
+description: Implement and verify accurate unit conversions, expressions, currency calculations, formatting and Graphy results. Use whenever formulas, parsers, units, rates, rounding, numeric input or result caching changes.
+---
+
+# Calculator Accuracy
+
+1. Read docs/CALCULATOR_SYSTEM.md and the affected evaluator/converter/model plus existing tests. Write down the calculation contract before editing: supported domain, units, precedence, precision, rounding, formatting and error behavior. Preserve established percentage, sign, exponent and scientific-function semantics; resolve ambiguous behavior before changing it.
+2. Use one calculation source for the numeric result, history, copy/share and Graphy. Pass structured result snapshots with input/unit/rate identity and error status; never re-parse rounded display text to calculate or build diagrams. Graphy must not independently invent formulas or intermediate results.
+3. Centralize unit IDs, factors, offsets and precision policy in the existing registry/model. Verify added definitions against authoritative standards/provider documentation and record provenance. Distinguish multiplicative from affine conversions (absolute temperature versus temperature difference), area/volume exponents, binary versus decimal data units and US versus Imperial units. Do not assume every conversion is multiplication or that all negative values are invalid.
+4. Choose numeric types deliberately. Use decimal arithmetic from decimal strings for exact decimal/financial requirements, with explicit scale and rounding; do not blindly convert a binary floating-point value into BigDecimal or replace every scientific calculation with decimal arithmetic. Where floating point is appropriate, document absolute/relative tolerances, overflow/underflow and domain limits. Retain internal precision and round at the defined output boundary. Never silently change precision for speed.
+5. Separate locale-aware input/display from canonical computation and storage. Handle supported decimal/grouping separators, Unicode minus, pasted input, trailing decimal/incomplete expressions and scientific notation as specified. Never strip punctuation indiscriminately or evaluate arbitrary code. Preserve explicit invalid/domain/divide-by-zero states; do not present NaN, infinity, zero or a stale previous answer as a valid current result.
+6. Treat currency as time-dependent data: retain provider/base/quote/rate timestamp, validate rates, document inversion/cross-rate handling, and distinguish fresh/cached/stale/unavailable states. Never fabricate a fallback rate or call cached data live. Key caches by every result-affecting input and invalidate when rates or precision settings change.
+7. Guard asynchronous publication with request/input identity: a late response must not overwrite a newer calculation or a different selected unit. Test adversarial completion order as well as cancellation.
+8. Add focused tests for changed numeric behavior using independently derived expected values. Include known reference examples, zero/negative/boundary/large/small input, invalid domains, rounding boundaries, locale cases and inverse conversions with justified tolerances. Round-trip tests alone are insufficient because paired mistakes can cancel. Test expression precedence/unary signs where relevant, rate freshness/errors for currency, and agreement between result/history/Graphy. Run the relevant existing tests and report exact outcomes; missing runtime validation remains unverified.
+
+Official Java numeric contract (check against Android-supported APIs):
+- https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigDecimal.html

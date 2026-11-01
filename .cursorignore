@@ -1,0 +1,56 @@
+# Build & Generated
+.gradle/
+.kotlin/
+build/
+bin/
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+/app/build/
+/app/release/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.git/
+
+# Config & Sensitive
+local.properties
+keystore.properties
+*.jks
+*.keystore
+google-services*.json
+
+# Assets & Binaries
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.pdf
+*.zip
+*.ico
+*.ttf
+*.otf
+*.jar
+*.aab
+*.apk
+
+# System
+Thumbs.db
+.DS_Store
+
+# Agent History
+.artifacts/
+
+# Redundant Android Resources (Compression)
+app/src/main/res/mipmap-*
+
+# Optional context (uncomment if not testing)
+# app/src/test/
+# app/src/androidTest/
+
+
+app/src/main/ic_launcher-playstore.png

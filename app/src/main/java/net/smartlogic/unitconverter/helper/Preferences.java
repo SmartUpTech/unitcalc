@@ -6,13 +6,46 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.theme.CalculatorThemes;
+import net.smartlogic.unitconverter.theme.ThemeAccess;
+import net.smartlogic.unitconverter.theme.ThemeManager;
+
+import java.util.Map;
 
 public class Preferences {
 
-    public static final String PREFS_THEME = "pref_theme";
+    public static final String PREFS_STARTUP_SCREEN = "startup_screen";
+
+    public String getStartupScreen() {
+        Object value = mPrefs.getAll().get(PREFS_STARTUP_SCREEN);
+        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(value)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(value)) {
+            return (String) value;
+        }
+        return net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC;
+    }
+
+    public void setStartupScreen(String screen) {
+        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC.equals(screen)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(screen)
+                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(screen)) {
+            mPrefs.edit().putString(PREFS_STARTUP_SCREEN, screen).apply();
+        }
+    }
+
+    public static final String PREFS_SELECTED_THEME = "selected_theme";
+    public static final String PREFS_THEME_EXPIRY_PREFIX = "theme_expiry_";
+    public static final String PREFS_PENDING_REWARDED_THEME = "pending_rewarded_theme";
+    public static final String PREFS_THEME_ACCESS_VERSION = "theme_access_version";
+    public static final String PREFS_THEME_NOTICE = "theme_access_notice";
+    private static final String REWARD_ATTEMPT_PREFIX = "theme_reward_attempt_";
+    public static final String NOTICE_EXPIRED = "expired";
+    public static final String NOTICE_MIGRATED = "migrated";
     public static final String PREFS_NUMBER_OF_DECIMALS = "number_decimals";
     public static final String PREFS_DECIMAL_SEPARATOR = "decimal_separator";
     public static final String PREFS_GROUP_SEPARATOR = "group_separator";
+    public static final String PREFS_KEY_SOUNDS = "key_sounds";
+    public static final String PREFS_KEY_VIBRATION = "key_vibration";
     private static final String PREFS_LAST_CONVERSION = "last_conversion";
     private static final String PREFS_LAST_FROM_UNIT = "last_from_unit";
     private static final String PREFS_LAST_TO_UNIT = "last_to_unit";
@@ -26,7 +59,7 @@ public class Preferences {
     private final SharedPreferences mPrefs;
     private final Context mContext;
 
-    public static Preferences getInstance(Context context) {
+    public static synchronized Preferences getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new Preferences(context.getApplicationContext());
         }
@@ -43,15 +76,122 @@ public class Preferences {
         return mPrefs;
     }
 
-    public boolean isLightTheme() {
-        return !mPrefs.getBoolean(PREFS_THEME, false);
+    private static final String PREFS_BMI_STATE = "bmi_state_v2";
+    private static final String PREFS_BMI_STATE_LEGACY = "bmi_state_v1";
+    public String getBmiState() {
+        try {
+            if (mPrefs.contains(PREFS_BMI_STATE)) return mPrefs.getString(PREFS_BMI_STATE, "");
+            return mPrefs.getString(PREFS_BMI_STATE_LEGACY, "");
+        } catch (ClassCastException invalid) { return ""; }
+    }
+    public void setBmiState(String state) { mPrefs.edit().putString(PREFS_BMI_STATE, state).apply(); }
+
+    public boolean isKeySoundsEnabled() {
+        return mPrefs.getBoolean(PREFS_KEY_SOUNDS, true);
     }
 
-    public String getPrefsTheme() {
-        if (mPrefs.getBoolean(PREFS_THEME, false)) {
-            return ThemeHelper.DARK_MODE;
+    public boolean isKeyVibrationEnabled() {
+        return mPrefs.getBoolean(PREFS_KEY_VIBRATION, true);
+    }
+
+    public void setKeySoundsEnabled(boolean enabled) {
+        mPrefs.edit().putBoolean(PREFS_KEY_SOUNDS, enabled).apply();
+    }
+
+    public void setKeyVibrationEnabled(boolean enabled) {
+        mPrefs.edit().putBoolean(PREFS_KEY_VIBRATION, enabled).apply();
+    }
+
+    public String getSelectedThemeId() {
+        try {
+            return CalculatorThemes.fromId(mPrefs.getString(PREFS_SELECTED_THEME, CalculatorThemes.DEFAULT_ID)).id();
+        } catch (ClassCastException invalidType) {
+            return CalculatorThemes.DEFAULT_ID;
         }
-        return ThemeHelper.LIGHT_MODE;
+    }
+
+    public synchronized boolean setSelectedThemeId(String themeId) {
+        long now = System.currentTimeMillis();
+        reconcileThemeAccess(now, ThemeManager.hasProAccess(),
+                !net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy());
+        if (!isThemeAvailable(themeId, now, ThemeManager.hasProAccess())) return false;
+        // Clear a stale notice even when explicitly selecting the already-visible theme.
+        mPrefs.edit().putString(PREFS_SELECTED_THEME, themeId)
+                .remove(PREFS_THEME_NOTICE).remove(PREFS_PENDING_REWARDED_THEME).apply();
+        return true;
+    }
+
+    public long getThemeExpiry(String themeId) {
+        Object value = mPrefs.getAll().get(PREFS_THEME_EXPIRY_PREFIX + themeId);
+        return value instanceof Long ? Math.max(0L, (Long) value) : 0L;
+    }
+
+    public boolean isThemeAvailable(String themeId, long now, boolean pro) {
+        return net.smartlogic.unitconverter.BuildConfig.DEBUG && ThemeAccess.isKnown(themeId)
+                || ThemeAccess.isAvailable(themeId, pro, getThemeExpiry(themeId), now);
+    }
+
+    /** Startup/foreground reconciliation. No timer mutates the visible theme. */
+    public synchronized String reconcileThemeAccess(long now, boolean pro, boolean finishPending) {
+        Map<String, ?> values = mPrefs.getAll();
+        Object rawSelected = values.get(PREFS_SELECTED_THEME);
+        String selected = getSelectedThemeId();
+        Object version = values.get(PREFS_THEME_ACCESS_VERSION);
+        boolean migration = !(version instanceof Integer) || (Integer) version < ThemeAccess.VERSION;
+        SharedPreferences.Editor editor = mPrefs.edit();
+        boolean changed = false;
+        if (migration) {
+            editor.putInt(PREFS_THEME_ACCESS_VERSION, ThemeAccess.VERSION)
+                    .remove("theme_usage_days").remove("theme_last_usage_date")
+                    .remove("theme_progression_version").remove("theme_grandfathered_id");
+            changed = true;
+        }
+        Object pending = values.get(PREFS_PENDING_REWARDED_THEME);
+        // Pending must represent a real, unexpired earned reward, not merely Pro access.
+        if (finishPending && pending != null) {
+            if (pending instanceof String && ThemeAccess.isKnown((String) pending)
+                    && getThemeExpiry((String) pending) > now) {
+                selected = (String) pending;
+                editor.putString(PREFS_SELECTED_THEME, selected).remove(PREFS_THEME_NOTICE);
+            }
+            editor.remove(PREFS_PENDING_REWARDED_THEME);
+            changed = true;
+        }
+        if (!isThemeAvailable(selected, now, pro)) {
+            selected = CalculatorThemes.DEFAULT_ID;
+            editor.putString(PREFS_SELECTED_THEME, selected)
+                    .putString(PREFS_THEME_NOTICE, migration ? NOTICE_MIGRATED : NOTICE_EXPIRED);
+            changed = true;
+        } else if (rawSelected != null && !ThemeAccess.isKnown(rawSelected instanceof String ? (String) rawSelected : null)) {
+            editor.putString(PREFS_SELECTED_THEME, selected);
+            changed = true;
+        }
+        if (net.smartlogic.unitconverter.BuildConfig.DEBUG && values.containsKey(PREFS_THEME_NOTICE)) {
+            editor.remove(PREFS_THEME_NOTICE);
+            changed = true;
+        }
+        if (changed) editor.apply();
+        return selected;
+    }
+
+    /** Call on the serialized reward executor. Commit completes before UI recovery. */
+    public boolean saveThemeReward(String themeId, String attemptId, long rewardTime) {
+        if (!ThemeAccess.isKnown(themeId) || ThemeAccess.isAlwaysFree(themeId)
+                || attemptId == null || attemptId.isEmpty() || rewardTime < 0
+                || rewardTime > Long.MAX_VALUE - ThemeAccess.REWARD_DURATION_MILLIS) return false;
+        Map<String, ?> values = mPrefs.getAll();
+        if (attemptId.equals(values.get(REWARD_ATTEMPT_PREFIX + themeId))) return false;
+        if (getThemeExpiry(themeId) > rewardTime) return false;
+        return mPrefs.edit()
+                .putLong(PREFS_THEME_EXPIRY_PREFIX + themeId, rewardTime + ThemeAccess.REWARD_DURATION_MILLIS)
+                .putString(REWARD_ATTEMPT_PREFIX + themeId, attemptId)
+                .putString(PREFS_PENDING_REWARDED_THEME, themeId).commit();
+    }
+
+    public synchronized String consumeThemeNotice() {
+        Object notice = mPrefs.getAll().get(PREFS_THEME_NOTICE);
+        if (notice != null) mPrefs.edit().remove(PREFS_THEME_NOTICE).apply();
+        return notice instanceof String ? (String) notice : null;
     }
 
     public int getLastConversion() {
@@ -106,6 +246,11 @@ public class Preferences {
         mPrefs.edit().putString(PREFS_CURR_DATA, response).apply();
     }
 
+    public void setCurrencySnapshot(String response, long fetchedAt) {
+        mPrefs.edit().putString(PREFS_CURR_DATA, response)
+                .putLong(PREFS_CURR_LAST_UPDT, fetchedAt).apply();
+    }
+
     public String getCurrencyResponse() {
         return mPrefs.getString(PREFS_CURR_DATA, "");
     }
@@ -116,6 +261,16 @@ public class Preferences {
 
     public int getFromCurrencyIndex() {
         return mPrefs.getInt(PREFS_CURR_FROM_INDEX, 31);
+    }
+
+    private static final String PREFS_CURR_ADDITIONAL_INDEX = "additional_currency_index";
+
+    public int getAdditionalCurrencyIndex() {
+        return mPrefs.getInt(PREFS_CURR_ADDITIONAL_INDEX, 11);
+    }
+
+    public void setAdditionalCurrencyIndex(int index) {
+        mPrefs.edit().putInt(PREFS_CURR_ADDITIONAL_INDEX, index).apply();
     }
 
     public void setToCurrencyIndex(int index) {

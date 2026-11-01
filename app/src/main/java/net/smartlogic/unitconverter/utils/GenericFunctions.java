@@ -13,7 +13,10 @@ public class GenericFunctions {
 
     public static void showToast(View v, int message) {
         Snackbar sb = Snackbar.make(v, message, Snackbar.LENGTH_LONG);
-        sb.getView().setBackgroundResource(R.color.colorNewGrey);
+        net.smartlogic.unitconverter.theme.CalculatorTheme theme = net.smartlogic.unitconverter.theme.ThemeManager.get();
+        sb.setBackgroundTint(theme.background());
+        sb.setTextColor(theme.primaryContentColor());
+        sb.setActionTextColor(theme.accentContentColor());
         sb.show();
     }
 
@@ -26,9 +29,11 @@ public class GenericFunctions {
             return;
         }
 
-        String text = textView.getText().toString();
-        if (text.isEmpty()) {
+        CharSequence text = textView.getText();
+        if (text == null || text.length() == 0) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, maxSp);
+            textView.setHorizontallyScrolling(false);
+            textView.scrollTo(0, 0);
             return;
         }
 
@@ -36,14 +41,13 @@ public class GenericFunctions {
         if (availableWidth <= 0) return;
 
         TextPaint paint = new TextPaint(textView.getPaint());
-        float density = textView.getContext().getResources().getDisplayMetrics().scaledDensity;
-        float currentSizeSp = textView.getTextSize() / density;
+        android.util.DisplayMetrics metrics = textView.getResources().getDisplayMetrics();
         float targetSizeSp = maxSp;
 
         // Reduction loop: start from max and go down until it fits or hits 8sp
         while (targetSizeSp > 8) {
-            paint.setTextSize(targetSizeSp * density);
-            if (paint.measureText(text) > availableWidth) {
+            paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, targetSizeSp, metrics));
+            if (paint.measureText(text, 0, text.length()) > availableWidth) {
                 targetSizeSp -= 2;
             } else {
                 break;
@@ -51,8 +55,20 @@ public class GenericFunctions {
         }
         targetSizeSp = Math.max(8, targetSizeSp);
 
-        if (Math.abs(targetSizeSp - currentSizeSp) > 0.1) {
+        if (Math.abs(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, targetSizeSp, metrics) - textView.getTextSize()) > 0.1) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, targetSizeSp);
+        }
+
+        paint.setTextSize(textView.getTextSize());
+        boolean overflow = paint.measureText(text, 0, text.length()) > availableWidth;
+        textView.setHorizontallyScrolling(overflow);
+        if (overflow) {
+            textView.post(() -> {
+                int scrollX = (int) (paint.measureText(text, 0, text.length()) - availableWidth);
+                textView.scrollTo(Math.max(0, scrollX), 0);
+            });
+        } else {
+            textView.scrollTo(0, 0);
         }
     }
 

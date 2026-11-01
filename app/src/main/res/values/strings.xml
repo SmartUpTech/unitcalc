@@ -1,16 +1,25 @@
 <resources>
-    <string name="app_name">Unit Converter</string>
+    <string name="bmi_history_value">BMI: %1$s</string>
+    <string name="settings_usage_analytics">Share usage analytics</string>
+    <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Sharing is optional and off by default. You can change your choice here anytime. Choosing Do not allow stops collection and resets analytics data on this device.</string>
+    <string name="settings_privacy_choices">Usage analytics</string>
+    <string name="settings_analytics_allow">Allow usage analytics</string>
+    <string name="settings_analytics_decline">Do not allow usage analytics</string>
+    <string name="launcher_name">Calculator+</string>
+    <string name="brand_name">Calculator+</string>
+    <string name="app_name">@string/brand_name</string>
+    <string name="app_bar_brand">Calculator+</string>
+    <string name="app_bar_product">CALCULATOR</string>
 
     <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
-    <string name="url_app_short_link">https://smartup.page.link/unitconverter</string>
     <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
     <string name="url_smartup_website">https://smartuptech.github.io</string>
     <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
-    <string name="description">Unit Converter is wonderful app for converting Unit and Metrics. UNIT CONVERTER is best UnitConverter app.</string>
-    <string name="keywords">Unit Converter app is a UNIT CONVERTER and is very good Unit Converter</string>
+    <string name="description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
+    <string name="keywords">scientific calculator, unit converter, currency converter, calculation history</string>
     <string name="company">SMARTUP</string>
 
-    <string name="note_share_body">Hi,\n\nI am using this excellent Unit Converter App.\nIt\'s accurate, customizable yet light-weight. Must try it.\n\n</string>
+    <string name="note_share_body">Meet %1$s: a scientific calculator, unit converter and currency converter in one app. Calculate, convert and revisit your calculation history.\n\nTry it on Google Play:\n%2$s</string>
 
     <string name="share">Share</string>
     <string name="url_exchangeratesapi">exchangeratesapi.io</string>
@@ -18,21 +27,99 @@
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
     <string name="calculator">Calculator</string>
-
-    <!-- Calculator keypad: operators and functions (shared across calculators) -->
+    <string name="prefs_startup_screen">Start-up screen</string>
+    <string name="startup_currency_converter">Currency Converter</string>
+    <string name="nav_calculator">Calculate</string>
+    <string name="tab_calculate">Calculate</string>
+    <string name="tab_convert">Convert</string>
+    <string name="graphy_empty">Calculate first, then open Graphy to see how the answer was produced.</string>
+    <string name="graphy_converter_empty">Enter a value to see how the conversion is calculated.</string>
+    <string name="same_unit">same unit</string>
+    <string name="history_today">Today</string>
+    <string name="history_yesterday">Yesterday</string>
+    <string name="no_conversion_history">No conversion history yet</string>
+    <string name="nav_converter">Convert</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_history">History</string>
+    <string name="nav_play">Play</string>
+    <string name="nav_play_favourites">Favourites</string>
+    <string name="games_offline_title">Internet connection needed</string>
+    <string name="games_offline_message">You are offline. Games need an Internet connection.</string>
+    <string name="games_offline_action">OK</string>
+    <string name="prefs_key_sounds_title">Keypad sounds</string>
+    <string name="prefs_key_sounds_summary">Play subtle sounds when using calculator keys</string>
+    <string name="prefs_key_vibration_title">Keypad vibration</string>
+    <string name="prefs_key_vibration_summary">Use subtle vibration when using calculator keys</string>
+    <string name="games_loading">Getting your games ready…</string>
+    <string name="games_load_error">Games couldn’t load. Check your connection and try again.</string>
+    <string name="games_update_webview">Update Android System WebView to play games securely.</string>
+    <string name="games_save_error">Your result couldn’t be saved. Please try again.</string>
+    <string name="games_retry">Try again</string>
+    <string name="games_privacy_options">Ad privacy choices</string>
+    <string name="explore_search_hint">Search calculators</string>
+    <string name="no_favorites">No favorites yet</string>
+    <string name="toggle_favorite">Toggle favorite</string>
+    <string name="nav_open_drawer">Open navigation menu</string>
+    <string name="drawer_section_calculators">Calculators</string>
+    <string name="drawer_section_converter">Converter</string>
+    <string name="drawer_unit_converter">Unit Converter</string>
+    <string name="drawer_section_utilities">Utilities</string>
+    <string name="drawer_section_general">General</string>
+    <string name="timer">Timer</string>
+    <string name="timer_recent">Recent Timers</string>
+    <string name="timer_label_hint">Label (optional)</string>
+    <string name="timer_default_label">Focus</string>
+    <string name="timer_hours">hours</string>
+    <string name="timer_min">min</string>
+    <string name="timer_sec">sec</string>
+    <string name="timer_start">Start timer</string>
+    <string name="timer_pause">Pause timer</string>
+    <string name="timer_resume">Resume timer</string>
+    <string name="timer_restart">Restart timer</string>
+    <string name="timer_reset">Reset timer</string>
+    <string name="timer_dismiss">Dismiss alarm</string>
+    <string name="timer_times_up">Time\'s up</string>
+    <string name="timer_replace_title">Replace active timer?</string>
+    <string name="timer_replace_message">Starting this timer will stop the one currently running.</string>
+    <string name="timer_replace_confirm">Replace</string>
+    <string name="timer_notification_channel">Timer</string>
+    <string name="timer_notification_running">%1$s · %2$s remaining</string>
+    <string name="timer_notification_paused">%1$s · paused at %2$s</string>
+    <string name="timer_notification_complete">%1$s finished</string>
+    <string name="timer_widget_description">Calculator+ timer</string>
+    <string name="timer_widget_open">Open timer</string>
+    <string name="clear_history">Clear history</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="multiply">×</string>
     <string name="divide">÷</string>
     <string name="equal">=</string>
     <string name="clear">AC</string>
-    <string name="sqrt">√</string>
-    <string name="exponent">^</string>
-    <string name="percent">%</string>
-    <string name="parenthesis_open">(</string>
-    <string name="parenthesis_close">)</string>
+    <string name="history">History</string>
+    <string name="history_conversion_input">%1$s %2$s → %3$s</string>
+    <string name="history_conversion_result">%1$s %2$s</string>
+    <string name="no_history">No history yet</string>
+    <string name="scientific_mode">Scientific Mode</string>
+    <string name="standard_mode">Standard Mode</string>
+    <string name="history_cleared">History cleared</string>
+    <string name="invalid_expression">Invalid Expression</string>
 
-    <!-- Calculator keypad: numbers -->
+    <!-- Graphy -->
+    <string name="graphy">Graphy</string>
+    <string name="show_graphy">Show Graphy</string>
+    <string name="hide_graphy">Hide Graphy</string>
+    <string name="graphy_panel_content_description">Graphy calculation explanation panel</string>
+    <string name="graphy_flowchart_content_description">Calculation flowchart diagram</string>
+    <string name="graphy_info_content_description">Graphy node guide</string>
+    <string name="graphy_legend_title">Graphy node guide</string>
+    <string name="graphy_legend_input">User-entered values</string>
+    <string name="graphy_legend_constant">Fixed values / conversion factors</string>
+    <string name="graphy_legend_operator">Mathematical operation</string>
+    <string name="graphy_legend_result">Intermediate calculated result</string>
+    <string name="graphy_legend_final">Final calculated answer</string>
+
+    <!-- Numbers -->
     <string name="one">1</string>
     <string name="two">2</string>
     <string name="three">3</string>
@@ -100,18 +187,18 @@
     <!-- Digital Storage -->
     <string name="bit">Bit</string>
     <string name="Byte">Byte</string>
-    <string name="kilobit">Kilobit</string>
-    <string name="kilobyte">Kilobyte</string>
-    <string name="megabit">Megabit</string>
-    <string name="megabyte">Megabyte</string>
-    <string name="gigabit">Gigabit</string>
-    <string name="gigabyte">Gigabyte</string>
-    <string name="terabit">Terabit</string>
-    <string name="terabyte">Terabyte</string>
-    <string name="petabit">Petabit</string>
-    <string name="petabyte">Petabyte</string>
-    <string name="exabit">Exabit</string>
-    <string name="exabyte">Exabyte</string>
+    <string name="kilobit">Kilobit (decimal)</string>
+    <string name="kilobyte">Kilobyte (decimal)</string>
+    <string name="megabit">Megabit (decimal)</string>
+    <string name="megabyte">Megabyte (decimal)</string>
+    <string name="gigabit">Gigabit (decimal)</string>
+    <string name="gigabyte">Gigabyte (decimal)</string>
+    <string name="terabit">Terabit (decimal)</string>
+    <string name="terabyte">Terabyte (decimal)</string>
+    <string name="petabit">Petabit (decimal)</string>
+    <string name="petabyte">Petabyte (decimal)</string>
+    <string name="exabit">Exabit (decimal)</string>
+    <string name="exabyte">Exabyte (decimal)</string>
 
     <!-- Energy -->
     <string name="joule">Joule</string>
@@ -227,14 +314,14 @@
     <string name="n_m">N-m</string>
 
     <!-- Volume -->
-    <string name="teaspoon">Teaspoon</string>
-    <string name="tablespoon">Tablespoon</string>
-    <string name="cup">Cup</string>
+    <string name="teaspoon">Teaspoon (US)</string>
+    <string name="tablespoon">Tablespoon (US)</string>
+    <string name="cup">Cup (US)</string>
     <string name="fluid_ounce">Fluid Ounce (US)</string>
     <string name="quart">Quart (US)</string>
     <string name="pint">Pint (US)</string>
     <string name="gallon">Gallon (US)</string>
-    <string name="barrel">Barrel (US)</string>
+    <string name="barrel">Barrel (US beer, 31.5 gal)</string>
     <string name="fluid_ounce_uk">Fluid Ounce (UK)</string>
     <string name="quart_uk">Quart (UK)</string>
     <string name="pint_uk">Pint (UK)</string>
@@ -260,26 +347,67 @@
     <string name="title_activity_info">Information</string>
 
     <!-- Preferences -->
+    <string name="prefs_title_display">Display</string>
+    <string name="prefs_title_theme">Theme</string>
+    <string name="theme_porcelain_white">Porcelain White</string>
+    <string name="theme_oyster_cream">Oyster Cream</string>
+    <string name="theme_titanium_gray">Titanium Gray</string>
+    <string name="theme_graphite_black">Graphite Black</string>
+    <string name="theme_purple_mountain_majesty">Purple Majesty</string>
+    <string name="theme_glacier">Glacier</string>
+    <string name="theme_burgundy">Burgundy</string>
+    <string name="theme_sage_green">Sage Green</string>
+    <string name="theme_burnt_orange">Burnt Orange</string>
+    <string name="theme_golden_poppy">Golden Poppy</string>
+    <string name="theme_state_locked">Locked. Tap for unlock details.</string>
+    <string name="theme_state_selected">Selected</string>
+    <string name="theme_state_available">Available</string>
+    <string name="theme_locked_title">Theme locked</string>
+    <string name="theme_always_free">Always free</string>
+    <string name="theme_included_pro">Included with Pro</string>
+    <string name="theme_watch_seven_days">Watch ad · 7 days</string>
+    <string name="theme_unlock_hint">Watch an ad to unlock a theme for 7 days.</string>
+    <string name="theme_watch_ad">Watch ad</string>
+    <string name="theme_reward_confirmation">Watch a video to unlock and apply %1$s for seven days. Other themes keep their own access periods.</string>
+    <string name="theme_unlock_offline">Connect to the internet to unlock themes.</string>
+    <string name="theme_ad_loading">Preparing theme reward…</string>
+    <string name="theme_ad_unavailable">The ad could not be shown. No theme was unlocked. Please try again.</string>
+    <string name="theme_ad_not_earned">The video closed before a reward was earned. No theme was unlocked. You can try again.</string>
+    <string name="theme_reward_save_failed">Your theme reward could not be saved. Please try again.</string>
+    <string name="theme_access_expired">Theme access expired. Applying Porcelain White. Unlock themes from Preferences.</string>
+    <string name="theme_access_migrated">Applying Porcelain White. Additional themes can now be unlocked for seven days from Preferences. Porcelain White, Oyster Cream, and Titanium Gray remain free.</string>
+    <plurals name="theme_remaining_days">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
+    <plurals name="theme_remaining_hours">
+        <item quantity="one">%1$d hour left</item>
+        <item quantity="other">%1$d hours left</item>
+    </plurals>
+    <plurals name="theme_remaining_minutes">
+        <item quantity="one">%1$d minute left</item>
+        <item quantity="other">%1$d minutes left</item>
+    </plurals>
     <string name="prefs_title_formatting">Customization</string>
     <string name="prefs_summary_number_decimals">Set the number of decimal places to be shown in result</string>
-    <string name="prefs_title_number_decimals">Number of Decimals</string>
+    <string name="prefs_title_number_decimals">Decimal places</string>
     <string name="prefs_summary_group_separator">Set the group separator to be shown in result</string>
-    <string name="prefs_title_group_separator">Group Separator</string>
+    <string name="prefs_title_group_separator">Thousands separator</string>
     <string name="prefs_summary_decimal_separator">Set the decimal separator to be shown in result</string>
-    <string name="prefs_title_decimal_separator">Decimal Separator</string>
-    <string name="prefs_title_light_theme">Use Light Theme</string>
+    <string name="prefs_title_decimal_separator">Decimal separator</string>
+    <string name="settings_open">Open settings</string>
 
-    <string name="pref_rate_title">Rate us on Google Play</string>
+    <string name="pref_rate_title">Rate on Google Play</string>
     <string name="pref_rate_summary">You seem to be liking our app. Why not rate us 5 stars?</string>
 
-    <string name="pref_share_title">Spread a word</string>
+    <string name="pref_share_title">Share app</string>
     <string name="pref_share_summary">Please help us by sharing this app with your friends, family and WhatsApp groups.</string>
 
-    <string name="pref_website_title">Find us on Web</string>
+    <string name="pref_website_title">Developer website</string>
     <string name="pref_website_summary">Visit our website to know more about us.</string>
-    <string name="pref_privacy_title">Privacy Policy</string>
+    <string name="pref_privacy_title">Privacy policy</string>
     <string name="pref_privacy_summary">Because your privacy is important to us.</string>
-    <string name="pref_version_title">Version</string>
+    <string name="pref_version_title">App version</string>
 
     <string name="group_separator_none">None</string>
 
@@ -314,7 +442,9 @@
     <string name="default_decimal_separator">.</string>
     <string name="str_from">From</string>
     <string name="str_to">To</string>
+    <string name="str_swap_units">Swap units</string>
 
+    <string name="toast_copied">Copied</string>
     <string name="toast_copied_clipboard">Result copied to clipboard</string>
     <string name="toast_no_results_to_copy">No results to copy</string>
     <string name="toast_result_copied">Result copied</string>
@@ -328,7 +458,7 @@
     <!-- AdMob Real Ads -->
     <string name="am_banner_ad_unit">XX</string>
     <string name="am_interstitial_ad_unit">XX</string>
-    <string name="am_rewarded_ad_unit">XX</string>
+    <string name="am_rewarded_ad_unit" translatable="false">ca-app-pub-9684723354540179/3894533962</string>
     <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
 
 
@@ -338,4 +468,564 @@
     <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
     <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/9257395921</string>-->
 
+    <string name="converter_currency_separator" translatable="false">·</string>
+    <string name="converter_unit_rate">%1$s %2$s = %3$s %4$s</string>
+    <string name="converter_input_amount">Input amount</string>
+    <string name="converter_output_amount">Converted amount</string>
+    <string name="converter_copy_result">Copy conversion</string>
+    <string name="converter_share_result">Share conversion</string>
+    <string name="converter_refresh_rates">Refresh exchange rates</string>
+    <string name="converter_backspace">Delete last digit</string>
+    <string name="converter_clear_input">Clear input</string>
+    <string name="converter_clear_key" translatable="false">AC</string>
+    <string name="currency_country_code_symbol">%1$s · %2$s · %3$s</string>
+    <string name="currency_country_code">%1$s · %2$s</string>
+    <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
+    <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
+    <string name="graphy_role_input">Input</string>
+    <string name="graphy_role_constant">Constant</string>
+    <string name="graphy_role_operation">Operation</string>
+    <string name="graphy_role_derived">Intermediate value</string>
+    <string name="graphy_role_result">Result</string>
+    <string name="graphy_role_decision">Classification</string>
+    <string name="graphy_role_visualization">Visualization</string>
+    <string name="graphy_role_explanation">Explanation</string>
+    <string name="graphy_node_accessibility">%1$s: %2$s</string>
+    <string name="graphy_dependency">Uses %1$s</string>
+    <string name="graphy_reused_value">Reused value</string>
+    <string name="graphy_info_symbol">ⓘ</string>
+    <string name="graphy_relationship">Conversion relationship</string>
+    <string name="graphy_exchange_rate">Exchange rate</string>
+    <string name="graphy_unit_relationship">1 %1$s = %2$s %3$s</string>
+    <string name="graphy_linear_formula">%1$s × %2$s</string>
+    <string name="graphy_reciprocal_formula">%1$s ÷ %2$s</string>
+    <string name="graphy_equation">%1$s = %2$s</string>
+    <string name="graphy_mapping">Conversion rule</string>
+    <string name="graphy_piecewise">This conversion uses the existing piecewise Gas Mark rule, including its range limits.</string>
+    <string name="graphy_fuel_rounding">Fuel consumption uses an inverse relationship. The result follows the converter’s existing division and rounding rules.</string>
+    <string name="graphy_zero_fuel">The inverse relationship is undefined at zero. The existing converter returns the input unchanged for this case.</string>
+    <string name="graphy_rate_cached">Cached exchange rate; last fetched %1$s. Rates can change and cached rates may be outdated.</string>
+    <string name="graphy_rate_unknown_time">Exchange rates can change. The time of this cached rate is unavailable.</string>
+    <string name="graphy_offset_formula">(%1$s) %2$s %3$s</string>
+    <string name="graphy_node_hint">Tap a node for details</string>
+    <string name="graphy_unavailable">A Graphy explanation is unavailable for the current values.</string>
+    <string name="currency_unavailable">Rate unavailable</string>
+    <string name="currency_refresh_failed">Could not refresh rates.</string>
+    <string name="currency_cached_at">Last refreshed: %1$s</string>
+    <string name="currency_stale_at">Last refreshed: %1$s (stale)</string>
+    <string name="converter_exchange_rate">Exchange rate</string>
+    <string name="graphy_expand_stage">Expand stage %1$d, %2$s</string>
+    <string name="graphy_collapse_stage">Collapse stage %1$d, %2$s</string>
+    <string name="graphy_stage_collapsed">Collapsed</string>
+    <string name="graphy_stage_expanded">Expanded</string>
+    <plurals name="graphy_stage_calculations">
+        <item quantity="one">%d calculation</item>
+        <item quantity="other">%d calculations</item>
+    </plurals>
+    <string name="graphy_download">Download graph</string>
+    <string name="graphy_export_pdf">PDF</string>
+    <string name="graphy_export_png">PNG</string>
+    <string name="graphy_export_preparing">Preparing graph download</string>
+    <string name="graphy_export_saved">Graph saved</string>
+    <string name="graphy_export_failed">Could not save the graph. Please try again.</string>
+    <string name="graphy_export_png_too_large">This graph is too large for PNG. Please download it as PDF.</string>
+    <string name="graphy_export_result">= %1$s</string>
+    <!-- Explicit conversion variants; factors live in the unit registry. -->
+    <string name="angle">Angle</string>
+    <string name="sq_millimetre">Square millimetre</string>
+    <string name="guntha">Guntha (1/40 acre)</string>
+    <string name="cent">Cent (1/100 acre)</string>
+    <string name="marla">Marla (272.25 sq ft)</string>
+    <string name="bigha_assam">Bigha (Assam, 14400 sq ft)</string>
+    <string name="bigha_rajasthan_pucca">Bigha (Rajasthan pucca, 27225 sq ft)</string>
+    <string name="bigha_rajasthan_kaccha">Bigha (Rajasthan kaccha, 17424 sq ft)</string>
+    <string name="quintal">Quintal (metric)</string>
+    <string name="tola">Tola (180 grains)</string>
+    <string name="troy_ounce">Troy ounce</string>
+    <string name="microlitre">Microlitre</string>
+    <string name="centilitre">Centilitre</string>
+    <string name="decilitre">Decilitre</string>
+    <string name="oil_barrel_us">Oil barrel (US, 42 gal)</string>
+    <string name="metric_cup">Cup (metric, 250 mL)</string>
+    <string name="tablespoon_au">Tablespoon (Australia, 20 mL)</string>
+    <string name="teaspoon_imperial">Teaspoon (Imperial, 1/768 gal)</string>
+    <string name="tablespoon_imperial">Tablespoon (Imperial, 1/256 gal)</string>
+    <string name="teaspoon_metric">Teaspoon (metric, 5 mL)</string>
+    <string name="tablespoon_metric">Tablespoon (metric, 15 mL)</string>
+    <string name="millibar">Millibar</string>
+    <string name="inch_mercury">Inch of mercury (conventional)</string>
+    <string name="cm_water">Centimetre of water (conventional)</string>
+    <string name="inch_water">Inch of water (conventional)</string>
+    <string name="kgf_m">Kilogram-force metre</string>
+    <string name="n_cm">Newton centimetre</string>
+    <string name="degree">Degree</string>
+    <string name="radian">Radian</string>
+    <string name="gradian">Gradian</string>
+    <string name="revolution">Revolution</string>
+    <string name="kibibit">Kibibit</string>
+    <string name="kibibyte">Kibibyte</string>
+    <string name="mebibit">Mebibit</string>
+    <string name="mebibyte">Mebibyte</string>
+    <string name="gibibit">Gibibit</string>
+    <string name="gibibyte">Gibibyte</string>
+    <string name="tebibit">Tebibit</string>
+    <string name="tebibyte">Tebibyte</string>
+    <string name="pebibit">Pebibit</string>
+    <string name="pebibyte">Pebibyte</string>
+    <string name="exbibit">Exbibit</string>
+    <string name="exbibyte">Exbibyte</string>
+    <string name="games_bonus_title">Play a new set</string>
+    <string name="games_bonus_message">Watch a video ad to unlock one extra set of games today.</string>
+    <string name="games_bonus_watch">Watch ad and unlock</string>
+    <string name="games_bonus_finished">You have finished the extra set for today. Come back tomorrow for more games.</string>
+    <string name="games_ad_unavailable">No video is available right now. Please try again later.</string>
+    <string name="calculator_input_limit">Expression limit: %1$d characters</string>
+    <string name="calculator_power_key" translatable="false">^</string>
+    <string name="calculator_square_root_key" translatable="false">√</string>
+    <string name="calculator_sqrt_description">Square root of x</string>
+    <string name="calculator_power_description">x raised to y</string>
+    <string name="calculator_open_parenthesis_key" translatable="false">(</string>
+    <string name="calculator_close_parenthesis_key" translatable="false">)</string>
+    <string name="calculator_percent_key" translatable="false">%</string>
+    <string name="calculator_minus_key" translatable="false">-</string>
+    <string name="calculator_sign_key" translatable="false">-/+</string>
+    <string name="timer_preview_time" translatable="false">0:00</string>
+    <string name="press_back_again_to_exit">Press back again to exit</string>
+    <string name="history_reuse_hint">Tap a calculation to reuse it. More options show full values.</string>
+    <string name="history_empty_description">Your calculations will appear here after you calculate a result.</string>
+    <string name="history_start">Start calculating</string>
+    <string name="history_more">Calculation options</string>
+    <string name="history_details">Full calculation</string>
+    <string name="history_copy_result">Copy result</string>
+    <string name="history_copy_calculation">Copy calculation</string>
+    <string name="history_view_full">View full calculation</string>
+    <string name="history_reuse">Reuse calculation</string>
+    <string name="history_open_tool">Open tool</string>
+    <string name="history_delete">Delete calculation</string>
+    <string name="history_clear_all">Clear all history</string>
+    <string name="history_clear_question">Clear all calculation history? This cannot be undone.</string>
+    <string name="history_deleted">Calculation deleted</string>
+    <string name="history_undo">Undo</string>
+    <string name="history_copied">Copied</string>
+    <string name="history_error">History could not be updated. Please try again.</string>
+    <string name="history_loading_error">History could not be loaded. Tap to retry.</string>
+    <string name="history_expression_label">Expression</string>
+    <string name="history_result_label">Result</string>
+    <string name="history_legacy_hint">This entry has no saved input details. Open the tool to start a new calculation.</string>
+    <string name="history_metadata">%1$s · %2$s</string>
+    <string name="history_retry">Retry</string>
+    <string name="history_back">Back to previous tool</string>
+    <string name="history_copy_content">Expression: %1$s\nResult: %2$s</string>
+    <!-- Store listing copy: publish these values through Google Play Console. -->
+    <string name="store_listing_title">Calculator+: Unit Converter</string>
+    <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
+    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
+    <string name="share_app_subject">%1$s: Calculate and convert</string>
+    <string name="currency_copy_format">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
+    <string name="currency_rate_format">1 %1$s = %2$s %3$s</string>
+    <string name="unit_label_symbol_format">%1$s (%2$s)</string>
+    <string name="conversion_copy_format">%1$s %2$s = %3$s %4$s</string>
+    <string name="decimal_input_start" translatable="false">0.</string>
+    <string name="currency_name_aud">Australian dollar</string>
+    <string name="currency_code_aud" translatable="false">AUD</string>
+    <string name="currency_country_aud">Australia</string>
+    <string name="currency_symbol_aud" translatable="false">$</string>
+    <string name="currency_name_brl">Brazilian real</string>
+    <string name="currency_code_brl" translatable="false">BRL</string>
+    <string name="currency_country_brl">Brazil</string>
+    <string name="currency_symbol_brl" translatable="false">R$</string>
+    <string name="currency_name_eur_bg">Euro</string>
+    <string name="currency_code_eur_bg" translatable="false">EUR</string>
+    <string name="currency_country_eur_bg">Bulgaria</string>
+    <string name="currency_symbol_eur_bg" translatable="false">€</string>
+    <string name="currency_name_cad">Canadian dollar</string>
+    <string name="currency_code_cad" translatable="false">CAD</string>
+    <string name="currency_country_cad">Canada</string>
+    <string name="currency_symbol_cad" translatable="false">$</string>
+    <string name="currency_name_cny">Chinese yuan</string>
+    <string name="currency_code_cny" translatable="false">CNY</string>
+    <string name="currency_country_cny">China</string>
+    <string name="currency_symbol_cny" translatable="false">¥</string>
+    <string name="currency_name_eur_hr">Euro</string>
+    <string name="currency_code_eur_hr" translatable="false">EUR</string>
+    <string name="currency_country_eur_hr">Croatia</string>
+    <string name="currency_symbol_eur_hr" translatable="false">€</string>
+    <string name="currency_name_czk">Czech koruna</string>
+    <string name="currency_code_czk" translatable="false">CZK</string>
+    <string name="currency_country_czk">Czechia</string>
+    <string name="currency_symbol_czk" translatable="false">Kč</string>
+    <string name="currency_name_dkk">Danish krone</string>
+    <string name="currency_code_dkk" translatable="false">DKK</string>
+    <string name="currency_country_dkk">Denmark</string>
+    <string name="currency_symbol_dkk" translatable="false">kr</string>
+    <string name="currency_name_hkd">Hong Kong dollar</string>
+    <string name="currency_code_hkd" translatable="false">HKD</string>
+    <string name="currency_country_hkd">Hong Kong</string>
+    <string name="currency_symbol_hkd" translatable="false">$</string>
+    <string name="currency_name_huf">Hungarian forint</string>
+    <string name="currency_code_huf" translatable="false">HUF</string>
+    <string name="currency_country_huf">Hungary</string>
+    <string name="currency_symbol_huf" translatable="false">Ft</string>
+    <string name="currency_name_isk">Icelandic króna</string>
+    <string name="currency_code_isk" translatable="false">ISK</string>
+    <string name="currency_country_isk">Iceland</string>
+    <string name="currency_symbol_isk" translatable="false">kr</string>
+    <string name="currency_name_inr">Indian rupee</string>
+    <string name="currency_code_inr" translatable="false">INR</string>
+    <string name="currency_country_inr">India</string>
+    <string name="currency_symbol_inr" translatable="false">₹</string>
+    <string name="currency_name_idr">Indonesian rupiah</string>
+    <string name="currency_code_idr" translatable="false">IDR</string>
+    <string name="currency_country_idr">Indonesia</string>
+    <string name="currency_symbol_idr" translatable="false">Rp</string>
+    <string name="currency_name_ils">Israeli new shekel</string>
+    <string name="currency_code_ils" translatable="false">ILS</string>
+    <string name="currency_country_ils">Israel</string>
+    <string name="currency_symbol_ils" translatable="false">₪</string>
+    <string name="currency_name_jpy">Japanese yen</string>
+    <string name="currency_code_jpy" translatable="false">JPY</string>
+    <string name="currency_country_jpy">Japan</string>
+    <string name="currency_symbol_jpy" translatable="false">¥</string>
+    <string name="currency_name_krw">South Korean won</string>
+    <string name="currency_code_krw" translatable="false">KRW</string>
+    <string name="currency_country_krw">South Korea</string>
+    <string name="currency_symbol_krw" translatable="false">₩</string>
+    <string name="currency_name_myr">Malaysian ringgit</string>
+    <string name="currency_code_myr" translatable="false">MYR</string>
+    <string name="currency_country_myr">Malaysia</string>
+    <string name="currency_symbol_myr" translatable="false">RM</string>
+    <string name="currency_name_mxn">Mexican peso</string>
+    <string name="currency_code_mxn" translatable="false">MXN</string>
+    <string name="currency_country_mxn">Mexico</string>
+    <string name="currency_symbol_mxn" translatable="false">$</string>
+    <string name="currency_name_nzd">New Zealand dollar</string>
+    <string name="currency_code_nzd" translatable="false">NZD</string>
+    <string name="currency_country_nzd">New Zealand</string>
+    <string name="currency_symbol_nzd" translatable="false">$</string>
+    <string name="currency_name_nok">Norwegian krone</string>
+    <string name="currency_code_nok" translatable="false">NOK</string>
+    <string name="currency_country_nok">Norway</string>
+    <string name="currency_symbol_nok" translatable="false">kr</string>
+    <string name="currency_name_php">Philippine peso</string>
+    <string name="currency_code_php" translatable="false">PHP</string>
+    <string name="currency_country_php">Philippines</string>
+    <string name="currency_symbol_php" translatable="false">₱</string>
+    <string name="currency_name_pln">Polish złoty</string>
+    <string name="currency_code_pln" translatable="false">PLN</string>
+    <string name="currency_country_pln">Poland</string>
+    <string name="currency_symbol_pln" translatable="false">zł</string>
+    <string name="currency_name_ron">Romanian leu</string>
+    <string name="currency_code_ron" translatable="false">RON</string>
+    <string name="currency_country_ron">Romania</string>
+    <string name="currency_symbol_ron" translatable="false">lei</string>
+    <string name="currency_name_rub">Russian ruble</string>
+    <string name="currency_code_rub" translatable="false">RUB</string>
+    <string name="currency_country_rub">Russia</string>
+    <string name="currency_symbol_rub" translatable="false">₽</string>
+    <string name="currency_name_sgd">Singapore dollar</string>
+    <string name="currency_code_sgd" translatable="false">SGD</string>
+    <string name="currency_country_sgd">Singapore</string>
+    <string name="currency_symbol_sgd" translatable="false">$</string>
+    <string name="currency_name_zar">South African rand</string>
+    <string name="currency_code_zar" translatable="false">ZAR</string>
+    <string name="currency_country_zar">South Africa</string>
+    <string name="currency_symbol_zar" translatable="false">R</string>
+    <string name="currency_name_sek">Swedish krona</string>
+    <string name="currency_code_sek" translatable="false">SEK</string>
+    <string name="currency_country_sek">Sweden</string>
+    <string name="currency_symbol_sek" translatable="false">kr</string>
+    <string name="currency_name_chf">Swiss franc</string>
+    <string name="currency_code_chf" translatable="false">CHF</string>
+    <string name="currency_country_chf">Switzerland</string>
+    <string name="currency_symbol_chf" translatable="false">Fr</string>
+    <string name="currency_name_thb">Thai baht</string>
+    <string name="currency_code_thb" translatable="false">THB</string>
+    <string name="currency_country_thb">Thailand</string>
+    <string name="currency_symbol_thb" translatable="false">฿</string>
+    <string name="currency_name_try">Turkish lira</string>
+    <string name="currency_code_try" translatable="false">TRY</string>
+    <string name="currency_country_try">Turkey</string>
+    <string name="currency_symbol_try" translatable="false">₺</string>
+    <string name="currency_name_gbp">British pound</string>
+    <string name="currency_code_gbp" translatable="false">GBP</string>
+    <string name="currency_country_gbp">United Kingdom</string>
+    <string name="currency_symbol_gbp" translatable="false">£</string>
+    <string name="currency_name_usd">US dollar</string>
+    <string name="currency_code_usd" translatable="false">USD</string>
+    <string name="currency_country_usd">United States</string>
+    <string name="currency_symbol_usd" translatable="false">$</string>
+    <string name="currency_name_eur">Euro</string>
+    <string name="currency_code_eur" translatable="false">EUR</string>
+    <string name="currency_country_eur">Germany</string>
+    <string name="currency_symbol_eur" translatable="false">€</string>
+    <string name="currency_name_aed">United Arab Emirates Dirham</string>
+    <string name="currency_code_aed" translatable="false">AED</string>
+    <string name="currency_country_aed">United Arab Emirates</string>
+    <string name="currency_symbol_aed" translatable="false">د.إ</string>
+    <string name="currency_name_amd">Armenian Dram</string>
+    <string name="currency_code_amd" translatable="false">AMD</string>
+    <string name="currency_country_amd">Armenia</string>
+    <string name="currency_symbol_amd" translatable="false">֏</string>
+    <string name="currency_name_azn">Azerbaijani Manat</string>
+    <string name="currency_code_azn" translatable="false">AZN</string>
+    <string name="currency_country_azn">Azerbaijan</string>
+    <string name="currency_symbol_azn" translatable="false">₼</string>
+    <string name="currency_name_bdt">Bangladeshi Taka</string>
+    <string name="currency_code_bdt" translatable="false">BDT</string>
+    <string name="currency_country_bdt">Bangladesh</string>
+    <string name="currency_symbol_bdt" translatable="false">৳</string>
+    <string name="currency_name_bhd">Bahraini Dinar</string>
+    <string name="currency_code_bhd" translatable="false">BHD</string>
+    <string name="currency_country_bhd">Bahrain</string>
+    <string name="currency_symbol_bhd" translatable="false">د.ب</string>
+    <string name="currency_name_btn">Bhutanese Ngultrum</string>
+    <string name="currency_code_btn" translatable="false">BTN</string>
+    <string name="currency_country_btn">Bhutan</string>
+    <string name="currency_symbol_btn" translatable="false">Nu.</string>
+    <string name="currency_name_gel">Georgian Lari</string>
+    <string name="currency_code_gel" translatable="false">GEL</string>
+    <string name="currency_country_gel">Georgia</string>
+    <string name="currency_symbol_gel" translatable="false">₾</string>
+    <string name="currency_name_iqd">Iraqi Dinar</string>
+    <string name="currency_code_iqd" translatable="false">IQD</string>
+    <string name="currency_country_iqd">Iraq</string>
+    <string name="currency_symbol_iqd" translatable="false">ع.د</string>
+    <string name="currency_name_jod">Jordanian Dinar</string>
+    <string name="currency_code_jod" translatable="false">JOD</string>
+    <string name="currency_country_jod">Jordan</string>
+    <string name="currency_symbol_jod" translatable="false">د.ا</string>
+    <string name="currency_name_kgs">Kyrgyzstani Som</string>
+    <string name="currency_code_kgs" translatable="false">KGS</string>
+    <string name="currency_country_kgs">Kyrgyzstan</string>
+    <string name="currency_symbol_kgs" translatable="false">som</string>
+    <string name="currency_name_khr">Cambodian Riel</string>
+    <string name="currency_code_khr" translatable="false">KHR</string>
+    <string name="currency_country_khr">Cambodia</string>
+    <string name="currency_symbol_khr" translatable="false">៛</string>
+    <string name="currency_name_kwd">Kuwaiti Dinar</string>
+    <string name="currency_code_kwd" translatable="false">KWD</string>
+    <string name="currency_country_kwd">Kuwait</string>
+    <string name="currency_symbol_kwd" translatable="false">د.ك</string>
+    <string name="currency_name_kzt">Kazakhstani Tenge</string>
+    <string name="currency_code_kzt" translatable="false">KZT</string>
+    <string name="currency_country_kzt">Kazakhstan</string>
+    <string name="currency_symbol_kzt" translatable="false">₸</string>
+    <string name="currency_name_lak">Lao Kip</string>
+    <string name="currency_code_lak" translatable="false">LAK</string>
+    <string name="currency_country_lak">Laos</string>
+    <string name="currency_symbol_lak" translatable="false">₭</string>
+    <string name="currency_name_lbp">Lebanese Pound</string>
+    <string name="currency_code_lbp" translatable="false">LBP</string>
+    <string name="currency_country_lbp">Lebanon</string>
+    <string name="currency_symbol_lbp" translatable="false">ل.ل</string>
+    <string name="currency_name_lkr">Sri Lankan Rupee</string>
+    <string name="currency_code_lkr" translatable="false">LKR</string>
+    <string name="currency_country_lkr">Sri Lanka</string>
+    <string name="currency_symbol_lkr" translatable="false">₨</string>
+    <string name="currency_name_mmk">Myanmar Kyat</string>
+    <string name="currency_code_mmk" translatable="false">MMK</string>
+    <string name="currency_country_mmk">Myanmar</string>
+    <string name="currency_symbol_mmk" translatable="false">K</string>
+    <string name="currency_name_mnt">Mongolian Tögrög</string>
+    <string name="currency_code_mnt" translatable="false">MNT</string>
+    <string name="currency_country_mnt">Mongolia</string>
+    <string name="currency_symbol_mnt" translatable="false">₮</string>
+    <string name="currency_name_npr">Nepalese Rupee</string>
+    <string name="currency_code_npr" translatable="false">NPR</string>
+    <string name="currency_country_npr">Nepal</string>
+    <string name="currency_symbol_npr" translatable="false">Rs.</string>
+    <string name="currency_name_omr">Omani Rial</string>
+    <string name="currency_code_omr" translatable="false">OMR</string>
+    <string name="currency_country_omr">Oman</string>
+    <string name="currency_symbol_omr" translatable="false">ر.ع.</string>
+    <string name="currency_name_pkr">Pakistani Rupee</string>
+    <string name="currency_code_pkr" translatable="false">PKR</string>
+    <string name="currency_country_pkr">Pakistan</string>
+    <string name="currency_symbol_pkr" translatable="false">₨</string>
+    <string name="currency_name_qar">Qatari Riyal</string>
+    <string name="currency_code_qar" translatable="false">QAR</string>
+    <string name="currency_country_qar">Qatar</string>
+    <string name="currency_symbol_qar" translatable="false">ر.ق</string>
+    <string name="currency_name_sar">Saudi Riyal</string>
+    <string name="currency_code_sar" translatable="false">SAR</string>
+    <string name="currency_country_sar">Saudi Arabia</string>
+    <string name="currency_symbol_sar" translatable="false">ر.س</string>
+    <string name="currency_name_tjs">Tajikistani Somoni</string>
+    <string name="currency_code_tjs" translatable="false">TJS</string>
+    <string name="currency_country_tjs">Tajikistan</string>
+    <string name="currency_symbol_tjs" translatable="false">ЅМ</string>
+    <string name="currency_name_twd">New Taiwan Dollar</string>
+    <string name="currency_code_twd" translatable="false">TWD</string>
+    <string name="currency_country_twd">Taiwan</string>
+    <string name="currency_symbol_twd" translatable="false">$</string>
+    <string name="currency_name_uzs">Uzbekistan Som</string>
+    <string name="currency_code_uzs" translatable="false">UZS</string>
+    <string name="currency_country_uzs">Uzbekistan</string>
+    <string name="currency_symbol_uzs" translatable="false">so\'m</string>
+    <string name="currency_name_vnd">Vietnamese Đồng</string>
+    <string name="currency_code_vnd" translatable="false">VND</string>
+    <string name="currency_country_vnd">Vietnam</string>
+    <string name="currency_symbol_vnd" translatable="false">₫</string>
+    <string name="currency_name_all">Albanian Lek</string>
+    <string name="currency_code_all" translatable="false">ALL</string>
+    <string name="currency_country_all">Albania</string>
+    <string name="currency_symbol_all" translatable="false">L</string>
+    <string name="currency_name_bam">Bosnia and Herzegovina Convertible Mark</string>
+    <string name="currency_code_bam" translatable="false">BAM</string>
+    <string name="currency_country_bam">Bosnia and Herzegovina</string>
+    <string name="currency_symbol_bam" translatable="false">КМ</string>
+    <string name="currency_name_byn">Belarusian Ruble</string>
+    <string name="currency_code_byn" translatable="false">BYN</string>
+    <string name="currency_country_byn">Belarus</string>
+    <string name="currency_symbol_byn" translatable="false">Br</string>
+    <string name="currency_name_mdl">Moldovan Leu</string>
+    <string name="currency_code_mdl" translatable="false">MDL</string>
+    <string name="currency_country_mdl">Moldova</string>
+    <string name="currency_symbol_mdl" translatable="false">L</string>
+    <string name="currency_name_mkd">Macedonian Denar</string>
+    <string name="currency_code_mkd" translatable="false">MKD</string>
+    <string name="currency_country_mkd">North Macedonia</string>
+    <string name="currency_symbol_mkd" translatable="false">ден</string>
+    <string name="currency_name_rsd">Serbian Dinar</string>
+    <string name="currency_code_rsd" translatable="false">RSD</string>
+    <string name="currency_country_rsd">Serbia</string>
+    <string name="currency_symbol_rsd" translatable="false">RSD</string>
+    <string name="currency_name_uah">Ukrainian Hryvnia</string>
+    <string name="currency_code_uah" translatable="false">UAH</string>
+    <string name="currency_country_uah">Ukraine</string>
+    <string name="currency_symbol_uah" translatable="false">₴</string>
+    <string name="currency_name_ars">Argentine Peso</string>
+    <string name="currency_code_ars" translatable="false">ARS</string>
+    <string name="currency_country_ars">Argentina</string>
+    <string name="currency_symbol_ars" translatable="false">$</string>
+    <string name="currency_name_bbd">Barbadian Dollar</string>
+    <string name="currency_code_bbd" translatable="false">BBD</string>
+    <string name="currency_country_bbd">Barbados</string>
+    <string name="currency_symbol_bbd" translatable="false">$</string>
+    <string name="currency_name_bob">Bolivian Boliviano</string>
+    <string name="currency_code_bob" translatable="false">BOB</string>
+    <string name="currency_country_bob">Bolivia</string>
+    <string name="currency_symbol_bob" translatable="false">Bs.</string>
+    <string name="currency_name_bsd">Bahamian Dollar</string>
+    <string name="currency_code_bsd" translatable="false">BSD</string>
+    <string name="currency_country_bsd">Bahamas</string>
+    <string name="currency_symbol_bsd" translatable="false">$</string>
+    <string name="currency_name_bzd">Belize Dollar</string>
+    <string name="currency_code_bzd" translatable="false">BZD</string>
+    <string name="currency_country_bzd">Belize</string>
+    <string name="currency_symbol_bzd" translatable="false">$</string>
+    <string name="currency_name_clp">Chilean Peso</string>
+    <string name="currency_code_clp" translatable="false">CLP</string>
+    <string name="currency_country_clp">Chile</string>
+    <string name="currency_symbol_clp" translatable="false">$</string>
+    <string name="currency_name_cop">Colombian Peso</string>
+    <string name="currency_code_cop" translatable="false">COP</string>
+    <string name="currency_country_cop">Colombia</string>
+    <string name="currency_symbol_cop" translatable="false">$</string>
+    <string name="currency_name_crc">Costa Rican Colón</string>
+    <string name="currency_code_crc" translatable="false">CRC</string>
+    <string name="currency_country_crc">Costa Rica</string>
+    <string name="currency_symbol_crc" translatable="false">₡</string>
+    <string name="currency_name_bnd">Brunei Dollar</string>
+    <string name="currency_code_bnd" translatable="false">BND</string>
+    <string name="currency_country_bnd">Brunei</string>
+    <string name="currency_symbol_bnd" translatable="false">$</string>
+    <string name="currency_name_gtq">Guatemalan Quetzal</string>
+    <string name="currency_code_gtq" translatable="false">GTQ</string>
+    <string name="currency_country_gtq">Guatemala</string>
+    <string name="currency_symbol_gtq" translatable="false">Q</string>
+    <string name="currency_name_gyd">Guyanese Dollar</string>
+    <string name="currency_code_gyd" translatable="false">GYD</string>
+    <string name="currency_country_gyd">Guyana</string>
+    <string name="currency_symbol_gyd" translatable="false">$</string>
+    <string name="currency_name_hnl">Honduran Lempira</string>
+    <string name="currency_code_hnl" translatable="false">HNL</string>
+    <string name="currency_country_hnl">Honduras</string>
+    <string name="currency_symbol_hnl" translatable="false">L</string>
+    <string name="currency_name_jmd">Jamaican Dollar</string>
+    <string name="currency_code_jmd" translatable="false">JMD</string>
+    <string name="currency_country_jmd">Jamaica</string>
+    <string name="currency_symbol_jmd" translatable="false">$</string>
+    <string name="currency_name_pen">Peruvian Sol</string>
+    <string name="currency_code_pen" translatable="false">PEN</string>
+    <string name="currency_country_pen">Peru</string>
+    <string name="currency_symbol_pen" translatable="false">S/</string>
+    <string name="currency_name_pyg">Paraguayan Guaraní</string>
+    <string name="currency_code_pyg" translatable="false">PYG</string>
+    <string name="currency_country_pyg">Paraguay</string>
+    <string name="currency_symbol_pyg" translatable="false">₲</string>
+    <string name="currency_name_ttd">Trinidad and Tobago Dollar</string>
+    <string name="currency_code_ttd" translatable="false">TTD</string>
+    <string name="currency_country_ttd">Trinidad and Tobago</string>
+    <string name="currency_symbol_ttd" translatable="false">$</string>
+    <string name="currency_name_uyu">Uruguayan Peso</string>
+    <string name="currency_code_uyu" translatable="false">UYU</string>
+    <string name="currency_country_uyu">Uruguay</string>
+    <string name="currency_symbol_uyu" translatable="false">$U</string>
+    <string name="currency_name_aoa">Angolan Kwanza</string>
+    <string name="currency_code_aoa" translatable="false">AOA</string>
+    <string name="currency_country_aoa">Angola</string>
+    <string name="currency_symbol_aoa" translatable="false">Kz</string>
+    <string name="currency_name_bwp">Botswana Pula</string>
+    <string name="currency_code_bwp" translatable="false">BWP</string>
+    <string name="currency_country_bwp">Botswana</string>
+    <string name="currency_symbol_bwp" translatable="false">P</string>
+    <string name="currency_name_dzd">Algerian Dinar</string>
+    <string name="currency_code_dzd" translatable="false">DZD</string>
+    <string name="currency_country_dzd">Algeria</string>
+    <string name="currency_symbol_dzd" translatable="false">د.ج</string>
+    <string name="currency_name_egp">Egyptian Pound</string>
+    <string name="currency_code_egp" translatable="false">EGP</string>
+    <string name="currency_country_egp">Egypt</string>
+    <string name="currency_symbol_egp" translatable="false">ج.م</string>
+    <string name="currency_name_etb">Ethiopian Birr</string>
+    <string name="currency_code_etb" translatable="false">ETB</string>
+    <string name="currency_country_etb">Ethiopia</string>
+    <string name="currency_symbol_etb" translatable="false">Br</string>
+    <string name="currency_name_ghs">Ghanaian Cedi</string>
+    <string name="currency_code_ghs" translatable="false">GHS</string>
+    <string name="currency_country_ghs">Ghana</string>
+    <string name="currency_symbol_ghs" translatable="false">₵</string>
+    <string name="currency_name_kes">Kenyan Shilling</string>
+    <string name="currency_code_kes" translatable="false">KES</string>
+    <string name="currency_country_kes">Kenya</string>
+    <string name="currency_symbol_kes" translatable="false">KSh</string>
+    <string name="currency_name_mad">Moroccan Dirham</string>
+    <string name="currency_code_mad" translatable="false">MAD</string>
+    <string name="currency_country_mad">Morocco</string>
+    <string name="currency_symbol_mad" translatable="false">د.م.</string>
+    <string name="currency_name_mur">Mauritian Rupee</string>
+    <string name="currency_code_mur" translatable="false">MUR</string>
+    <string name="currency_country_mur">Mauritius</string>
+    <string name="currency_symbol_mur" translatable="false">₨</string>
+    <string name="currency_name_ngn">Nigerian Naira</string>
+    <string name="currency_code_ngn" translatable="false">NGN</string>
+    <string name="currency_country_ngn">Nigeria</string>
+    <string name="currency_symbol_ngn" translatable="false">₦</string>
+    <string name="currency_name_tnd">Tunisian Dinar</string>
+    <string name="currency_code_tnd" translatable="false">TND</string>
+    <string name="currency_country_tnd">Tunisia</string>
+    <string name="currency_symbol_tnd" translatable="false">د.ت</string>
+    <string name="currency_name_tzs">Tanzanian Shilling</string>
+    <string name="currency_code_tzs" translatable="false">TZS</string>
+    <string name="currency_country_tzs">Tanzania</string>
+    <string name="currency_symbol_tzs" translatable="false">Sh</string>
+    <string name="currency_name_ugx">Ugandan Shilling</string>
+    <string name="currency_code_ugx" translatable="false">UGX</string>
+    <string name="currency_country_ugx">Uganda</string>
+    <string name="currency_symbol_ugx" translatable="false">USh</string>
+    <string name="currency_name_zmw">Zambian Kwacha</string>
+    <string name="currency_code_zmw" translatable="false">ZMW</string>
+    <string name="currency_country_zmw">Zambia</string>
+    <string name="currency_symbol_zmw" translatable="false">K</string>
+    <string name="currency_name_fjd">Fijian Dollar</string>
+    <string name="currency_code_fjd" translatable="false">FJD</string>
+    <string name="currency_country_fjd">Fiji</string>
+    <string name="currency_symbol_fjd" translatable="false">$</string>
+    <string name="currency_name_pgk">Papua New Guinean Kina</string>
+    <string name="currency_code_pgk" translatable="false">PGK</string>
+    <string name="currency_country_pgk">Papua New Guinea</string>
+    <string name="currency_symbol_pgk" translatable="false">K</string>
+    <string name="currency_swap_destinations">Swap second and third currencies</string>
+    <string name="theme_debug_unlocked">Available in debug</string>
 </resources>

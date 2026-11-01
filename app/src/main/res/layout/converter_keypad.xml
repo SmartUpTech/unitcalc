@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/converter_spacing">
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:minHeight="@dimen/converter_touch_target"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/seven"
+            style="@style/ConverterNumberKey"
+            android:text="@string/seven" />
+        <Button
+            android:id="@+id/eight"
+            style="@style/ConverterNumberKey"
+            android:text="@string/eight" />
+        <Button
+            android:id="@+id/nine"
+            style="@style/ConverterNumberKey"
+            android:text="@string/nine" />
+        <Button
+            android:id="@+id/ac"
+            style="@style/ConverterActionKey"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/converter_clear_key"
+            android:contentDescription="@string/converter_clear_input"
+            android:layout_weight="1" />
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:minHeight="@dimen/converter_touch_target"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/four"
+            style="@style/ConverterNumberKey"
+            android:text="@string/four" />
+        <Button
+            android:id="@+id/five"
+            style="@style/ConverterNumberKey"
+            android:text="@string/five" />
+        <Button
+            android:id="@+id/six"
+            style="@style/ConverterNumberKey"
+            android:text="@string/six" />
+        <ImageButton
+            android:id="@+id/backspace"
+            style="@style/ConverterKeyIcon"
+            android:contentDescription="@string/converter_backspace"
+            android:src="@drawable/backspace" />
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:minHeight="@dimen/converter_touch_target"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/one"
+            style="@style/ConverterNumberKey"
+            android:text="@string/one" />
+        <Button
+            android:id="@+id/two"
+            style="@style/ConverterNumberKey"
+            android:text="@string/two" />
+        <Button
+            android:id="@+id/three"
+            style="@style/ConverterNumberKey"
+            android:text="@string/three" />
+        <ImageButton
+            android:id="@+id/copy"
+            style="@style/ConverterKeyIcon"
+            android:contentDescription="@string/converter_copy_result"
+            android:src="@drawable/ic_copy" />
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+    <net.smartlogic.unitconverter.widget.KeypadRowLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:minHeight="@dimen/converter_touch_target"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/zero"
+            style="@style/ConverterNumberKey"
+            android:text="@string/zero" />
+        <Button
+            android:id="@+id/double_zero"
+            style="@style/ConverterNumberKey"
+            android:text="@string/double_zero" />
+        <Button
+            android:id="@+id/dot"
+            style="@style/ConverterNumberKey"
+            android:text="@string/dot" />
+        <Button
+            android:id="@+id/minus"
+            style="@style/ConverterOperatorKey"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/minus"
+            android:layout_weight="1" />
+    </net.smartlogic.unitconverter.widget.KeypadRowLayout>
+</LinearLayout>

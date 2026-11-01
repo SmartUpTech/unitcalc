@@ -1,5 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id 'com.android.application'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+}
+
+// A local Firebase registration enables telemetry; unconfigured builds remain usable.
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -8,26 +16,50 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+// Provider credentials stay outside version control (local.properties, Gradle properties or CI environment).
+def currencyProperties = new Properties()
+def currencyPropertiesFile = rootProject.file("local.properties")
+if (currencyPropertiesFile.exists()) {
+    currencyPropertiesFile.withInputStream { currencyProperties.load(it) }
+}
+
 android {
 
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "net.smartlogic.unitconverter"
-        minSdk 26
-        targetSdk {
-            version = release(36)
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
+        versionCode 12
+        versionName "2.0"
+        (1..4).each { index ->
+            def keyName = "CURRENCY_RATE_KEY_${index}"
+            def keyValue = providers.gradleProperty(keyName)
+                    .orElse(providers.environmentVariable(keyName))
+                    .getOrElse(currencyProperties.getProperty(keyName, ""))
+            buildConfigField "String", keyName, groovy.json.JsonOutput.toJson(keyValue)
         }
-        versionCode 11
-        versionName "1.9"
     }
 
     namespace "net.smartlogic.unitconverter"
 
+    testOptions { unitTests.includeAndroidResources = true }
+
     buildFeatures {
         buildConfig = true
+        compose = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 
     signingConfigs {
@@ -92,18 +124,68 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.8.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.2.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.14.0'
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.analytics
+    implementation libs.play.review
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+
+    def composeBom = platform(libs.compose.bom)
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling.preview
+    implementation libs.compose.material3
+    implementation libs.compose.foundation
+    implementation libs.compose.runtime
+    implementation libs.activity.compose
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.viewmodel.compose
+    implementation libs.lifecycle.viewmodel.ktx
+    debugImplementation libs.compose.ui.tooling
+
+    implementation libs.javaluator
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation libs.core.splashscreen
+    implementation libs.legacy.support.v4
+    implementation libs.preference
+    implementation libs.webkit
+    implementation libs.user.messaging.platform
+    implementation libs.cardview
+    implementation libs.viewpager2
+    implementation libs.material
 
     // GMA Next-Gen AdMob SDK
-    implementation 'com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.4.0'
+    implementation libs.ads.mobile.sdk
 
     // For App Open Ads lifecycle support
-    implementation "androidx.lifecycle:lifecycle-runtime:2.11.0"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.11.0"
-    implementation "androidx.lifecycle:lifecycle-process:2.11.0"
+    implementation libs.lifecycle.runtime
+    implementation libs.lifecycle.common.java8
+    implementation libs.lifecycle.process
 }
+
+// Preserve the context-free theme model while keeping colors.xml the palette source of truth.
+def themePaletteOutput = layout.buildDirectory.dir("generated/source/themePalette")
+def generateThemePalette = tasks.register("generateThemePalette") {
+    def paletteFile = layout.projectDirectory.file("src/main/res/values/colors.xml")
+    inputs.file(paletteFile)
+    outputs.dir(themePaletteOutput)
+    doLast {
+        def declarations = []
+        def matcher = paletteFile.asFile.getText("UTF-8") =~ /<color name="(palette_[^"]+)">#([0-9A-Fa-f]{6})<\/color>/
+        matcher.each { match ->
+            declarations.add("    public static final int ${match[1].toUpperCase(java.util.Locale.ROOT)} = 0xFF${match[2]};")
+        }
+        def outputFile = new File(themePaletteOutput.get().asFile,
+                "net/smartlogic/unitconverter/theme/generated/ThemePalette.java")
+        outputFile.parentFile.mkdirs()
+        outputFile.setText("package net.smartlogic.unitconverter.theme.generated;\n" +
+                "// Generated from colors.xml. Do not edit.\npublic final class ThemePalette {\n" +
+                declarations.join("\n") + "\n    private ThemePalette() {}\n}\n", "UTF-8")
+    }
+}
+android.sourceSets.main.java.srcDir(themePaletteOutput.get().asFile)
+tasks.named("preBuild").configure { dependsOn(generateThemePalette) }

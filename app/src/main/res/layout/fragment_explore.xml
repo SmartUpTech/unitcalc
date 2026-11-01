@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/explore_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/theme_swatch_color_size"
+    android:paddingTop="@dimen/spacing_12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/app_text"
+        android:letterSpacing="0.06"
+        android:text="@string/nav_explore"
+        android:textColor="@color/screen_result_text"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/explore_search"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/spacing_12dp"
+        android:background="@color/transparent"
+        android:fontFamily="@font/app_text"
+        android:hint="@string/explore_search_hint"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:textColor="@color/screen_result_text"
+        android:textColorHint="@color/screen_expression_text"
+        android:textSize="15sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_explore"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/converter_spacing"
+        android:layout_weight="1" />
+</LinearLayout>

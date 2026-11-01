@@ -1,0 +1,5 @@
+<androidx.appcompat.widget.AppCompatImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/equal" style="@style/CalculatorKey.Icon"
+    android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+    android:foreground="?attr/selectableItemBackground" android:src="@drawable/ic_theme_check"
+    android:contentDescription="@string/bmi_done" />

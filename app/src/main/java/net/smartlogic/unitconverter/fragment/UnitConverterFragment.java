@@ -23,26 +23,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.adapter.ConversionAdapter;
 import net.smartlogic.unitconverter.adapter.UnitAdapter;
-import net.smartlogic.unitconverter.helper.HorizontalListView;
+import net.smartlogic.unitconverter.widget.ConverterPickerSpinner;
+import net.smartlogic.unitconverter.graphy.integration.ConversionGraphAdapter;
+import net.smartlogic.unitconverter.graphy.model.GraphyOutput;
 import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.helper.IdleHistoryRecorder;
+import net.smartlogic.unitconverter.model.CalculatorCatalog;
+import net.smartlogic.unitconverter.helper.InteractionFeedbackManager;
 import net.smartlogic.unitconverter.model.Conversion;
 import net.smartlogic.unitconverter.model.Unit;
+import net.smartlogic.unitconverter.theme.ThemeApplier;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.utils.Conversions;
-import net.smartlogic.unitconverter.utils.GenericFunctions;
 import net.smartlogic.unitconverter.utils.NumberUtils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
-
+import java.util.ArrayList;
 
 public class UnitConverterFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
@@ -52,7 +57,9 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     Button dot, double_zero;
     EditText inputValue, outputValue;
     TextView inputSymbol, outputSymbol;
-    HorizontalListView horizontalListView;
+    private TabLayout categorySelector;
+    private boolean categoryChangeInProgress;
+    private TextView unitRate;
     private Context context;
     private Spinner fromUnit, toUnit;
 
@@ -66,6 +73,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     ImageButton reverse, copy, backspace;
 
     TextWatcher inputTextWatcher;
+    private IdleHistoryRecorder historyRecorder;
 
     public UnitConverterFragment() {
         // Required empty public constructor
@@ -80,9 +88,29 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         return fragment;
     }
 
+    @Override public void onSaveInstanceState(@NonNull Bundle state) {
+        super.onSaveInstanceState(state);
+        historyRecorder.saveState(state);
+    }
+
+    public void historyVisibilityChanged() {
+        if (historyRecorder != null) historyRecorder.visibilityChanged();
+    }
+
+    @Override public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        historyVisibilityChanged();
+    }
+
+    @Override public void onDestroyView() {
+        historyRecorder.invalidate();
+        super.onDestroyView();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        historyRecorder = new IdleHistoryRecorder(this, savedInstanceState);
 
         this.context = this.getActivity();
         mPrefs = Preferences.getInstance(getActivity());
@@ -107,10 +135,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         copy = view.findViewById(R.id.copy);
 
         subtract = view.findViewById(R.id.minus);
+        subtract.setVisibility(View.VISIBLE);
 
         dot = view.findViewById(R.id.dot);
         double_zero = view.findViewById(R.id.double_zero);
-
 
         inputValue = view.findViewById(R.id.input);
         outputValue = view.findViewById(R.id.output);
@@ -118,9 +146,21 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         inputSymbol = view.findViewById(R.id.inputSymbol);
         outputSymbol = view.findViewById(R.id.outputSymbol);
 
-        horizontalListView = view.findViewById(R.id.horizontal_list);
+        categorySelector = view.findViewById(R.id.category_selector);
+        unitRate = view.findViewById(R.id.unit_rate);
         fromUnit = view.findViewById(R.id.fromUnit);
         toUnit = view.findViewById(R.id.toUnit);
+        ((ConverterPickerSpinner) fromUnit).setPickerClick(() -> showUnitPicker(true));
+        ((ConverterPickerSpinner) toUnit).setPickerClick(() -> showUnitPicker(false));
+        view.findViewById(R.id.from_selector).setOnClickListener(v -> fromUnit.performClick());
+        view.findViewById(R.id.to_selector).setOnClickListener(v -> toUnit.performClick());
+        view.findViewById(R.id.ac).setOnClickListener(this);
+        for (int id : new int[]{R.id.zero, R.id.one, R.id.two, R.id.three, R.id.four,
+                R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.double_zero,
+                R.id.dot, R.id.minus, R.id.ac, R.id.reverse, R.id.backspace,
+                R.id.fromUnit, R.id.toUnit, R.id.category_selector}) {
+            InteractionFeedbackManager.configure(view.findViewById(id));
+        }
 
         mCoordinatorLayout = view.findViewById(R.id.cl);
 
@@ -142,12 +182,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         backspace.setOnClickListener(this);
         copy.setOnClickListener(this);
 
-        outputValue.setOnLongClickListener(this);
         backspace.setOnLongClickListener(this);
 
-        inputValue.requestFocus();
-
         inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setCursorVisible(false);
+        inputValue.setFocusable(false);
+        inputValue.setClickable(false);
+        inputValue.setLongClickable(false);
 
     }
 
@@ -164,12 +205,15 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             int id = view.getId();
             if (id == R.id.output) {
                 ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText(getString(R.string.app_name), ((EditText) view).getText().toString());
+                ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), ((EditText) view).getText().toString());
                 clipboard.setPrimaryClip(clip);
                 showToast(R.string.toast_copied_positive);
             } else if (id == R.id.backspace) {
+                boolean hadInput = inputValue.length() > 0;
                 inputValue.setText("");
                 convertAndDisplay("");
+                if (hadInput) InteractionFeedbackManager.perform(view, InteractionFeedbackManager.Type.ACTION);
+                return true;
             }
         }
         catch (Exception ignored) { }
@@ -180,25 +224,31 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         try {
             int id = view.getId();
+            String previous = inputValue.getText().toString();
             if (id == R.id.reverse) {
                 int fromPos = fromUnit.getSelectedItemPosition();
                 int toPos = toUnit.getSelectedItemPosition();
                 fromUnit.setSelection(toPos);
                 toUnit.setSelection(fromPos);
+            } else if (id == R.id.ac) {
+                inputValue.setText("");
+                outputValue.setText("");
+                convertAndDisplay("");
             } else if (id == R.id.backspace) {
+                if (previous.isEmpty()) return;
                 String substr = inputValue.getText().toString().substring(0, inputValue.getText().toString().length() - 1);
                 inputValue.setText(substr);
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.dot) {
                 if (inputValue.getText().toString().isEmpty())
-                    inputValue.setText("0.");
+                    inputValue.setText(R.string.decimal_input_start);
                 else if (inputValue.getText().toString().equals("-"))
                     inputValue.append("0.");
-                else
+                else if (!previous.contains("."))
                     inputValue.append(".");
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.minus) {
-                inputValue.append("-");
+                inputValue.setText(previous.startsWith("-") ? previous.substring(1) : "-" + previous);
                 inputValue.setSelection(inputValue.getText().length());
             } else if (id == R.id.zero) {
                 String currentInput1 = inputValue.getText().toString();
@@ -221,11 +271,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
                     ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
-                    String result = inputValue.getText().toString() + " " +
-                            context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()) + " = " +
-                            outputValue.getText().toString() + " " +
-                            context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource());
-                    ClipData clip = ClipData.newPlainText(getString(R.string.app_name), result);
+                    String result = getString(R.string.conversion_copy_format, inputValue.getText().toString(), context.getString(selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition()).getLabelResource()), outputValue.getText().toString(), context.getString(selectedConversion.getUnits().get(toUnit.getSelectedItemPosition()).getLabelResource()));
+                    ClipData clip = ClipData.newPlainText(getString(R.string.brand_name), result);
                     clipboard.setPrimaryClip(clip);
                     showToast(R.string.toast_copied_positive);
                 } else {
@@ -243,6 +290,12 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
                     inputValue.append(data);
                 inputValue.setSelection(inputValue.getText().length());
             }
+            if (id == R.id.reverse || !previous.equals(inputValue.getText().toString())) {
+                InteractionFeedbackManager.perform(view,
+                        id == R.id.reverse || id == R.id.backspace
+                                ? InteractionFeedbackManager.Type.ACTION
+                                : InteractionFeedbackManager.Type.INPUT);
+            }
         }
         catch(Exception e) {
             //Log.d("SHRIKI", e.getMessage());
@@ -252,6 +305,8 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
+        ThemeApplier.apply(getView());
+        updateCategoryPicker();
         convertAndDisplay(inputValue.getText().toString());
     }
 
@@ -278,6 +333,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     }
 
     public String applyFormatting(double res) {
+        return Double.isFinite(res) ? applyFormatting(java.math.BigDecimal.valueOf(res)) : "";
+    }
+
+    public String applyFormatting(java.math.BigDecimal res) {
         String s;
         try {
             s = getDecimalFormat().format(res);
@@ -299,36 +358,10 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         initUILayout(view);
 
-        Integer[] mCustomData = {0,1,2,3,4,5,6,7,8,9,10,11,12,13};
-
-        final ConversionAdapter adapter = new ConversionAdapter(requireActivity(), mCustomData);
-
-        horizontalListView.setAdapter(adapter);
-        horizontalListView.setOnItemClickListener((parent, view1, position, id) -> {
-
-            if (position == Conversion.TEMPERATURE) {
-                inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-            }
-            else {
-                inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            }
-            inputValue.setText("");
-            convertAndDisplay("");
-            mPrefs.setLastConversion(position);
-            mPrefs.setLastFromConversion(0);
-            mPrefs.setLastToConversion(1);
-            initialDropDown(conversions.getById(position));
-            convertAndDisplay(inputValue.getText().toString());
-            adapter.setSelectedItem(position);
-            adapter.notifyDataSetChanged();
-        });
-
-        adapter.setSelectedItem(mPrefs.getLastConversion());
-        adapter.notifyDataSetChanged();
-
+        bindCategoryTabs();
         initialDropDown(conversions.getById(mPrefs.getLastConversion()));
-
-        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        updateCategoryPicker();
+        updateInputType(getSelectedCategoryId());
 
         inputTextWatcher = new TextWatcher() {
             @Override
@@ -344,31 +377,58 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             @Override
             public void afterTextChanged(Editable s) {
                 convertAndDisplay(s.toString());
-                GenericFunctions.adjustTextSize(inputValue, 21);
             }
         };
 
         inputValue.addTextChangedListener(inputTextWatcher);
-
-        GenericFunctions.adjustTextSize(inputValue, 21);
-        GenericFunctions.adjustTextSize(outputValue, 21);
+        ThemeApplier.apply(view);
 
         return view;
     }
 
     private void convertAndDisplay(String in) {
+        historyRecorder.invalidate();
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + fromUnit.getSelectedItem() + " to " + toUnit.getSelectedItem());
         //Log.d("SHRIKI","Convert value: " + in + " from " + fromUnit.getSelectedItemPosition() + " to " + toUnit.getSelectedItemPosition());
 
         Unit from = selectedConversion.getUnits().get(fromUnit.getSelectedItemPosition());
         Unit to = selectedConversion.getUnits().get(toUnit.getSelectedItemPosition());
+        String fromRateSymbol = from.getSymbol();
+        if (fromRateSymbol == null || fromRateSymbol.isEmpty()) fromRateSymbol = String.valueOf(from.getId());
+        String toRateSymbol = to.getSymbol();
+        if (toRateSymbol == null || toRateSymbol.isEmpty()) toRateSymbol = String.valueOf(to.getId());
+        double oneUnit = selectedConversion.getId() == Conversion.TEMPERATURE
+                ? conversions.convertTemperatureValue(1, from, to)
+                : selectedConversion.getId() == Conversion.FUEL
+                    ? conversions.convertFuelValue(1, from, to)
+                    : conversions.convert(1, from, to);
+        unitRate.setText(getString(R.string.converter_unit_rate,
+                getString(R.string.one), fromRateSymbol, applyFormatting(oneUnit), toRateSymbol));
+
 
         /*Unit from = selectedConversion.getUnitByLabelResource(fromUnit.getSelectedItem());
         Unit to = selectedConversion.getUnitByLabelResource(toUnit.getSelectedItem()); */
 
         //Log.d("SHRIKI","Convert value: " + in + " from " + context.getString(from.getLabelResource()) + " to " + context.getString(to.getLabelResource()));
 
+        if (in.isEmpty() || in.equals("-")) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
+        java.math.BigDecimal decimalInput;
+        try { decimalInput = NumberUtils.parseDecimal(in); }
+        catch (IllegalArgumentException | ArithmeticException invalid) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
+        double input = decimalInput.doubleValue();
+        if (!Double.isFinite(input)) {
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
+        }
         double result;
 
         String fromSym = from.getSymbol();
@@ -379,20 +439,47 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         if (toSym == null || toSym.isEmpty()) toSym = String.valueOf(to.getId());
         outputSymbol.setText(toSym);
 
-        if (selectedConversion.getId() == Conversion.TEMPERATURE) {
-            result = conversions.convertTemperatureValue(NumberUtils.parseDouble(in),from, to);
-            result = in.isEmpty() ? 0 : result;
+        String finalStr;
+        try {
+            java.math.BigDecimal decimalResult;
+            if (selectedConversion.getId() == Conversion.TEMPERATURE) {
+                result = conversions.convertTemperatureValue(input, from, to);
+                if (!Double.isFinite(result)) throw new ArithmeticException("Invalid temperature");
+                decimalResult = java.math.BigDecimal.valueOf(result);
+            } else if (selectedConversion.getId() == Conversion.FUEL) {
+                decimalResult = conversions.convertFuelValue(decimalInput, from, to);
+            } else {
+                decimalResult = conversions.convert(decimalInput, from, to);
+            }
+            result = decimalResult.doubleValue();
+            finalStr = applyFormatting(decimalResult);
+        } catch (ArithmeticException invalid) {
+            outputValue.setText("");
+            if (getParentFragment() instanceof ConverterFragment converter) converter.clearConversionGraphy();
+            return;
         }
-        else if (selectedConversion.getId() == Conversion.FUEL) {
-            result = conversions.convertFuelValue(NumberUtils.parseDouble(in),from, to);
-        }
-        else
-            result = conversions.convert(NumberUtils.parseDouble(in),from, to);
-
-        String finalStr = applyFormatting(result);
 
         outputValue.setText(finalStr);
-        GenericFunctions.adjustTextSize(outputValue, 21);
+        historyRecorder.update(getString(R.string.history_conversion_input, in,
+                        getString(from.getLabelResource()), getString(to.getLabelResource())),
+                getString(R.string.history_conversion_result, finalStr, getString(to.getLabelResource())),
+                CalculatorCatalog.unitId(selectedConversion.getId()));
+        updateParentGraphy(in, from, to, fromSym, toSym, finalStr, result);
+    }
+
+    private void updateParentGraphy(String in, Unit from, Unit to, String fromSym,
+                                    String toSym, String finalStr, double result) {
+        if (!(getParentFragment() instanceof ConverterFragment converter)) return;
+        Context context = getContext();
+        if (context == null || !isAdded()) return;
+        if (in.trim().isEmpty() || in.equals("-")) {
+            converter.clearConversionGraphy();
+            return;
+        }
+        GraphyOutput output = ConversionGraphAdapter.unit(context, conversions,
+                selectedConversion.getId(), from, to, NumberUtils.parseDouble(in), result,
+                in + " " + fromSym, finalStr + " " + toSym, fromSym, toSym);
+        converter.updateConversionGraphy(output, output.getExpression());
     }
 
     public void initialDropDown(Conversion s) {
@@ -411,13 +498,16 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         fromUnit.setAdapter(unitAdapter);
         toUnit.setAdapter(unitAdapter);
-
         fromUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
+                if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
+                    label.setTextColor(ThemeManager.get().primaryContentColor());
+                }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastFromConversion(position);
+                parent.setContentDescription(getString(R.string.converter_picker_source_unit,
+                        getString(selectedConversion.getUnits().get(position).getLabelResource())));
             }
 
             @Override
@@ -429,9 +519,13 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         toUnit.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(ContextCompat.getColor(requireActivity(),R.color.display_result_text_color));
+                if (parent.getChildCount() > 0 && parent.getChildAt(0) instanceof TextView label) {
+                    label.setTextColor(ThemeManager.get().primaryContentColor());
+                }
                 convertAndDisplay(inputValue.getText().toString());
                 mPrefs.setLastToConversion(position);
+                parent.setContentDescription(getString(R.string.converter_picker_destination_unit,
+                        getString(selectedConversion.getUnits().get(position).getLabelResource())));
             }
 
             @Override
@@ -440,8 +534,118 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
             }
         });
 
-        fromUnit.setSelection(mPrefs.getLastFromConversion());
-        toUnit.setSelection(mPrefs.getLastToConversion());
+        int fromPosition = mPrefs.getLastFromConversion();
+        int toPosition = mPrefs.getLastToConversion();
+        // Removed trailing units must not leave an invalid restored spinner position.
+        int unitCount = selectedConversion.getUnits().size();
+        fromUnit.setSelection(fromPosition >= 0 && fromPosition < unitCount ? fromPosition : 0);
+        toUnit.setSelection(toPosition >= 0 && toPosition < unitCount ? toPosition : Math.min(1, unitCount - 1));
+    }
+
+    public int getSelectedCategoryId() {
+        if (selectedConversion != null) {
+            return selectedConversion.getId();
+        }
+        return mPrefs != null ? mPrefs.getLastConversion() : Conversion.LENGTH;
+    }
+
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        super.onViewCreated(view, state);
+        getChildFragmentManager().setFragmentResultListener(ConverterPickerDialogFragment.RESULT_KEY,
+                getViewLifecycleOwner(), (key, result) -> {
+                    if (result.getInt(ConverterPickerDialogFragment.GROUP) != getSelectedCategoryId()) return;
+                    int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
+                    if (index < 0 || index >= selectedConversion.getUnits().size()) return;
+                    Spinner target = result.getBoolean(ConverterPickerDialogFragment.SOURCE) ? fromUnit : toUnit;
+                    target.setSelection(index);
+                });
+    }
+
+    private void showUnitPicker(boolean source) {
+        if (selectedConversion == null) return;
+        ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
+        for (Unit unit : selectedConversion.getUnits()) {
+            String name = getString(unit.getLabelResource());
+            String symbol = unit.getSymbol();
+            labels.add(symbol == null || symbol.isEmpty() ? name
+                    : getString(R.string.converter_picker_unit_label, name, symbol));
+            details.add("");
+            keywords.add(symbol == null ? "" : symbol);
+        }
+        String title = getString(source ? R.string.converter_picker_from_title : R.string.converter_picker_to_title,
+                getString(selectedConversion.getLabelResource()));
+        Spinner target = source ? fromUnit : toUnit;
+        if (ConverterPickerDialogFragment.newInstance(title, source, getSelectedCategoryId(),
+                target.getSelectedItemPosition(), labels, details, keywords, null).showFor(this)) {
+            InteractionFeedbackManager.perform(target, InteractionFeedbackManager.Type.ACTION);
+        }
+    }
+
+    private void bindCategoryTabs() {
+        for (int id : conversions.getCategoryIds()) {
+            Conversion category = conversions.getById(id);
+            View item = getLayoutInflater().inflate(R.layout.converter_category_tab, categorySelector, false);
+            ((android.widget.ImageView) item.findViewById(R.id.converter_category_tab_icon)).setImageResource(category.getImageResource());
+            ((TextView) item.findViewById(R.id.converter_category_tab_label)).setText(category.getLabelResource());
+            ThemeApplier.apply(item);
+            categorySelector.addTab(categorySelector.newTab().setTag(id)
+                    .setText(category.getLabelResource()).setIcon(category.getImageResource())
+                    .setContentDescription(category.getLabelResource()).setCustomView(item), false);
+        }
+        categorySelector.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                int id = (Integer) tab.getTag();
+                if (categoryChangeInProgress || id == getSelectedCategoryId()) return;
+                categoryChangeInProgress = true;
+                try {
+                    selectCategory(id);
+                    InteractionFeedbackManager.perform(categorySelector, InteractionFeedbackManager.Type.ACTION);
+                } finally {
+                    categoryChangeInProgress = false;
+                }
+            }
+            @Override public void onTabUnselected(TabLayout.Tab tab) { }
+            @Override public void onTabReselected(TabLayout.Tab tab) { }
+        });
+    }
+
+    private void updateCategoryPicker() {
+        if (selectedConversion == null || categorySelector == null) return;
+        ThemeApplier.applyTabLayout(categorySelector);
+        categorySelector.setTabIconTint(ThemeApplier.navigationTint(ThemeManager.get()));
+        for (int i = 0; i < categorySelector.getTabCount(); i++) {
+            TabLayout.Tab tab = categorySelector.getTabAt(i);
+            if (tab != null && (Integer) tab.getTag() == getSelectedCategoryId()) {
+                if (!tab.isSelected()) tab.select();
+                // Selection from drawer/restoration must also reveal off-screen categories.
+                categorySelector.setScrollPosition(i, 0f, true);
+                break;
+            }
+        }
+    }
+
+    private void updateInputType(int categoryId) {
+        inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
+                | ((categoryId == Conversion.TEMPERATURE || categoryId == Conversion.ANGLE)
+                        ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
+        inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setCursorVisible(false);
+        inputValue.setFocusable(false);
+        inputValue.setClickable(false);
+        inputValue.setLongClickable(false);
+    }
+
+    public void selectCategory(int categoryId) {
+        if (categorySelector == null || conversions == null) return;
+        updateInputType(categoryId);
+        inputValue.setText("");
+        convertAndDisplay("");
+        mPrefs.setLastConversion(categoryId);
+        mPrefs.setLastFromConversion(0);
+        mPrefs.setLastToConversion(1);
+        initialDropDown(conversions.getById(categoryId));
+        updateCategoryPicker();
+        convertAndDisplay(inputValue.getText().toString());
     }
 
     @Override

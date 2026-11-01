@@ -4,292 +4,268 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.google.android.libraries.ads.mobile.sdk.MobileAds;
-import com.google.android.libraries.ads.mobile.sdk.banner.AdSize;
-import com.google.android.libraries.ads.mobile.sdk.banner.AdView;
-import com.google.android.libraries.ads.mobile.sdk.banner.BannerAd;
-import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdEventCallback;
-import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest;
-import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
 import com.google.android.libraries.ads.mobile.sdk.common.AdRequest;
 import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError;
-import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
 import com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration;
 import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig;
-import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd;
-import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback;
-import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdPreloader;
 import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAd;
 import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdEventCallback;
 import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdPreloader;
-
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 import net.smartlogic.unitconverter.BuildConfig;
 import net.smartlogic.unitconverter.R;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.LongConsumer;
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback;
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError;
 
-public class AdMobManager {
-
-    private static final String TAG = "SHRIKI";
-    private static final boolean DEBUG_FLAG = false;
-    private static long DELAY_BEFORE_LOAD = 1200;
-    private static AdMobManager mInstance;
+/** Consent-gated rewarded inventory. No banner or unsolicited interstitial requests. */
+public final class AdMobManager {
+    private static AdMobManager instance;
+    private static boolean gamesAdShowing;
+    private static boolean themeAdShowing;
+    private static final String GAMES_PRELOAD_ID = "games_rewarded";
     private final Context context;
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Handler main = new Handler(Looper.getMainLooper());
     private final List<Runnable> readyCallbacks = new ArrayList<>();
-    private volatile boolean initialized = false;
+    private boolean initialized;
+    private boolean consentRefreshFinished;
+    private boolean gamesConsentUpdating;
+    private boolean gamesConsentChecked;
+    private boolean gamesPreloadStarted;
+
+    private boolean initializationStarted;
 
     private AdMobManager(Context context) {
-        if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside AdMobManager");
-
         this.context = context.getApplicationContext();
-        String appId = this.context.getString(R.string.am_app_id);
-
-        new Thread(() -> MobileAds.initialize(
-                this.context,
-                new InitializationConfig.Builder(appId).build(),
-                initializationStatus -> {
-                    initialized = true;
-                    startPreloading();
-                    mainHandler.post(this::notifyReadyCallbacks);
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                        Log.d(TAG, "AdMob onInitializationComplete with status " + initializationStatus);
-                    }
-                }
-        )).start();
     }
+
+    private void initializeSdkIfEligible() {
+        if (initializationStarted || !canRequestAds() || gamesConsentUpdating) return;
+        initializationStarted = true;
+        // Next-Gen initialization can block: run once, after consent, off the UI thread.
+        new Thread(() -> {
+            try {
+                MobileAds.initialize(context,
+                        new InitializationConfig.Builder(context.getString(R.string.am_app_id)).build(),
+                        status -> main.post(() -> {
+                            initialized = true;
+                            List<Runnable> callbacks = new ArrayList<>(readyCallbacks);
+                            readyCallbacks.clear();
+                            for (Runnable callback : callbacks) callback.run();
+                        }));
+            } catch (RuntimeException error) {
+                android.util.Log.w("AdMobManager", "Unable to initialize ads", error);
+                main.post(() -> {
+                    initializationStarted = false;
+                    gamesPreloadStarted = false;
+                    readyCallbacks.clear();
+                });
+            }
+        }, "mobile-ads-init").start();
+    }
+
+    public boolean isInitialized() { return initialized; }
 
     public static synchronized AdMobManager getInstance(Context context) {
-        if (mInstance == null) {
-            if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob instance is null. Initializing");
-            mInstance = new AdMobManager(context);
-            return mInstance;
-        }
-        DELAY_BEFORE_LOAD = 1;
-        if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob is already initialized.");
-        return mInstance;
+        if (instance == null) instance = new AdMobManager(context);
+        return instance;
     }
 
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    public void onSdkReady(Runnable runnable) {
-        if (initialized) {
-            runnable.run();
-        } else {
-            readyCallbacks.add(runnable);
+    public void onSdkReady(Runnable callback) {
+        if (initialized) callback.run();
+        else {
+            readyCallbacks.add(callback);
+            initializeSdkIfEligible();
         }
     }
 
-    private void notifyReadyCallbacks() {
-        for (Runnable callback : readyCallbacks) {
-            callback.run();
-        }
-        readyCallbacks.clear();
+    static boolean isValidAdUnitId(String id) {
+        return id != null && id.matches("ca-app-pub-[0-9]{16}/[0-9]{10}");
     }
 
-    private void startPreloading() {
-        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
-        if (isValidAdUnitId(interstitialUnitId)) {
-            AdRequest interstitialRequest = new AdRequest.Builder(interstitialUnitId).build();
-            InterstitialAdPreloader.start(
-                    interstitialUnitId,
-                    new PreloadConfiguration(interstitialRequest));
-        }
-
-        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
-        if (isValidAdUnitId(rewardedUnitId)) {
-            AdRequest rewardedRequest = new AdRequest.Builder(rewardedUnitId).build();
-            RewardedAdPreloader.start(
-                    rewardedUnitId,
-                    new PreloadConfiguration(rewardedRequest));
-        }
+    private String gamesAdUnit() {
+        return BuildConfig.DEBUG ? "ca-app-pub-3940256099942544/5224354917"
+                : context.getString(R.string.am_rewarded_ad_unit);
     }
 
-    static boolean isValidAdUnitId(String unitId) {
-        return unitId != null && unitId.startsWith("ca-app-pub-");
-    }
-
-    public void loadBannerAd(final AdView adView, Activity activity) {
-        if (!initialized) {
-            onSdkReady(() -> loadBannerAd(adView, activity));
+    /** Refresh consent before any ad requests, including app-open. */
+    public void prepareGamesAds(Activity activity, BooleanSupplier stillVisible, Runnable onPrivacyUpdated) {
+        if (gamesConsentUpdating) return;
+        if (gamesConsentChecked) {
+            startGamesPreloading();
+            AppOpenManager.onConsentChanged();
             return;
         }
+        gamesConsentUpdating = true;
+        ConsentInformation consent = UserMessagingPlatform.getConsentInformation(context);
+        consent.requestConsentInfoUpdate(activity, new ConsentRequestParameters.Builder().build(), () -> {
+            onPrivacyUpdated.run();
+            if (!activity.isFinishing() && !activity.isDestroyed() && stillVisible.getAsBoolean()) {
+                UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity, error -> {
+                    gamesConsentUpdating = false;
+                    gamesConsentChecked = consent.canRequestAds();
+                    consentRefreshFinished = true;
+                    onPrivacyUpdated.run();
+                    startGamesPreloading();
+                    AppOpenManager.onConsentChanged();
+                });
+            } else {
+                gamesConsentUpdating = false;
+                gamesConsentChecked = consent.canRequestAds();
+                consentRefreshFinished = true;
+                startGamesPreloading();
+                AppOpenManager.onConsentChanged();
+            }
+        }, error -> {
+            gamesConsentUpdating = false;
+            gamesConsentChecked = consent.canRequestAds();
+            consentRefreshFinished = true;
+            onPrivacyUpdated.run();
+            startGamesPreloading();
+            AppOpenManager.onConsentChanged();
+        });
+    }
 
-        String bannerUnitId = context.getString(R.string.am_banner_ad_unit);
-        if (!isValidAdUnitId(bannerUnitId)) {
-            return;
-        }
+    private void startGamesPreloading() {
+        if (gamesPreloadStarted || gamesConsentUpdating || !canRequestAds() || !isValidAdUnitId(gamesAdUnit())) return;
+        gamesPreloadStarted = true;
+        onSdkReady(() -> {
+            if (!canRequestAds() || gamesConsentUpdating) { gamesPreloadStarted = false; return; }
+            RewardedAdPreloader.start(GAMES_PRELOAD_ID,
+                    new PreloadConfiguration(new AdRequest.Builder(gamesAdUnit()).build()));
+        });
+    }
 
-        Runnable loadAd = () -> {
-            AdSize adSize = AdSize.getLargeAnchoredAdaptiveBannerAdSize(activity, 360);
-            BannerAdRequest adRequest = new BannerAdRequest.Builder(bannerUnitId, adSize).build();
-            adView.loadAd(
-                    adRequest,
-                    new AdLoadCallback<BannerAd>() {
-                        @Override
-                        public void onAdLoaded(@NonNull BannerAd bannerAd) {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdLoaded");
-                            bannerAd.setAdEventCallback(new BannerAdEventCallback() {
-                                @Override
-                                public void onAdImpression() {
-                                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                                        Log.d(TAG, "AdMob Banner onAdImpression");
-                                    }
+    public boolean isConsentUpdating() { return gamesConsentUpdating; }
+
+    public boolean canRequestAds() {
+        return consentRefreshFinished && UserMessagingPlatform.getConsentInformation(context).canRequestAds();
+    }
+
+    public boolean isGamesPrivacyOptionsRequired() {
+        return UserMessagingPlatform.getConsentInformation(context).getPrivacyOptionsRequirementStatus()
+                == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+    }
+
+    public void showGamesPrivacyOptions(Activity activity) {
+        if (!isGamesPrivacyOptionsRequired()) return;
+        AppOpenManager.invalidateInventory();
+        if (initialized) RewardedAdPreloader.destroy(GAMES_PRELOAD_ID);
+        gamesPreloadStarted = false;
+        gamesConsentUpdating = true;
+        UserMessagingPlatform.showPrivacyOptionsForm(activity, error -> {
+            gamesConsentUpdating = false;
+            startGamesPreloading();
+            AppOpenManager.onConsentChanged();
+        });
+    }
+
+    public static boolean isGamesAdShowing() { return gamesAdShowing; }
+    public static boolean isThemeAdShowing() {
+        return themeAdShowing || net.smartlogic.unitconverter.theme.ThemeRewardCoordinator.isBusy();
+    }
+
+    /** A separate reward route; inventory never calls game or ad-free reward handlers. */
+    public boolean showThemeAd(Activity activity, BooleanSupplier stillEligible,
+                               LongConsumer onEarned, java.util.function.Consumer<Boolean> onClosed) {
+        if (themeAdShowing || gamesAdShowing || AppOpenManager.isShowingAd() || InAppReview.isActive()
+                || activity.isFinishing() || activity.isDestroyed()) return false;
+        themeAdShowing = true;
+        java.lang.ref.WeakReference<Activity> host = new java.lang.ref.WeakReference<>(activity);
+        final boolean[] done = {false};
+        final boolean[] presented = {false};
+        Runnable fail = () -> {
+            if (done[0]) return;
+            done[0] = true;
+            themeAdShowing = false;
+            onClosed.accept(true);
+        };
+        Runnable timeout = () -> { if (!presented[0]) fail.run(); };
+        main.postDelayed(timeout, 30_000);
+        Runnable load = () -> {
+            if (done[0]) return;
+            if (!canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+            onSdkReady(() -> {
+                if (done[0]) return;
+                if (!canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+                RewardedAd.load(new AdRequest.Builder(gamesAdUnit()).build(), new AdLoadCallback<RewardedAd>() {
+                    @Override public void onAdFailedToLoad(@NonNull LoadAdError error) { main.post(fail); }
+                    @Override public void onAdLoaded(@NonNull RewardedAd ad) {
+                        main.post(() -> {
+                            Activity target = host.get();
+                            if (done[0]) return;
+                            if (target == null || target.isFinishing() || target.isDestroyed()
+                                    || !canRequestAds() || !stillEligible.getAsBoolean()) { fail.run(); return; }
+                            java.util.concurrent.atomic.AtomicBoolean earned = new java.util.concurrent.atomic.AtomicBoolean();
+                            ad.setAdEventCallback(new RewardedAdEventCallback() {
+                                @Override public void onAdDismissedFullScreenContent() {
+                                    main.post(() -> {
+                                        if (done[0]) return;
+                                        done[0] = true;
+                                        themeAdShowing = false;
+                                        main.removeCallbacks(timeout);
+                                        onClosed.accept(false);
+                                    });
                                 }
-
-                                @Override
-                                public void onAdClicked() {
-                                    if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Banner onAdClicked");
+                                @Override public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError error) {
+                                    main.post(fail);
                                 }
                             });
-                        }
-
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                                Log.d(TAG, "AdMob Banner onAdFailedToLoad. Error: " + loadAdError);
-                            }
-                        }
-                    });
-        };
-        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
-    }
-
-    public void loadInterstitialAd() {
-        if (!initialized) {
-            onSdkReady(this::loadInterstitialAd);
-            return;
-        }
-
-        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
-        if (!isValidAdUnitId(interstitialUnitId)) {
-            return;
-        }
-
-        Runnable loadAd = () -> {
-            if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside loadInterstitialAd");
-            if (!InterstitialAdPreloader.isAdAvailable(interstitialUnitId)) {
-                AdRequest adRequest = new AdRequest.Builder(interstitialUnitId).build();
-                InterstitialAdPreloader.start(
-                        interstitialUnitId,
-                        new PreloadConfiguration(adRequest));
-            }
-        };
-        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
-    }
-
-    public void showInterstitialAd(Activity activity) {
-        if (!initialized) {
-            return;
-        }
-
-        String interstitialUnitId = context.getString(R.string.am_interstitial_ad_unit);
-        if (!isValidAdUnitId(interstitialUnitId)) {
-            return;
-        }
-
-        InterstitialAd interstitialAd = InterstitialAdPreloader.pollAd(interstitialUnitId);
-        if (interstitialAd == null) {
-            return;
-        }
-
-        interstitialAd.setAdEventCallback(new InterstitialAdEventCallback() {
-            @Override
-            public void onAdDismissedFullScreenContent() {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Interstitial onAdDismissedFullScreenContent");
-            }
-
-            @Override
-            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError fullScreenContentError) {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                    Log.d(TAG, "AdMob Interstitial onAdFailedToShow. Error: "
-                            + fullScreenContentError.getMessage());
-                }
-            }
-
-            @Override
-            public void onAdShowedFullScreenContent() {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Interstitial onAdShowedFullScreenContent");
-            }
-        });
-        interstitialAd.show(activity);
-    }
-
-    public void loadRewardedAd() {
-        if (!initialized) {
-            onSdkReady(this::loadRewardedAd);
-            return;
-        }
-
-        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
-        if (!isValidAdUnitId(rewardedUnitId)) {
-            return;
-        }
-
-        Runnable loadAd = () -> {
-            if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "Inside loadRewardedAd");
-            if (!RewardedAdPreloader.isAdAvailable(rewardedUnitId)) {
-                AdRequest adRequest = new AdRequest.Builder(rewardedUnitId).build();
-                RewardedAdPreloader.start(
-                        rewardedUnitId,
-                        new PreloadConfiguration(adRequest));
-            }
-        };
-        mainHandler.postDelayed(loadAd, DELAY_BEFORE_LOAD);
-    }
-
-    public boolean hasRewardedAd() {
-        if (!initialized) {
-            return false;
-        }
-
-        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
-        return isValidAdUnitId(rewardedUnitId)
-                && RewardedAdPreloader.isAdAvailable(rewardedUnitId);
-    }
-
-    public void showRewardedAd(Activity activity) {
-        if (!initialized) {
-            return;
-        }
-
-        String rewardedUnitId = context.getString(R.string.am_rewarded_ad_unit);
-        if (!isValidAdUnitId(rewardedUnitId)) {
-            return;
-        }
-
-        RewardedAd rewardedAd = RewardedAdPreloader.pollAd(rewardedUnitId);
-        if (rewardedAd == null) {
-            return;
-        }
-
-        rewardedAd.setAdEventCallback(new RewardedAdEventCallback() {
-            @Override
-            public void onAdDismissedFullScreenContent() {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) Log.d(TAG, "AdMob Rewarded onAdDismissedFullScreenContent");
-            }
-
-            @Override
-            public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError fullScreenContentError) {
-                if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                    Log.d(TAG, "AdMob Rewarded onAdFailedToShow. Error: "
-                            + fullScreenContentError.getMessage());
-                }
-            }
-        });
-        rewardedAd.show(
-                activity,
-                rewardItem -> {
-                    if (BuildConfig.DEBUG && DEBUG_FLAG) {
-                        Log.d(TAG, "AdMob Rewarded Ad onUserEarnedReward");
+                            try {
+                                presented[0] = true;
+                                main.removeCallbacks(timeout);
+                                ad.show(target, reward -> {
+                                    long rewardTime = System.currentTimeMillis();
+                                    if (earned.compareAndSet(false, true)) main.post(() -> onEarned.accept(rewardTime));
+                                });
+                            } catch (RuntimeException error) { fail.run(); }
+                        });
                     }
                 });
+            });
+        };
+        if (gamesConsentUpdating) { fail.run(); return true; }
+        if (consentRefreshFinished) load.run();
+        else prepareGamesAds(activity, stillEligible, () -> {
+            if (!gamesConsentUpdating && consentRefreshFinished) load.run();
+        });
+        return true;
+    }
+
+    /** Only the earned callback unlocks content; dismissal and no-fill never grant a set. */
+    public boolean showNewSetAd(Activity activity, Runnable onEarned, Runnable onClosed) {
+        if (!initialized || !canRequestAds() || gamesConsentUpdating || gamesAdShowing || isThemeAdShowing() || AppOpenManager.isShowingAd() || InAppReview.isActive()
+                || activity.isFinishing() || activity.isDestroyed()) return false;
+        RewardedAd ad = RewardedAdPreloader.pollAd(GAMES_PRELOAD_ID);
+        if (ad == null) { startGamesPreloading(); return false; }
+        gamesAdShowing = true;
+        ad.setAdEventCallback(new RewardedAdEventCallback() {
+            private boolean closed;
+            private void close() {
+                if (closed) return;
+                closed = true;
+                gamesAdShowing = false;
+                main.post(onClosed);
+            }
+            @Override public void onAdDismissedFullScreenContent() { close(); }
+            @Override public void onAdFailedToShowFullScreenContent(@NonNull FullScreenContentError error) { close(); }
+        });
+        try {
+            java.util.concurrent.atomic.AtomicBoolean earned = new java.util.concurrent.atomic.AtomicBoolean();
+            ad.show(activity, reward -> {
+                if (earned.compareAndSet(false, true)) main.post(onEarned);
+            });
+            return true;
+        } catch (RuntimeException error) {
+            gamesAdShowing = false;
+            return false;
+        }
     }
 }

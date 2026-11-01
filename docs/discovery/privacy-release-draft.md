@@ -1,0 +1,15 @@
+# Calculator+ privacy policy update — owner review required
+
+Prepared 2026-10-27 for the current Android release. Replace the outdated published storage and collection descriptions before release. Confirm retention, hosted-games server practices and account settings before publishing this draft.
+
+Calculator+ stores calculation history, preferences, favourite tools, timer state, cached exchange rates and game completion/unlock records on your device. History can be deleted in the app. Android backup may retain supported app data according to your device's backup settings. Graphy exports are written to a location you choose through Android's document picker; the app does not need broad storage access for this feature.
+
+Optional usage analytics uses Google Analytics for Firebase when you enable Share usage analytics in Settings. Usage events describe tools, theme selections and active themes, games started/completed/exited, currency refresh outcomes, history restore requests, Graphy use/exports, sharing requests and formatting-setting changes. These events exclude expressions, amounts, scores and saved history. The Firebase SDK may also process app-instance/device identifiers, app/device information and automatically collected diagnostics and usage events. Analytics advertising-ID collection and ad-personalization signals are disabled by this integration. Google processes Analytics information under its applicable terms and privacy policy.
+
+Analytics is off by default. You may turn it off in Settings; this stops collection and resets analytics data on the device. This does not itself delete previously received server data. The owner must publish the applicable retention period and a working contact/deletion request process after reviewing the Firebase project settings.
+
+Google AdMob and its User Messaging Platform support advertising and applicable consent choices. Optional rewarded ads can unlock eligible themes or additional game sets. Advertising SDK data processing is separate from the usage-analytics switch. Applicable ad privacy controls are available in the app. Review Google's advertising privacy information and the owner's AdMob configuration for the relevant data categories and purposes.
+
+Currency refresh contacts the exchange-rate provider and hosted games load from SmartUpTech's website. Those servers receive network requests, which can include IP address and normal request/device information. Confirm the operator's logs, cookies, retention and game analytics before publication; this repository cannot establish their server behavior. External links and Android sharing destinations have their own privacy practices.
+
+Owner actions before publication: retain an accurate audience/children policy, identify the controller and contact channel, specify retention/deletion and international processing where applicable, link relevant provider privacy policies, set an effective date, and reconcile Google Play Data safety with the merged SDK behavior. Do not repeat an unconditional claim that no personal information is collected.

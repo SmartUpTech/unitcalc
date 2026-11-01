@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingHorizontal="@dimen/theme_swatch_color_size"
+    android:paddingTop="@dimen/spacing_12dp"
+    android:paddingBottom="@dimen/converter_flag_height">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_section_display"
+            style="@style/SettingsSectionTitle"
+            android:text="@string/prefs_title_display" />
+
+        <LinearLayout
+            android:id="@+id/card_display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/converter_spacing"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
+
+            <include
+                android:id="@+id/row_theme"
+                layout="@layout/item_settings_theme_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_number_decimals"
+                layout="@layout/item_settings_choice_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_group_separator"
+                layout="@layout/item_settings_choice_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_decimal_separator"
+                layout="@layout/item_settings_choice_row" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_section_feedback"
+            style="@style/SettingsSectionTitle"
+            android:layout_marginTop="@dimen/converter_flag_height"
+            android:text="@string/title_activity_feedback" />
+
+        <LinearLayout
+            android:id="@+id/card_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/converter_spacing"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
+
+            <include
+                android:id="@+id/row_key_sounds"
+                layout="@layout/item_settings_switch_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_key_vibration"
+                layout="@layout/item_settings_switch_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_rate"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_share"
+                layout="@layout/item_settings_action_row" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_section_information"
+            style="@style/SettingsSectionTitle"
+            android:layout_marginTop="@dimen/converter_flag_height"
+            android:text="@string/title_activity_info" />
+
+        <LinearLayout
+            android:id="@+id/card_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/converter_spacing"
+            android:background="@drawable/bg_converter_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/theme_swatch_color_size"
+            android:paddingVertical="@dimen/converter_small_spacing">
+
+            <include
+                android:id="@+id/row_website"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_privacy"
+                layout="@layout/item_settings_action_row" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/bg_settings_divider" />
+
+            <include
+                android:id="@+id/row_version"
+                layout="@layout/item_settings_info_row" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

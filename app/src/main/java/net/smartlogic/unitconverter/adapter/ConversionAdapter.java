@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.theme.CalculatorTheme;
+import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.utils.Conversions;
 
 public class ConversionAdapter extends ArrayAdapter<Integer> {
@@ -24,7 +24,7 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
 
 
     public ConversionAdapter(@NonNull Context context, Integer[] values) {
-        super(context, R.layout.single_item,values);
+        super(context, R.layout.single_item, values);
         mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.val = values;
         this.conversions = Conversions.getInstance();
@@ -34,45 +34,44 @@ public class ConversionAdapter extends ArrayAdapter<Integer> {
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //return super.getView(position, convertView, parent);
-
         Holder holder;
 
         if (convertView == null) {
-            // Inflate the view since it does not exist
             convertView = mInflater.inflate(R.layout.single_item, parent, false);
-
-            // Create and save off the holder in the tag so we get quick access to inner fields
-            // This must be done for performance reasons
             holder = new Holder();
             holder.textView = convertView.findViewById(R.id.textView);
             holder.imageView = convertView.findViewById(R.id.image);
-            holder.ll = convertView.findViewById(R.id.ll);
+            holder.iconContainer = convertView.findViewById(R.id.icon_container);
+            holder.indicator = convertView.findViewById(R.id.indicator);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
         }
 
-        // Populate the text
         holder.textView.setText(context.getString(conversions.getById(val[position]).getLabelResource()));
         holder.imageView.setImageResource(conversions.getById(val[position]).getImageResource());
 
-
-        if (position == selectedItem){
-            holder.ll.setBackgroundColor(context.getResources().getColor(R.color.colorHighlighter));
-        }
-        else{
-            holder.ll.setBackgroundColor(context.getResources().getColor(R.color.colorNewGrey));
-        }
+        CalculatorTheme theme = ThemeManager.get();
+        boolean selected = position == selectedItem;
+        convertView.setSelected(selected);
+        holder.indicator.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
+        holder.indicator.setBackgroundColor(theme.accentContentColor());
+        holder.iconContainer.setBackgroundResource(
+                selected ? R.drawable.bg_category_icon_selected : R.drawable.bg_category_icon_default);
+        
+        int accent = theme.accentContentColor();
+        int muted = theme.secondaryContentColor();
+        holder.textView.setTextColor(selected ? accent : muted);
+        holder.imageView.setColorFilter(selected ? accent : muted);
 
         return convertView;
     }
 
-    /** View holder for the views we need access to */
     private static class Holder {
-        public TextView textView;
+        TextView textView;
         ImageView imageView;
-        LinearLayout ll;
+        View iconContainer;
+        View indicator;
     }
 
     private int selectedItem;

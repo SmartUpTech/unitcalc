@@ -1,0 +1,4 @@
+interface:
+  display_name: "AdMob Compliance"
+  short_description: "Review ad consent, placements, and lifecycle safety"
+  default_prompt: "Use $admob-compliance to review this Android ad integration and its consent flow."

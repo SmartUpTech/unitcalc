@@ -1,0 +1,60 @@
+package net.smartlogic.unitconverter.timer
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
+import net.smartlogic.unitconverter.timer.compose.TimerScreen
+
+class TimerFragment : Fragment() {
+    private lateinit var viewModel: TimerViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val engine = TimerEngine.getInstance(requireContext())
+        viewModel = ViewModelProvider(
+            this,
+            TimerViewModelFactory(engine),
+        )[TimerViewModel::class.java]
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setScreenVisible(!isHidden)
+    }
+
+    override fun onPause() {
+        viewModel.setScreenVisible(false)
+        super.onPause()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        viewModel.setScreenVisible(!hidden && isResumed)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                GraphyTheme {
+                    TimerScreen(viewModel = viewModel)
+                }
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): TimerFragment = TimerFragment()
+    }
+}
