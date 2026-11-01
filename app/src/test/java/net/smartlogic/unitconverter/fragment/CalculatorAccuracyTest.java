@@ -40,6 +40,8 @@ public class CalculatorAccuracyTest {
         shadowOf(Looper.getMainLooper()).idle();
         try {
             assertNotNull(ReflectionHelpers.getField(fragment, "tvResult"));
+            assertTrue(fragment.requireView().findViewById(R.id.sqrt) instanceof android.widget.ImageButton);
+            assertTrue(fragment.requireView().findViewById(R.id.power) instanceof android.widget.ImageButton);
             click(fragment, R.id.one);
             click(fragment, R.id.six);
             click(fragment, R.id.sqrt);
