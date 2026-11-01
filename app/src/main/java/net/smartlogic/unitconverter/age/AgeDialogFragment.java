@@ -50,6 +50,13 @@ public final class AgeDialogFragment extends DialogFragment {
         return dialog;
     }
 
+    /** Reuse the themed calendar-part picker for other tools without changing date semantics. */
+    public static AgeDialogFragment forDate(String mode, LocalDate date, int title) {
+        AgeDialogFragment dialog = create(mode, date);
+        dialog.requireArguments().putInt("title", title);
+        return dialog;
+    }
+
     @NonNull @Override public Dialog onCreateDialog(Bundle state) {
         var theme = ThemeManager.get();
         var builder = new MaterialAlertDialogBuilder(requireContext(), R.style.GraphyAlertDialogTheme)
@@ -73,7 +80,7 @@ public final class AgeDialogFragment extends DialogFragment {
                 button.setOnClickListener(v -> pickPart(part));
             }
             updateDateButtons();
-            builder.setTitle(BIRTH.equals(mode) ? R.string.age_birth : R.string.age_as_of)
+            builder.setTitle(requireArguments().getInt("title", BIRTH.equals(mode) ? R.string.age_birth : R.string.age_as_of))
                     .setView(dateView).setPositiveButton(android.R.string.ok, (d, which) -> send(mode, selected, false));
         }
         return builder.create();

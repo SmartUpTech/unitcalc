@@ -51,6 +51,9 @@ import net.smartlogic.unitconverter.utils.GenericFunctions;
 public class CalculatorFragment extends Fragment implements View.OnClickListener, OnLongClickListener, GraphyPanelHost {
 
     private TextView tvExpression, tvResult;
+    // Canonical key tokens used by the existing editor; initialized from non-translatable resources.
+    private String symZero, symDot, symSqrt, symExponent, symPercent, symPlus, symMinus,
+            symMultiply, symDivide, symParenOpen, symParenClose, funcSqrt, funcSqrtParen;
     private static final int MAX_INPUT_LENGTH = 30;
     private boolean inputChangeInProgress;
     private boolean recalculateAfterInput;
@@ -171,6 +174,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void initViews(View view) {
+        initSymbols();
         semanticTheme = ExpressionDisplayFormatter.GraphySemanticTheme.from(requireContext());
         mCoordinatorLayout = view.findViewById(R.id.cl);
         workspaceTabs = view.findViewById(R.id.workspace_tabs);

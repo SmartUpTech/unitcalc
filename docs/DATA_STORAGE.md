@@ -24,3 +24,7 @@ description: Details of the application's persistence layers including SQLite an
 - **Migrations**: Versioned migrations MUST be handled in `onUpgrade` of the `DatabaseHelper`.
 - **Catalog Correlation**: `calculator_id` in history must always map to a valid ID in the `CalculatorCatalog`.
 
+
+## EMI and shared monetary preference
+
+Schema v4 adds nullable `payload` to calculation_history without rebuilding old rows. EMI stores a versioned raw scenario payload; history reads, details, restoration and Undo preserve it. Legacy callers retain their constructors and null payload behavior. `preferred_currency` initializes once from device region with INR fallback, and never changes converter indices. `emi_workspace_v1` stores compact loan drafts. See EMI_CALCULATOR.md.

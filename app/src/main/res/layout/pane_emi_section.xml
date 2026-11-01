@@ -1,0 +1,6 @@
+<net.smartlogic.unitconverter.widget.CalculationViewport xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<net.smartlogic.unitconverter.emi.EmiSectionLayout android:id="@+id/emi_section" android:layout_width="match_parent" android:layout_height="match_parent">
+ <LinearLayout android:id="@+id/emi_header" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+ <FrameLayout android:id="@+id/emi_body" android:layout_width="match_parent" android:layout_height="match_parent" />
+ <LinearLayout android:id="@+id/emi_footer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+</net.smartlogic.unitconverter.emi.EmiSectionLayout></net.smartlogic.unitconverter.widget.CalculationViewport>

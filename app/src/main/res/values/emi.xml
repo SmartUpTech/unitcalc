@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drawer_section_finance">Finance</string>
+    <string name="emi_calculator">EMI Calculator</string>
+    <string name="emi_preferred_currency">Preferred currency</string>
+    <string name="emi_currency_choice">%1$s (%2$s)</string>
+    <string name="emi_money">%1$s%2$s</string>
+    <string name="emi_schedule">Schedule</string>
+    <string name="emi_loan_amount">Loan amount</string>
+    <string name="emi_annual_rate">Annual interest (%)</string>
+    <string name="emi_tenure">Tenure</string>
+    <string name="emi_first_date">First EMI</string>
+    <string name="emi_monthly">Monthly EMI</string>
+    <string name="emi_interest">Total interest</string>
+    <string name="emi_total">Total payment</string>
+    <string name="emi_insights">Insights</string>
+    <string name="emi_more">More</string>
+    <string name="emi_prepayments">Prepayments</string>
+    <string name="emi_compare">Compare loans</string>
+    <string name="emi_report">Save report</string>
+    <string name="emi_share">Share</string>
+    <string name="emi_reset">Reset</string>
+    <string name="emi_empty">Enter loan amount, annual interest and tenure.</string>
+    <string name="emi_invalid">Check the amount, rate, tenure and prepayments. Amount: up to 12 integer digits; rate: 0–100%; tenure: 1–600 whole months.</string>
+    <string name="emi_rounding">This payment is too small to reduce the balance at this currency’s precision. Increase the amount or shorten the tenure.</string>
+    <string name="emi_loading">Calculating…</string>
+    <string name="emi_fixed">Fixed rate · Monthly reducing balance</string>
+    <string name="emi_years">Years</string>
+    <string name="emi_months">Months</string>
+    <string name="emi_next_field">Next field</string>
+    <string name="emi_done">Done</string>
+    <string name="emi_monthly_table">Monthly</string>
+    <string name="emi_yearly_table">Yearly</string>
+    <string name="emi_previous">Previous</string>
+    <string name="emi_next">Next</string>
+    <string name="emi_jump">Jump to period</string>
+    <string name="emi_period">Period</string>
+    <string name="emi_principal">Principal</string>
+    <string name="emi_interest_paid">Interest</string>
+    <string name="emi_balance">Balance</string>
+    <string name="emi_payment">Payment</string>
+    <string name="emi_extra">Prepayment</string>
+    <string name="emi_opening">Opening balance</string>
+    <string name="emi_closing">Closing balance</string>
+    <string name="emi_unused">Unused extra payment</string>
+    <string name="emi_final">Final installment</string>
+    <string name="emi_count">Payments</string>
+    <string name="emi_payoff">Estimated payoff</string>
+    <string name="emi_page_range">%1$d–%2$d of %3$d</string>
+    <string name="emi_table_hint">Tap a period for full details. Currency: %1$s</string>
+    <string name="emi_year_period">%1$d (%2$d payments)</string>
+    <string name="emi_pdf">PDF</string>
+    <string name="emi_csv">CSV</string>
+    <string name="emi_breakdown">Breakdown</string>
+    <string name="emi_balance_chart">Balance</string>
+    <string name="emi_view_schedule">View schedule</string>
+    <string name="emi_assumptions">Estimate only. Fixed annual rate and monthly reducing balance. Interest and payments round HALF_EVEN to currency minor units; the final payment closes the balance. Dates label monthly periods. Fees, taxes, daily interest, rate changes, moratoriums and balloon payments are excluded. Actual lender schedules may differ.</string>
+    <string name="emi_graph_formula">EMI calculation</string>
+    <string name="emi_graph_prepay">Prepayment impact</string>
+    <string name="emi_monthly_rate">Monthly rate</string>
+    <string name="emi_payment_count">Monthly payments</string>
+    <string name="emi_rate_step">Annual rate ÷ 12</string>
+    <string name="emi_term_step">Tenure in months</string>
+    <string name="emi_formula">EMI formula</string>
+    <string name="emi_formula_detail">r = annual percentage ÷ 1200. EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1); at zero interest, P ÷ n. Currency postings use HALF_EVEN. The last installment is adjusted to close the balance.</string>
+    <string name="emi_original">Original schedule</string>
+    <string name="emi_revised">Revised schedule</string>
+    <string name="emi_apply_extra">Apply extra principal after EMI</string>
+    <string name="emi_saved_interest">Interest saved</string>
+    <string name="emi_saved_months">Months saved</string>
+    <string name="emi_add_rule">Add prepayment</string>
+    <string name="emi_edit_rule">Edit prepayment</string>
+    <string name="emi_rule_amount">Extra amount</string>
+    <string name="emi_rule_first">First installment</string>
+    <string name="emi_rule_last">Last installment</string>
+    <string name="emi_rule_frequency">Frequency</string>
+    <string name="emi_once">One time</string>
+    <string name="emi_every_month">Every month</string>
+    <string name="emi_every_year">Every year</string>
+    <string name="emi_reduce_tenure">Reduce tenure</string>
+    <string name="emi_reduce_emi">Reduce EMI</string>
+    <string name="emi_method">Prepayment method</string>
+    <string name="emi_rule_label">%1$s · %2$s · %3$d–%4$d</string>
+    <string name="emi_rule_limit">A maximum of 20 prepayment rules is supported.</string>
+    <string name="emi_rule_error">Enter a positive amount within currency precision and installment numbers within the original tenure.</string>
+    <string name="emi_no_rules">No prepayments. Extra payments are applied after the selected EMI.</string>
+    <string name="emi_save">Save</string>
+    <string name="emi_cancel">Cancel</string>
+    <string name="emi_delete">Delete</string>
+    <string name="emi_back">Back</string>
+    <string name="emi_loan_a">Loan A</string>
+    <string name="emi_loan_b">Loan B</string>
+    <string name="emi_edit_a">Edit A</string>
+    <string name="emi_edit_b">Edit B</string>
+    <string name="emi_apply">Apply</string>
+    <string name="emi_discard">Discard</string>
+    <string name="emi_comparison_note">Compare total cost and duration. Both loans use the same currency; amounts are not converted.</string>
+    <string name="emi_difference">B − A</string>
+    <string name="emi_export_comparison">Export comparison</string>
+    <string name="emi_share_text">Text summary</string>
+    <string name="emi_share_pdf">Share PDF</string>
+    <string name="emi_share_csv">Share CSV</string>
+    <string name="emi_export_busy">Preparing report…</string>
+    <string name="emi_export_error">Could not create or save the report. Please try another destination.</string>
+    <string name="emi_export_saved">Report saved</string>
+    <string name="emi_share_error">No compatible sharing app is available.</string>
+    <string name="emi_report_title">Loan repayment report</string>
+    <string name="emi_report_page">Page %1$d</string>
+    <string name="emi_report_scenario">%1$s · %2$s</string>
+    <string name="emi_share_summary">Loan amount: %1$s
+Annual interest: %2$s%%
+Payments: %3$d
+Monthly EMI: %4$s
+Total interest: %5$s
+Total payment: %6$s
+Estimated payoff: %7$s
+Interest saved: %8$s
+Months saved: %9$d
+Final installment: %10$s</string>
+    <string name="emi_history_summary">%1$s · %2$s%% · %3$d months</string>
+    <string name="emi_history_hint">Open to restore this loan and its prepayments.</string>
+    <string name="emi_state_error">This saved loan could not be restored. Your current inputs have been kept.</string>
+    <string name="emi_space_limit">This window cannot fit the complete EMI workflow at the current text/display size. Increase the available window or reduce scaling.</string>
+    <string name="emi_currency_new">New loans use the preferred currency in Settings. Existing loans retain their currency.</string>
+    <string name="emi_graph_extra_detail">Prepayments reduce principal after each selected installment. The revised schedule uses the selected tenure/EMI method; savings compare posted interest against the unchanged original loan.</string>
+    <string name="emi_chart_point">%1$s · %2$s</string>
+    <string name="emi_rate_value">%1$s%%</string>
+    <string name="emi_term_value">%1$s %2$s</string>
+    <string name="emi_schedule_detail">%1$s
+Opening: %2$s
+Payment: %3$s
+Principal: %4$s
+Interest: %5$s
+Prepayment: %6$s
+Closing: %7$s
+Unused extra payment: %8$s</string>
+    <string name="emi_reset_question">Clear this loan and its prepayments? Saved history is retained.</string>
+    <string name="emi_switch_units_error">Use a tenure that represents a whole number of months.</string>
+    <string name="emi_choose_export">Report format</string>
+    <string name="emi_missing_comparison">Complete both loans before comparing.</string>
+    <string name="emi_chart_no_interest">No interest at a zero annual rate.</string>
+    <string name="emi_payments_value">%1$d payments</string>
+    <string name="emi_percent_value">%1$s%%</string>
+    <string name="emi_rule_after_payoff">Rules after payoff are not applied. Excess in the payoff installment is shown as unused.</string>
+    <string name="emi_preferred_hint">Used by new loans and future monetary tools. Currency conversion selections stay independent.</string>
+    <string name="emi_report_range">%1$s – %2$s</string>
+    <string name="emi_rule_position">Rule %1$d of %2$d</string>
+    <string name="emi_editing_loan">Editing %1$s</string>
+    <string name="emi_clear_field">Clear field</string>
+    <string name="emi_choose_month">Choose installment</string>
+    <string name="emi_export_compare_summary">%1$s
+
+%2$s
+
+%3$s
+
+%4$s</string>
+    <string name="emi_csv_number">Installment</string>
+    <string name="emi_csv_date">Date</string>
+    <string name="emi_csv_currency">Currency symbol</string>
+    <string name="emi_rule_remove_question">Delete this prepayment rule?</string>
+    <string name="emi_balance_start">Start</string>
+    <string name="emi_operation_schedule">Build posted monthly schedule</string>
+    <string name="emi_baseline_interest">Original interest</string>
+    <string name="emi_revised_interest">Revised interest</string>
+    <string name="emi_chart_help">Select a period to hear its balance.</string>
+    <string name="emi_page_jump">Go</string>
+    <string name="emi_preferred_symbol">Currency: %1$s</string>
+    <string name="emi_no_result">—</string>
+    <item name="emi_calculator" type="id" />
+    <dimen name="emi_result_size">36sp</dimen>
+    <dimen name="emi_result_compact_size">24sp</dimen>
+    <dimen name="emi_field_size">18sp</dimen>
+    <dimen name="emi_wide_min_width">600dp</dimen>
+    <dimen name="emi_chart_height">180dp</dimen>
+    <dimen name="emi_max_content_width">600dp</dimen>
+    <dimen name="emi_chart_stroke">2dp</dimen>
+    <dimen name="emi_chart_point_radius">4dp</dimen>
+    <integer name="emi_report_page_width">595</integer>
+    <integer name="emi_report_page_height">842</integer>
+    <integer name="emi_report_margin">36</integer>
+    <integer name="emi_report_body_size">11</integer>
+    <integer name="emi_report_title_size">18</integer>
+    <integer name="emi_report_row_height">26</integer>
+    <style name="EmiText" parent="BmiText" />
+    <style name="EmiCaption" parent="BmiCaption" />
+    <style name="EmiInput" parent="BmiInput">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">0</item>
+        <item name="android:minHeight">@dimen/converter_touch_target</item>
+        <item name="android:textSize">@dimen/emi_field_size</item>
+        <item name="android:layout_marginEnd">@dimen/spacing_0dp</item>
+    </style>
+    <style name="EmiAction" parent="AgeDateButton">
+        <item name="android:tag">theme_text_action</item>
+    </style>
+    <string name="emi_initial_monthly">Initial monthly EMI</string>
+    <string name="emi_changing_payments">EMI changes after prepayments; see the schedule.</string>
+    <string name="emi_csv_end_date">End date</string>
+    <string name="emi_csv_periods">Payment count</string>
+    <string name="emi_input_rejected">This edit exceeds the allowed range or precision and was not applied.</string>
+    <string name="emi_check_fields">Check the amount, rate, whole-month tenure and prepayment ranges.</string>
+</resources>

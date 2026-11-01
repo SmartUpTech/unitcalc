@@ -72,6 +72,23 @@ public class Preferences {
         mContext = context;
     }
 
+    public static final String PREFS_PREFERRED_CURRENCY = "preferred_currency";
+    public String getPreferredCurrency() {
+        var supported = PreferredCurrency.choices(mContext).stream().map(net.smartlogic.unitconverter.model.Currency::getCurrencyISOCode).collect(java.util.stream.Collectors.toList());
+        String value;
+        try { value = mPrefs.getString(PREFS_PREFERRED_CURRENCY, null); }
+        catch (ClassCastException invalid) { value = null; }
+        if (value == null || !supported.contains(value)) {
+            value = PreferredCurrency.regionDefault(java.util.Locale.getDefault(), supported);
+            mPrefs.edit().putString(PREFS_PREFERRED_CURRENCY, value).apply();
+        }
+        return value;
+    }
+    public void setPreferredCurrency(String code) {
+        PreferredCurrency.find(mContext, code);
+        mPrefs.edit().putString(PREFS_PREFERRED_CURRENCY, code).apply();
+    }
+
     public SharedPreferences getPreferences() {
         return mPrefs;
     }

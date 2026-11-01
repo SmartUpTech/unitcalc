@@ -10,7 +10,8 @@ import net.smartlogic.unitconverter.R;
 
 /** Fixed workspace: never exposes a scrolling or clipped interactive surface. */
 public final class CalculationViewport extends FrameLayout {
-    private CalculationLayout content;
+    private View content;
+    private ViewportContent measuredContent;
     private TextView spaceMessage;
 
     public CalculationViewport(Context context, AttributeSet attrs) {
@@ -19,7 +20,8 @@ public final class CalculationViewport extends FrameLayout {
 
     @Override protected void onFinishInflate() {
         super.onFinishInflate();
-        content = (CalculationLayout) getChildAt(0);
+        content = getChildAt(0);
+        measuredContent = (ViewportContent) content;
         spaceMessage = new TextView(getContext());
         spaceMessage.setId(R.id.tool_space_message);
         spaceMessage.setTextAppearance(R.style.TextAppearance_Graphy_Body1);
@@ -35,10 +37,10 @@ public final class CalculationViewport extends FrameLayout {
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int height = Math.max(0, MeasureSpec.getSize(heightMeasureSpec)
                 - getPaddingTop() - getPaddingBottom());
-        content.setViewportHeight(height);
+        measuredContent.setViewportHeight(height);
         // INVISIBLE preserves state and remains measurable when a window grows again.
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        boolean fits = content.fitsViewport();
+        boolean fits = measuredContent.fitsViewport();
         content.setVisibility(fits ? VISIBLE : INVISIBLE);
         spaceMessage.setVisibility(fits ? GONE : VISIBLE);
         if (!fits) {

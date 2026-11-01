@@ -133,17 +133,17 @@
     <string name="double_zero">00</string>
     <string name="dot">.</string>
 
+    <!-- Canonical editor tokens (do not translate). -->
+    <string name="sqrt" translatable="false">√</string>
+    <string name="exponent" translatable="false">^</string>
+    <string name="percent" translatable="false">%</string>
+    <string name="parenthesis_open" translatable="false">(</string>
+    <string name="parenthesis_close" translatable="false">)</string>
     <!-- Calculator parser tokens (do not translate) -->
     <string name="func_sqrt" translatable="false">sqrt</string>
     <string name="func_sqrt_paren" translatable="false">sqrt(</string>
 
     <!-- Calculator UI -->
-    <string name="history">History</string>
-    <string name="no_history">No history yet</string>
-    <string name="scientific_mode">Scientific Mode</string>
-    <string name="standard_mode">Standard Mode</string>
-    <string name="history_cleared">History cleared</string>
-    <string name="invalid_expression">Invalid Expression</string>
     <string name="clip_label_calculator_result">Calculator Result</string>
 
     <!-- Calculator content descriptions -->
@@ -463,10 +463,10 @@
 
 
     <!-- AdMob Test Ads (Next-Gen SDK test unit IDs) -->
-    <!--    <string name="am_banner_ad_unit">ca-app-pub-3940256099942544/9214589741</string>-->
-    <!--    <string name="am_interstitial_ad_unit">ca-app-pub-3940256099942544/1033173712</string>-->
-    <!--    <string name="am_rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string>-->
-    <!--    <string name="am_app_open_ad_unit">ca-app-pub-3940256099942544/9257395921</string>-->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
 
     <string name="converter_currency_separator" translatable="false">·</string>
     <string name="converter_unit_rate">%1$s %2$s = %3$s %4$s</string>

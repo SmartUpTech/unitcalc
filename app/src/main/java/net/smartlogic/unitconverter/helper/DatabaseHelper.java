@@ -20,9 +20,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static void executeHistoryWork(Runnable task) { HISTORY_IO.execute(task); }
 
     private static final String DATABASE_NAME = "UnitCalc.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String TABLE_HISTORY = "calculation_history";
+    private static final String COLUMN_PAYLOAD = "payload";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_EXPRESSION = "expression";
     private static final String COLUMN_RESULT = "result";
@@ -40,7 +41,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_EXPRESSION + " TEXT,"
                 + COLUMN_RESULT + " TEXT,"
                 + COLUMN_CREATED_AT + " INTEGER,"
-                + COLUMN_CALCULATOR_ID + " TEXT"
+                + COLUMN_CALCULATOR_ID + " TEXT,"
+                + COLUMN_PAYLOAD + " TEXT"
                 + ")";
         db.execSQL(createHistoryTable);
     }
@@ -54,13 +56,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_HISTORY + " ADD COLUMN " + COLUMN_CALCULATOR_ID
                     + " TEXT DEFAULT '" + CalculatorCatalog.ID_BASIC + "'");
         }
+        if (oldVersion < 4) db.execSQL("ALTER TABLE " + TABLE_HISTORY + " ADD COLUMN " + COLUMN_PAYLOAD + " TEXT");
     }
 
     public void addHistory(@NonNull String expression, @NonNull String result, @NonNull String calculatorId) {
+        addHistory(expression, result, calculatorId, null);
+    }
+
+    public void addHistory(@NonNull String expression, @NonNull String result, @NonNull String calculatorId, String payload) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_EXPRESSION, expression);
         values.put(COLUMN_RESULT, result);
+        values.put(COLUMN_PAYLOAD, payload);
         values.put(COLUMN_CREATED_AT, System.currentTimeMillis());
         values.put(COLUMN_CALCULATOR_ID, calculatorId);
         db.insert(TABLE_HISTORY, null, values);
@@ -97,7 +105,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             cursor.getString(resultIndex),
                             createdAt,
                             calculatorId,
-                            cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))
+                            cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PAYLOAD))
                     );
                     historyList.add(item);
                 }
@@ -120,6 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_ID, item.id());
         values.put(COLUMN_EXPRESSION, item.expression());
         values.put(COLUMN_RESULT, item.result());
+        values.put(COLUMN_PAYLOAD, item.payload());
         values.put(COLUMN_CREATED_AT, item.createdAt());
         values.put(COLUMN_CALCULATOR_ID, item.calculatorId());
         SQLiteDatabase db = getWritableDatabase();

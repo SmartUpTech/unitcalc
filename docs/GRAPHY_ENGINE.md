@@ -158,9 +158,7 @@ a genuinely new semantic concept.** A different appearance is not a new concept.
 
 Provide semantic content and dependencies, reuse validated calculation state, pass
 formatted values and localized labels, then use the common renderer. Never select a
-renderer by calculator id. No chart implementations currently exist in v11; add a
-shared chart primitive/token contract when real chart data is introduced, rather
-than shipping speculative unused components.
+renderer by calculator id. `ValueChartData`, `ValueChartRenderer` and `ValueChartView` provide shared proportion/line charts for EMI insights, comparisons and reports. They consume authoritative values and formatted labels; the shared renderer owns theme colors, typography, lines, dashes, axes and legends. EMI flowcharts continue to use the existing Graphy node primitives.
 
 ## Verification
 

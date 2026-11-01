@@ -247,6 +247,10 @@ public final class ThemeApplier {
             view.setPadding(0, 0, 0, 0);
         }
         if ("converter_selector".equals(view.getTag()) || "converter_amount".equals(view.getTag())) {
+            if (view instanceof TextView amount) {
+                amount.setTextColor(theme.primaryContentColor());
+                amount.setHintTextColor(theme.secondaryContentColor());
+            }
             int left = view.getPaddingLeft();
             int right = view.getPaddingRight();
             if ("converter_selector".equals(view.getTag())) {

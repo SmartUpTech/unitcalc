@@ -41,12 +41,13 @@ public class HistoryDialogFragment extends DialogFragment {
         result.putString("calculator", item.calculatorId());
         result.putLong("created", item.createdAt());
         result.putLong("id", item.id());
+        result.putString("payload", item.payload());
         return result;
     }
 
     public static CalculationHistoryItem item(Bundle args) {
         return new CalculationHistoryItem(args.getString("expression", ""), args.getString("result", ""),
-                args.getLong("created"), args.getString("calculator", CalculatorCatalog.ID_BASIC), args.getLong("id", -1));
+                args.getLong("created"), args.getString("calculator", CalculatorCatalog.ID_BASIC), args.getLong("id", -1), args.getString("payload"));
     }
 
     private void send(String action) {
@@ -85,10 +86,12 @@ public class HistoryDialogFragment extends DialogFragment {
                     : getString(R.string.history_metadata, calculator, date));
             ((TextView) content.findViewById(R.id.tv_history_expression)).setText(item.expression());
             ((TextView) content.findViewById(R.id.tv_history_result)).setText(item.result());
-            boolean reusable = CalculatorCatalog.ID_BASIC.equals(item.calculatorId());
+            boolean reusable = CalculatorCatalog.ID_BASIC.equals(item.calculatorId()) || CalculatorCatalog.ID_EMI.equals(item.calculatorId());
             content.findViewById(R.id.history_legacy_hint).setVisibility(reusable ? View.GONE : View.VISIBLE);
             if (CalculatorCatalog.ID_BMI.equals(item.calculatorId()))
                 ((TextView) content.findViewById(R.id.history_legacy_hint)).setText(R.string.bmi_history_hint);
+            if (CalculatorCatalog.ID_EMI.equals(item.calculatorId()))
+                ((TextView) content.findViewById(R.id.history_legacy_hint)).setText(R.string.emi_history_hint);
             ThemeApplier.apply(content);
             builder.setTitle(R.string.history_details).setView(content)
                     .setNegativeButton(android.R.string.cancel, null)

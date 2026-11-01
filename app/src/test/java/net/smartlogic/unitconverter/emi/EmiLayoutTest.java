@@ -1,0 +1,70 @@
+package net.smartlogic.unitconverter.emi;
+
+import android.app.Application;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.view.View;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.helper.Preferences;
+import net.smartlogic.unitconverter.theme.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
+import org.robolectric.util.ReflectionHelpers;
+import java.io.File;
+import java.io.FileOutputStream;
+import static org.junit.Assert.*;
+
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@LooperMode(LooperMode.Mode.PAUSED)
+public class EmiLayoutTest {
+    @Test public void allThemesAndFontsKeepSummaryAndKeypadInSupportedViewport() throws Exception {
+        for (var theme : CalculatorThemes.all()) render(theme, Appearance.Font.OSWALD, 1f, 360, 600, true, true);
+        for (var font : Appearance.Font.values()) render(CalculatorThemes.GRAPHITE_BLACK, font, 1.3f, 412, 660, true, true);
+    }
+    @Test public void summaryAndLandscapeReflowAndImpossibleViewport() throws Exception {
+        render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 600, false, true);
+        render(CalculatorThemes.GRAPHITE_BLACK, Appearance.Font.OSWALD, 1f, 800, 350, true, true);
+        render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 480, true, true);
+        render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.ROBOTO_MONO, 2f, 320, 300, true, false);
+    }
+    private void render(CalculatorTheme theme, Appearance.Font font, float scale, int width, int height, boolean editing, boolean expected) throws Exception {
+        Application app = RuntimeEnvironment.getApplication(); Configuration original = new Configuration(app.getResources().getConfiguration());
+        Configuration configuration = new Configuration(original); configuration.fontScale = scale; app.getResources().updateConfiguration(configuration, app.getResources().getDisplayMetrics());
+        ThemeManager.init(app); ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+        Preferences.getInstance(app).getPreferences().edit().putString(Appearance.FONT, font.name()).apply();
+        var controller = Robolectric.buildActivity(AppCompatActivity.class); controller.get().setTheme(R.style.AppTheme); controller.setup().visible();
+        try {
+            View viewport = controller.get().getLayoutInflater().inflate(R.layout.pane_emi_calculate, null);
+            viewport.setBackgroundColor(theme.background()); controller.get().setContentView(viewport);
+            EmiLayout content = viewport.findViewById(R.id.emi_layout);
+            ((TextView) viewport.findViewById(R.id.emi_principal)).setText("1000000"); ((TextView) viewport.findViewById(R.id.emi_rate)).setText("8.5");
+            ((TextView) viewport.findViewById(R.id.emi_tenure)).setText("20"); ((TextView) viewport.findViewById(R.id.emi_date)).setText("02 Dec 2026");
+            ((TextView) viewport.findViewById(R.id.emi_value)).setText("₹8,678.23");
+            ((TextView) viewport.findViewById(R.id.emi_total_interest)).setText("Total interest: ₹10,82,776.63");
+            ((TextView) viewport.findViewById(R.id.emi_total_payment)).setText("Total payment: ₹20,82,776.63");
+            ((TextView) viewport.findViewById(R.id.emi_message)).setText(R.string.emi_fixed);
+            viewport.findViewById(R.id.emi_keys).setVisibility(editing ? View.VISIBLE : View.GONE); viewport.findViewById(R.id.emi_actions).setVisibility(editing ? View.GONE : View.VISIBLE);
+            ThemeApplier.apply(viewport);
+            for (int i = 0; i < 3; i++) { viewport.forceLayout(); viewport.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)); viewport.layout(0, 0, width, height); viewport.getViewTreeObserver().dispatchOnPreDraw(); }
+            String name = theme.id() + "-" + font.name() + "-" + scale + "-" + width + "x" + height + "-" + editing;
+            assertEquals(name, expected, content.fitsViewport());
+            if (expected && editing) {
+                View summary = viewport.findViewById(R.id.emi_summary), keys = viewport.findViewById(R.id.emi_keys);
+                if (width < height) assertTrue(name, summary.getBottom() <= keys.getTop());
+                assertTrue("numeric key width", viewport.findViewById(R.id.seven).getMeasuredWidth() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
+                assertTrue("numeric key height", viewport.findViewById(R.id.seven).getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
+                assertTrue(keys.getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target) * 4);
+            }
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888); viewport.draw(new Canvas(bitmap));
+            File file = new File("build/reports/emi/" + name + ".png"); file.getParentFile().mkdirs();
+            try (var out = new FileOutputStream(file)) { bitmap.compress(Bitmap.CompressFormat.PNG, 100, out); } bitmap.recycle();
+        } finally { controller.pause().stop().destroy(); app.getResources().updateConfiguration(original, app.getResources().getDisplayMetrics()); }
+    }
+}

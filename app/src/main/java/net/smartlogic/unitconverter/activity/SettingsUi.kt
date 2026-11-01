@@ -121,7 +121,7 @@ private fun SettingsScreen(
     DisposableEffect(preferences) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (Appearance.isPreference(key) || key == net.smartlogic.unitconverter.helper.UsageAnalytics.ENABLED ||
-                key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
+                key == Preferences.PREFS_PREFERRED_CURRENCY || key == Preferences.PREFS_STARTUP_SCREEN || choices.any { it.key == key } ||
                 key == Preferences.PREFS_KEY_SOUNDS || key == Preferences.PREFS_KEY_VIBRATION) {
                 revision++
             }
@@ -197,6 +197,11 @@ private fun SettingsScreen(
                 onClick = { activeChoiceKey = Appearance.FONT })
             SettingsRow(stringResource(R.string.appearance_reset),
                 onClick = { activeChoiceKey = "appearance_reset" })
+
+            SettingsRow(stringResource(R.string.emi_preferred_currency),
+                value = net.smartlogic.unitconverter.helper.PreferredCurrency.label(context),
+                summary = stringResource(R.string.emi_preferred_hint),
+                onClick = { net.smartlogic.unitconverter.helper.PreferredCurrency.showPicker(activity as androidx.fragment.app.FragmentActivity) })
 
             SettingsSection(R.string.settings_section_number_format)
             choices.forEachIndexed { index, choice ->

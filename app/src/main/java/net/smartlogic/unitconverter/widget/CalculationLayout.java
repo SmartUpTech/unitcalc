@@ -22,7 +22,7 @@ import java.util.List;
  * selector/value rows before reducing keys to their font-aware touch minimum.
  * If even that cannot fit, report the unsupported viewport to the fixed host.
  */
-public final class CalculationLayout extends LinearLayout {
+public final class CalculationLayout extends LinearLayout implements ViewportContent {
     private int viewportHeight;
     private int viewportWidth;
     int getViewportWidth() { return viewportWidth; }
@@ -48,7 +48,7 @@ public final class CalculationLayout extends LinearLayout {
         }
     }
 
-    void setViewportHeight(int height) {
+    public void setViewportHeight(int height) {
         if (viewportHeight != height) {
             viewportHeight = height;
             // The available viewport is also used during intrinsic-height probes.
@@ -56,7 +56,7 @@ public final class CalculationLayout extends LinearLayout {
         }
     }
 
-    boolean fitsViewport() { return fitsViewport; }
+    public boolean fitsViewport() { return fitsViewport; }
 
     @Override protected void onFinishInflate() {
         super.onFinishInflate();

@@ -19,3 +19,7 @@
   applied font. Both dialogs share the selector and native preview component.
 
 Settings group headings explicitly use bold in the selected app font across every theme.
+
+## Preferred currency
+
+The shared preferred-currency picker reuses converter catalog metadata and the searchable native picker. Labels use currency name and symbol; new EMI scenarios use the preference while saved loans retain their original currency. Existing converter choices remain independent. Monetary values show symbols without separate ISO labels.

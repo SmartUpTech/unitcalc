@@ -166,3 +166,7 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
   https://www.breville.com/content/dam/breville/au/assets/miscellaneous/instruction-manual/mixers/BEM800-instruction-manual.pdf
 - Explicit Imperial spoon convention cross-check (converter owner's published definitions):
   https://www.unitconverters.net/volume/teaspoon-uk-to-milliliter.htm
+
+## EMI Calculator
+
+`emi_calculator` is registered under Finance, the third drawer category. `EmiCalculator` owns DECIMAL128 EMI arithmetic and HALF_EVEN currency postings, baseline/revised schedules, both prepayment methods and final-payment reconciliation. Every consumer uses immutable result snapshots, never rounded display text. See EMI_CALCULATOR.md for limits, dates, prepayment timing, posting fixtures and exclusions.

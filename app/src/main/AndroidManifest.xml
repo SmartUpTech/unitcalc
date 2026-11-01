@@ -104,6 +104,11 @@
                 android:resource="@xml/timer_widget_info" />
         </receiver>
 
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.reports"
+            android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/emi_report_paths" />
+        </provider>
     </application>
 
 </manifest>

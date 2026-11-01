@@ -24,6 +24,7 @@ public final class CalculatorCatalog {
     public static final String ID_CURRENCY = "currency";
     public static final String ID_TIMER = "timer";
     public static final String ID_AGE = "age_calculator";
+    public static final String ID_EMI = "emi_calculator";
     public static final String ID_BMI = "bmi_calculator";
     private static final String UNIT_PREFIX = "unit:";
 
@@ -39,6 +40,7 @@ public final class CalculatorCatalog {
         TIMER,
         AGE_CALCULATOR,
         BMI_CALCULATOR,
+        EMI_CALCULATOR,
         RATE_APP,
         SHARE_APP
     }
@@ -69,7 +71,8 @@ public final class CalculatorCatalog {
             return destination == Destination.BASIC_CALCULATOR
                     || destination == Destination.UNIT_CATEGORY
                     || destination == Destination.CURRENCY
-                    || destination == Destination.TIMER;
+                    || destination == Destination.TIMER
+                    || destination == Destination.EMI_CALCULATOR;
         }
     }
 
@@ -152,8 +155,14 @@ public final class CalculatorCatalog {
                 Destination.AGE_CALCULATOR, -1)));
         tools.add(register(entry(ID_BMI, R.string.bmi_calculator, R.drawable.ic_bmi,
                 Destination.BMI_CALCULATOR, -1)));
+        // Append registration to retain every existing catalog/menu identity.
+        // Finance is the third drawer category; future FD/RD/SIP tools belong here.
+        List<Entry> finance = new ArrayList<>();
+        finance.add(register(entry(ID_EMI, R.string.emi_calculator, R.drawable.ic_calculator,
+                Destination.EMI_CALCULATOR, -1)));
         tools.add(BY_ID.get(ID_TIMER));
         SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
+        SECTIONS.add(2, new Section(R.string.drawer_section_finance, finance));
     }
 
     private CalculatorCatalog() {

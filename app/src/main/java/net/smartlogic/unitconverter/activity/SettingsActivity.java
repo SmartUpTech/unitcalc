@@ -23,6 +23,13 @@ public class SettingsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) getSupportActionBar().hide();
         setContentView(R.layout.settings_activity);
         WindowChrome.apply(this);
+        getSupportFragmentManager().setFragmentResultListener(
+                net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment.RESULT_KEY, this, (key, result) -> {
+            var choices = net.smartlogic.unitconverter.helper.PreferredCurrency.choices(this);
+            int index = result.getInt(net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment.INDEX, -1);
+            if (index >= 0 && index < choices.size()) net.smartlogic.unitconverter.helper.Preferences.getInstance(this)
+                    .setPreferredCurrency(choices.get(index).getCurrencyISOCode());
+        });
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

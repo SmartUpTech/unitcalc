@@ -3,7 +3,11 @@ package net.smartlogic.unitconverter.model;
 import androidx.annotation.NonNull;
 
 public record CalculationHistoryItem(String expression, String result, long createdAt,
-                                     @NonNull String calculatorId, long id) {
+                                     @NonNull String calculatorId, long id, String payload) {
+
+    public CalculationHistoryItem(String expression, String result, long createdAt, @NonNull String calculatorId, long id) {
+        this(expression, result, createdAt, calculatorId, id, null);
+    }
 
     public CalculationHistoryItem(String expression, String result, long createdAt, @NonNull String calculatorId) {
         this(expression, result, createdAt, calculatorId, -1L);

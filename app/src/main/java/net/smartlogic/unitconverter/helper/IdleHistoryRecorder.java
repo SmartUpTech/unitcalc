@@ -24,20 +24,24 @@ public final class IdleHistoryRecorder implements DefaultLifecycleObserver {
     private Entry lastSaved;
     private final Runnable save = this::saveNow;
 
-    private record Entry(String expression, String result, String tool) { }
+    private record Entry(String expression, String result, String tool, String payload) { }
 
     public IdleHistoryRecorder(Fragment fragment, Bundle state) {
         this.fragment = fragment;
         context = fragment.requireContext().getApplicationContext();
         if (state != null) {
             String[] values = state.getStringArray(STATE);
-            if (values != null && values.length == 3) lastSaved = new Entry(values[0], values[1], values[2]);
+            if (values != null && values.length >= 3) lastSaved = new Entry(values[0], values[1], values[2], values.length > 3 ? values[3] : null);
         }
         fragment.getLifecycle().addObserver(this);
     }
 
     public void update(String expression, String result, String tool) {
-        Entry next = new Entry(expression, result, tool);
+        update(expression, result, tool, null);
+    }
+
+    public void update(String expression, String result, String tool, String payload) {
+        Entry next = new Entry(expression, result, tool, payload);
         if (next.equals(candidate)) return;
         candidate = next;
         visibilityChanged();
@@ -76,7 +80,7 @@ public final class IdleHistoryRecorder implements DefaultLifecycleObserver {
         lastSaved = entry;
         DatabaseHelper.executeHistoryWork(() -> {
             try (DatabaseHelper database = new DatabaseHelper(context)) {
-                database.addHistory(entry.expression(), entry.result(), entry.tool());
+                database.addHistory(entry.expression(), entry.result(), entry.tool(), entry.payload());
                 UsageAnalytics.event("calculation_saved", "tool_id", entry.tool());
                 handler.post(() -> InAppReview.recordUse(context));
             } catch (RuntimeException error) {
@@ -88,7 +92,8 @@ public final class IdleHistoryRecorder implements DefaultLifecycleObserver {
 
     public void saveState(Bundle state) {
         if (lastSaved != null) state.putStringArray(STATE,
-                new String[]{lastSaved.expression(), lastSaved.result(), lastSaved.tool()});
+                lastSaved.payload() == null ? new String[]{lastSaved.expression(), lastSaved.result(), lastSaved.tool()}
+                        : new String[]{lastSaved.expression(), lastSaved.result(), lastSaved.tool(), lastSaved.payload()});
     }
 
     @Override public void onResume(@NonNull LifecycleOwner owner) { visibilityChanged(); }

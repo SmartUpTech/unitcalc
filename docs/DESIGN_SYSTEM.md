@@ -50,3 +50,7 @@ description: Guidelines for UI consistency, component usage, and layout rules. U
 BMI editing swaps the centered result region for the shared keypad. Keep input geometry stable across keypad open/Done; the result card is invisible while editing and returns centered after Done or Back.
 
 Calculator square-root and power keys are tintable ImageButtons showing √x and xʸ. Their IDs and canonical √/^ input tokens remain unchanged, including Graphy operator labels. Converter AC uses the same accent-filled appearance and readable foreground as calculator Equal. Currency Last refreshed uses the shared 10sp timestamp role. Swap icons use 2dp horizontal padding while retaining 48dp touch targets; the card end margin is 2dp and the selector extra width is 12dp, sharing 4dp reclaimed space equally between amount and picker.
+
+## EMI Calculator
+
+Finance (third drawer category)/Explore/Favorites → EMI Calculator. Keep Calculate/Schedule/Graphy workspace tabs and existing bottom navigation. Calculate uses four input rows, an unboxed monthly EMI and two quiet total rows, with Insights/More actions. Editing keeps all inputs and both totals visible with the shared converter keypad and canonical Done treatment. Secondary features use fixed pages and measured pagination, never a scrolling fallback. Shared ViewportContent/CalculationViewport report impossible configurations. All appearance preferences apply through existing owners; no separate EMI palette or keypad style. See EMI_CALCULATOR.md for calculation, persistence and report contracts.
