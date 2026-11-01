@@ -32,9 +32,13 @@ public class EmiLayoutTest {
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 600, false, true);
         render(CalculatorThemes.GRAPHITE_BLACK, Appearance.Font.OSWALD, 1f, 800, 350, true, true);
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 480, true, true);
+        render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 480, true, true, true);
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.ROBOTO_MONO, 2f, 320, 300, true, false);
     }
     private void render(CalculatorTheme theme, Appearance.Font font, float scale, int width, int height, boolean editing, boolean expected) throws Exception {
+        render(theme, font, scale, width, height, editing, expected, false);
+    }
+    private void render(CalculatorTheme theme, Appearance.Font font, float scale, int width, int height, boolean editing, boolean expected, boolean empty) throws Exception {
         Application app = RuntimeEnvironment.getApplication(); Configuration original = new Configuration(app.getResources().getConfiguration());
         Configuration configuration = new Configuration(original); configuration.fontScale = scale; app.getResources().updateConfiguration(configuration, app.getResources().getDisplayMetrics());
         ThemeManager.init(app); ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
@@ -50,10 +54,20 @@ public class EmiLayoutTest {
             ((TextView) viewport.findViewById(R.id.emi_total_interest)).setText("Total interest: ₹10,82,776.63");
             ((TextView) viewport.findViewById(R.id.emi_total_payment)).setText("Total payment: ₹20,82,776.63");
             ((TextView) viewport.findViewById(R.id.emi_message)).setText(R.string.emi_fixed);
+            viewport.findViewById(R.id.emi_message).setVisibility(editing ? View.GONE : View.VISIBLE);
+            if (empty) {
+                ((TextView) viewport.findViewById(R.id.emi_principal)).setText("");
+                ((TextView) viewport.findViewById(R.id.emi_rate)).setText("");
+                ((TextView) viewport.findViewById(R.id.emi_value)).setText(R.string.emi_no_result);
+                ((TextView) viewport.findViewById(R.id.emi_total_interest)).setText("Total interest: —");
+                ((TextView) viewport.findViewById(R.id.emi_total_payment)).setText("Total payment: —");
+                ((TextView) viewport.findViewById(R.id.emi_message)).setText(R.string.emi_empty);
+                viewport.findViewById(R.id.emi_message).setVisibility(View.VISIBLE);
+            }
             viewport.findViewById(R.id.emi_keys).setVisibility(editing ? View.VISIBLE : View.GONE); viewport.findViewById(R.id.emi_actions).setVisibility(editing ? View.GONE : View.VISIBLE);
             ThemeApplier.apply(viewport);
             for (int i = 0; i < 3; i++) { viewport.forceLayout(); viewport.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)); viewport.layout(0, 0, width, height); viewport.getViewTreeObserver().dispatchOnPreDraw(); }
-            String name = theme.id() + "-" + font.name() + "-" + scale + "-" + width + "x" + height + "-" + editing;
+            String name = theme.id() + "-" + font.name() + "-" + scale + "-" + width + "x" + height + "-" + editing + (empty ? "-empty" : "");
             assertEquals(name, expected, content.fitsViewport());
             if (expected && editing) {
                 View summary = viewport.findViewById(R.id.emi_summary), keys = viewport.findViewById(R.id.emi_keys);

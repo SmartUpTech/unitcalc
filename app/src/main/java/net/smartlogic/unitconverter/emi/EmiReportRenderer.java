@@ -43,6 +43,9 @@ public final class EmiReportRenderer {
         for (int i = 0; i < fields.size(); i++) { if (i > 0) out.write(','); out.write('"'); out.write(fields.get(i).replace("\"", "\"\"")); out.write('"'); } out.write("\r\n");
     }
     public static void pdf(Context c, OutputStream output, EmiResult a, EmiResult b, boolean yearly) throws IOException {
+        android.content.res.Configuration paper = new android.content.res.Configuration(c.getResources().getConfiguration());
+        paper.densityDpi = 160; paper.fontScale = 1f;
+        c = c.createConfigurationContext(paper);
         PdfDocument document = new PdfDocument();
         Pages pages = new Pages(c, document);
         try {
@@ -56,7 +59,7 @@ public final class EmiReportRenderer {
             }
             for (int scenario = 0; scenario < (b == null ? 1 : 2); scenario++) {
                 EmiResult r = scenario == 0 ? a : b;
-                if (scenario > 0 || b != null) pages.newPage();
+                if (scenario > 0 || b != null) pages.newPortraitPage();
                 pages.text(c.getString(R.string.emi_report_title), pages.title);
                 pages.text(c.getString(scenario == 0 ? R.string.emi_loan_a : R.string.emi_loan_b), pages.body);
                 pages.text(f.summary(r), pages.body);
@@ -75,12 +78,14 @@ public final class EmiReportRenderer {
         } finally { pages.finish(); document.close(); }
     }
     private static final class Pages {
-        final Context c; final PdfDocument document; final int width, height, margin, body, title;
+        final Context c; final PdfDocument document; final int paperWidth, paperHeight, margin, body, title;
+        int width, height;
         final TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         PdfDocument.Page page; Canvas canvas; int pageNumber; float y;
         Pages(Context c, PdfDocument d) {
             this.c = c; document = d;
             width = c.getResources().getInteger(R.integer.emi_report_page_width); height = c.getResources().getInteger(R.integer.emi_report_page_height);
+            paperWidth = width; paperHeight = height;
             margin = c.getResources().getInteger(R.integer.emi_report_margin); body = c.getResources().getInteger(R.integer.emi_report_body_size);
             title = c.getResources().getInteger(R.integer.emi_report_title_size); paint.setTypeface(AppearanceTypography.typeface(c));
             paint.setColor(CalculatorThemes.PORCELAIN_WHITE.primaryContentColor()); newPage();
@@ -90,6 +95,8 @@ public final class EmiReportRenderer {
             return StaticLayout.Builder.obtain(text, 0, text.length(), p, Math.max(1, available)).setIncludePad(false).setAlignment(Layout.Alignment.ALIGN_NORMAL).build();
         }
         void newPage() { finish(); page = document.startPage(new PdfDocument.PageInfo.Builder(width, height, ++pageNumber).create()); canvas = page.getCanvas(); y = margin; }
+        void newPortraitPage() { finish(); width = paperWidth; height = paperHeight; newPage(); }
+        void landscapeTable() { if (width == paperWidth) { finish(); width = paperHeight; height = paperWidth; newPage(); } }
         void finish() {
             if (page == null) return;
             paint.setTextSize(body); canvas.drawText(c.getString(R.string.emi_report_page, pageNumber), margin, height - margin / 2f, paint);
@@ -108,10 +115,12 @@ public final class EmiReportRenderer {
             y += chartHeight + body;
         }
         void table(EmiResult r, boolean yearly) throws IOException {
+            landscapeTable();
             EmiFormatter f = new EmiFormatter(c);
             List<String> headers = java.util.Arrays.asList(c.getString(R.string.emi_period), c.getString(R.string.emi_opening), c.getString(R.string.emi_payment),
                     c.getString(R.string.emi_principal), c.getString(R.string.emi_interest_paid), c.getString(R.string.emi_extra), c.getString(R.string.emi_closing), c.getString(R.string.emi_unused));
             text(c.getString(yearly ? R.string.emi_yearly_table : R.string.emi_monthly_table) + " · " + c.getString(R.string.emi_schedule), title);
+            if (y + rowHeight(headers) + c.getResources().getInteger(R.integer.emi_report_row_height) > height - margin) newPage();
             tableRow(headers, true);
             for (var r0 : EmiTableRows.build(r, yearly)) {
                 List<String> cells = java.util.Arrays.asList(r0.label(c, yearly), f.money(r0.opening(), r), f.money(r0.payment(), r), f.money(r0.principal(), r),
@@ -122,7 +131,7 @@ public final class EmiReportRenderer {
         }
         float rowHeight(List<String> cells) {
             int column = (width - margin * 2) / cells.size(); float h = c.getResources().getInteger(R.integer.emi_report_row_height);
-            for (String cell : cells) h = Math.max(h, layout(cell, body, column - body).getHeight() + body);
+            for (String cell : cells) h = Math.max(h, layout(cell, body, column - body / 2).getHeight() + body);
             return h;
         }
         void tableRow(List<String> cells, boolean header) {
@@ -130,7 +139,7 @@ public final class EmiReportRenderer {
             if (y + h > height - margin) newPage();
             int column = (width - margin * 2) / cells.size();
             for (int i = 0; i < cells.size(); i++) {
-                canvas.save(); canvas.translate(margin + i * column, y); layout(cells.get(i), body, column - body).draw(canvas); canvas.restore();
+                canvas.save(); canvas.translate(margin + i * column, y); layout(cells.get(i), body, column - body / 2).draw(canvas); canvas.restore();
             }
             y += h;
             if (header) canvas.drawLine(margin, y - body / 2f, width - margin, y - body / 2f, paint);

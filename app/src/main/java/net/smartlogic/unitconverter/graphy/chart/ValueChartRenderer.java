@@ -54,7 +54,7 @@ public final class ValueChartRenderer {
                 canvas.drawRect(x, top, end, top + gap * 2, p); x = end;
             }
             p.setPathEffect(null); p.setStyle(Paint.Style.FILL);
-            String label = s.label();
+            String label = s.label() + (data.kind() == ValueChartData.Kind.PROPORTIONS && !s.points().isEmpty() ? ": " + s.points().get(0).label() : "");
             // Legend text wraps through the same measured native text layout as document text.
             android.text.TextPaint tp = new android.text.TextPaint(p);
             var layout = android.text.StaticLayout.Builder.obtain(label, 0, label.length(), tp, Math.max(1, (int) bounds.width())).build();

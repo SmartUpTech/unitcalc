@@ -107,16 +107,7 @@
     <string name="emi_report_title">Loan repayment report</string>
     <string name="emi_report_page">Page %1$d</string>
     <string name="emi_report_scenario">%1$s · %2$s</string>
-    <string name="emi_share_summary">Loan amount: %1$s
-Annual interest: %2$s%%
-Payments: %3$d
-Monthly EMI: %4$s
-Total interest: %5$s
-Total payment: %6$s
-Estimated payoff: %7$s
-Interest saved: %8$s
-Months saved: %9$d
-Final installment: %10$s</string>
+    <string name="emi_share_summary">Loan amount: %1$s\nAnnual interest: %2$s%%\nPayments: %3$d\nMonthly EMI: %4$s\nTotal interest: %5$s\nTotal payment: %6$s\nEstimated payoff: %7$s\nInterest saved: %8$s\nMonths saved: %9$d\nFinal installment: %10$s</string>
     <string name="emi_history_summary">%1$s · %2$s%% · %3$d months</string>
     <string name="emi_history_hint">Open to restore this loan and its prepayments.</string>
     <string name="emi_state_error">This saved loan could not be restored. Your current inputs have been kept.</string>
@@ -126,14 +117,7 @@ Final installment: %10$s</string>
     <string name="emi_chart_point">%1$s · %2$s</string>
     <string name="emi_rate_value">%1$s%%</string>
     <string name="emi_term_value">%1$s %2$s</string>
-    <string name="emi_schedule_detail">%1$s
-Opening: %2$s
-Payment: %3$s
-Principal: %4$s
-Interest: %5$s
-Prepayment: %6$s
-Closing: %7$s
-Unused extra payment: %8$s</string>
+    <string name="emi_schedule_detail">%1$s\nOpening: %2$s\nPayment: %3$s\nPrincipal: %4$s\nInterest: %5$s\nPrepayment: %6$s\nClosing: %7$s\nUnused extra payment: %8$s</string>
     <string name="emi_reset_question">Clear this loan and its prepayments? Saved history is retained.</string>
     <string name="emi_switch_units_error">Use a tenure that represents a whole number of months.</string>
     <string name="emi_choose_export">Report format</string>
@@ -148,13 +132,7 @@ Unused extra payment: %8$s</string>
     <string name="emi_editing_loan">Editing %1$s</string>
     <string name="emi_clear_field">Clear field</string>
     <string name="emi_choose_month">Choose installment</string>
-    <string name="emi_export_compare_summary">%1$s
-
-%2$s
-
-%3$s
-
-%4$s</string>
+    <string name="emi_export_compare_summary">%1$s\n\n%2$s\n\n%3$s\n\n%4$s</string>
     <string name="emi_csv_number">Installment</string>
     <string name="emi_csv_date">Date</string>
     <string name="emi_csv_currency">Currency symbol</string>
@@ -200,4 +178,6 @@ Unused extra payment: %8$s</string>
     <string name="emi_csv_periods">Payment count</string>
     <string name="emi_input_rejected">This edit exceeds the allowed range or precision and was not applied.</string>
     <string name="emi_check_fields">Check the amount, rate, whole-month tenure and prepayment ranges.</string>
+    <string name="emi_rounding_short">Increase the amount or shorten the tenure.</string>
+    <string name="emi_check_short">Check loan inputs and prepayment ranges.</string>
 </resources>

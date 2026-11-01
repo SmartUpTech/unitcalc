@@ -248,6 +248,7 @@ public final class EmiCalculatorFragment extends Fragment {
             if (open && editors != null) editors[Math.min(focus, editors.length - 1)].requestFocus();
         }
         updateBack();
+        renderForm();
     }
     private void changed() {
         revision++; if (calculation != null) calculation.cancel(true);
@@ -291,11 +292,15 @@ public final class EmiCalculatorFragment extends Fragment {
     }
     private void renderForm() {
         if (formPage == null || !isAdded()) return;
+        for (int id : new int[]{R.id.emi_value, R.id.emi_total_interest, R.id.emi_total_payment})
+            formPage.findViewById(id).setVisibility(screen.equals("rule") ? View.GONE : View.VISIBLE);
         if (screen.equals("rule")) {
+            formPage.findViewById(R.id.emi_insights).setEnabled(true);
             text(formPage, R.id.emi_value_label, getString(R.string.emi_prepayments)); text(formPage, R.id.emi_value, "");
             text(formPage, R.id.emi_total_interest, ""); text(formPage, R.id.emi_total_payment, ""); text(formPage, R.id.emi_message, getString(R.string.emi_rule_after_payoff)); return;
         }
         EmiResult r = result(); EmiFormatter f = new EmiFormatter(requireContext());
+        formPage.findViewById(R.id.emi_insights).setEnabled(r != null);
         int failure = editingB ? errorB : errorA;
         boolean changes = !draft().rules.isEmpty() && draft().method == EmiInputs.Method.REDUCE_EMI;
         text(formPage, R.id.emi_value_label, getString(changes ? R.string.emi_initial_monthly : R.string.emi_monthly));
@@ -303,6 +308,12 @@ public final class EmiCalculatorFragment extends Fragment {
         text(formPage, R.id.emi_total_interest, getString(R.string.emi_interest) + ": " + (r == null ? getString(R.string.emi_no_result) : f.money(r.totalInterest(), r)));
         text(formPage, R.id.emi_total_payment, getString(R.string.emi_total) + ": " + (r == null ? getString(R.string.emi_no_result) : f.money(r.totalPayment(), r)));
         text(formPage, R.id.emi_message, getString(r == null && failure != 0 ? failure : r != null ? changes ? R.string.emi_changing_payments : R.string.emi_fixed : draft().principal.isEmpty() || draft().rate.isEmpty() ? R.string.emi_empty : validInputs(draft()) != null ? R.string.emi_loading : R.string.emi_check_fields));
+        if (keysOpen && r == null) {
+            TextView message = formPage.findViewById(R.id.emi_message);
+            message.setContentDescription(message.getText());
+            if (failure == R.string.emi_rounding) message.setText(R.string.emi_rounding_short);
+            else if (failure != 0 || validInputs(draft()) == null && !draft().principal.isEmpty() && !draft().rate.isEmpty()) message.setText(R.string.emi_check_short);
+        } else formPage.findViewById(R.id.emi_message).setContentDescription(null);
         formPage.findViewById(R.id.emi_message).setVisibility(keysOpen && r != null ? View.GONE : View.VISIBLE);
     }
     private void renderGraph() {
@@ -421,7 +432,7 @@ public final class EmiCalculatorFragment extends Fragment {
         label(h, getString(R.string.emi_final) + ": " + f.money(resultA.finalPayment(), resultA));
         if (!a.rules.isEmpty()) label(h, getString(R.string.emi_saved_interest) + ": " + f.money(resultA.interestSaved(), resultA) + " · " + getString(R.string.emi_saved_months) + ": " + resultA.monthsSaved());
         var data = balanceChart ? EmiCharts.balance(requireContext(), resultA, null) : EmiCharts.breakdown(requireContext(), resultA);
-        label(foot, data.description()); button(foot, R.string.emi_view_schedule, () -> { open("main"); tabs.selectTab(1); });
+        button(foot, R.string.emi_view_schedule, () -> { open("main"); tabs.selectTab(1); });
         body(page).addView(new ValueChartView(requireContext(), data), new FrameLayout.LayoutParams(-1, -1));
     }
     private void renderRules(View page) {
@@ -465,7 +476,10 @@ public final class EmiCalculatorFragment extends Fragment {
             label(h, getString(R.string.emi_total) + ": " + f.money(resultA.totalPayment(), resultA) + " / " + f.money(resultB.totalPayment(), resultB));
             label(h, getString(R.string.emi_count) + ": " + resultA.installments().size() + " / " + resultB.installments().size());
             label(h, getString(R.string.emi_difference) + ": " + f.money(resultB.totalPayment().subtract(resultA.totalPayment()), resultA) + " · " + (resultB.installments().size() - resultA.installments().size()) + " " + getString(R.string.emi_months));
-            body(page).addView(new ValueChartView(requireContext(), EmiCharts.balance(requireContext(), resultA, resultB)), new FrameLayout.LayoutParams(-1, -1));
+            LinearLayout dates = new LinearLayout(requireContext()); dates.setOrientation(LinearLayout.VERTICAL);
+            label(dates, getString(R.string.emi_payoff) + "\n" + getString(R.string.emi_loan_a) + ": " + f.date(resultA.payoffDate())
+                    + "\n" + getString(R.string.emi_loan_b) + ": " + f.date(resultB.payoffDate()));
+            body(page).addView(dates, new FrameLayout.LayoutParams(-1, -2));
         }
         LinearLayout edits = row(foot); button(edits, R.string.emi_edit_a, () -> beginEdit(false)); button(edits, R.string.emi_edit_b, () -> beginEdit(true)); equalButtons(edits);
         LinearLayout actions = row(foot); button(actions, R.string.emi_export_comparison, () -> choice(R.string.emi_export_comparison)); button(actions, R.string.emi_share, () -> choice(R.string.emi_share)); equalButtons(actions);

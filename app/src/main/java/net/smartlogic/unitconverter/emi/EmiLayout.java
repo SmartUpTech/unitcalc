@@ -29,6 +29,13 @@ public final class EmiLayout extends ViewGroup implements ViewportContent {
         inset = (width - content) / 2;
         column = wide ? (content - gap) / 2 : content;
         ((EmiFieldsLayout) getChildAt(0)).setTwoColumns(wide || compact);
+        android.widget.LinearLayout heading = findViewById(R.id.emi_result_heading);
+        heading.setOrientation(compact ? android.widget.LinearLayout.HORIZONTAL : android.widget.LinearLayout.VERTICAL);
+        for (int i = 0; i < heading.getChildCount(); i++) {
+            var params = (android.widget.LinearLayout.LayoutParams) heading.getChildAt(i).getLayoutParams();
+            params.width = compact ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT;
+            params.setMarginEnd(compact && i == 0 ? gap : 0);
+        }
         TextView result = findViewById(R.id.emi_value);
         if (result != null) result.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(compact ? R.dimen.emi_result_compact_size : R.dimen.emi_result_size));
         for (int i = 0; i < 4; i++) {

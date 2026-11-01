@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 34)
+@Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
 @LooperMode(LooperMode.Mode.PAUSED)
 public class EmiFragmentTest {
     public static class Host extends AppCompatActivity {
@@ -78,6 +78,12 @@ public class EmiFragmentTest {
             set(f, R.id.emi_rate, ""); assertNull(ReflectionHelpers.getField(f, "resultA")); drain(f);
             assertEquals("—", ((TextView) form(f).findViewById(R.id.emi_value)).getText().toString());
             set(f, R.id.emi_rate, "8.5"); drain(f);
+            principal.performClick(); set(f, R.id.emi_principal, "1"); drain(f);
+            View root = f.requireView();
+            root.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(528, View.MeasureSpec.EXACTLY));
+            root.layout(0, 0, 360, 528);
+            assertTrue("Rounding guidance must leave the editor usable", ((EmiLayout) form(f).findViewById(R.id.emi_layout)).fitsViewport());
+            set(f, R.id.emi_principal, "1000000"); drain(f); f.handleBack();
             form(f).findViewById(R.id.emi_more).performClick(); menu(f, 0);
             assertEquals("rules", ReflectionHelpers.getField(f, "screen"));
             text(f.requireView().findViewById(R.id.emi_secondary), f.getString(R.string.emi_add_rule)).performClick();
