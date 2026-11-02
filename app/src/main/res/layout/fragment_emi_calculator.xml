@@ -1,4 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/emi_root" android:layout_width="match_parent" android:layout_height="match_parent">
- <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"><include layout="@layout/workspace_tabs_pager" /></LinearLayout>
+ <LinearLayout android:id="@+id/emi_workspace" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"><include layout="@layout/workspace_tabs_pager" /></LinearLayout>
  <FrameLayout android:id="@+id/emi_secondary" android:layout_width="match_parent" android:layout_height="match_parent" android:visibility="gone" />
 </FrameLayout>

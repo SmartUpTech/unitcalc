@@ -76,7 +76,10 @@ public final class EmiCalculatorFragment extends Fragment {
     private GraphyPanelController graphy;
     private View graphPage;
     private IdleHistoryRecorder history;
-    private OnBackPressedCallback back;
+    private boolean restoreSecondary;
+    private final OnBackPressedCallback back = new OnBackPressedCallback(false) {
+        @Override public void handleOnBackPressed() { handleBack(); }
+    };
     private FixedTableView scheduleTable, rulesTable;
     private final Runnable calculateLater = this::calculate;
     private final ThemeManager.Listener themeListener = theme -> { if (getView() != null) { ThemeApplier.apply(getView()); render(); refreshSecondary(); } };
@@ -115,9 +118,8 @@ public final class EmiCalculatorFragment extends Fragment {
     }
     @Override public void onViewCreated(@NonNull View root, @Nullable Bundle saved) {
         epoch++; history = new IdleHistoryRecorder(this, saved); secondary = root.findViewById(R.id.emi_secondary);
-        back = new OnBackPressedCallback(false) { @Override public void handleOnBackPressed() { handleBack(); } };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), back);
-        getChildFragmentManager().setFragmentResultListener(EmiDialogFragment.RESULT, getViewLifecycleOwner(), (key, value) -> choice(value.getInt("action")));
+        getChildFragmentManager().setFragmentResultListener(EmiDialogFragment.RESULT, getViewLifecycleOwner(), this::onChoiceResult);
         getChildFragmentManager().setFragmentResultListener(AgeDialogFragment.RESULT, getViewLifecycleOwner(), (key, value) -> {
             if ("emi_date".equals(value.getString("mode"))) { draft().firstEmi = LocalDate.parse(value.getString("date")); bindDate(); changed(); }
         });
@@ -125,15 +127,7 @@ public final class EmiCalculatorFragment extends Fragment {
             if (scheduleTable != null && value.getInt(ConverterPickerDialogFragment.GROUP) == 1) scheduleTable.jump(value.getInt(ConverterPickerDialogFragment.INDEX));
         });
         pager = root.findViewById(R.id.workspace_pager); pager.setOffscreenPageLimit(2);
-        pager.setAdapter(new WorkspacePagerAdapter(new int[]{R.layout.pane_emi_calculate, R.layout.pane_emi_section, R.layout.pane_emi_graphy}, (position, page) -> {
-            if (position == 0) { mainPage = page; if (screen.equals("main")) bindForm(page, false); }
-            else if (position == 1) { schedulePage = page; renderSchedule(); }
-            else { graphPage = page; graphy = new GraphyPanelController(page.findViewById(R.id.graphy_panel), this, new GraphyViewTheme(requireContext()));
-                page.findViewById(R.id.emi_graph_mode).setOnClickListener(v -> {
-                    if (resultA != null && !a.rules.isEmpty()) { prepaymentGraph = !prepaymentGraph; renderGraph(); }
-                }); }
-            ThemeApplier.apply(page); render();
-        }));
+        pager.setAdapter(new WorkspacePagerAdapter(new int[]{R.layout.pane_emi_calculate, R.layout.pane_emi_section, R.layout.pane_emi_graphy}, this::bindWorkspacePage));
         int restoredTab = tab;
         tabs = new WorkspaceTabController(pager, root.findViewById(R.id.workspace_tabs), new int[]{R.string.tab_calculate, R.string.emi_schedule, R.string.graphy}, new WorkspaceTabController.Callback() {
             @Override public void onTabSelected(int position) {
@@ -143,8 +137,19 @@ public final class EmiCalculatorFragment extends Fragment {
             @Override public boolean isTabEnabled(int position) { return position == 0 || resultA != null; }
         });
         tab = restoredTab; ThemeManager.addListener(themeListener); ThemeApplier.apply(root);
-        if (!screen.equals("main")) showSecondary();
+        restoreSecondary = !screen.equals("main");
+        root.findViewById(R.id.emi_workspace).setVisibility(restoreSecondary ? View.INVISIBLE : View.VISIBLE);
         changed();
+    }
+    private void onChoiceResult(String key, Bundle value) { choice(value.getInt("action")); }
+    private void bindWorkspacePage(int position, View page) {
+            if (position == 0) { mainPage = page; if (screen.equals("main")) bindForm(page, false); }
+            else if (position == 1) { schedulePage = page; renderSchedule(); }
+            else { graphPage = page; graphy = new GraphyPanelController(page.findViewById(R.id.graphy_panel), this, new GraphyViewTheme(requireContext()));
+                page.findViewById(R.id.emi_graph_mode).setOnClickListener(v -> {
+                    if (resultA != null && !a.rules.isEmpty()) { prepaymentGraph = !prepaymentGraph; renderGraph(); }
+                }); }
+            ThemeApplier.apply(page); render();
     }
     private EmiDraft draft() { return editingB && b != null ? b : a; }
     private EmiResult result() { return editingB ? resultB : resultA; }
@@ -319,8 +324,8 @@ public final class EmiCalculatorFragment extends Fragment {
     private void renderGraph() {
         if (graphy == null) return;
         boolean extra = prepaymentGraph && !a.rules.isEmpty();
-        text(graphPage, R.id.emi_graph_mode, getString(extra ? R.string.emi_graph_prepay : R.string.emi_graph_formula));
-        graphPage.findViewById(R.id.emi_graph_mode).setEnabled(resultA != null && !a.rules.isEmpty());
+        text(graphPage, R.id.emi_graph_mode, getString(extra ? R.string.emi_formula : R.string.emi_graph_prepay));
+        graphPage.findViewById(R.id.emi_graph_mode).setVisibility(resultA != null && !a.rules.isEmpty() ? View.VISIBLE : View.GONE);
         graphy.update(resultA == null ? null : EmiGraphBuilder.build(requireContext(), resultA, extra, a.years));
     }
     private void more() { show(EmiDialogFragment.choices(R.string.emi_more, R.string.emi_prepayments, R.string.emi_compare, R.string.emi_report, R.string.emi_share, R.string.emi_reset)); }
@@ -367,6 +372,7 @@ public final class EmiCalculatorFragment extends Fragment {
     private void open(String destination) {
         saveSelection(); clearEditorFocus(); setKeys(false); screen = destination;
         if (destination.equals("main")) {
+            requireView().findViewById(R.id.emi_workspace).setVisibility(View.VISIBLE);
             editingB = false; secondary.removeAllViews(); secondary.setVisibility(View.GONE); formPage = null; editors = null;
             if (mainPage != null) bindForm(mainPage, false);
             if (tabs != null) tabs.selectTab(0);
@@ -375,6 +381,7 @@ public final class EmiCalculatorFragment extends Fragment {
     }
     private void showSecondary() {
         if (secondary == null) return;
+        requireView().findViewById(R.id.emi_workspace).setVisibility(View.INVISIBLE);
         secondary.removeAllViews(); secondary.setVisibility(View.VISIBLE); secondary.setBackgroundColor(ThemeManager.get().background());
         if (screen.equals("edit") || screen.equals("rule")) {
             View page = getLayoutInflater().inflate(R.layout.pane_emi_calculate, secondary, false); secondary.addView(page); bindForm(page, screen.equals("rule"));
@@ -556,7 +563,7 @@ public final class EmiCalculatorFragment extends Fragment {
             } catch (Exception failure) { main.post(() -> { exportBusy = false; toast(R.string.emi_export_error); }); }
         });
     }
-    @Override public void onResume() { super.onResume(); if (getView() != null) { ThemeApplier.apply(requireView()); render(); renderSchedule(); refreshSecondary(); } updateBack(); }
+    @Override public void onResume() { super.onResume(); if (getView() != null) { if (restoreSecondary) { restoreSecondary = false; showSecondary(); } ThemeApplier.apply(requireView()); render(); renderSchedule(); refreshSecondary(); } updateBack(); }
     @Override public void onPause() { persist(); super.onPause(); updateBack(); }
     @Override public void onHiddenChanged(boolean hidden) { super.onHiddenChanged(hidden); if (history != null) history.visibilityChanged(); updateBack(); if (!hidden && getView() != null) { render(); refreshSecondary(); } }
     @Override public void onSaveInstanceState(@NonNull Bundle out) {
@@ -566,7 +573,7 @@ public final class EmiCalculatorFragment extends Fragment {
     }
     @Override public void onDestroyView() {
         persist(); if (history != null) history.invalidate(); epoch++; if (calculation != null) calculation.cancel(true); main.removeCallbacks(calculateLater); ThemeManager.removeListener(themeListener);
-        if (tabs != null) tabs.detach(); tabs = null; pager = null; graphy = null; graphPage = null; formPage = null; mainPage = null; schedulePage = null; secondary = null; editors = null; back = null; scheduleTable = null; rulesTable = null;
+        if (tabs != null) tabs.detach(); tabs = null; pager = null; graphy = null; graphPage = null; formPage = null; mainPage = null; schedulePage = null; secondary = null; editors = null; back.setEnabled(false); scheduleTable = null; rulesTable = null;
         super.onDestroyView();
     }
 }

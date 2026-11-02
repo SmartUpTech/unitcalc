@@ -54,7 +54,10 @@ public final class EmiReportRenderer {
                 pages.text(c.getString(R.string.emi_compare), pages.title);
                 pages.text(c.getString(R.string.emi_loan_a) + "\n" + f.summary(a), pages.body);
                 pages.text(c.getString(R.string.emi_loan_b) + "\n" + f.summary(b), pages.body);
-                pages.text(c.getString(R.string.emi_difference) + "\n" + c.getString(R.string.emi_total) + ": " + f.money(b.totalPayment().subtract(a.totalPayment()), a), pages.body);
+                pages.text(c.getString(R.string.emi_difference) + "\n" + c.getString(R.string.emi_monthly) + ": " + f.money(b.regularEmi().subtract(a.regularEmi()), a)
+                        + "\n" + c.getString(R.string.emi_interest) + ": " + f.money(b.totalInterest().subtract(a.totalInterest()), a)
+                        + "\n" + c.getString(R.string.emi_total) + ": " + f.money(b.totalPayment().subtract(a.totalPayment()), a)
+                        + "\n" + c.getString(R.string.emi_count) + ": " + (b.installments().size() - a.installments().size()), pages.body);
                 pages.chart(EmiCharts.balance(c, a, b));
             }
             for (int scenario = 0; scenario < (b == null ? 1 : 2); scenario++) {

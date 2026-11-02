@@ -34,6 +34,7 @@ public class EmiFragmentTest {
         }
     }
     private EmiCalculatorFragment launch(Host activity) throws Exception {
+        RuntimeEnvironment.setFontScale(1f);
         ThemeManager.init(activity);
         Preferences.getInstance(activity).getPreferences().edit().remove("emi_workspace_v1").apply();
         EmiCalculatorFragment f = new EmiCalculatorFragment(); activity.getSupportFragmentManager().beginTransaction().add(12345, f).commitNow();
@@ -80,9 +81,17 @@ public class EmiFragmentTest {
             set(f, R.id.emi_rate, "8.5"); drain(f);
             principal.performClick(); set(f, R.id.emi_principal, "1"); drain(f);
             View root = f.requireView();
-            root.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(528, View.MeasureSpec.EXACTLY));
-            root.layout(0, 0, 360, 528);
-            assertTrue("Rounding guidance must leave the editor usable", ((EmiLayout) form(f).findViewById(R.id.emi_layout)).fitsViewport());
+            for (int pass = 0; pass < 3; pass++) {
+                root.forceLayout();
+                root.measure(View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(528, View.MeasureSpec.EXACTLY));
+                root.layout(0, 0, 360, 528); root.getViewTreeObserver().dispatchOnPreDraw();
+            }
+            assertTrue("Rounding guidance must leave the editor usable: available=" + form(f).getMeasuredHeight()
+                    + " fields=" + form(f).findViewById(R.id.emi_fields).getMeasuredHeight()
+                    + " summary=" + form(f).findViewById(R.id.emi_summary).getMeasuredHeight()
+                    + " keys=" + form(f).findViewById(R.id.emi_keys).getMeasuredHeight()
+                    + " message=" + ((TextView) form(f).findViewById(R.id.emi_message)).getText(),
+                    ((EmiLayout) form(f).findViewById(R.id.emi_layout)).fitsViewport());
             set(f, R.id.emi_principal, "1000000"); drain(f); f.handleBack();
             form(f).findViewById(R.id.emi_more).performClick(); menu(f, 0);
             assertEquals("rules", ReflectionHelpers.getField(f, "screen"));

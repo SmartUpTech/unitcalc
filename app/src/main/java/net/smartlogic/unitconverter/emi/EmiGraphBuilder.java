@@ -50,7 +50,7 @@ public final class EmiGraphBuilder {
             edges.addAll(java.util.Arrays.asList(edge("annual", "rate_op"), edge("rate_op", "rate"), edge("rate", "formula"), edge("p", "formula"), edge(years ? "term" : "term_input", "formula"), edge("formula", "result")));
         }
         return GraphyOutput.create(CalculatorCatalog.ID_EMI, c.getString(prepayment ? R.string.emi_graph_prepay : R.string.emi_graph_formula), value,
-                nodes, edges, notice, java.util.Collections.singletonMap(GraphyOutput.METADATA_NOTICE, notice));
+                nodes, edges, notice, java.util.Collections.singletonMap(GraphyOutput.METADATA_NOTICE, c.getString(R.string.emi_fixed)));
     }
     private static GraphyNode node(Context c, String id, GraphyNodeType type, int label, String value, String formula, String description) {
         return new GraphyNode(id, type, c.getString(label), value, type.name().toLowerCase(java.util.Locale.ROOT), formula, description);

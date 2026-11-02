@@ -48,6 +48,8 @@ public final class EmiFormatter {
         return context.getString(R.string.emi_share_summary, money(r.inputs().principal(), r), r.inputs().annualRate().toPlainString(),
                 r.installments().size(), money(r.regularEmi(), r), money(r.totalInterest(), r), money(r.totalPayment(), r),
                 date(r.payoffDate()), money(r.interestSaved(), r), r.monthsSaved(), money(r.finalPayment(), r))
+                + (r.inputs().method() == EmiInputs.Method.REDUCE_EMI && !r.inputs().prepayments().isEmpty()
+                    ? "\n" + context.getString(R.string.emi_changing_payments) : "")
                 + "\n" + context.getString(R.string.emi_assumptions);
     }
 }
