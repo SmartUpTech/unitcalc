@@ -1,4 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
- <com.google.android.material.button.MaterialButton android:id="@+id/emi_graph_mode" style="@style/EmiAction" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/emi_graph_formula" />
+ <com.google.android.material.button.MaterialButton android:id="@+id/emi_graph_mode" style="@style/EmiAction" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" android:text="@string/emi_graph_prepay" />
  <androidx.compose.ui.platform.ComposeView android:id="@+id/graphy_panel" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
 </LinearLayout>
