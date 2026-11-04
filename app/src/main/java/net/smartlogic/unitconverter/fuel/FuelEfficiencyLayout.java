@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.widget.AutoSizeEditText;
 
 /** Inputs stay anchored while the keypad replaces the centered result. */
 public final class FuelEfficiencyLayout extends ViewGroup {
@@ -56,6 +57,7 @@ public final class FuelEfficiencyLayout extends ViewGroup {
                 }
             }
         }
+        setCompactValues(controls, compact);
         natural(controls, controlsWidth);
         View results = getChildAt(1);
         natural(results, resultWidth);
@@ -79,6 +81,17 @@ public final class FuelEfficiencyLayout extends ViewGroup {
     private void natural(View child, int width) {
         child.measure(MeasureSpec.makeMeasureSpec(Math.max(0, width), MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    }
+
+    private void setCompactValues(View root, boolean compact) {
+        if (root instanceof AutoSizeEditText amount) {
+            amount.setCompactValue(compact);
+            amount.forceLayout();
+        } else if (root instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                setCompactValues(group.getChildAt(i), compact);
+            }
+        }
     }
 
     @Override protected void onLayout(boolean c, int l, int t, int r, int b) {

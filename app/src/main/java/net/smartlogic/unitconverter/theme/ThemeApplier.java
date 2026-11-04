@@ -50,7 +50,8 @@ public final class ThemeApplier {
             R.id.fromCurrency, R.id.toCurrency,
             R.id.catalog_title, R.id.tv_history_section,
             R.id.fromCurrencyISO, R.id.toCurrencyISO, R.id.tool_space_message,
-            R.id.tv_empty_history, R.id.history_start
+            R.id.tv_empty_history, R.id.history_start,
+            R.id.fe_distance_input, R.id.fe_efficiency_input, R.id.fe_price_input, R.id.fe_passengers_input
     };
     private static final int[] SECONDARY_TEXT_IDS = {
             R.id.expression, R.id.tv_choice_summary, R.id.tv_action_summary,
