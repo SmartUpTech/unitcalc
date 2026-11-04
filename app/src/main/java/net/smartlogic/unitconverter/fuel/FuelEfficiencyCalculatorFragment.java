@@ -3,6 +3,7 @@ package net.smartlogic.unitconverter.fuel;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputFilter.LengthFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 public final class FuelEfficiencyCalculatorFragment extends Fragment {
     private static final int MAX_INPUT_CHARACTERS = 12;
     private static final int MAX_INPUT_FRACTION_DIGITS = 3;
+    private static final int MAX_PASSENGER_CHARACTERS = 2;
     private static final int PICK_DISTANCE = 10;
     private static final int PICK_EFFICIENCY = 11;
 
@@ -171,13 +173,16 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
             final int index = i;
             EditText field = fields()[i];
             field.setShowSoftInputOnFocus(false);
-            field.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+            int maxChars = field == passengers ? MAX_PASSENGER_CHARACTERS : MAX_INPUT_CHARACTERS;
+            field.setFilters(new InputFilter[]{
+                    new LengthFilter(maxChars),
+                    (source, start, end, dest, dstart, dend) -> {
                 if (binding) return null;
                 String next = dest.subSequence(0, dstart) + source.subSequence(start, end).toString()
                         + dest.subSequence(dend, dest.length());
                 if (field == passengers) {
                     if (end == start && next.matches("[0-9]*")) return null;
-                    return next.length() <= 2 && next.matches("[0-9]*") ? null : dest.subSequence(dstart, dend);
+                    return next.length() <= MAX_PASSENGER_CHARACTERS && next.matches("[0-9]*") ? null : dest.subSequence(dstart, dend);
                 }
                 if (end == start && next.matches("-?[0-9]*\\.?[0-9]*")) return null;
                 int dot = next.indexOf('.');
@@ -398,6 +403,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         var theme = ThemeManager.get();
         calculatePage.setBackgroundColor(theme.background());
         ThemeApplier.apply(calculatePage);
+        refitAmountFields(calculatePage);
         TextView tripCost = calculatePage.findViewById(R.id.fe_trip_cost_value);
         TextView fuelNeeded = calculatePage.findViewById(R.id.fe_fuel_needed);
         TextView perPassenger = calculatePage.findViewById(R.id.fe_cost_per_passenger);
@@ -429,6 +435,16 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         }
         if (graphy != null) graphy.update(graphyOutput);
         if (tabs != null && result == null && selectedTab != 0) tabs.selectTab(0);
+    }
+
+    private void refitAmountFields(View root) {
+        if (root instanceof net.smartlogic.unitconverter.widget.AutoSizeEditText amount) {
+            amount.requestLayout();
+        } else if (root instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                refitAmountFields(group.getChildAt(i));
+            }
+        }
     }
 
     public void reset() {

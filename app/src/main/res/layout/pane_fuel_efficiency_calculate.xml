@@ -35,13 +35,14 @@
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:gravity="center_vertical"
+                    android:minHeight="@dimen/converter_row_height"
                     android:orientation="horizontal">
 
                     <net.smartlogic.unitconverter.widget.AutoSizeEditText
                         android:id="@+id/fe_distance_input"
                         style="@style/ConverterValue"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginEnd="@dimen/converter_small_spacing"
                         android:layout_weight="1"
                         android:contentDescription="@string/fuel_trip_distance"
@@ -55,15 +56,15 @@
                     <LinearLayout
                         android:id="@+id/fe_distance_unit"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:clickable="true"
                         android:contentDescription="@string/fuel_pick_distance"
                         android:focusable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
-                        android:minHeight="@dimen/converter_touch_target"
                         android:minWidth="@dimen/converter_touch_target"
                         android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/converter_field_content_inset"
                         android:tag="converter_selector">
 
                         <TextView
@@ -73,8 +74,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:importantForAccessibility="no"
-                            android:maxLines="1"
-                            android:paddingHorizontal="@dimen/converter_field_content_inset" />
+                            android:maxLines="1" />
 
                         <ImageView
                             android:layout_width="@dimen/converter_chevron_size"
@@ -104,13 +104,14 @@
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:gravity="center_vertical"
+                    android:minHeight="@dimen/converter_row_height"
                     android:orientation="horizontal">
 
                     <net.smartlogic.unitconverter.widget.AutoSizeEditText
                         android:id="@+id/fe_efficiency_input"
                         style="@style/ConverterValue"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginEnd="@dimen/converter_small_spacing"
                         android:layout_weight="1"
                         android:contentDescription="@string/fuel_efficiency_label"
@@ -124,13 +125,15 @@
                     <LinearLayout
                         android:id="@+id/fe_efficiency_unit"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:clickable="true"
+                        android:contentDescription="@string/fuel_pick_efficiency"
                         android:focusable="true"
                         android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
-                        android:minHeight="@dimen/converter_touch_target"
-                        android:contentDescription="@string/fuel_pick_efficiency"
+                        android:minWidth="@dimen/converter_category_min_width"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/converter_field_content_inset"
                         android:tag="converter_selector">
 
                         <TextView
@@ -140,8 +143,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:importantForAccessibility="no"
-                            android:maxLines="1"
-                            android:paddingHorizontal="@dimen/converter_field_content_inset" />
+                            android:maxLines="1" />
 
                         <ImageView
                             android:layout_width="@dimen/converter_chevron_size"
@@ -177,6 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:minHeight="@dimen/converter_row_height"
                     android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/converter_field_content_inset"
                     android:tag="converter_amount">
@@ -225,18 +228,26 @@
                     android:labelFor="@id/fe_passengers_input"
                     android:text="@string/fuel_passengers" />
 
-                <net.smartlogic.unitconverter.widget.AutoSizeEditText
-                    android:id="@+id/fe_passengers_input"
-                    style="@style/ConverterValue"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/fuel_passengers"
-                    android:gravity="end|center_vertical"
-                    android:hint="@string/zero"
-                    android:inputType="number"
-                    android:maxLength="2"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/converter_row_height"
+                    android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/converter_field_content_inset"
-                    android:tag="converter_amount" />
+                    android:tag="converter_amount">
+
+                    <net.smartlogic.unitconverter.widget.AutoSizeEditText
+                        android:id="@+id/fe_passengers_input"
+                        style="@style/ConverterValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/fuel_passengers"
+                        android:gravity="end|center_vertical"
+                        android:hint="@string/zero"
+                        android:inputType="number"
+                        android:maxLength="2" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
