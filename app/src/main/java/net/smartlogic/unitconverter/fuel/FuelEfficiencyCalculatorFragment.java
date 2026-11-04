@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,8 +45,8 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     private static final int PICK_EFFICIENCY = 11;
 
     private EditText distance, efficiency, price, passengers, active;
-    private MaterialButton distanceUnitButton, efficiencyUnitButton;
-    private TextView priceUnit;
+    private View distanceUnitSelector, efficiencyUnitSelector;
+    private TextView distanceUnitLabel, efficiencyUnitLabel, priceSymbol;
     private MaterialSwitch roundTrip;
     private int distanceUnitId = Unit.KILOMETRE;
     private int efficiencyUnitId = Unit.L_100K;
@@ -144,9 +143,11 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         efficiency = page.findViewById(R.id.fe_efficiency_input);
         price = page.findViewById(R.id.fe_price_input);
         passengers = page.findViewById(R.id.fe_passengers_input);
-        distanceUnitButton = page.findViewById(R.id.fe_distance_unit);
-        efficiencyUnitButton = page.findViewById(R.id.fe_efficiency_unit);
-        priceUnit = page.findViewById(R.id.fe_price_unit);
+        distanceUnitSelector = page.findViewById(R.id.fe_distance_unit);
+        efficiencyUnitSelector = page.findViewById(R.id.fe_efficiency_unit);
+        distanceUnitLabel = page.findViewById(R.id.fe_distance_unit_label);
+        efficiencyUnitLabel = page.findViewById(R.id.fe_efficiency_unit_label);
+        priceSymbol = page.findViewById(R.id.fe_price_symbol);
         roundTrip = page.findViewById(R.id.fe_round_trip);
         binding = true;
         Bundle savedRecorder = recorderState == null ? new Bundle() : recorderState;
@@ -207,10 +208,10 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
                 openKeypad();
             });
         }
-        InteractionFeedbackManager.configure(distanceUnitButton);
-        distanceUnitButton.setOnClickListener(v -> openDistancePicker());
-        InteractionFeedbackManager.configure(efficiencyUnitButton);
-        efficiencyUnitButton.setOnClickListener(v -> openEfficiencyPicker());
+        InteractionFeedbackManager.configure(distanceUnitSelector);
+        distanceUnitSelector.setOnClickListener(v -> openDistancePicker());
+        InteractionFeedbackManager.configure(efficiencyUnitSelector);
+        efficiencyUnitSelector.setOnClickListener(v -> openEfficiencyPicker());
         roundTrip.setOnCheckedChangeListener((button, checked) -> {
             if (binding) return;
             render();
@@ -264,11 +265,16 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     }
 
     private void updateUnits() {
-        distanceUnitButton.setText(getString(R.string.fuel_unit_button, distanceUnit().getSymbol()));
-        efficiencyUnitButton.setText(getString(R.string.fuel_unit_button, efficiencyUnit().getSymbol()));
-        EmiFormatter formatter = new EmiFormatter(requireContext());
-        String code = Preferences.getInstance(requireContext()).getPreferredCurrency();
-        priceUnit.setText(getString(R.string.fuel_price_per_litre, formatter.symbol(code)));
+        if (distanceUnitLabel != null) {
+            distanceUnitLabel.setText(distanceUnit().getSymbol());
+        }
+        if (efficiencyUnitLabel != null) {
+            efficiencyUnitLabel.setText(efficiencyUnit().getSymbol());
+        }
+        if (priceSymbol != null) {
+            String code = Preferences.getInstance(requireContext()).getPreferredCurrency();
+            priceSymbol.setText(new EmiFormatter(requireContext()).symbol(code));
+        }
     }
 
     public void onKeypadKey(int id) {
@@ -363,6 +369,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
 
     private void render() {
         if (calculatePage == null || distance == null) return;
+        updateUnits();
         result = null;
         graphyOutput = null;
         EmiFormatter money = new EmiFormatter(requireContext());

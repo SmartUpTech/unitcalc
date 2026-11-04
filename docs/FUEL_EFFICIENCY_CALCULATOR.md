@@ -16,7 +16,7 @@ Golden fixture: 420 km, 15 L/100 km, ₹102.50/L, round trip, 4 passengers → 1
 ## UI
 
 - Shared workspace shell: **Calculate | Graphy** tabs (`fragment_calculator`).
-- Calculate pane: BMI-style inputs, unit chips, collapsible `converter_keypad`, result card.
+- Calculate pane: converter-style amount fields and unit selectors (`converter_amount` / `converter_selector`), preferred-currency symbol on price per litre, collapsible `converter_keypad`, result card.
 - Graphy: flowchart via `FuelEfficiencyGraphBuilder` (same numbers as Calculate).
 - App bar: History + Reset (shared reset menu with BMI).
 - Bottom navigation stays visible; no new bottom-nav destination.

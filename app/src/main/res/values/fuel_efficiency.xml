@@ -13,8 +13,7 @@
     <string name="fuel_cost_per_passenger">Cost per passenger</string>
     <string name="fuel_no_result">Enter trip details</string>
     <string name="fuel_invalid">Check distance, efficiency, price and passengers.</string>
-    <string name="fuel_price_per_litre">%1$s/L</string>
-    <string name="fuel_unit_button">%1$s ▾</string>
+    <string name="fuel_price_unit_suffix">/L</string>
     <string name="fuel_reset">Reset fuel calculator</string>
     <string name="fuel_reset">Reset</string>
     <string name="fuel_history_value">Trip: %1$s</string>

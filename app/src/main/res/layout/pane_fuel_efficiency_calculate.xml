@@ -26,26 +26,63 @@
                 android:paddingEnd="@dimen/converter_small_spacing">
 
                 <TextView
-                    style="@style/BmiFieldLabel"
+                    style="@style/ConverterLabel"
                     android:labelFor="@id/fe_distance_input"
                     android:text="@string/fuel_trip_distance" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
+                    android:baselineAligned="false"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <net.smartlogic.unitconverter.widget.AutoSizeEditText
                         android:id="@+id/fe_distance_input"
-                        style="@style/BmiInput"
-                        android:contentDescription="@string/fuel_trip_distance" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/fe_distance_unit"
-                        style="@style/BmiUnitButton"
-                        android:layout_width="@dimen/converter_touch_target"
+                        style="@style/ConverterValue"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/fuel_pick_distance" />
+                        android:layout_marginEnd="@dimen/converter_small_spacing"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/fuel_trip_distance"
+                        android:gravity="end|center_vertical"
+                        android:hint="@string/zero"
+                        android:maxLength="12"
+                        android:paddingStart="@dimen/converter_field_content_inset"
+                        android:paddingEnd="@dimen/converter_field_content_inset"
+                        android:tag="converter_amount" />
+
+                    <LinearLayout
+                        android:id="@+id/fe_distance_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:contentDescription="@string/fuel_pick_distance"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_touch_target"
+                        android:minWidth="@dimen/converter_touch_target"
+                        android:orientation="horizontal"
+                        android:tag="converter_selector">
+
+                        <TextView
+                            android:id="@+id/fe_distance_unit_label"
+                            style="@style/ConverterSelectorText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:importantForAccessibility="no"
+                            android:maxLines="1"
+                            android:paddingHorizontal="@dimen/converter_field_content_inset" />
+
+                        <ImageView
+                            android:layout_width="@dimen/converter_chevron_size"
+                            android:layout_height="@dimen/converter_chevron_size"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_down" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -58,26 +95,61 @@
                 android:paddingStart="@dimen/converter_small_spacing">
 
                 <TextView
-                    style="@style/BmiFieldLabel"
+                    style="@style/ConverterLabel"
                     android:labelFor="@id/fe_efficiency_input"
                     android:text="@string/fuel_efficiency_label" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
+                    android:baselineAligned="false"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <net.smartlogic.unitconverter.widget.AutoSizeEditText
                         android:id="@+id/fe_efficiency_input"
-                        style="@style/BmiInput"
-                        android:contentDescription="@string/fuel_efficiency_label" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/fe_efficiency_unit"
-                        style="@style/BmiUnitButton"
-                        android:layout_width="@dimen/converter_category_min_width"
+                        style="@style/ConverterValue"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/fuel_pick_efficiency" />
+                        android:layout_marginEnd="@dimen/converter_small_spacing"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/fuel_efficiency_label"
+                        android:gravity="end|center_vertical"
+                        android:hint="@string/zero"
+                        android:maxLength="12"
+                        android:paddingStart="@dimen/converter_field_content_inset"
+                        android:paddingEnd="@dimen/converter_field_content_inset"
+                        android:tag="converter_amount" />
+
+                    <LinearLayout
+                        android:id="@+id/fe_efficiency_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/converter_touch_target"
+                        android:contentDescription="@string/fuel_pick_efficiency"
+                        android:tag="converter_selector">
+
+                        <TextView
+                            android:id="@+id/fe_efficiency_unit_label"
+                            style="@style/ConverterSelectorText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:importantForAccessibility="no"
+                            android:maxLines="1"
+                            android:paddingHorizontal="@dimen/converter_field_content_inset" />
+
+                        <ImageView
+                            android:layout_width="@dimen/converter_chevron_size"
+                            android:layout_height="@dimen/converter_chevron_size"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_down" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -97,26 +169,47 @@
                 android:paddingEnd="@dimen/converter_small_spacing">
 
                 <TextView
-                    style="@style/BmiFieldLabel"
+                    style="@style/ConverterLabel"
                     android:labelFor="@id/fe_price_input"
                     android:text="@string/fuel_price_label" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/converter_field_content_inset"
+                    android:tag="converter_amount">
+
+                    <TextView
+                        android:id="@+id/fe_price_symbol"
+                        style="@style/ConverterSelectorText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/converter_small_spacing"
+                        android:importantForAccessibility="no"
+                        android:singleLine="true"
+                        android:textSize="@dimen/converter_currency_symbol_size" />
 
                     <net.smartlogic.unitconverter.widget.AutoSizeEditText
                         android:id="@+id/fe_price_input"
-                        style="@style/BmiInput"
-                        android:contentDescription="@string/fuel_price_label" />
+                        style="@style/ConverterValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/fuel_price_label"
+                        android:gravity="end|center_vertical"
+                        android:hint="@string/zero"
+                        android:maxLength="12" />
 
                     <TextView
-                        android:id="@+id/fe_price_unit"
-                        style="@style/BmiCaption"
-                        android:layout_width="@dimen/converter_category_min_width"
-                        android:gravity="center"
-                        android:tag="content_secondary" />
+                        android:id="@+id/fe_price_suffix"
+                        style="@style/ConverterSelectorText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/converter_small_spacing"
+                        android:importantForAccessibility="no"
+                        android:text="@string/fuel_price_unit_suffix" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -128,15 +221,22 @@
                 android:paddingStart="@dimen/converter_small_spacing">
 
                 <TextView
-                    style="@style/BmiFieldLabel"
+                    style="@style/ConverterLabel"
                     android:labelFor="@id/fe_passengers_input"
                     android:text="@string/fuel_passengers" />
 
                 <net.smartlogic.unitconverter.widget.AutoSizeEditText
                     android:id="@+id/fe_passengers_input"
-                    style="@style/BmiInput"
+                    style="@style/ConverterValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/fuel_passengers"
-                    android:inputType="number" />
+                    android:gravity="end|center_vertical"
+                    android:hint="@string/zero"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:paddingHorizontal="@dimen/converter_field_content_inset"
+                    android:tag="converter_amount" />
             </LinearLayout>
         </LinearLayout>
 
@@ -148,7 +248,7 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/BmiFieldLabel"
+                style="@style/ConverterLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -173,10 +273,10 @@
 
         <TextView
             android:id="@+id/fe_trip_cost_label"
-            style="@style/BmiCaption"
+            style="@style/ConverterLabel"
             android:gravity="center"
-            android:text="@string/fuel_trip_cost_label"
-            android:tag="content_secondary" />
+            android:tag="content_secondary"
+            android:text="@string/fuel_trip_cost_label" />
 
         <TextView
             android:id="@+id/fe_trip_cost_value"
@@ -187,14 +287,14 @@
 
         <TextView
             android:id="@+id/fe_fuel_needed"
-            style="@style/BmiCaption"
+            style="@style/ConverterLabel"
             android:layout_marginTop="@dimen/converter_small_spacing"
             android:gravity="center"
             android:tag="content_secondary" />
 
         <TextView
             android:id="@+id/fe_cost_per_passenger"
-            style="@style/BmiText"
+            style="@style/ConverterSelectorText"
             android:layout_marginTop="@dimen/converter_compact_row_spacing"
             android:gravity="center"
             android:tag="content_primary" />
