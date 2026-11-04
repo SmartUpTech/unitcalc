@@ -47,6 +47,7 @@ import net.smartlogic.unitconverter.timer.TimerFragment;
 import net.smartlogic.unitconverter.age.AgeCalculatorFragment;
 import net.smartlogic.unitconverter.bmi.BmiCalculatorFragment;
 import net.smartlogic.unitconverter.emi.EmiCalculatorFragment;
+import net.smartlogic.unitconverter.fuel.FuelEfficiencyCalculatorFragment;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private int ageReturnTab = R.id.calculator;
     private int emiReturnTab = R.id.calculator;
     private int bmiReturnTab = R.id.calculator;
+    private int fuelReturnTab = R.id.calculator;
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (savedInstanceState != null) ageReturnTab = savedInstanceState.getInt("age_return_tab", R.id.calculator);
         if (savedInstanceState != null) emiReturnTab = savedInstanceState.getInt("emi_return_tab", R.id.calculator);
         if (savedInstanceState != null) bmiReturnTab = savedInstanceState.getInt("bmi_return_tab", R.id.calculator);
+        if (savedInstanceState != null) fuelReturnTab = savedInstanceState.getInt("fuel_return_tab", R.id.calculator);
         // Root fallback: later drawer, Timer and workspace callbacks keep priority.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 if (activeFragment instanceof AgeCalculatorFragment) { closeAge(); return; }
                 if (activeFragment instanceof EmiCalculatorFragment) { closeEmi(); return; }
                 if (activeFragment instanceof BmiCalculatorFragment) { closeBmi(); return; }
+                if (activeFragment instanceof FuelEfficiencyCalculatorFragment) { closeFuel(); return; }
                 long now = android.os.SystemClock.elapsedRealtime();
                 if (lastExitBackAt >= 0 && now - lastExitBackAt <= EXIT_BACK_WINDOW_MS) {
                     if (exitToast != null) exitToast.cancel();
@@ -124,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                     else if (activeFragment instanceof AgeCalculatorFragment) closeAge();
                     else if (activeFragment instanceof EmiCalculatorFragment) closeEmi();
                     else if (activeFragment instanceof BmiCalculatorFragment) closeBmi();
+                    else if (activeFragment instanceof FuelEfficiencyCalculatorFragment) closeFuel();
                     else openDrawer();
                 });
             }
@@ -265,6 +270,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             case BMI_CALCULATOR:
                 selectTab(R.id.bmi_calculator);
                 break;
+            case FUEL_EFFICIENCY_CALCULATOR:
+                selectTab(R.id.fuel_efficiency_calculator);
+                break;
             case RATE_APP:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_app_link))));
                 break;
@@ -308,6 +316,15 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 findViewById(R.id.frame_layout).post(() -> {
                     Fragment fragment = tabFragments.get(R.id.bmi_calculator);
                     if (fragment instanceof BmiCalculatorFragment bmi) bmi.restoreFromHistory(item.expression());
+                });
+                break;
+            case FUEL_EFFICIENCY_CALCULATOR:
+                selectTab(R.id.fuel_efficiency_calculator);
+                findViewById(R.id.frame_layout).post(() -> {
+                    Fragment fragment = tabFragments.get(R.id.fuel_efficiency_calculator);
+                    if (fragment instanceof FuelEfficiencyCalculatorFragment fuel) {
+                        fuel.restoreFromHistory(item.expression());
+                    }
                 });
                 break;
             case BASIC_CALCULATOR:
@@ -397,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         registerRestoredFragment(R.id.history, AppConst.TAG_HISTORY);
         registerRestoredFragment(R.id.age_calculator, AppConst.TAG_AGE);
         registerRestoredFragment(R.id.bmi_calculator, AppConst.TAG_BMI);
+        registerRestoredFragment(R.id.fuel_efficiency_calculator, AppConst.TAG_FUEL_EFFICIENCY);
         registerRestoredFragment(R.id.emi_calculator, AppConst.TAG_EMI);
         registerRestoredFragment(R.id.explore, AppConst.TAG_EXPLORE);
         registerRestoredFragment(R.id.favorites, AppConst.TAG_FAVORITES);
@@ -435,7 +453,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (!initialTabSelected) {
             initialTabSelected = true;
             int restoredId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-            if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator || restoredId == R.id.emi_calculator) selectTab(restoredId);
+            if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator
+                    || restoredId == R.id.fuel_efficiency_calculator || restoredId == R.id.emi_calculator) selectTab(restoredId);
             else bottomNavigationView.setSelectedItemId(restoredId);
         }
     }
@@ -456,6 +475,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         if (openWorkspace && itemId == R.id.emi_calculator && !(activeFragment instanceof EmiCalculatorFragment)
                 && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.emi_calculator))
             emiReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+        if (openWorkspace && itemId == R.id.fuel_efficiency_calculator
+                && !(activeFragment instanceof FuelEfficiencyCalculatorFragment)
+                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.fuel_efficiency_calculator)) {
+            fuelReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+        }
         if (itemId == R.id.history && !(activeFragment instanceof HistoryFragment)) {
             int previous = resolveMenuIdForTag(AppConst.CURRENT_TAG);
             if (previous != R.id.history) historyReturnTab = previous;
@@ -519,11 +543,19 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         updateFavoriteMenuItem();
     }
 
+    private void closeFuel() {
+        selectTab(fuelReturnTab == R.id.fuel_efficiency_calculator || fuelReturnTab == R.id.history
+                ? R.id.calculator : fuelReturnTab, false);
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
     private void updateHistoryChrome(boolean history) {
         boolean age = activeFragment instanceof AgeCalculatorFragment;
         boolean bmi = activeFragment instanceof BmiCalculatorFragment;
+        boolean fuel = activeFragment instanceof FuelEfficiencyCalculatorFragment;
         boolean emi = activeFragment instanceof EmiCalculatorFragment;
-        boolean secondary = history || age || bmi || emi;
+        boolean secondary = history || age || bmi || fuel || emi;
         if (bottomNavigationView != null) {
             bottomNavigationView.setVisibility(history ? View.GONE : View.VISIBLE);
             MenuItem selected = bottomNavigationView.getMenu().findItem(resolveMenuIdForTag(AppConst.CURRENT_TAG));
@@ -531,7 +563,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         android.widget.TextView title = findViewById(R.id.tv_app_bar_brand);
         ImageButton navigation = findViewById(R.id.btn_nav_menu);
-        if (title != null) title.setText(timerVisible ? R.string.timer : emi ? R.string.emi_calculator : bmi ? R.string.bmi_calculator : age ? R.string.age_calculator : history ? R.string.nav_history : R.string.app_bar_brand);
+        if (title != null) title.setText(timerVisible ? R.string.timer : emi ? R.string.emi_calculator
+                : fuel ? R.string.fuel_efficiency_calculator
+                : bmi ? R.string.bmi_calculator : age ? R.string.age_calculator
+                : history ? R.string.nav_history : R.string.app_bar_brand);
         if (navigation != null) {
             navigation.setImageResource(secondary ? R.drawable.ic_settings_back : R.drawable.ic_menu);
             navigation.setContentDescription(getString(secondary ? R.string.history_back : R.string.nav_open_drawer));
@@ -544,6 +579,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private Fragment createFragmentFor(int itemId) {
         if (itemId == R.id.emi_calculator) return new EmiCalculatorFragment();
         if (itemId == R.id.bmi_calculator) return new BmiCalculatorFragment();
+        if (itemId == R.id.fuel_efficiency_calculator) return new FuelEfficiencyCalculatorFragment();
         if (itemId == R.id.age_calculator) return new AgeCalculatorFragment();
         if (itemId == R.id.play) return new GamesFragment();
         if (itemId == R.id.calculator) {
@@ -567,6 +603,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private void updateCurrentTag(int itemId) {
         if (itemId == R.id.emi_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_EMI; return; }
         if (itemId == R.id.bmi_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_BMI; return; }
+        if (itemId == R.id.fuel_efficiency_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_FUEL_EFFICIENCY; return; }
         if (itemId == R.id.age_calculator) { AppConst.CURRENT_TAG = AppConst.TAG_AGE; return; }
         if (itemId == R.id.play) {
             AppConst.CURRENT_TAG = GamesConfig.TAG;
@@ -588,6 +625,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private int resolveMenuIdForTag(@NonNull String tag) {
         if (AppConst.TAG_EMI.equals(tag)) return R.id.emi_calculator;
         if (AppConst.TAG_BMI.equals(tag)) return R.id.bmi_calculator;
+        if (AppConst.TAG_FUEL_EFFICIENCY.equals(tag)) return R.id.fuel_efficiency_calculator;
         if (AppConst.TAG_AGE.equals(tag)) return R.id.age_calculator;
         if (GamesConfig.TAG.equals(tag)) return R.id.play;
         if (AppConst.TAG_CALC.equals(tag)) {
@@ -612,6 +650,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private String fragmentTagFor(int itemId) {
         if (itemId == R.id.emi_calculator) return AppConst.TAG_EMI;
         if (itemId == R.id.bmi_calculator) return AppConst.TAG_BMI;
+        if (itemId == R.id.fuel_efficiency_calculator) return AppConst.TAG_FUEL_EFFICIENCY;
         if (itemId == R.id.age_calculator) return AppConst.TAG_AGE;
         if (itemId == R.id.play) return GamesConfig.TAG;
         if (itemId == R.id.calculator) {
@@ -641,6 +680,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             activeCalculatorId = CalculatorCatalog.ID_AGE;
         } else if (activeFragment instanceof BmiCalculatorFragment) {
             activeCalculatorId = CalculatorCatalog.ID_BMI;
+        } else if (activeFragment instanceof FuelEfficiencyCalculatorFragment) {
+            activeCalculatorId = CalculatorCatalog.ID_FUEL_EFFICIENCY;
         } else if (activeFragment instanceof CalculatorFragment) {
             activeCalculatorId = CalculatorCatalog.ID_BASIC;
         } else if (activeFragment instanceof ConverterFragment) {
@@ -711,7 +752,16 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                     && !(activeFragment instanceof TimerFragment)
                     && !(activeFragment instanceof GamesFragment)
                     && item.getItemId() == (history ? R.id.menu_clear_history : R.id.menu_history));
-            if (item.getItemId() == R.id.menu_bmi_reset) item.setVisible(activeFragment instanceof BmiCalculatorFragment);
+            if (item.getItemId() == R.id.menu_bmi_reset) {
+                boolean tool = activeFragment instanceof BmiCalculatorFragment
+                        || activeFragment instanceof FuelEfficiencyCalculatorFragment;
+                item.setVisible(tool);
+                if (activeFragment instanceof FuelEfficiencyCalculatorFragment) {
+                    item.setTitle(R.string.fuel_reset);
+                } else if (activeFragment instanceof BmiCalculatorFragment) {
+                    item.setTitle(R.string.bmi_reset);
+                }
+            }
             if (item.getItemId() == R.id.menu_clear_history) item.setEnabled(history && ((HistoryFragment) activeFragment).hasHistory());
             if (item.getIcon() != null) item.getIcon().setTint(ThemeManager.get().primaryContentColor());
         }
@@ -751,6 +801,10 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         int id = item.getItemId();
         if (id == R.id.menu_bmi_reset && activeFragment instanceof BmiCalculatorFragment bmi) {
             bmi.reset();
+            return true;
+        }
+        if (id == R.id.menu_bmi_reset && activeFragment instanceof FuelEfficiencyCalculatorFragment fuel) {
+            fuel.reset();
             return true;
         }
         if (id == R.id.menu_clear_history && activeFragment instanceof HistoryFragment history) {
@@ -803,10 +857,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         // A widget/notification may have opened Timer during onCreate.
         // Reselecting a tab here would immediately hide that screen.
         if (!timerVisible) {
-            if (currentId == R.id.history || currentId == R.id.age_calculator || currentId == R.id.bmi_calculator || currentId == R.id.emi_calculator) {
+            if (currentId == R.id.history || currentId == R.id.age_calculator || currentId == R.id.bmi_calculator
+                    || currentId == R.id.fuel_efficiency_calculator || currentId == R.id.emi_calculator) {
                 if (currentId == R.id.history && !(activeFragment instanceof HistoryFragment)
                         || currentId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)
                         || currentId == R.id.bmi_calculator && !(activeFragment instanceof BmiCalculatorFragment)
+                        || currentId == R.id.fuel_efficiency_calculator
+                                && !(activeFragment instanceof FuelEfficiencyCalculatorFragment)
                         || currentId == R.id.emi_calculator && !(activeFragment instanceof EmiCalculatorFragment)) selectTab(currentId);
             } else {
                 bottomNavigationView.setSelectedItemId(currentId);
@@ -822,6 +879,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         outState.putInt(SAVED_HISTORY_RETURN, historyReturnTab);
         outState.putInt("age_return_tab", ageReturnTab);
         outState.putInt("bmi_return_tab", bmiReturnTab);
+        outState.putInt("fuel_return_tab", fuelReturnTab);
         outState.putInt("emi_return_tab", emiReturnTab);
         super.onSaveInstanceState(outState);
     }

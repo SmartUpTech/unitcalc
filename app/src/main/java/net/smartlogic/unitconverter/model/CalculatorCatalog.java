@@ -26,6 +26,7 @@ public final class CalculatorCatalog {
     public static final String ID_AGE = "age_calculator";
     public static final String ID_EMI = "emi_calculator";
     public static final String ID_BMI = "bmi_calculator";
+    public static final String ID_FUEL_EFFICIENCY = "fuel_efficiency_calculator";
     private static final String UNIT_PREFIX = "unit:";
 
     public enum Destination {
@@ -40,6 +41,7 @@ public final class CalculatorCatalog {
         TIMER,
         AGE_CALCULATOR,
         BMI_CALCULATOR,
+        FUEL_EFFICIENCY_CALCULATOR,
         EMI_CALCULATOR,
         RATE_APP,
         SHARE_APP
@@ -155,6 +157,8 @@ public final class CalculatorCatalog {
                 Destination.AGE_CALCULATOR, -1)));
         tools.add(register(entry(ID_BMI, R.string.bmi_calculator, R.drawable.ic_bmi,
                 Destination.BMI_CALCULATOR, -1)));
+        tools.add(register(entry(ID_FUEL_EFFICIENCY, R.string.fuel_efficiency_calculator, R.drawable.ic_fuel,
+                Destination.FUEL_EFFICIENCY_CALCULATOR, -1)));
         // Append registration to retain every existing catalog/menu identity.
         // Finance is the third drawer category; future FD/RD/SIP tools belong here.
         List<Entry> finance = new ArrayList<>();
