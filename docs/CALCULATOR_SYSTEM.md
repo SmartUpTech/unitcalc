@@ -170,3 +170,7 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 ## EMI Calculator
 
 `emi_calculator` is registered under Finance, the third drawer category. `EmiCalculator` owns DECIMAL128 EMI arithmetic and HALF_EVEN currency postings, baseline/revised schedules, both prepayment methods and final-payment reconciliation. Every consumer uses immutable result snapshots, never rounded display text. See EMI_CALCULATOR.md for limits, dates, prepayment timing, posting fixtures and exclusions.
+
+## Fuel Efficiency Calculator
+
+`fuel_efficiency_calculator` lives under Tools beside Age, BMI, and Timer. `FuelEfficiencyCalculator` uses length conversion, `convertFuelValue`, and EMI-style currency rounding for trip cost and cost per passenger. See FUEL_EFFICIENCY_CALCULATOR.md.

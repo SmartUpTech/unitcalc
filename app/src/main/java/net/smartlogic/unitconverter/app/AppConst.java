@@ -21,6 +21,7 @@ public class AppConst {
     public static final String TAG_AGE = "age_calculator";
     public static final String TAG_EMI = "emi_calculator";
     public static final String TAG_BMI = "bmi_calculator";
+    public static final String TAG_FUEL_EFFICIENCY = "fuel_efficiency_calculator";
 
     /** @deprecated Use {@link #TAG_CONVERTER} with {@link #CONVERTER_TAB}. */
     @Deprecated

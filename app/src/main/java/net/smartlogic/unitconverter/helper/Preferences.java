@@ -103,6 +103,20 @@ public class Preferences {
     }
     public void setBmiState(String state) { mPrefs.edit().putString(PREFS_BMI_STATE, state).apply(); }
 
+    private static final String PREFS_FUEL_EFFICIENCY_STATE = "fuel_efficiency_state_v1";
+
+    public String getFuelEfficiencyState() {
+        try {
+            return mPrefs.getString(PREFS_FUEL_EFFICIENCY_STATE, "");
+        } catch (ClassCastException invalid) {
+            return "";
+        }
+    }
+
+    public void setFuelEfficiencyState(String state) {
+        mPrefs.edit().putString(PREFS_FUEL_EFFICIENCY_STATE, state).apply();
+    }
+
     public boolean isKeySoundsEnabled() {
         return mPrefs.getBoolean(PREFS_KEY_SOUNDS, true);
     }
