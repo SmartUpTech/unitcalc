@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
                 findViewById(R.id.frame_layout).post(() -> {
                     Fragment fragment = tabFragments.get(R.id.fuel_efficiency_calculator);
                     if (fragment instanceof FuelEfficiencyCalculatorFragment fuel) {
-                        fuel.restoreFromHistory(item.expression());
+                        fuel.restoreFromHistory(item.expression(), item.payload());
                     }
                 });
                 break;
