@@ -117,6 +117,20 @@ public class Preferences {
         mPrefs.edit().putString(PREFS_FUEL_EFFICIENCY_STATE, state).apply();
     }
 
+    private static final String PREFS_PERCENTAGE_STATE = "percentage_state_v1";
+
+    public String getPercentageState() {
+        try {
+            return mPrefs.getString(PREFS_PERCENTAGE_STATE, "");
+        } catch (ClassCastException invalid) {
+            return "";
+        }
+    }
+
+    public void setPercentageState(String state) {
+        mPrefs.edit().putString(PREFS_PERCENTAGE_STATE, state).apply();
+    }
+
     public boolean isKeySoundsEnabled() {
         return mPrefs.getBoolean(PREFS_KEY_SOUNDS, true);
     }

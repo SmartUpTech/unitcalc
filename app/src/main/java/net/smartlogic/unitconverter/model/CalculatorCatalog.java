@@ -27,6 +27,7 @@ public final class CalculatorCatalog {
     public static final String ID_EMI = "emi_calculator";
     public static final String ID_BMI = "bmi_calculator";
     public static final String ID_FUEL_EFFICIENCY = "fuel_efficiency_calculator";
+    public static final String ID_PERCENTAGE = "percentage_calculator";
     private static final String UNIT_PREFIX = "unit:";
 
     public enum Destination {
@@ -42,6 +43,7 @@ public final class CalculatorCatalog {
         AGE_CALCULATOR,
         BMI_CALCULATOR,
         FUEL_EFFICIENCY_CALCULATOR,
+        PERCENTAGE_CALCULATOR,
         EMI_CALCULATOR,
         RATE_APP,
         SHARE_APP
@@ -167,6 +169,9 @@ public final class CalculatorCatalog {
         tools.add(BY_ID.get(ID_TIMER));
         SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
         SECTIONS.add(2, new Section(R.string.drawer_section_finance, finance));
+        // Append after existing menu IDs so stored favorites remain stable.
+        SECTIONS.get(0).entries.add(register(entry(ID_PERCENTAGE, R.string.percentage_calculator,
+                R.drawable.ic_percentage, Destination.PERCENTAGE_CALCULATOR, -1)));
     }
 
     private CalculatorCatalog() {

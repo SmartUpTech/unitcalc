@@ -174,3 +174,7 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 ## Fuel Efficiency Calculator
 
 `fuel_efficiency_calculator` lives under Tools beside Age, BMI, and Timer. `FuelEfficiencyCalculator` uses length conversion, `convertFuelValue`, and EMI-style currency rounding for trip cost and cost per passenger. See FUEL_EFFICIENCY_CALCULATOR.md.
+
+## Percentage Calculator
+
+`percentage_calculator` lives under Calculators beside Basic Calculator. `PercentageCalculator` owns percent-of, increase, decrease and what-percent modes with DECIMAL128 division via `DecimalMath`. See PERCENTAGE_CALCULATOR.md.

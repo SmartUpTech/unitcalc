@@ -19,6 +19,11 @@ public class CalculatorCatalogTest {
 
         assertEquals(5, sections.size());
         assertEquals(R.string.drawer_section_calculators, sections.get(0).titleRes);
+        assertEquals(2, sections.get(0).entries.size());
+        assertEquals(CalculatorCatalog.ID_BASIC, sections.get(0).entries.get(0).id);
+        assertEquals(CalculatorCatalog.ID_PERCENTAGE, sections.get(0).entries.get(1).id);
+        assertEquals(CalculatorCatalog.Destination.PERCENTAGE_CALCULATOR,
+                sections.get(0).entries.get(1).destination);
         assertEquals(R.string.drawer_section_converter, sections.get(1).titleRes);
         assertEquals(R.string.drawer_section_finance, sections.get(2).titleRes);
         assertEquals(1, sections.get(2).entries.size());
