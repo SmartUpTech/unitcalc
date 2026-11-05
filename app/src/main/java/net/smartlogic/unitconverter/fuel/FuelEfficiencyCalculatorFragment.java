@@ -155,13 +155,16 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         Bundle savedRecorder = recorderState == null ? new Bundle() : recorderState;
         try {
             JSONObject saved = new JSONObject(restored);
-            distance.setText(saved.optString("distance"));
-            efficiency.setText(saved.optString("efficiency"));
-            price.setText(saved.optString("price"));
-            passengers.setText(saved.optString("passengers", "1"));
-            distanceUnitId = saved.optInt("distanceUnit", Unit.KILOMETRE);
-            efficiencyUnitId = saved.optInt("efficiencyUnit", Unit.L_100K);
-            roundTrip.setChecked(saved.optBoolean("roundTrip"));
+            FuelHistoryState draft = FuelHistoryState.fromDraft(restored);
+            if (draft != null) {
+                distance.setText(draft.distance);
+                efficiency.setText(draft.efficiency);
+                price.setText(draft.price);
+                passengers.setText(draft.passengers);
+                distanceUnitId = draft.distanceUnitId;
+                efficiencyUnitId = draft.efficiencyUnitId;
+                roundTrip.setChecked(draft.roundTrip);
+            }
             activeIndex = saved.optInt("focus", 0);
             keypadExpanded = recorderState != null && recorderState.getBoolean("fuel_keypad_expanded");
         } catch (Exception ignored) {
@@ -431,7 +434,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
                     result.inputs().passengers(),
                     result.inputs().roundTrip() ? getString(R.string.fuel_history_round_trip) : "");
             history.update(expression, getString(R.string.fuel_history_value, money.money(result.tripCost(), currency)),
-                    CalculatorCatalog.ID_FUEL_EFFICIENCY);
+                    CalculatorCatalog.ID_FUEL_EFFICIENCY, currentHistoryState().toPayload());
         }
         if (graphy != null) graphy.update(graphyOutput);
         if (tabs != null && result == null && selectedTab != 0) tabs.selectTab(0);
@@ -461,15 +464,42 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         persist();
     }
 
-    public void restoreFromHistory(String expression) {
-        if (distance == null || expression == null) return;
+    public void restoreFromHistory(@Nullable String expression, @Nullable String payload) {
+        if (distance == null) return;
+        FuelHistoryState state = FuelHistoryState.fromPayload(payload);
+        if (state == null) state = FuelHistoryState.fromLegacyExpression(expression);
+        if (state == null) return;
+        applyHistoryState(state, 0);
+        history.markCurrentAsSaved();
+    }
+
+    private void applyHistoryState(FuelHistoryState state, int focusIndex) {
         binding = true;
-        String[] parts = expression.split(" · ");
-        if (parts.length >= 1) distance.setText(parts[0].trim());
+        distance.setText(state.distance);
+        efficiency.setText(state.efficiency);
+        price.setText(state.price);
+        passengers.setText(state.passengers);
+        distanceUnitId = state.distanceUnitId == Unit.MILE ? Unit.MILE : Unit.KILOMETRE;
+        efficiencyUnitId = fuelUnits().stream().anyMatch(unit -> unit.getId() == state.efficiencyUnitId)
+                ? state.efficiencyUnitId : Unit.L_100K;
+        roundTrip.setChecked(state.roundTrip);
         binding = false;
+        updateUnits();
+        closeKeypad();
+        selectField(focusIndex);
         render();
         persist();
-        history.markCurrentAsSaved();
+    }
+
+    private FuelHistoryState currentHistoryState() {
+        return new FuelHistoryState(
+                distance.getText().toString(),
+                efficiency.getText().toString(),
+                price.getText().toString(),
+                passengers.getText().toString(),
+                distanceUnitId,
+                efficiencyUnitId,
+                roundTrip.isChecked());
     }
 
     private String snapshot() {

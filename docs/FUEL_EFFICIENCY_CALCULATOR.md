@@ -24,7 +24,7 @@ Golden fixture: 420 km, 15 L/100 km, ₹102.50/L, round trip, 4 passengers → 1
 ## Persistence
 
 - Draft: `fuel_efficiency_state_v1` in app preferences (JSON).
-- History: shared 3 s idle recorder; `calculator_id` = `fuel_efficiency_calculator`.
+- History: shared 3 s idle recorder; `calculator_id` = `fuel_efficiency_calculator`. Payload JSON restores all inputs on reuse; legacy rows without payload fall back to parsing the visible expression.
 
 ## Out of scope (v1)
 
