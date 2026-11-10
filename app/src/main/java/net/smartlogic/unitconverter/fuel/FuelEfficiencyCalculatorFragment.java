@@ -3,7 +3,6 @@ package net.smartlogic.unitconverter.fuel;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputFilter.LengthFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +51,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     private MaterialSwitch roundTrip;
     private int distanceUnitId = Unit.KILOMETRE;
     private int efficiencyUnitId = Unit.L_100K;
+    private String currencyCode;
     private boolean binding;
     private int activeIndex;
     private boolean keypadExpanded;
@@ -67,7 +67,10 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     private Bundle recorderState;
     private OnBackPressedCallback back;
     private final Conversions conversions = Conversions.getInstance();
-    private final ThemeManager.Listener themeListener = theme -> render();
+    private final ThemeManager.Listener themeListener = theme -> {
+        if (getView() != null) ThemeApplier.apply(getView());
+        render();
+    };
 
     @Override public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
@@ -85,7 +88,8 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         super.onViewCreated(view, state);
         back = new OnBackPressedCallback(false) {
             @Override public void handleOnBackPressed() {
-                tabs.selectTab(0);
+                if (selectedTab == 1) tabs.selectTab(0);
+                else closeKeypad();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), back);
@@ -152,11 +156,13 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         priceSymbol = page.findViewById(R.id.fe_price_symbol);
         roundTrip = page.findViewById(R.id.fe_round_trip);
         binding = true;
+        currencyCode = Preferences.getInstance(requireContext()).getPreferredCurrency();
         Bundle savedRecorder = recorderState == null ? new Bundle() : recorderState;
         try {
             JSONObject saved = new JSONObject(restored);
             FuelHistoryState draft = FuelHistoryState.fromDraft(restored);
             if (draft != null) {
+                currencyCode = restoredCurrency(draft.currencyCode);
                 distance.setText(draft.distance);
                 efficiency.setText(draft.efficiency);
                 price.setText(draft.price);
@@ -176,9 +182,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
             final int index = i;
             EditText field = fields()[i];
             field.setShowSoftInputOnFocus(false);
-            int maxChars = field == passengers ? MAX_PASSENGER_CHARACTERS : MAX_INPUT_CHARACTERS;
             field.setFilters(new InputFilter[]{
-                    new LengthFilter(maxChars),
                     (source, start, end, dest, dstart, dend) -> {
                 if (binding) return null;
                 String next = dest.subSequence(0, dstart) + source.subSequence(start, end).toString()
@@ -201,6 +205,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
                 @Override public void afterTextChanged(Editable s) {
                     if (binding) return;
                     activeIndex = index;
+                    active = field;
                     render();
                     persist();
                 }
@@ -208,11 +213,12 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
             field.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
                     activeIndex = index;
+                    active = field;
                     openKeypad();
                 }
             });
             field.setOnClickListener(v -> {
-                activeIndex = index;
+                selectField(index);
                 openKeypad();
             });
         }
@@ -277,10 +283,12 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
             distanceUnitLabel.setText(distanceUnit().getSymbol());
         }
         if (efficiencyUnitLabel != null) {
-            efficiencyUnitLabel.setText(efficiencyUnit().getSymbol());
+            efficiencyUnitLabel.setText(efficiencyUnitId == Unit.MPG_US ? getString(R.string.fuel_mpg_us)
+                    : efficiencyUnitId == Unit.MPG_UK ? getString(R.string.fuel_mpg_uk)
+                    : efficiencyUnit().getSymbol());
         }
         if (priceSymbol != null) {
-            String code = Preferences.getInstance(requireContext()).getPreferredCurrency();
+            String code = currencyCode;
             priceSymbol.setText(new EmiFormatter(requireContext()).symbol(code));
         }
     }
@@ -333,7 +341,10 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     private void selectField(int index) {
         activeIndex = Math.max(0, Math.min(fields().length - 1, index));
         active = fields()[activeIndex];
+        boolean wasExpanded = keypadExpanded;
         active.requestFocus();
+        keypadExpanded = wasExpanded;
+        updateKeypad();
     }
 
     private void openKeypad() {
@@ -353,11 +364,11 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         if (host == null) return;
         host.setVisibility(keypadExpanded ? View.VISIBLE : View.GONE);
         if (results != null) results.setVisibility(keypadExpanded ? View.GONE : View.VISIBLE);
-        if (back != null) back.setEnabled(selectedTab == 1);
+        if (back != null) back.setEnabled(!isHidden() && (selectedTab == 1 || keypadExpanded));
     }
 
     private void updateBack() {
-        if (back != null) back.setEnabled(selectedTab == 1);
+        if (back != null) back.setEnabled(!isHidden() && (selectedTab == 1 || keypadExpanded));
         updateKeypad();
     }
 
@@ -381,7 +392,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         result = null;
         graphyOutput = null;
         EmiFormatter money = new EmiFormatter(requireContext());
-        String currency = Preferences.getInstance(requireContext()).getPreferredCurrency();
+        String currency = currencyCode;
         try {
             BigDecimal distanceValue = decimalOrNull(distance.getText().toString());
             BigDecimal efficiencyValue = decimalOrNull(efficiency.getText().toString());
@@ -419,8 +430,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
             perPassenger.setTextColor(theme.secondaryContentColor());
             history.invalidate();
         } else {
-            String fuel = result.fuelLitres().setScale(1, java.math.RoundingMode.HALF_EVEN).stripTrailingZeros()
-                    .toPlainString() + " L";
+            String fuel = FuelEfficiencyGraphBuilder.formatVolume(requireContext(), result.fuelLitres());
             tripCost.setText(money.money(result.tripCost(), currency));
             tripCost.setTextColor(theme.accentContentColor());
             fuelNeeded.setText(getString(R.string.fuel_needed_label) + ": " + fuel);
@@ -453,6 +463,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
     public void reset() {
         if (distance == null) return;
         binding = true;
+        currencyCode = Preferences.getInstance(requireContext()).getPreferredCurrency();
         distance.setText("");
         efficiency.setText("");
         price.setText("");
@@ -475,6 +486,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
 
     private void applyHistoryState(FuelHistoryState state, int focusIndex) {
         binding = true;
+        currencyCode = restoredCurrency(state.currencyCode);
         distance.setText(state.distance);
         efficiency.setText(state.efficiency);
         price.setText(state.price);
@@ -491,6 +503,17 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         persist();
     }
 
+    private String restoredCurrency(String code) {
+        if (code != null) {
+            try {
+                new EmiFormatter(requireContext()).symbol(code);
+                return code;
+            } catch (IllegalArgumentException ignored) { }
+        }
+        // Older records did not retain currency identity.
+        return Preferences.getInstance(requireContext()).getPreferredCurrency();
+    }
+
     private FuelHistoryState currentHistoryState() {
         return new FuelHistoryState(
                 distance.getText().toString(),
@@ -499,20 +522,13 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
                 passengers.getText().toString(),
                 distanceUnitId,
                 efficiencyUnitId,
-                roundTrip.isChecked());
+                roundTrip.isChecked(), currencyCode);
     }
 
     private String snapshot() {
         if (distance == null) return restored;
         try {
-            return new JSONObject()
-                    .put("distance", distance.getText().toString())
-                    .put("efficiency", efficiency.getText().toString())
-                    .put("price", price.getText().toString())
-                    .put("passengers", passengers.getText().toString())
-                    .put("distanceUnit", distanceUnitId)
-                    .put("efficiencyUnit", efficiencyUnitId)
-                    .put("roundTrip", roundTrip.isChecked())
+            return currentHistoryState().toJson()
                     .put("focus", activeIndex)
                     .toString();
         } catch (Exception ignored) {

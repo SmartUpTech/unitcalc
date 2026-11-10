@@ -47,6 +47,9 @@
             android:orientation="vertical">
 
             <TextView
+                android:tag="content_secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/percentage_first_label"
                 style="@style/ConverterLabel"
                 android:labelFor="@id/percentage_first_input"
@@ -74,6 +77,9 @@
             android:orientation="vertical">
 
             <TextView
+                android:tag="content_secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/percentage_second_label"
                 style="@style/ConverterLabel"
                 android:labelFor="@id/percentage_second_input"
@@ -100,6 +106,7 @@
                     android:maxLength="12" />
 
                 <TextView
+                android:tag="content_primary"
                     android:id="@+id/percentage_second_suffix"
                     style="@style/ConverterSelectorText"
                     android:layout_width="wrap_content"
@@ -121,6 +128,8 @@
         android:tag="theme_outlined_surface">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/percentage_result_caption"
             style="@style/ConverterLabel"
             android:gravity="center"
@@ -128,6 +137,8 @@
             android:text="@string/percentage_result_label" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/percentage_result_value"
             style="@style/ResultDisplay"
             android:accessibilityLiveRegion="polite"
@@ -136,6 +147,8 @@
             android:text="@string/percentage_no_result" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/percentage_result_explain"
             style="@style/ConverterLabel"
             android:layout_marginTop="@dimen/converter_small_spacing"

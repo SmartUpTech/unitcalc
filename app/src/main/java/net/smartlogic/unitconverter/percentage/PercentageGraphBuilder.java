@@ -15,7 +15,8 @@ public final class PercentageGraphBuilder {
     }
 
     public static GraphyOutput build(Context context, PercentageCalculator.Result result, String formattedResult) {
-        String rule = context.getString(R.string.percentage_graphy_rule);
+        String rule = context.getString(result.mode() == PercentageCalculator.Mode.WHAT_PERCENT
+                ? R.string.percentage_graphy_step_what : R.string.percentage_graphy_rule);
         String firstLabel;
         String secondLabel;
         String firstValue = plain(result.inputs().first());
@@ -50,23 +51,35 @@ public final class PercentageGraphBuilder {
         String amount = plain(result.amount()) + (result.mode() == PercentageCalculator.Mode.WHAT_PERCENT ? "%" : "");
         String summary = formattedResult;
         String contextLine = firstValue + " · " + secondValue;
+        boolean adjustment = result.mode() == PercentageCalculator.Mode.INCREASE
+                || result.mode() == PercentageCalculator.Mode.DECREASE;
+        var nodes = new java.util.ArrayList<GraphyNode>(Arrays.asList(
+                node("first", GraphyNodeType.INPUT, firstLabel, firstValue, "input"),
+                node("second", GraphyNodeType.INPUT, secondLabel, secondValue, "input"),
+                node("op", GraphyNodeType.OPERATION,
+                        adjustment ? context.getString(R.string.percentage_graphy_step_of) : step,
+                        adjustment ? context.getString(R.string.percentage_graphy_step_of) : step,
+                        "operation", amount, rule),
+                node("derived", GraphyNodeType.DERIVED, context.getString(R.string.percentage_amount_label),
+                        amount, "derived", amount, rule)));
+        var edges = new java.util.ArrayList<GraphyConnection>(Arrays.asList(
+                edge("first", "op"), edge("second", "op"), edge("op", "derived")));
+        if (adjustment) {
+            nodes.add(node("adjust", GraphyNodeType.OPERATION, step, step, "operation", summary, rule));
+            edges.add(edge("first", "adjust"));
+            edges.add(edge("derived", "adjust"));
+            edges.add(edge("adjust", "result"));
+        } else {
+            edges.add(edge("derived", "result"));
+        }
+        nodes.add(node("result", GraphyNodeType.RESULT, context.getString(R.string.percentage_result_label),
+                summary, "result", null, rule));
         return GraphyOutput.create(
                 CalculatorCatalog.ID_PERCENTAGE,
                 contextLine,
                 summary,
-                Arrays.asList(
-                        node("first", GraphyNodeType.INPUT, firstLabel, firstValue, "input"),
-                        node("second", GraphyNodeType.INPUT, secondLabel, secondValue, "input"),
-                        node("op", GraphyNodeType.OPERATION, step, step, "operation", amount, rule),
-                        node("derived", GraphyNodeType.DERIVED, context.getString(R.string.percentage_amount_label),
-                                amount, "derived", amount, rule),
-                        node("result", GraphyNodeType.RESULT, context.getString(R.string.percentage_result_label),
-                                summary, "result", null, rule)),
-                Arrays.asList(
-                        edge("first", "op"),
-                        edge("second", "op"),
-                        edge("op", "derived"),
-                        edge("derived", "result")),
+                nodes,
+                edges,
                 rule,
                 Map.of(GraphyOutput.METADATA_CONTEXT, contextLine));
     }

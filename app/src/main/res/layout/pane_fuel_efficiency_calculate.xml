@@ -26,6 +26,9 @@
                 android:paddingEnd="@dimen/converter_small_spacing">
 
                 <TextView
+                android:tag="content_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     style="@style/ConverterLabel"
                     android:labelFor="@id/fe_distance_input"
                     android:text="@string/fuel_trip_distance" />
@@ -68,6 +71,7 @@
                         android:tag="converter_selector">
 
                         <TextView
+                android:tag="content_primary"
                             android:id="@+id/fe_distance_unit_label"
                             style="@style/ConverterSelectorText"
                             android:layout_width="wrap_content"
@@ -77,6 +81,7 @@
                             android:maxLines="1" />
 
                         <ImageView
+                            android:tag="content_accent"
                             android:layout_width="@dimen/converter_chevron_size"
                             android:layout_height="@dimen/converter_chevron_size"
                             android:contentDescription="@null"
@@ -95,6 +100,9 @@
                 android:paddingStart="@dimen/converter_small_spacing">
 
                 <TextView
+                android:tag="content_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     style="@style/ConverterLabel"
                     android:labelFor="@id/fe_efficiency_input"
                     android:text="@string/fuel_efficiency_label" />
@@ -137,6 +145,7 @@
                         android:tag="converter_selector">
 
                         <TextView
+                android:tag="content_primary"
                             android:id="@+id/fe_efficiency_unit_label"
                             style="@style/ConverterSelectorText"
                             android:layout_width="wrap_content"
@@ -146,6 +155,7 @@
                             android:maxLines="1" />
 
                         <ImageView
+                            android:tag="content_accent"
                             android:layout_width="@dimen/converter_chevron_size"
                             android:layout_height="@dimen/converter_chevron_size"
                             android:contentDescription="@null"
@@ -171,6 +181,9 @@
                 android:paddingEnd="@dimen/converter_small_spacing">
 
                 <TextView
+                android:tag="content_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     style="@style/ConverterLabel"
                     android:labelFor="@id/fe_price_input"
                     android:text="@string/fuel_price_label" />
@@ -185,6 +198,7 @@
                     android:tag="converter_amount">
 
                     <TextView
+                android:tag="content_primary"
                         android:id="@+id/fe_price_symbol"
                         style="@style/ConverterSelectorText"
                         android:layout_width="wrap_content"
@@ -206,6 +220,7 @@
                         android:maxLength="12" />
 
                     <TextView
+                android:tag="content_primary"
                         android:id="@+id/fe_price_suffix"
                         style="@style/ConverterSelectorText"
                         android:layout_width="wrap_content"
@@ -224,6 +239,9 @@
                 android:paddingStart="@dimen/converter_small_spacing">
 
                 <TextView
+                android:tag="content_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     style="@style/ConverterLabel"
                     android:labelFor="@id/fe_passengers_input"
                     android:text="@string/fuel_passengers" />
@@ -259,6 +277,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:tag="content_secondary"
                 style="@style/ConverterLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -267,6 +286,8 @@
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/fe_round_trip"
+                style="@style/Widget.Material3.CompoundButton.MaterialSwitch"
+                app:showText="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/fuel_round_trip" />
@@ -283,6 +304,8 @@
         android:tag="theme_outlined_surface">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/fe_trip_cost_label"
             style="@style/ConverterLabel"
             android:gravity="center"
@@ -290,6 +313,8 @@
             android:text="@string/fuel_trip_cost_label" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/fe_trip_cost_value"
             style="@style/ResultDisplay"
             android:gravity="center"
@@ -297,6 +322,8 @@
             android:text="@string/fuel_no_result" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/fe_fuel_needed"
             style="@style/ConverterLabel"
             android:layout_marginTop="@dimen/converter_small_spacing"
@@ -304,6 +331,8 @@
             android:tag="content_secondary" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/fe_cost_per_passenger"
             style="@style/ConverterSelectorText"
             android:layout_marginTop="@dimen/converter_compact_row_spacing"

@@ -34,7 +34,9 @@ public final class FuelEfficiencyCalculator {
             BigDecimal fuelLitres,
             BigDecimal tripCost,
             BigDecimal costPerPassenger,
-            Inputs inputs) {
+            Inputs inputs,
+            BigDecimal distanceKm,
+            BigDecimal litresPer100Km) {
     }
 
     public static Result calculate(Inputs inputs, Conversions conversions) {
@@ -63,7 +65,7 @@ public final class FuelEfficiencyCalculator {
         BigDecimal tripCost = moneyScale(fuelLitres.multiply(inputs.pricePerLitre()), inputs.currencyCode());
         BigDecimal perPassenger = moneyScale(
                 DecimalMath.divide(tripCost, BigDecimal.valueOf(inputs.passengers())), inputs.currencyCode());
-        return new Result(fuelLitres, tripCost, perPassenger, inputs);
+        return new Result(fuelLitres, tripCost, perPassenger, inputs, distanceKm, lPer100);
     }
 
     private static Unit unit(Conversions conversions, int category, int id) {

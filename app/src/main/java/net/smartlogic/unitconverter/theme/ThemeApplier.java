@@ -206,6 +206,28 @@ public final class ThemeApplier {
             button.setStrokeWidth(("theme_outline_action".equals(view.getTag()) || "theme_outline_field".equals(view.getTag())) ? view.getResources().getDimensionPixelSize(R.dimen.theme_outline) : 0);
             button.setRippleColor(ColorStateList.valueOf(withAlpha(ink, 0x22)));
         }
+        if (view instanceof com.google.android.material.button.MaterialButton button
+                && button.getParent() instanceof com.google.android.material.button.MaterialButtonToggleGroup
+                && "theme_outline_action".equals(view.getTag())) {
+            int[][] states = {{-android.R.attr.state_enabled}, {android.R.attr.state_checked}, {}};
+            button.setTextColor(new ColorStateList(states, new int[]{theme.secondaryContentColor(),
+                    theme.onAccentColor(), theme.primaryContentColor()}));
+            button.setBackgroundTintList(new ColorStateList(states, new int[]{theme.background(),
+                    theme.accentContentColor(), theme.background()}));
+            button.setStrokeColor(new ColorStateList(states, new int[]{theme.secondaryContentColor(),
+                    theme.accentContentColor(), theme.secondaryContentColor()}));
+        }
+        if (view instanceof com.google.android.material.materialswitch.MaterialSwitch toggle) {
+            int[][] states = {{-android.R.attr.state_enabled}, {android.R.attr.state_checked}, {}};
+            toggle.setThumbTintList(new ColorStateList(states, new int[]{theme.secondaryContentColor(),
+                    theme.onAccentColor(), theme.primaryContentColor()}));
+            toggle.setTrackTintList(new ColorStateList(states, new int[]{
+                    androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x18), theme.background()),
+                    theme.accentContentColor(),
+                    androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x33), theme.background())}));
+            toggle.setTrackDecorationTintList(ColorStateList.valueOf(theme.secondaryContentColor()));
+            toggle.setTextColor(theme.primaryContentColor());
+        }
         if (id == R.id.converter_divider) {
             view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x33));
         }

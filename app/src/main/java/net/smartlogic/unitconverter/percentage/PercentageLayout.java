@@ -25,14 +25,13 @@ public final class PercentageLayout extends ViewGroup {
         int width = MeasureSpec.getSize(ws), height = MeasureSpec.getSize(hs);
         open = getChildAt(2).getVisibility() != GONE;
         wide = width >= dim(R.dimen.bmi_wide_width) && width > height;
-        int required = measureContent(width, height, false, false);
-        if (required > height) required = measureContent(width, height, true, false);
-        if (required > height) required = measureContent(width, height, true, true);
+        int required = measureContent(width, height, false);
+        if (required > height) required = measureContent(width, height, true);
         fits = required <= height;
         setMeasuredDimension(width, height | (fits ? 0 : MEASURED_STATE_TOO_SMALL));
     }
 
-    private int measureContent(int width, int height, boolean compact, boolean tight) {
+    private int measureContent(int width, int height, boolean compact) {
         inset = gap = dim(compact ? R.dimen.converter_compact_row_spacing : R.dimen.converter_spacing);
         int available = width - inset * 2;
         int columns = wide ? 2 : 1;
@@ -40,15 +39,6 @@ public final class PercentageLayout extends ViewGroup {
         controlsWidth = Math.min(column, dim(R.dimen.bmi_controls_max_width));
         resultWidth = column;
         LinearLayout controls = (LinearLayout) getChildAt(0);
-        for (int row = 0; row < controls.getChildCount(); row++) {
-            View child = controls.getChildAt(row);
-            if (child.getId() == R.id.percentage_mode_group) continue;
-            if (child instanceof LinearLayout vertical && vertical.getOrientation() == LinearLayout.VERTICAL) {
-                if (vertical.getChildCount() > 0) {
-                    vertical.getChildAt(0).setVisibility(tight ? GONE : VISIBLE);
-                }
-            }
-        }
         setCompactValues(controls, compact);
         natural(controls, controlsWidth);
         View results = getChildAt(1);
@@ -61,8 +51,9 @@ public final class PercentageLayout extends ViewGroup {
         int regionTop = wide ? inset : inset + controls.getMeasuredHeight() + gap;
         int regionHeight = Math.max(0, height - inset - regionTop);
         resultY = regionTop + Math.max(0, (regionHeight - results.getMeasuredHeight()) / 2);
-        return inset * 2 + (wide ? Math.max(controls.getMeasuredHeight(), Math.max(keysHeight, results.getMeasuredHeight()))
-                : controls.getMeasuredHeight() + gap + Math.max(results.getMeasuredHeight(), keysHeight));
+        int regionRequired = open ? keysHeight : results.getMeasuredHeight();
+        return inset * 2 + (wide ? Math.max(controls.getMeasuredHeight(), regionRequired)
+                : controls.getMeasuredHeight() + gap + regionRequired);
     }
 
     private int dim(int id) {

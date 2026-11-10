@@ -3,7 +3,6 @@ package net.smartlogic.unitconverter.percentage;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputFilter.LengthFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,10 @@ public final class PercentageCalculatorFragment extends Fragment {
     private String restored = "";
     private Bundle recorderState;
     private OnBackPressedCallback back;
-    private final ThemeManager.Listener themeListener = theme -> render();
+    private final ThemeManager.Listener themeListener = theme -> {
+        if (getView() != null) ThemeApplier.apply(getView());
+        render();
+    };
 
     @Override public void onCreate(@Nullable Bundle state) {
         super.onCreate(state);
@@ -74,7 +76,8 @@ public final class PercentageCalculatorFragment extends Fragment {
         super.onViewCreated(view, state);
         back = new OnBackPressedCallback(false) {
             @Override public void handleOnBackPressed() {
-                tabs.selectTab(0);
+                if (selectedTab == 1) tabs.selectTab(0);
+                else closeKeypad();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), back);
@@ -139,7 +142,6 @@ public final class PercentageCalculatorFragment extends Fragment {
             EditText field = fields()[i];
             field.setShowSoftInputOnFocus(false);
             field.setFilters(new InputFilter[]{
-                    new LengthFilter(MAX_INPUT_CHARACTERS),
                     (source, start, end, dest, dstart, dend) -> {
                         if (binding) return null;
                         String next = dest.subSequence(0, dstart) + source.subSequence(start, end).toString()
@@ -158,6 +160,7 @@ public final class PercentageCalculatorFragment extends Fragment {
                 @Override public void afterTextChanged(Editable s) {
                     if (binding) return;
                     activeIndex = index;
+                    active = field;
                     render();
                     persist();
                 }
@@ -165,11 +168,12 @@ public final class PercentageCalculatorFragment extends Fragment {
             field.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
                     activeIndex = index;
+                    active = field;
                     openKeypad();
                 }
             });
             field.setOnClickListener(v -> {
-                activeIndex = index;
+                selectField(index);
                 openKeypad();
             });
         }
@@ -272,7 +276,10 @@ public final class PercentageCalculatorFragment extends Fragment {
     private void selectField(int index) {
         activeIndex = Math.max(0, Math.min(fields().length - 1, index));
         active = fields()[activeIndex];
+        boolean wasExpanded = keypadExpanded;
         active.requestFocus();
+        keypadExpanded = wasExpanded;
+        updateKeypad();
     }
 
     private void openKeypad() {
@@ -292,11 +299,11 @@ public final class PercentageCalculatorFragment extends Fragment {
         if (host == null) return;
         host.setVisibility(keypadExpanded ? View.VISIBLE : View.GONE);
         if (results != null) results.setVisibility(keypadExpanded ? View.GONE : View.VISIBLE);
-        if (back != null) back.setEnabled(selectedTab == 1);
+        if (back != null) back.setEnabled(!isHidden() && (selectedTab == 1 || keypadExpanded));
     }
 
     private void updateBack() {
-        if (back != null) back.setEnabled(selectedTab == 1);
+        if (back != null) back.setEnabled(!isHidden() && (selectedTab == 1 || keypadExpanded));
         updateKeypad();
     }
 
