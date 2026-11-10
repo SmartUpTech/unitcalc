@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <!-- A bank and closed lock represent a fixed-term deposit. -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/semantic_number" android:strokeWidth="2"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M3,8L11,3L19,8ZM5,11V17M10,11V17M3,20H10M14,14H21V21H14ZM15.5,14V12A2,2 0,0 1,19.5 12V14" />
+</vector>

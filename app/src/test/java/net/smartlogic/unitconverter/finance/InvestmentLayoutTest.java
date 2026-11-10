@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.finance;
+package net.smartlogic.unitconverter.calculator.finance.investment;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.os.Looper;
 import android.view.View;
 import androidx.appcompat.widget.SwitchCompat;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.emi.EmiLayout;
+import net.smartlogic.unitconverter.calculator.finance.emi.EmiLayout;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.theme.*;
 import org.junit.Test;
@@ -96,7 +96,12 @@ public class InvestmentLayoutTest extends InvestmentFragmentTest {
         View root=f.requireView();for(int n=0;n<3;n++){root.forceLayout();root.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));root.layout(0,0,width,height);root.getViewTreeObserver().dispatchOnPreDraw();Shadows.shadowOf(Looper.getMainLooper()).idle();}
         EmiLayout content=form(f).findViewById(R.id.emi_layout);String name=f.kind()+"-"+theme+"-"+scale+"-"+width+"x"+height+"-"+state;
         assertEquals(name,expected,content.fitsViewport());
-        if(expected&&editing){View keys=form(f).findViewById(R.id.emi_keys),summary=form(f).findViewById(R.id.emi_summary);if(width<height)assertTrue(name,summary.getBottom()<=keys.getTop());
+        if(expected&&editing){View keys=form(f).findViewById(R.id.emi_keys),summary=form(f).findViewById(R.id.emi_summary);if(width<height){
+            int margin=root.getResources().getDimensionPixelSize(R.dimen.emi_summary_dense_margin);
+            assertTrue(name+" result top space",summary.getTop()-form(f).findViewById(R.id.emi_fields).getBottom()>=margin);
+            assertTrue(name+" result bottom space",keys.getTop()-summary.getBottom()>=margin);
+        }
+            assertTrue(name+" readable result caption",((android.widget.TextView)form(f).findViewById(R.id.emi_value_label)).getTextSize()>=root.getResources().getDimension(R.dimen.graphy_value_text_size));
             assertTrue(name,form(f).findViewById(R.id.seven).getMeasuredHeight()>=48);assertTrue(name,form(f).findViewById(R.id.seven).getMeasuredWidth()>=48);
             assertControls(form(f),name);}
         Bitmap bitmap=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);root.draw(new Canvas(bitmap));

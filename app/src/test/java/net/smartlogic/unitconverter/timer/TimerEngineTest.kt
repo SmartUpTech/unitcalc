@@ -1,11 +1,11 @@
-package net.smartlogic.unitconverter.timer
+package net.smartlogic.unitconverter.calculator.tools.timer
 
 import android.content.Context
 
-import net.smartlogic.unitconverter.timer.model.RecentTimer
-import net.smartlogic.unitconverter.timer.model.TimerDraft
-import net.smartlogic.unitconverter.timer.model.TimerPhase
-import net.smartlogic.unitconverter.timer.service.NoOpTimerBackgroundCoordinator
+import net.smartlogic.unitconverter.calculator.tools.timer.model.RecentTimer
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerDraft
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerPhase
+import net.smartlogic.unitconverter.calculator.tools.timer.service.NoOpTimerBackgroundCoordinator
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -200,7 +200,7 @@ class TimerEngineTest {
     }
 
     @Test fun notificationActionsFollowTheSameStateMachine() {
-        val helper = net.smartlogic.unitconverter.timer.notification.TimerNotificationHelper
+        val helper = net.smartlogic.unitconverter.calculator.tools.timer.notification.TimerNotificationHelper
         engine.startFromDraft()
         clock.advance(3_000L)
         engine.handleNotificationAction(helper.ACTION_PAUSE)

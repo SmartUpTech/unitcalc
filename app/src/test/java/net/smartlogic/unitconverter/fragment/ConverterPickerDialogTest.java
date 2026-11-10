@@ -1,4 +1,8 @@
-package net.smartlogic.unitconverter.fragment;
+package net.smartlogic.unitconverter.converter;
+import net.smartlogic.unitconverter.converter.ConverterFragment;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
+import net.smartlogic.unitconverter.converter.currency.CurrencyConverterFragment;
+import net.smartlogic.unitconverter.converter.unit.UnitConverterFragment;
 
 import android.os.Bundle;
 import android.app.Application;

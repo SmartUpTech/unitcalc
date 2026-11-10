@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.bmi;
+package net.smartlogic.unitconverter.calculator.tools.bmi;
 
 import java.math.BigDecimal;
 import org.junit.Test;

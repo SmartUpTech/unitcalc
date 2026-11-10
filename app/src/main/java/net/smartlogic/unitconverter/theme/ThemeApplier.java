@@ -104,6 +104,7 @@ public final class ThemeApplier {
                         0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 item.setTitle(title);
             }
+            AppearanceTypography.applyMenu(drawer.getContext(), drawer.getMenu());
         }
     }
 

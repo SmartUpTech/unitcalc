@@ -1,11 +1,11 @@
-package net.smartlogic.unitconverter.age;
+package net.smartlogic.unitconverter.calculator.tools.age;
 
 import android.app.Application;
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;

@@ -171,11 +171,11 @@ public final class CalculatorCatalog {
         // Append registration to retain every existing catalog/menu identity.
         // Finance registration is appended to preserve existing menu identities.
         List<Entry> finance = new ArrayList<>();
-        finance.add(register(entry(ID_EMI, R.string.emi_calculator, R.drawable.ic_calculator,
+        finance.add(register(entry(ID_EMI, R.string.emi_calculator, R.drawable.ic_emi,
                 Destination.EMI_CALCULATOR, -1)));
-        finance.add(register(entry(ID_FD, R.string.fd_calculator, R.drawable.ic_calculator, Destination.FD_CALCULATOR, -1)));
-        finance.add(register(entry(ID_RD, R.string.rd_calculator, R.drawable.ic_calculator, Destination.RD_CALCULATOR, -1)));
-        finance.add(register(entry(ID_SIP, R.string.sip_calculator, R.drawable.ic_calculator, Destination.SIP_CALCULATOR, -1)));
+        finance.add(register(entry(ID_FD, R.string.fd_calculator, R.drawable.ic_fixed_deposit, Destination.FD_CALCULATOR, -1)));
+        finance.add(register(entry(ID_RD, R.string.rd_calculator, R.drawable.ic_recurring_deposit, Destination.RD_CALCULATOR, -1)));
+        finance.add(register(entry(ID_SIP, R.string.sip_calculator, R.drawable.ic_sip, Destination.SIP_CALCULATOR, -1)));
         tools.add(BY_ID.get(ID_TIMER));
         SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
         SECTIONS.add(2, new Section(R.string.drawer_section_finance, finance));

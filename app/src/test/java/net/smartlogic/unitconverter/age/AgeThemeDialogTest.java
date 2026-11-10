@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.age;
+package net.smartlogic.unitconverter.calculator.tools.age;
 
 import android.app.Application;
 import android.graphics.Bitmap;
@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.DialogFragment;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
 import net.smartlogic.unitconverter.theme.CalculatorThemes;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import org.junit.Test;

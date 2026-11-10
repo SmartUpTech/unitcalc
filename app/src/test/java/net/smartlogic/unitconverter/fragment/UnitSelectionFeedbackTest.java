@@ -1,4 +1,6 @@
 package net.smartlogic.unitconverter.fragment;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
+import net.smartlogic.unitconverter.converter.unit.UnitConverterFragment;
 
 import android.app.Application;
 import android.os.Looper;

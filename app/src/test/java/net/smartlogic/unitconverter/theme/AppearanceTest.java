@@ -47,6 +47,36 @@ public class AppearanceTest {
         });
         return inflater.inflate(layout, null);
     }
+    @Test public void drawerOffscreenActionsKeepSelectedFontAcrossRebinds() {
+        var drawer = new com.google.android.material.navigation.NavigationView(context);
+        var general = drawer.getMenu().addSubMenu("General");
+        var rate = general.add("Rate on Google Play");
+        var share = general.add("Share app");
+        var color = new android.text.style.ForegroundColorSpan(android.graphics.Color.RED);
+        var colored = new android.text.SpannableString(rate.getTitle());
+        colored.setSpan(color, 0, colored.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        rate.setTitle(colored);
+        for (Appearance.Font font : Appearance.Font.values()) {
+            Appearance.applyFont(context, font);
+            AppearanceTypography.apply(drawer);
+            for (var item : new android.view.MenuItem[]{drawer.getMenu().getItem(0), rate, share}) {
+                var title = (android.text.Spanned) item.getTitle();
+                var paint = new android.text.TextPaint();
+                paint.setTypeface(android.graphics.Typeface.DEFAULT);
+                var spans = title.getSpans(0, title.length(), android.text.style.MetricAffectingSpan.class);
+                for (var span : spans) span.updateMeasureState(paint);
+                assertEquals(font.name(), AppearanceTypography.typeface(context), paint.getTypeface());
+                paint.setTypeface(android.graphics.Typeface.DEFAULT);
+                for (var span : spans) span.updateDrawState(paint);
+                assertEquals(font.name(), AppearanceTypography.typeface(context), paint.getTypeface());
+                CharSequence before = item.getTitle();
+                AppearanceTypography.apply(drawer);
+                assertSame("Repeated layouts must not rebind menu titles", before, item.getTitle());
+            }
+            assertEquals(1, ((android.text.Spanned) rate.getTitle()).getSpans(0, rate.getTitle().length(),
+                    android.text.style.ForegroundColorSpan.class).length);
+        }
+    }
     @Test public void typographyRepairsWidgetTypefaceResetsWithoutChangingThePreference() {
         TextView text = new TextView(context);
         for (Appearance.Font font : Appearance.Font.values()) {

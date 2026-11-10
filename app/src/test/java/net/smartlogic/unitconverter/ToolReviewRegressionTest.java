@@ -1,4 +1,10 @@
 package net.smartlogic.unitconverter;
+import net.smartlogic.unitconverter.calculator.finance.emi.EmiFormatter;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyLayout;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelHistoryState;
+import net.smartlogic.unitconverter.calculator.tools.percentage.PercentageCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.tools.percentage.PercentageLayout;
 
 import android.app.Application;
 import android.widget.EditText;
@@ -73,11 +79,11 @@ public class ToolReviewRegressionTest {
             field.setText("2");
             field.performClick();
             field.setSelection(1);
-            fragment.onKeypadKey(R.id.three);
+            host.findViewById(R.id.three).performClick();
             assertEquals("23", field.getText().toString());
-            fragment.onKeypadKey(R.id.backspace);
+            host.findViewById(R.id.backspace).performClick();
             assertEquals("2", field.getText().toString());
-            fragment.onKeypadKey(R.id.ac);
+            host.findViewById(R.id.ac).performClick();
             assertEquals("", field.getText().toString());
         }
         EditText pax = host.findViewById(R.id.fe_passengers_input);
@@ -103,7 +109,7 @@ public class ToolReviewRegressionTest {
         layout(host);
         assertTrue(((PercentageLayout) host.findViewById(R.id.percentage_root)).contentFits());
         second.setSelection(2);
-        fragment.onKeypadKey(R.id.three);
+        host.findViewById(R.id.three).performClick();
         assertEquals("123", second.getText().toString());
         assertEquals("250", first.getText().toString());
         second.getText().replace(0, 3, "1234567890123");
@@ -150,7 +156,7 @@ public class ToolReviewRegressionTest {
                 net.smartlogic.unitconverter.model.Unit.KILOMETRE,
                 net.smartlogic.unitconverter.model.Unit.L_100K, false, "USD");
         fragment.restoreFromHistory(null, saved.toPayload());
-        String usd = new net.smartlogic.unitconverter.emi.EmiFormatter(host).money(new java.math.BigDecimal("20"), "USD");
+        String usd = new net.smartlogic.unitconverter.calculator.finance.emi.EmiFormatter(host).money(new java.math.BigDecimal("20"), "USD");
         assertEquals(usd, ((android.widget.TextView) host.findViewById(R.id.fe_trip_cost_value)).getText().toString());
         assertEquals("INR", Preferences.getInstance(host).getPreferredCurrency());
         assertEquals("USD", FuelHistoryState.fromDraft(Preferences.getInstance(host).getFuelEfficiencyState()).currencyCode);

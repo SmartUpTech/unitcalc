@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.emi;
+package net.smartlogic.unitconverter.calculator.finance.emi;
 
 import android.app.Application;
 import android.content.res.Configuration;
@@ -71,7 +71,13 @@ public class EmiLayoutTest {
             assertEquals(name, expected, content.fitsViewport());
             if (expected && editing) {
                 View summary = viewport.findViewById(R.id.emi_summary), keys = viewport.findViewById(R.id.emi_keys);
-                if (width < height) assertTrue(name, summary.getBottom() <= keys.getTop());
+                if (width < height) {
+                    int margin = app.getResources().getDimensionPixelSize(R.dimen.emi_summary_dense_margin);
+                    assertTrue(name + " result top space", summary.getTop() - viewport.findViewById(R.id.emi_fields).getBottom() >= margin);
+                    assertTrue(name + " result bottom space", keys.getTop() - summary.getBottom() >= margin);
+                }
+                assertTrue(name + " readable result caption", ((TextView) viewport.findViewById(R.id.emi_value_label)).getTextSize()
+                        >= app.getResources().getDimension(R.dimen.graphy_value_text_size));
                 assertTrue("numeric key width", viewport.findViewById(R.id.seven).getMeasuredWidth() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
                 assertTrue("numeric key height", viewport.findViewById(R.id.seven).getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
                 assertTrue(keys.getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target) * 4);

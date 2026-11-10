@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.finance;
+package net.smartlogic.unitconverter.calculator.finance.investment;
 
 import android.app.Application;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.emi.EmiDialogFragment;
+import net.smartlogic.unitconverter.calculator.finance.emi.EmiDialogFragment;
 import net.smartlogic.unitconverter.helper.Preferences;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import org.junit.Test;

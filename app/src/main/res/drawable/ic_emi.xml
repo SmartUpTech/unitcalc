@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <!-- A payment statement and clock represent scheduled loan instalments. -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/semantic_number" android:strokeWidth="2"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M14,7V3H4V21L7,19L10,21L12,19M7,7H10M7,11H9M7,15H9M22,15A5,5 0,1 1,12 15A5,5 0,1 1,22 15M17,12V15L19,16" />
+</vector>

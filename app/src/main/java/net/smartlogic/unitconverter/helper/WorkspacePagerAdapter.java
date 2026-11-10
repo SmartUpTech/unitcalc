@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -19,17 +20,26 @@ public class WorkspacePagerAdapter extends RecyclerView.Adapter<WorkspacePagerAd
 
     private final int[] layoutResIds;
     private final PageBindListener listener;
+    private final LayoutInflater inflater;
 
     public WorkspacePagerAdapter(@NonNull @LayoutRes int[] layoutResIds,
                                  @NonNull PageBindListener listener) {
+        this(layoutResIds, listener, null);
+    }
+
+    public WorkspacePagerAdapter(@NonNull @LayoutRes int[] layoutResIds,
+                                 @NonNull PageBindListener listener,
+                                 @Nullable LayoutInflater inflater) {
         this.layoutResIds = layoutResIds;
         this.listener = listener;
+        this.inflater = inflater;
     }
 
     @NonNull
     @Override
     public PageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+        // Fragment-owned inflaters attach XML child fragments to their calculator owner.
+        View view = (inflater != null ? inflater : LayoutInflater.from(parent.getContext()))
                 .inflate(layoutResIds[viewType], parent, false);
         return new PageHolder(view);
     }

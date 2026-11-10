@@ -2,9 +2,13 @@
 
 Finance is the third drawer section: EMI, FD, RD, SIP. Existing EMI and catalog identities are retained. The new tools are separate destinations, with independent drafts, history and favorites, using the same Java/XML workspace, EMI adaptive layout, converter keypad, theme renderer, paged tables and Graphy primitives.
 
+Catalog icons share a tintable 24dp vector style: EMI uses a payment statement/clock, FD a bank/lock, RD a calendar/repeat arrow and SIP a growth chart. `CalculatorCatalog` owns these mappings for the drawer, Explore and Favorites; do not duplicate tool icons in individual screens.
+
+EMI/FD/RD/SIP share balanced result typography: 28sp primary values (22sp in compact layouts), 16sp result captions and 18sp supporting totals (16sp compact). Secondary guidance uses 16sp normally and the existing 13sp caption role only in the densest layout. `EmiLayout` reserves space above and below the result section: 16dp normally, 8dp compact and 4dp in the densest supported layout. Spare portrait space is shared above/below the summary; essential inputs and canonical keypad targets retain priority. These are shared resource roles, not per-tool styling.
+
 ## Authoritative calculations
 
-`finance/InvestmentCalculator` validates immutable `InvestmentInputs` and returns `InvestmentResult`/`InvestmentPeriod` snapshots. Every display, history entry, schedule and Graphy consumes these snapshots. Decimal inputs use DECIMAL128 intermediates and HALF_EVEN at currency boundaries. Posted period growth is the difference between rounded balances and contributions; totals therefore reconcile without accumulating monthly rounding error. Step-up contributions are rounded at each increase.
+`calculator/finance/investment/InvestmentCalculator` validates immutable `InvestmentInputs` and returns `InvestmentResult`/`InvestmentPeriod` snapshots. Every display, history entry, schedule and Graphy consumes these snapshots. Decimal inputs use DECIMAL128 intermediates and HALF_EVEN at currency boundaries. Posted period growth is the difference between rounded balances and contributions; totals therefore reconcile without accumulating monthly rounding error. Step-up contributions are rounded at each increase.
 
 - SIP contributes at period start, then multiplies by `1 + annualPercentage/1200`. Optional step-up every 3/6/12 months adds an amount or multiplies the previous contribution by `1 + percentage/100`, starting with contribution 4/7/13. Disabled settings and independent amount/percentage drafts are retained. Return projections are not guaranteed.
 - RD contributes at period start and uses the equivalent monthly factor `(1 + annualPercentage/400)^(1/3)` for quarterly compounding. A bounded decimal Newton iteration supplies the root, rather than binary floating-point powers.

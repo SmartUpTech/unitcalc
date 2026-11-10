@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.finance;
+package net.smartlogic.unitconverter.calculator.finance.investment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

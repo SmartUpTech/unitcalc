@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.fuel;
+package net.smartlogic.unitconverter.calculator.tools.fuel;
 
 import net.smartlogic.unitconverter.model.Unit;
 import org.junit.Test;

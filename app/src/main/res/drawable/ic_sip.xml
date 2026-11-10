@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Growing contributions and a trend arrow represent an investment plan. -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/semantic_number" android:strokeWidth="2"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M3,3V21H21M7,17V14M12,17V12M17,17V10M6,11L11,6L14,8L19,3M15,3H19V7" />
+</vector>

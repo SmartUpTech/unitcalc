@@ -34,6 +34,10 @@ shading are limited to the finish styles.
 
 `AppearanceTypography` handles the View boundary (including dynamic rows) and
 Canvas font lookup; GraphyTheme supplies the same bundled family to Compose.
+Drawer menu titles, including nested sections and offscreen Rate/Share actions,
+also carry the selected font for measurement and drawing. Recycling a drawer row
+must not restore the stock widget font. Existing title colors are preserved;
+changing font replaces the font span without accumulating spans.
 Android retains its language fallback. Fonts are bundled for offline use; their
 OFL licenses are under docs/licenses. Oswald remains the default.
 

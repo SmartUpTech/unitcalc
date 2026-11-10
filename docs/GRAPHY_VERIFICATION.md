@@ -75,10 +75,10 @@ cache-fetch time, not a guaranteed provider quote timestamp; freshness/fetch pol
 ## Files changed
 - `AGENTS.md`
 - `app/build.gradle`
-- `app/src/main/java/net/smartlogic/unitconverter/fragment/CalculatorFragment.java`
-- `app/src/main/java/net/smartlogic/unitconverter/fragment/ConverterFragment.java`
-- `app/src/main/java/net/smartlogic/unitconverter/fragment/CurrencyConverterFragment.java`
-- `app/src/main/java/net/smartlogic/unitconverter/fragment/UnitConverterFragment.java`
+- `app/src/main/java/net/smartlogic/unitconverter/calculator/basic/CalculatorFragment.java`
+- `app/src/main/java/net/smartlogic/unitconverter/converter/ConverterFragment.java`
+- `app/src/main/java/net/smartlogic/unitconverter/converter/currency/CurrencyConverterFragment.java`
+- `app/src/main/java/net/smartlogic/unitconverter/converter/unit/UnitConverterFragment.java`
 - `app/src/main/java/net/smartlogic/unitconverter/graphy/builder/ConversionGraphBuilder.java`
 - `app/src/main/java/net/smartlogic/unitconverter/graphy/builder/ExpressionGraphBuilder.java`
 - `app/src/main/java/net/smartlogic/unitconverter/graphy/compose/GraphyPanelController.kt`

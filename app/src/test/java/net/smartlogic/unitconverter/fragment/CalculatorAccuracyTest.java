@@ -1,4 +1,5 @@
 package net.smartlogic.unitconverter.fragment;
+import net.smartlogic.unitconverter.calculator.basic.CalculatorFragment;
 
 import android.app.Application;
 import android.os.Bundle;

@@ -1,4 +1,6 @@
 package net.smartlogic.unitconverter.fragment;
+import net.smartlogic.unitconverter.converter.ConverterFragment;
+import net.smartlogic.unitconverter.converter.currency.CurrencyConverterFragment;
 
 import android.app.Application;
 import android.widget.EditText;

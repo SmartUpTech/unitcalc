@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.timer
+package net.smartlogic.unitconverter.calculator.tools.timer
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

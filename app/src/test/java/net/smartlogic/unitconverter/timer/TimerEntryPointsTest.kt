@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.timer
+package net.smartlogic.unitconverter.calculator.tools.timer
 
 import android.app.Application
 import android.app.Notification
@@ -6,10 +6,10 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.activity.MainActivity
-import net.smartlogic.unitconverter.timer.model.TimerDraft
-import net.smartlogic.unitconverter.timer.model.TimerPhase
-import net.smartlogic.unitconverter.timer.notification.TimerNotificationHelper
-import net.smartlogic.unitconverter.timer.widget.TimerWidgetRenderer
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerDraft
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerPhase
+import net.smartlogic.unitconverter.calculator.tools.timer.notification.TimerNotificationHelper
+import net.smartlogic.unitconverter.calculator.tools.timer.widget.TimerWidgetRenderer
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

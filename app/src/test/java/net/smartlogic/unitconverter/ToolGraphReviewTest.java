@@ -1,4 +1,10 @@
 package net.smartlogic.unitconverter;
+import net.smartlogic.unitconverter.calculator.finance.emi.EmiFormatter;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyCalculator;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyGraphBuilder;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelHistoryState;
+import net.smartlogic.unitconverter.calculator.tools.percentage.PercentageCalculator;
+import net.smartlogic.unitconverter.calculator.tools.percentage.PercentageGraphBuilder;
 
 import android.app.Application;
 import java.math.BigDecimal;
@@ -51,7 +57,7 @@ public class ToolGraphReviewTest {
             assertEquals("4", node(graph, "passengers").displayValue());
             assertTrue(edge(graph, "passengers", "share_op"));
             assertTrue(edge(graph, "share_op", "result"));
-            assertEquals(new net.smartlogic.unitconverter.emi.EmiFormatter(RuntimeEnvironment.getApplication()).money(result.costPerPassenger(), "USD"), node(graph, "result").displayValue());
+            assertEquals(new net.smartlogic.unitconverter.calculator.finance.emi.EmiFormatter(RuntimeEnvironment.getApplication()).money(result.costPerPassenger(), "USD"), node(graph, "result").displayValue());
         }
     }
     @Test public void historyReadsOldVersionAndRetainsCurrencyInNewPayloadAndDraft() {

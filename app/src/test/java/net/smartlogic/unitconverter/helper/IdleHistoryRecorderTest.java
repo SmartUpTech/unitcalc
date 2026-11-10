@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.fragment.ConverterFragment;
+import net.smartlogic.unitconverter.converter.ConverterFragment;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;

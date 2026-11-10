@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <!-- A calendar and repeat arrow represent regular deposits. -->
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/semantic_number" android:strokeWidth="2"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M4,5H20V21H4ZM4,9H20M8,3V7M16,3V7M15,15A3,3 0,1 0,12 18M15,12V15H12" />
+</vector>

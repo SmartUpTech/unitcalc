@@ -123,7 +123,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
                         if (graphyOutput != null) graphy.update(graphyOutput);
                     }
                     render();
-                }));
+                }, getLayoutInflater()));
         int restoreTab = selectedTab;
         tabs = new WorkspaceTabController(pager, view.findViewById(R.id.workspace_tabs),
                 new int[]{R.string.tab_calculate, R.string.graphy}, new WorkspaceTabController.Callback() {

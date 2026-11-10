@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.percentage;
+package net.smartlogic.unitconverter.calculator.tools.percentage;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -1,8 +1,8 @@
-package net.smartlogic.unitconverter.timer
+package net.smartlogic.unitconverter.calculator.tools.timer
 
 import android.app.AlarmManager
 import android.content.Context
-import net.smartlogic.unitconverter.timer.service.TimerAlarmScheduler
+import net.smartlogic.unitconverter.calculator.tools.timer.service.TimerAlarmScheduler
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

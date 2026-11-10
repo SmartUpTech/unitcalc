@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.bmi;
+package net.smartlogic.unitconverter.calculator.tools.bmi;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class BmiHistoryInputsTest {

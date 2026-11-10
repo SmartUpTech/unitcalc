@@ -28,6 +28,18 @@ Paths below are relative to docs/. Confirm implementation when a document is sta
 ## PROTOCOL
 1. Analyze task. 2. Load relevant docs. 3. Target files. 4. Implement/Validate.
 
+## SOURCE ROUTING (POST-REFACTOR)
+Paths below are relative to `app/src/main/java/net/smartlogic/unitconverter/`.
+- Basic calculator -> `calculator/basic/`.
+- Finance -> `calculator/finance/emi/` and `calculator/finance/investment/` (shared FD/RD/SIP implementation).
+- Tools -> `calculator/tools/{age,bmi,fuel,percentage,timer}/`; timer Compose, model, service, notification, alarm and widget code stays inside its tool package.
+- Converters -> `converter/` (shared host/picker), `converter/unit/`, `converter/currency/`.
+- Shared screens -> `fragment/` (Explore, Favorites, History); entry points -> `activity/`.
+- Shared owners remain `model/`, `helper/`, `utils/`, `widget/`, `theme/`, `graphy/` and `games/`. Reuse these across groups.
+- Navigation registration -> `model/CalculatorCatalog.java`; workspace dispatch -> `activity/MainActivity.java`.
+- When moving a tool, update tests (including package declarations and reflection references), XML custom-view names, manifest components and entry-point imports. Do not rename persisted catalog IDs or preference keys just to match a package move.
+- See `docs/ARCHITECTURE.md` for package boundaries and `docs/TESTING.md` for build/device verification.
+
 ## SHARED SKILLS
 Keep reusable skills in .agents/skills/ as the single source of truth. Agents that do not auto-discover this directory must follow this routing and open the linked SKILL.md manually; directory naming alone does not guarantee every tool's automatic discovery.
 

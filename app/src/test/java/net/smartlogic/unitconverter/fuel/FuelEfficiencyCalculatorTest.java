@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.fuel;
+package net.smartlogic.unitconverter.calculator.tools.fuel;
 
 import java.math.BigDecimal;
 import net.smartlogic.unitconverter.model.Conversion;

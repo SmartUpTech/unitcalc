@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.emi;
+package net.smartlogic.unitconverter.calculator.finance.emi;
 
 import android.app.Application;
 import java.io.File;

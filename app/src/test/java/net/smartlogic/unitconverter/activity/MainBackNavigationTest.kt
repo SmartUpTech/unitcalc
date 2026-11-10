@@ -8,7 +8,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.PopupMenu
 import com.google.android.material.tabs.TabLayout
-import net.smartlogic.unitconverter.fragment.CalculatorFragment
+import net.smartlogic.unitconverter.calculator.basic.CalculatorFragment
 import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.app.AppConst
 import net.smartlogic.unitconverter.helper.Preferences

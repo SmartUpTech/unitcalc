@@ -496,8 +496,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
             int restoredId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
             if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator
                     || restoredId == R.id.fuel_efficiency_calculator || restoredId == R.id.percentage_calculator
-                    || restoredId == R.id.emi_calculator) selectTab(restoredId);
-            if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator || restoredId == R.id.emi_calculator || isInvestmentId(restoredId)) selectTab(restoredId);
+                    || restoredId == R.id.emi_calculator || isInvestmentId(restoredId)) selectTab(restoredId);
             else bottomNavigationView.setSelectedItemId(restoredId);
         }
     }
@@ -584,6 +583,18 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private void closeEmi() {
         if (activeFragment instanceof EmiCalculatorFragment emi && emi.handleBack()) return;
         selectTab(emiReturnTab == R.id.emi_calculator || emiReturnTab == R.id.history ? R.id.calculator : emiReturnTab, false);
+        refreshActiveCalculatorId();
+        updateFavoriteMenuItem();
+    }
+
+    private static boolean isInvestmentId(int itemId) {
+        return itemId == R.id.fd_calculator || itemId == R.id.rd_calculator || itemId == R.id.sip_calculator;
+    }
+
+    private void closeInvestment() {
+        if (activeFragment instanceof InvestmentCalculatorFragment investment && investment.handleBack()) return;
+        selectTab(isInvestmentId(financeReturnTab) || financeReturnTab == R.id.history
+                ? R.id.calculator : financeReturnTab, false);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
@@ -943,10 +954,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         // A widget/notification may have opened Timer during onCreate.
         // Reselecting a tab here would immediately hide that screen.
         if (!timerVisible) {
-            if (currentId == R.id.history || currentId == R.id.age_calculator || currentId == R.id.bmi_calculator || currentId == R.id.emi_calculator || isInvestmentId(currentId)) {
             if (currentId == R.id.history || currentId == R.id.age_calculator || currentId == R.id.bmi_calculator
                     || currentId == R.id.fuel_efficiency_calculator || currentId == R.id.percentage_calculator
-                    || currentId == R.id.emi_calculator) {
+                    || currentId == R.id.emi_calculator || isInvestmentId(currentId)) {
                 if (currentId == R.id.history && !(activeFragment instanceof HistoryFragment)
                         || currentId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)
                         || currentId == R.id.bmi_calculator && !(activeFragment instanceof BmiCalculatorFragment)

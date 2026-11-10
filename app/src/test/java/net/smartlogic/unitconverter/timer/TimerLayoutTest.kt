@@ -1,4 +1,4 @@
-package net.smartlogic.unitconverter.timer
+package net.smartlogic.unitconverter.calculator.tools.timer
 
 import android.app.Application
 import android.content.res.Configuration
@@ -22,8 +22,8 @@ import net.smartlogic.unitconverter.R
 import net.smartlogic.unitconverter.graphy.compose.theme.GraphyTheme
 import net.smartlogic.unitconverter.theme.CalculatorThemes
 import net.smartlogic.unitconverter.theme.ThemeManager
-import net.smartlogic.unitconverter.timer.compose.*
-import net.smartlogic.unitconverter.timer.model.TimerDraft
+import net.smartlogic.unitconverter.calculator.tools.timer.compose.*
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerDraft
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -184,7 +184,7 @@ class TimerLayoutTest {
         ThemeManager.init(app)
         TimerEngine.resetForTests()
         val engine = TimerEngine.getInstance(app)
-        engine.setBackgroundCoordinatorForTests(net.smartlogic.unitconverter.timer.service.NoOpTimerBackgroundCoordinator())
+        engine.setBackgroundCoordinatorForTests(net.smartlogic.unitconverter.calculator.tools.timer.service.NoOpTimerBackgroundCoordinator())
         engine.setAlarmPlayerEnabledForTests(false)
         engine.reset()
         engine.updateDraft(TimerDraft(minutes = 5, label = "Focus"))
