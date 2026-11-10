@@ -10,6 +10,11 @@ import net.smartlogic.unitconverter.theme.ThemeAccessLifecycle;
 
 public class UnitConverter extends Application {
 
+    @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        net.smartlogic.unitconverter.calculator.tools.timer.TimerEngine.refreshLanguageIfActive();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

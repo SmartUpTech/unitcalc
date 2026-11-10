@@ -26,11 +26,18 @@
     <string name="centilitre">Centilitre</string>
     <string name="decilitre">Decilitre</string>
     <string name="cm_water">Centimetre of water (conventional)</string>
-    <string name="kgf_m">Kilogram-force metre</string>
-    <string name="n_cm">Newton centimetre</string>
     <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
     <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
     <string name="bmi_height_cm">Height in centimetres</string>
     <string name="bmi_metric_height">Centimetres (cm)</string>
     <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per litre and passengers.</string>
+    <string name="appearance_customise">Customise</string>
+    <string name="appearance_reset">Reset customisation</string>
+    <string name="sq_metre">Sq Metre</string>
+    <string name="l_100k">Litres/100km</string>
+    <string name="metre">Metre</string>
+    <string name="m_s">Metre/second</string>
+    <string name="m_min">Metre/minute</string>
+    <string name="litre">Litre</string>
+    <string name="cubic_m">Cubic Metre</string>
 </resources>

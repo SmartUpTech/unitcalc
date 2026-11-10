@@ -80,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
         public View onCreateView(@NonNull android.view.LayoutInflater inflater,
                                  @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ComposeView view = new ComposeView(requireContext());
-            view.setId(View.generateViewId());
+            view.setId(R.id.settings_compose_content);
             SettingsUi.bind(view, this, () -> ((SettingsActivity) requireActivity()).closeSettings());
             return view;
         }

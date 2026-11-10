@@ -192,6 +192,74 @@ public class ConverterPickerDialogTest {
         }
     }
 
+    @Test public void newSearchStartsAtFirstMatchAfterScrollingToSelectedRegion() {
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            Fragment host = host(controller.get());
+            ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
+            for (int i = 0; i < 60; i++) {
+                labels.add("Region " + i);
+                details.add("");
+                keywords.add(i < 10 ? "matching" : "other");
+            }
+            ConverterPickerDialogFragment dialog = ConverterPickerDialogFragment.newInstance(
+                    "Region", false, 100, 50, labels, details, keywords, null);
+            dialog.showFor(host);
+            ListView list = dialog.requireDialog().findViewById(R.id.converter_picker_list);
+            list.setSelectionFromTop(50, -30);
+            shadowOf(Looper.getMainLooper()).idle();
+            EditText search = dialog.requireDialog().findViewById(R.id.converter_picker_search);
+            search.setText("matching");
+            shadowOf(Looper.getMainLooper()).idle();
+            list.measure(android.view.View.MeasureSpec.makeMeasureSpec(320, android.view.View.MeasureSpec.EXACTLY),
+                    android.view.View.MeasureSpec.makeMeasureSpec(150, android.view.View.MeasureSpec.EXACTLY));
+            list.layout(0, 0, 320, 150);
+            assertEquals(10, list.getCount());
+            assertEquals(0, list.getFirstVisiblePosition());
+            assertEquals("Region 0", list.getItemAtPosition(list.getFirstVisiblePosition()));
+        }
+    }
+
+    @Test public void restoredRegionPickerReloadsLabelsInCurrentLanguage() {
+        org.robolectric.RuntimeEnvironment.setQualifiers("fr-rFR");
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            Fragment host = host(controller.get());
+            ConverterPickerDialogFragment dialog = ConverterPickerDialogFragment.newInstance(
+                    "Region", false, 100, 0, values("Germany"), values("DE"), values("Germany DE"), null)
+                    .useLabelResources(R.string.regional_region, new int[]{R.string.region_de});
+            dialog.showFor(host);
+            ListView list = dialog.requireDialog().findViewById(R.id.converter_picker_list);
+            assertEquals("Allemagne", list.getItemAtPosition(0));
+            ((EditText) dialog.requireDialog().findViewById(R.id.converter_picker_search)).setText("DE");
+            controller.recreate();
+            shadowOf(Looper.getMainLooper()).idle();
+            Fragment restoredHost = controller.get().getSupportFragmentManager().findFragmentByTag("host");
+            ConverterPickerDialogFragment restored = (ConverterPickerDialogFragment) restoredHost
+                    .getChildFragmentManager().findFragmentByTag(ConverterPickerDialogFragment.TAG);
+            assertEquals("DE", ((EditText) restored.requireDialog().findViewById(R.id.converter_picker_search)).getText().toString());
+            assertEquals("Allemagne", ((ListView) restored.requireDialog().findViewById(R.id.converter_picker_list)).getItemAtPosition(0));
+        }
+    }
+
+    @Test public void restoredPreferredCurrencyPickerReloadsCatalogInCurrentLanguage() {
+        org.robolectric.RuntimeEnvironment.setQualifiers("fr-rFR");
+        try (ActivityController<AppCompatActivity> controller = activity()) {
+            Fragment host = host(controller.get());
+            android.content.res.Configuration english = new android.content.res.Configuration(controller.get().getResources().getConfiguration());
+            english.setLocale(java.util.Locale.US);
+            ConverterPickerDialogFragment dialog = net.smartlogic.unitconverter.helper.PreferredCurrency.createPicker(
+                    controller.get().createConfigurationContext(english));
+            dialog.showFor(host);
+            ListView list = dialog.requireDialog().findViewById(R.id.converter_picker_list);
+            boolean frenchDollar = false;
+            for (int i = 0; i < list.getCount(); i++) {
+                String label = list.getItemAtPosition(i).toString();
+                assertFalse(label, label.contains("US Dollar"));
+                frenchDollar |= label.contains("dollar des États-Unis");
+            }
+            assertTrue("Currency labels must use the recreated Activity language", frenchDollar);
+        }
+    }
+
     @Test public void searchRestoresAfterRecreationAndDuplicateOpenIsIgnored() {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Fragment host = host(controller.get());
@@ -240,6 +308,7 @@ public class ConverterPickerDialogTest {
     @Test public void allFourRealDropdownsUseTheDialogAndKeepInputAndPreferences() {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Preferences prefs = Preferences.getInstance(controller.get());
+            prefs.migrateRegionalPreferences(false);
             prefs.setLastConversion(Conversion.LENGTH);
             prefs.setLastFromConversion(0);
             prefs.setLastToConversion(1);
@@ -250,16 +319,19 @@ public class ConverterPickerDialogTest {
             for (boolean source : new boolean[]{true, false}) {
                 android.widget.Spinner spinner = unit.requireView().findViewById(source ? R.id.fromUnit : R.id.toUnit);
                 spinner.performClick();
-                choose(unit, "Metre (m)", source ? "Length - Select From Value" : "Length - Select To Value");
+                choose(unit, unit.getString(R.string.converter_picker_unit_label, unit.getString(R.string.metre), "m"),
+                        source ? "Length - Select From Value" : "Length - Select To Value");
                 shadowOf(Looper.getMainLooper()).idle();
                 assertEquals(Unit.METRE, ((Unit) spinner.getSelectedItem()).getId());
                 assertEquals(spinner.getSelectedItemPosition(), source ? prefs.getLastFromConversion() : prefs.getLastToConversion());
                 assertEquals("12", ((EditText) unit.requireView().findViewById(R.id.input)).getText().toString());
             }
             unit.requireView().findViewById(R.id.fromUnit).performClick();
-            choose(unit, "Feet (ft)", "Length - Select From Value");
+            choose(unit, unit.getString(R.string.converter_picker_unit_label, unit.getString(R.string.feet), "ft"),
+                    "Length - Select From Value");
             unit.requireView().findViewById(R.id.toUnit).performClick();
-            choose(unit, "Picometre (pm)", "Length - Select To Value");
+            choose(unit, unit.getString(R.string.converter_picker_unit_label, unit.getString(R.string.picometre), "pm"),
+                    "Length - Select To Value");
             shadowOf(Looper.getMainLooper()).idle();
             EditText unitInput = unit.requireView().findViewById(R.id.input);
             EditText unitOutput = unit.requireView().findViewById(R.id.output);
@@ -268,7 +340,7 @@ public class ConverterPickerDialogTest {
             unitRoot.measure(android.view.View.MeasureSpec.makeMeasureSpec(360, android.view.View.MeasureSpec.EXACTLY),
                     android.view.View.MeasureSpec.makeMeasureSpec(460, android.view.View.MeasureSpec.EXACTLY));
             unitRoot.layout(0, 0, 360, 460);
-            assertEquals(30479695200000000d, Double.parseDouble(unitOutput.getText().toString()), 4d);
+            assertEquals("30,479,695,200,000,000", unitOutput.getText().toString());
             assertEquals(unit.getResources().getDimension(R.dimen.converter_value_text_size), unitInput.getTextSize(), 0.1f);
             assertTrue(unitOutput.getTextSize() < unitInput.getTextSize());
             OfflineCurrencyFragment currency = new OfflineCurrencyFragment();

@@ -25,9 +25,14 @@
     <string name="centilitre">Centilitre</string>
     <string name="decilitre">Decilitre</string>
     <string name="cm_water">Centimetre of water (conventional)</string>
-    <string name="kgf_m">Kilogram-force metre</string>
-    <string name="n_cm">Newton centimetre</string>
     <string name="bmi_height_cm">Height in centimetres</string>
     <string name="bmi_metric_height">Centimetres (cm)</string>
     <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per litre and passengers.</string>
+    <string name="sq_metre">Sq Metre</string>
+    <string name="l_100k">Litres/100km</string>
+    <string name="metre">Metre</string>
+    <string name="m_s">Metre/second</string>
+    <string name="m_min">Metre/minute</string>
+    <string name="litre">Litre</string>
+    <string name="cubic_m">Cubic Metre</string>
 </resources>

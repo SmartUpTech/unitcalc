@@ -43,6 +43,8 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
     public static final String TAG = "converter_picker";
     private static final String TITLE = "title", LABELS = "labels", DETAILS = "details",
             KEYWORDS = "keywords", FLAGS = "flags", QUERY = "query", SCROLL = "scroll";
+    private static final String TITLE_RESOURCE = "title_resource", LABEL_RESOURCES = "label_resources",
+            PREFERRED_CURRENCY_TEXT = "preferred_currency_text";
     private EditText search;
     private ListView list;
     private PickerAdapter adapter;
@@ -74,6 +76,18 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         return true;
     }
 
+    /** Resource identities survive a system app-language change while a picker is open. */
+    public ConverterPickerDialogFragment useLabelResources(int titleResource, int[] labelResources) {
+        requireArguments().putInt(TITLE_RESOURCE, titleResource);
+        requireArguments().putIntArray(LABEL_RESOURCES, labelResources);
+        return this;
+    }
+
+    public ConverterPickerDialogFragment refreshPreferredCurrencyText() {
+        requireArguments().putBoolean(PREFERRED_CURRENCY_TEXT, true);
+        return this;
+    }
+
     /** Reuse the same searchable, restorable picker for non-unit selections. */
     public static ConverterPickerDialogFragment forValues(String title, int group, int selected,
             ArrayList<String> labels, int searchHint) {
@@ -86,6 +100,16 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
 
     @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = requireArguments();
+        if (args.getBoolean(PREFERRED_CURRENCY_TEXT)) {
+            args.putAll(net.smartlogic.unitconverter.helper.PreferredCurrency.createPicker(requireContext()).requireArguments());
+        }
+        int[] labelResources = args.getIntArray(LABEL_RESOURCES);
+        if (labelResources != null) {
+            ArrayList<String> labels = new ArrayList<>();
+            for (int resource : labelResources) labels.add(getString(resource));
+            args.putStringArrayList(LABELS, labels);
+            args.putString(TITLE, getString(args.getInt(TITLE_RESOURCE)));
+        }
         View root = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_converter_picker, null);
         CalculatorTheme theme = ThemeManager.get();
         TextView title = root.findViewById(R.id.converter_picker_title);
@@ -138,6 +162,9 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 adapter.search(s.toString());
+                // A new query must not retain the selected country's old list offset.
+                // Saved scroll state is restored separately after restoring the query.
+                list.setSelection(0);
             }
             @Override public void afterTextChanged(Editable s) { }
         });

@@ -31,19 +31,28 @@ def resources(directory):
 
 
 def placeholders(text):
-    return sorted(re.findall(r"%(?!%)(?:\d+\$)?[-+0 #]*\d*(?:\.\d+)?[sdfoxegbctSDFOXEGBCThH]", text))
+    return sorted(re.findall(r"%(?:\d+\$)?[-+0 #]*\d*(?:\.\d+)?[sdfoxegbctSDFOXEGBCThH]",
+                             text.replace("%%", "")))
 
 
 def text(element):
     return "".join(element.itertext())
 
 
-def audit():
+def audit(scope="all"):
     base, errors = resources(RES / "values")
     required = {key: value for key, value in base.items() if value.get("translatable") != "false"}
+    if scope == "settings":
+        prefixes = ("settings_", "prefs_", "pref_", "regional_", "region_", "appearance_", "button_",
+                    "theme_", "converter_picker_", "currency_name_", "currency_country_")
+        shared = {"games_privacy_options", "note_share_body", "share_app_subject",
+                  "title_activity_settings", "emi_preferred_currency", "emi_preferred_hint",
+                  "calculator", "drawer_unit_converter", "startup_currency_converter", "currency_converter", "timer"}
+        required = {key: value for key, value in required.items()
+                    if key[1].startswith(prefixes) or key[1].endswith("_calculator") or key[1] in shared}
     tags = [e.get("{http://schemas.android.com/apk/res/android}name")
             for e in ET.parse(RES / "xml/locales_config.xml").getroot()]
-    report = {"errors": errors, "base_translatable_resources": len(required), "locales": {}}
+    report = {"scope": scope, "errors": errors, "base_translatable_resources": len(required), "locales": {}}
     for tag in tags:
         language, _, region = tag.partition("-")
         qualifier = "in" if language == "id" else language
@@ -81,8 +90,9 @@ def audit():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--scope", choices=["all", "settings"], default="all")
     args = parser.parse_args()
-    report = audit()
+    report = audit(args.scope)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Locales: {len(report['locales'])}; errors: {len(report['errors'])}")

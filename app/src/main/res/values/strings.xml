@@ -1,28 +1,28 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="bmi_history_value">BMI: %1$s</string>
     <string name="settings_usage_analytics">Share usage analytics</string>
     <string name="settings_usage_analytics_summary">Help improve Calculator+ by sharing feature, theme and game usage with Google Analytics for Firebase. Calculations, amounts and history are excluded. Sharing is optional and off by default. You can change your choice here anytime. Choosing Do not allow stops collection and resets analytics data on this device.</string>
     <string name="settings_privacy_choices">Usage analytics</string>
     <string name="settings_analytics_allow">Allow usage analytics</string>
     <string name="settings_analytics_decline">Do not allow usage analytics</string>
-    <string name="launcher_name">Calculator+</string>
-    <string name="brand_name">Calculator+</string>
-    <string name="app_name">@string/brand_name</string>
-    <string name="app_bar_brand">Calculator+</string>
+    <string name="launcher_name" translatable="false">Calculator+</string>
+    <string name="brand_name" translatable="false">Calculator+</string>
+    <string name="app_name" translatable="false">@string/brand_name</string>
+    <string name="app_bar_brand" translatable="false">Calculator+</string>
     <string name="app_bar_product">CALCULATOR</string>
 
-    <string name="url_app_link">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
-    <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
-    <string name="url_smartup_website">https://smartuptech.github.io</string>
-    <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
+    <string name="url_app_link" translatable="false">https://play.google.com/store/apps/details?id=net.smartlogic.unitconverter</string>
+    <string name="url_other_apps" translatable="false">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
+    <string name="url_smartup_website" translatable="false">https://smartuptech.github.io</string>
+    <string name="url_privacy_policy" translatable="false">https://smartuptech.github.io/privacy_policy.html</string>
     <string name="description">Scientific calculator, unit converter and currency converter for everyday math.</string>
     <string name="keywords">scientific calculator, unit converter, currency converter, calculation history</string>
-    <string name="company">SMARTUP</string>
+    <string name="company" translatable="false">SMARTUP</string>
 
     <string name="note_share_body">Meet %1$s: a scientific calculator, unit converter and currency converter in one app. Calculate, convert and revisit your calculation history.\n\nTry it on Google Play:\n%2$s</string>
 
     <string name="share">Share</string>
-    <string name="url_exchangeratesapi">exchangeratesapi.io</string>
+    <string name="url_exchangeratesapi" translatable="false">exchangeratesapi.io</string>
 
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
@@ -90,15 +90,15 @@
     <string name="timer_widget_description">Calculator+ timer</string>
     <string name="timer_widget_open">Open timer</string>
     <string name="clear_history">Clear history</string>
-    <string name="plus">+</string>
-    <string name="minus">-</string>
-    <string name="multiply">×</string>
-    <string name="divide">÷</string>
-    <string name="equal">=</string>
+    <string name="plus" translatable="false">+</string>
+    <string name="minus" translatable="false">-</string>
+    <string name="multiply" translatable="false">×</string>
+    <string name="divide" translatable="false">÷</string>
+    <string name="equal" translatable="false">=</string>
     <string name="clear">AC</string>
     <string name="history">History</string>
-    <string name="history_conversion_input">%1$s %2$s → %3$s</string>
-    <string name="history_conversion_result">%1$s %2$s</string>
+    <string name="history_conversion_input" translatable="false">%1$s %2$s → %3$s</string>
+    <string name="history_conversion_result" translatable="false">%1$s %2$s</string>
     <string name="no_history">No history yet</string>
     <string name="scientific_mode">Scientific Mode</string>
     <string name="standard_mode">Standard Mode</string>
@@ -106,7 +106,7 @@
     <string name="invalid_expression">Invalid Expression</string>
 
     <!-- Graphy -->
-    <string name="graphy">Graphy</string>
+    <string name="graphy" translatable="false">Graphy</string>
     <string name="show_graphy">Show Graphy</string>
     <string name="hide_graphy">Hide Graphy</string>
     <string name="graphy_panel_content_description">Graphy calculation explanation panel</string>
@@ -120,18 +120,18 @@
     <string name="graphy_legend_final">Final calculated answer</string>
 
     <!-- Numbers -->
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
-    <string name="six">6</string>
-    <string name="seven">7</string>
-    <string name="eight">8</string>
-    <string name="nine">9</string>
-    <string name="zero">0</string>
-    <string name="double_zero">00</string>
-    <string name="dot">.</string>
+    <string name="one" translatable="false">1</string>
+    <string name="two" translatable="false">2</string>
+    <string name="three" translatable="false">3</string>
+    <string name="four" translatable="false">4</string>
+    <string name="five" translatable="false">5</string>
+    <string name="six" translatable="false">6</string>
+    <string name="seven" translatable="false">7</string>
+    <string name="eight" translatable="false">8</string>
+    <string name="nine" translatable="false">9</string>
+    <string name="zero" translatable="false">0</string>
+    <string name="double_zero" translatable="false">00</string>
+    <string name="dot" translatable="false">.</string>
 
     <!-- Canonical editor tokens (do not translate). -->
     <string name="sqrt" translatable="false">√</string>
@@ -174,7 +174,7 @@
 
     <!-- Area -->
     <string name="sq_kilometre">Sq Kilometer</string>
-    <string name="sq_metre">Sq Metre</string>
+    <string name="sq_metre">Sq Meter</string>
     <string name="sq_centimetre">Sq Centimeter</string>
     <string name="hectare">Hectare</string>
     <string name="sq_mile">Sq Mile</string>
@@ -205,9 +205,9 @@
     <string name="kilojoule">Kilojoule</string>
     <string name="calorie">Calorie</string>
     <string name="kilocalorie">Kilocalorie</string>
-    <string name="btu">BTU</string>
-    <string name="ft_lbF">ft-lbf</string>
-    <string name="in_lbF">in-lbf</string>
+    <string name="btu" translatable="false">BTU</string>
+    <string name="ft_lbF" translatable="false">ft-lbf</string>
+    <string name="in_lbF" translatable="false">in-lbf</string>
     <string name="kilowatt_hour">Kilowatt-Hour</string>
     <string name="watt_hour">Watt-Hour</string>
     <string name="megajoule">Megajoule</string>
@@ -217,14 +217,14 @@
     <!-- Fuel Consumption -->
     <string name="mpg_us">Miles/gallon (US)</string>
     <string name="mpg_uk">Miles/gallon (UK)</string>
-    <string name="l_100k">Litres/100km</string>
+    <string name="l_100k">Liters/100km</string>
     <string name="km_l">Kilometers/liter</string>
     <string name="miles_l">Miles/liter</string>
 
     <!-- Distance -->
     <string name="kilometre">Kilometer</string>
     <string name="mile">Miles</string>
-    <string name="metre">Metre</string>
+    <string name="metre">Meter</string>
     <string name="centimetre">Centimeter</string>
     <string name="millimetre">Millimeter</string>
     <string name="micrometre">Micrometer</string>
@@ -259,31 +259,31 @@
     <string name="megawatt">Megawatt</string>
     <string name="hp">HP (metric)</string>
     <string name="hp_uk">HP (mechanical)</string>
-    <string name="ft_lbf_s">ft-lbf/second</string>
+    <string name="ft_lbf_s" translatable="false">ft-lbf/second</string>
     <string name="calorie_s">Calorie/second</string>
     <string name="btu_s">BTU/second</string>
-    <string name="kva">kV-A</string>
+    <string name="kva" translatable="false">kV-A</string>
 
     <!-- Pressure -->
     <string name="megapascal">Megapascal</string>
     <string name="kilopascal">Kilopascal</string>
     <string name="pascal">Pascal</string>
     <string name="bar">Bar</string>
-    <string name="psi">PSI</string>
-    <string name="psf">PSF</string>
+    <string name="psi" translatable="false">PSI</string>
+    <string name="psf" translatable="false">PSF</string>
     <string name="atmosphere">Atmosphere</string>
     <string name="technical_atmosphere">Technical Atm</string>
-    <string name="mmhg">mm Hg</string>
+    <string name="mmhg" translatable="false">mm Hg</string>
     <string name="torr">Torr</string>
     <string name="hectopascal">Hectopascal</string>
 
     <!-- Speed -->
     <string name="km_h">Kilometer/hour</string>
     <string name="mph">Mile/hour</string>
-    <string name="m_s">Metre/second</string>
+    <string name="m_s">Meter/second</string>
     <string name="fps">Foot/second</string>
     <string name="knot">Knot</string>
-    <string name="m_min">Metre/minute</string>
+    <string name="m_min">Meter/minute</string>
     <string name="km_s">Kilometer/second</string>
 
     <!-- Temperature -->
@@ -328,9 +328,9 @@
     <string name="gallon_uk">Gallon (UK)</string>
     <string name="barrel_uk">Barrel (UK)</string>
     <string name="millilitre">Milliliter</string>
-    <string name="litre">Litre</string>
+    <string name="litre">Liter</string>
     <string name="cubic_cm">Cubic cm</string>
-    <string name="cubic_m">Cubic Metre</string>
+    <string name="cubic_m">Cubic Meter</string>
     <string name="cubic_inch">Cubic Inch</string>
     <string name="cubic_foot">Cubic Foot</string>
     <string name="cubic_yard">Cubic Yard</string>
@@ -469,7 +469,7 @@
     <!---->
 
     <string name="converter_currency_separator" translatable="false">·</string>
-    <string name="converter_unit_rate">%1$s %2$s = %3$s %4$s</string>
+    <string name="converter_unit_rate" translatable="false">%1$s %2$s = %3$s %4$s</string>
     <string name="converter_input_amount">Input amount</string>
     <string name="converter_output_amount">Converted amount</string>
     <string name="converter_copy_result">Copy conversion</string>
@@ -478,8 +478,8 @@
     <string name="converter_backspace">Delete last digit</string>
     <string name="converter_clear_input">Clear input</string>
     <string name="converter_clear_key" translatable="false">AC</string>
-    <string name="currency_country_code_symbol">%1$s · %2$s · %3$s</string>
-    <string name="currency_country_code">%1$s · %2$s</string>
+    <string name="currency_country_code_symbol" translatable="false">%1$s · %2$s · %3$s</string>
+    <string name="currency_country_code" translatable="false">%1$s · %2$s</string>
     <string name="converter_source_currency">%1$s (%2$s), select source currency</string>
     <string name="converter_destination_currency">%1$s (%2$s), select destination currency</string>
     <string name="graphy_role_input">Input</string>
@@ -490,23 +490,23 @@
     <string name="graphy_role_decision">Classification</string>
     <string name="graphy_role_visualization">Visualization</string>
     <string name="graphy_role_explanation">Explanation</string>
-    <string name="graphy_node_accessibility">%1$s: %2$s</string>
+    <string name="graphy_node_accessibility" translatable="false">%1$s: %2$s</string>
     <string name="graphy_dependency">Uses %1$s</string>
     <string name="graphy_reused_value">Reused value</string>
-    <string name="graphy_info_symbol">ⓘ</string>
+    <string name="graphy_info_symbol" translatable="false">ⓘ</string>
     <string name="graphy_relationship">Conversion relationship</string>
     <string name="graphy_exchange_rate">Exchange rate</string>
-    <string name="graphy_unit_relationship">1 %1$s = %2$s %3$s</string>
-    <string name="graphy_linear_formula">%1$s × %2$s</string>
-    <string name="graphy_reciprocal_formula">%1$s ÷ %2$s</string>
-    <string name="graphy_equation">%1$s = %2$s</string>
+    <string name="graphy_unit_relationship" translatable="false">1 %1$s = %2$s %3$s</string>
+    <string name="graphy_linear_formula" translatable="false">%1$s × %2$s</string>
+    <string name="graphy_reciprocal_formula" translatable="false">%1$s ÷ %2$s</string>
+    <string name="graphy_equation" translatable="false">%1$s = %2$s</string>
     <string name="graphy_mapping">Conversion rule</string>
     <string name="graphy_piecewise">This conversion uses the existing piecewise Gas Mark rule, including its range limits.</string>
     <string name="graphy_fuel_rounding">Fuel consumption uses an inverse relationship. The result follows the converter’s existing division and rounding rules.</string>
     <string name="graphy_zero_fuel">The inverse relationship is undefined at zero. The existing converter returns the input unchanged for this case.</string>
     <string name="graphy_rate_cached">Cached exchange rate; last fetched %1$s. Rates can change and cached rates may be outdated.</string>
     <string name="graphy_rate_unknown_time">Exchange rates can change. The time of this cached rate is unavailable.</string>
-    <string name="graphy_offset_formula">(%1$s) %2$s %3$s</string>
+    <string name="graphy_offset_formula" translatable="false">(%1$s) %2$s %3$s</string>
     <string name="graphy_node_hint">Tap a node for details</string>
     <string name="graphy_unavailable">A Graphy explanation is unavailable for the current values.</string>
     <string name="currency_unavailable">Rate unavailable</string>
@@ -523,13 +523,13 @@
         <item quantity="other">%d calculations</item>
     </plurals>
     <string name="graphy_download">Download graph</string>
-    <string name="graphy_export_pdf">PDF</string>
-    <string name="graphy_export_png">PNG</string>
+    <string name="graphy_export_pdf" translatable="false">PDF</string>
+    <string name="graphy_export_png" translatable="false">PNG</string>
     <string name="graphy_export_preparing">Preparing graph download</string>
     <string name="graphy_export_saved">Graph saved</string>
     <string name="graphy_export_failed">Could not save the graph. Please try again.</string>
     <string name="graphy_export_png_too_large">This graph is too large for PNG. Please download it as PDF.</string>
-    <string name="graphy_export_result">= %1$s</string>
+    <string name="graphy_export_result" translatable="false">= %1$s</string>
     <!-- Explicit conversion variants; factors live in the unit registry. -->
     <string name="angle">Angle</string>
     <string name="sq_millimetre">Square millimeter</string>
@@ -556,8 +556,8 @@
     <string name="inch_mercury">Inch of mercury (conventional)</string>
     <string name="cm_water">Centimeter of water (conventional)</string>
     <string name="inch_water">Inch of water (conventional)</string>
-    <string name="kgf_m">Kilogram-force meter</string>
-    <string name="n_cm">Newton centimeter</string>
+    <string name="kgf_m" translatable="false">Kilogram-force meter</string>
+    <string name="n_cm" translatable="false">Newton centimeter</string>
     <string name="degree">Degree</string>
     <string name="radian">Radian</string>
     <string name="gradian">Gradian</string>
@@ -612,7 +612,7 @@
     <string name="history_expression_label">Expression</string>
     <string name="history_result_label">Result</string>
     <string name="history_legacy_hint">This entry has no saved input details. Open the tool to start a new calculation.</string>
-    <string name="history_metadata">%1$s · %2$s</string>
+    <string name="history_metadata" translatable="false">%1$s · %2$s</string>
     <string name="history_retry">Retry</string>
     <string name="history_back">Back to previous tool</string>
     <string name="history_copy_content">Expression: %1$s\nResult: %2$s</string>
@@ -621,10 +621,10 @@
     <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday math.</string>
     <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday math, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful math tools together.</string>
     <string name="share_app_subject">%1$s: Calculate and convert</string>
-    <string name="currency_copy_format">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
-    <string name="currency_rate_format">1 %1$s = %2$s %3$s</string>
-    <string name="unit_label_symbol_format">%1$s (%2$s)</string>
-    <string name="conversion_copy_format">%1$s %2$s = %3$s %4$s</string>
+    <string name="currency_copy_format" translatable="false">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
+    <string name="currency_rate_format" translatable="false">1 %1$s = %2$s %3$s</string>
+    <string name="unit_label_symbol_format" translatable="false">%1$s (%2$s)</string>
+    <string name="conversion_copy_format" translatable="false">%1$s %2$s = %3$s %4$s</string>
     <string name="decimal_input_start" translatable="false">0.</string>
     <string name="currency_name_aud">Australian dollar</string>
     <string name="currency_code_aud" translatable="false">AUD</string>
@@ -1245,8 +1245,8 @@
     <string name="regional_nbsp">Non-breaking space</string>
     <string name="regional_nnbsp">Narrow non-breaking space</string>
     <string name="regional_apostrophe">Apostrophe</string>
-    <string name="regional_currency_label">%1$s · %2$s</string>
-    <string name="regional_format_summary">%1$s · %2$s</string>
+    <string name="regional_currency_label" translatable="false">%1$s · %2$s</string>
+    <string name="regional_format_summary" translatable="false">%1$s · %2$s</string>
     <string name="regional_search">Search regions</string>
     <string name="regional_invalid_number">Check the number format.</string>
 
@@ -1263,8 +1263,8 @@
     <string name="age_month">Month</string>
     <string name="age_day">Day</string>
     <string name="age_search_date_values">Search</string>
-    <string name="age_placeholder">—</string>
-    <string name="age_date_button">%1$s\n%2$s</string>
+    <string name="age_placeholder" translatable="false">—</string>
+    <string name="age_date_button" translatable="false">%1$s\n%2$s</string>
     <string name="age_result">Age</string>
     <string name="age_next_birthday">Next birthday</string>
     <string name="age_birthday">Birthday</string>
@@ -1278,28 +1278,28 @@
     <string name="age_empty">Your age, next birthday and calendar totals will appear here.</string>
     <string name="age_invalid">Date of birth must be on or before Age as of.</string>
     <string name="age_totals_note">Calendar totals · 24-hour days</string>
-    <string name="age_breakdown">%1$s, %2$s, %3$s</string>
-    <string name="age_remaining">%1$s | %2$s</string>
+    <string name="age_breakdown" translatable="false">%1$s, %2$s, %3$s</string>
+    <string name="age_remaining" translatable="false">%1$s | %2$s</string>
     <string name="age_graphy_step_years">Years</string>
     <string name="age_graphy_step_months">Months</string>
     <string name="age_graphy_step_days">Days</string>
-    <string name="age_birthday_details">%1$s\n%2$s\n%3$s</string>
-    <string name="age_birthday_when">%1$s · %2$s</string>
+    <string name="age_birthday_details" translatable="false">%1$s\n%2$s\n%3$s</string>
+    <string name="age_birthday_when" translatable="false">%1$s · %2$s</string>
     <string name="age_add_calendar">Add to Calendar</string>
     <string name="age_calendar_question">Birthday: %1$s. Add it once or repeat yearly? Review the date, repetition and reminders in your calendar app before saving.</string>
     <string name="age_calendar_once">Next birthday only</string>
     <string name="age_calendar_yearly">Repeat yearly</string>
     <string name="age_calendar_unavailable">No compatible calendar app is available.</string>
     <string name="age_share_unavailable">No app is available to share this result.</string>
-    <string name="age_date_interval">%1$s → %2$s</string>
+    <string name="age_date_interval" translatable="false">%1$s → %2$s</string>
     <string name="age_completed_years">Completed years</string>
     <string name="age_completed_months">Completed months</string>
     <string name="age_remaining_days">Remaining days</string>
     <string name="age_anniversary">Last anniversary</string>
     <string name="age_month_anchor">After completed months</string>
-    <string name="age_year_step">%1$s → %2$s</string>
-    <string name="age_month_step">%1$s → %2$s</string>
-    <string name="age_day_step">%1$s → %2$s: %3$s</string>
+    <string name="age_year_step" translatable="false">%1$s → %2$s</string>
+    <string name="age_month_step" translatable="false">%1$s → %2$s</string>
+    <string name="age_day_step" translatable="false">%1$s → %2$s: %3$s</string>
     <string name="age_calendar_rule">Count completed years from the birth date, then completed months from that anniversary, then the remaining calendar days. February 29 anniversaries use February 28 in non-leap years. Month additions clamp to the last valid day of the target month.</string>
     <string name="age_share_body">Age Calculator\nDate of birth: %1$s\nAge as of: %2$s\nAge: %3$s\nNext birthday: %4$s (%5$s)\nCountdown: %6$s\n\nSummary\nYears: %7$s\nMonths: %8$s\nWeeks: %9$s\nDays: %10$s\nHours: %11$s\nMinutes: %12$s\nCompleted calendar units; hours and minutes use 24-hour days without time of birth.</string>
     <plurals name="age_years"><item quantity="one">%1$s year</item><item quantity="other">%1$s years</item></plurals>
@@ -1308,10 +1308,10 @@
     <plurals name="age_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
 
     <!-- appearance.xml -->
-    <string name="appearance_customise">Customise</string>
+    <string name="appearance_customise">Customize</string>
     <string name="appearance_buttons">Buttons</string>
     <string name="appearance_font">Text Font</string>
-    <string name="appearance_reset">Reset customisation</string>
+    <string name="appearance_reset">Reset customization</string>
     <string name="appearance_reset_message">Restore Flat (Borderless), Rounded and Oswald? Your theme will stay selected.</string>
     <string name="appearance_style">Button Style</string>
     <string name="appearance_shape">Button Shape</string>
@@ -1355,8 +1355,8 @@
     <string name="bmi_child_history">BMI: %1$s · %2$s\nBMI-for-age: %3$s\n%4$s\nCDC reference; screening only.</string>
     <string name="bmi_infant_history">BMI: %1$s · Classification not recommended under 2. Use WHO weight-for-length assessment.</string>
     <string name="bmi_group_infants">Under 2</string>
-    <string name="bmi_group_children">2–19</string>
-    <string name="bmi_group_adults">20+</string>
+    <string name="bmi_group_children" translatable="false">2–19</string>
+    <string name="bmi_group_adults" translatable="false">20+</string>
     <string name="bmi_reference_title">BMI ranges and guidance</string>
     <string name="bmi_infant_guidance">Under 2 years\nBMI-for-age classification is not recommended in this calculator. Infants should be assessed using WHO growth standards, including weight-for-length, with a healthcare professional. No adult category or weight target is shown.</string>
     <string name="bmi_child_guidance">Children and teens, ages 2–19\nCDC BMI-for-age categories depend on age in months and sex used by the growth reference. The BMI number alone cannot be compared with adult cutoffs. The reference range is not a weight-loss target; growth and health need professional assessment.</string>
@@ -1368,7 +1368,7 @@
     <string name="bmi_infant_source_url" translatable="false">https://www.cdc.gov/growth-chart-training/hcp/using-growth-charts/who-using.html</string>
     <string name="bmi_child_source_url" translatable="false">https://www.cdc.gov/bmi/child-teen-calculator/bmi-categories.html</string>
     <string name="bmi_adult_source_url" translatable="false">https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html</string>
-    <string name="bmi_done_symbol">✓</string>
+    <string name="bmi_done_symbol" translatable="false">✓</string>
     <string name="bmi_done">Calculate BMI and close keypad</string>
     <string name="bmi_calculator">BMI Calculator</string>
     <string name="bmi_age">Age · years</string>
@@ -1383,18 +1383,18 @@
     <string name="bmi_height_in">Additional inches, less than 12</string>
     <string name="bmi_weight_kg">Weight in kilograms</string>
     <string name="bmi_weight_lb">Weight in pounds</string>
-    <string name="bmi_cm">cm</string>
-    <string name="bmi_ft">ft</string>
-    <string name="bmi_in">in</string>
-    <string name="bmi_kg">kg</string>
-    <string name="bmi_lb">lb</string>
+    <string name="bmi_cm" translatable="false">cm</string>
+    <string name="bmi_ft" translatable="false">ft</string>
+    <string name="bmi_in" translatable="false">in</string>
+    <string name="bmi_kg" translatable="false">kg</string>
+    <string name="bmi_lb" translatable="false">lb</string>
     <string name="bmi_height_unit">Height unit</string>
     <string name="bmi_weight_unit">Weight unit</string>
     <string name="bmi_metric_height">Centimeters (cm)</string>
     <string name="bmi_imperial_height">Feet and inches (ft/in)</string>
     <string name="bmi_metric_weight">Kilograms (kg)</string>
     <string name="bmi_imperial_weight">Pounds (lb)</string>
-    <string name="bmi_unit_button">%1$s ▾</string>
+    <string name="bmi_unit_button" translatable="false">%1$s ▾</string>
     <string name="bmi_label">BMI</string>
     <string name="bmi_adult_label">BMI · Adults 20+</string>
     <string name="bmi_category">Category</string>
@@ -1407,12 +1407,12 @@
     <string name="bmi_obesity_i">Obesity class I</string>
     <string name="bmi_obesity_ii">Obesity class II</string>
     <string name="bmi_obesity_iii">Obesity class III</string>
-    <string name="bmi_range_low">&lt;18.5</string>
-    <string name="bmi_range_healthy">18.5–&lt;25</string>
-    <string name="bmi_range_over">25–&lt;30</string>
-    <string name="bmi_range_i">30–&lt;35</string>
-    <string name="bmi_range_ii">35–&lt;40</string>
-    <string name="bmi_range_iii">≥40</string>
+    <string name="bmi_range_low" translatable="false">&lt;18.5</string>
+    <string name="bmi_range_healthy" translatable="false">18.5–&lt;25</string>
+    <string name="bmi_range_over" translatable="false">25–&lt;30</string>
+    <string name="bmi_range_i" translatable="false">30–&lt;35</string>
+    <string name="bmi_range_ii" translatable="false">35–&lt;40</string>
+    <string name="bmi_range_iii" translatable="false">≥40</string>
     <string name="bmi_ranges_action">BMI ranges by age · More info</string>
     <string name="bmi_ranges_short">Ranges · info</string>
     <string name="bmi_result_accessibility">BMI %1$s. %2$s. %3$s. %4$s. Show BMI ranges by age.</string>
@@ -1424,7 +1424,7 @@
     <string name="bmi_empty">Enter height and weight</string>
     <string name="bmi_invalid">Enter positive height and weight.</string>
     <string name="bmi_invalid_imperial">Use whole feet and inches below 12.</string>
-    <string name="bmi_weight_range">%1$s–&lt;%2$s %3$s</string>
+    <string name="bmi_weight_range" translatable="false">%1$s–&lt;%2$s %3$s</string>
     <string name="bmi_range_result">Healthy: %1$s</string>
     <string name="bmi_within_range">Within range</string>
     <string name="bmi_below_range">%1$s %2$s below range</string>
@@ -1433,14 +1433,14 @@
     <string name="bmi_history_age">%1$sY %2$dM</string>
     <string name="bmi_history_male">M</string>
     <string name="bmi_history_female">F</string>
-    <string name="bmi_history_measurement">%1$s%2$s</string>
+    <string name="bmi_history_measurement" translatable="false">%1$s%2$s</string>
     <string name="bmi_history_feet_inches">%1$sft %2$sin</string>
     <string name="bmi_history_hint">Opens BMI Calculator with the inputs from this record.</string>
-    <string name="bmi_measurement">%1$s %2$s</string>
+    <string name="bmi_measurement" translatable="false">%1$s %2$s</string>
     <string name="bmi_feet_inches">%1$s ft %2$s in</string>
     <string name="bmi_history_result">BMI: %1$s · %2$s\nHealthy weight range: %3$s\nDifference: %4$s</string>
     <string name="bmi_reset">Reset BMI calculator</string>
-    <string name="bmi_no_result">—</string>
+    <string name="bmi_no_result" translatable="false">—</string>
 
     <!-- converter_picker.xml -->
     <string name="converter_picker_from_title">%1$s - Select From Value</string>
@@ -1450,7 +1450,7 @@
     <string name="converter_picker_close">Close picker</string>
     <string name="converter_picker_empty">No matching values. Try another name or symbol.</string>
     <string name="converter_picker_selected">%1$s, selected</string>
-    <string name="converter_picker_unit_label">%1$s (%2$s)</string>
+    <string name="converter_picker_unit_label" translatable="false">%1$s (%2$s)</string>
     <string name="converter_picker_source_unit">%1$s, select source unit</string>
     <string name="converter_picker_destination_unit">%1$s, select destination unit</string>
 
@@ -1458,8 +1458,8 @@
     <string name="drawer_section_finance">Finance</string>
     <string name="emi_calculator">EMI Calculator</string>
     <string name="emi_preferred_currency">Preferred currency</string>
-    <string name="emi_currency_choice">%1$s (%2$s)</string>
-    <string name="emi_money">%1$s%2$s</string>
+    <string name="emi_currency_choice" translatable="false">%1$s (%2$s)</string>
+    <string name="emi_money" translatable="false">%1$s%2$s</string>
     <string name="emi_schedule">Schedule</string>
     <string name="emi_loan_amount">Loan amount</string>
     <string name="emi_annual_rate">Annual interest (%)</string>
@@ -1504,19 +1504,19 @@
     <string name="emi_page_range">%1$d–%2$d of %3$d</string>
     <string name="emi_table_hint">Tap a period for full details. Currency: %1$s</string>
     <string name="emi_year_period">%1$d (%2$d payments)</string>
-    <string name="emi_pdf">PDF</string>
-    <string name="emi_csv">CSV</string>
+    <string name="emi_pdf" translatable="false">PDF</string>
+    <string name="emi_csv" translatable="false">CSV</string>
     <string name="emi_breakdown">Breakdown</string>
     <string name="emi_balance_chart">Balance</string>
     <string name="emi_view_schedule">View schedule</string>
     <string name="emi_assumptions">Estimate only. Fixed annual rate and monthly reducing balance. Interest and payments round HALF_EVEN to currency minor units; the final payment closes the balance. Dates label monthly periods. Fees, taxes, daily interest, rate changes, moratoriums and balloon payments are excluded. Actual lender schedules may differ.</string>
-    <string name="emi_graph_formula">EMI calculation</string>
+    <string name="emi_graph_formula" translatable="false">EMI calculation</string>
     <string name="emi_graph_prepay">Prepayment impact</string>
     <string name="emi_monthly_rate">Monthly rate</string>
     <string name="emi_payment_count">Monthly payments</string>
     <string name="emi_rate_step">Annual rate ÷ 12</string>
     <string name="emi_term_step">Tenure in months</string>
-    <string name="emi_formula">EMI formula</string>
+    <string name="emi_formula" translatable="false">EMI formula</string>
     <string name="emi_formula_detail">r = annual percentage ÷ 1200. EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1); at zero interest, P ÷ n. Currency postings use HALF_EVEN. The last installment is adjusted to close the balance.</string>
     <string name="emi_original">Original schedule</string>
     <string name="emi_revised">Revised schedule</string>
@@ -1535,7 +1535,7 @@
     <string name="emi_reduce_tenure">Reduce tenure</string>
     <string name="emi_reduce_emi">Reduce EMI</string>
     <string name="emi_method">Prepayment method</string>
-    <string name="emi_rule_label">%1$s · %2$s · %3$d–%4$d</string>
+    <string name="emi_rule_label" translatable="false">%1$s · %2$s · %3$d–%4$d</string>
     <string name="emi_rule_limit">A maximum of 20 prepayment rules is supported.</string>
     <string name="emi_rule_error">Enter a positive amount within currency precision and installment numbers within the original tenure.</string>
     <string name="emi_no_rules">No prepayments. Extra payments are applied after the selected EMI.</string>
@@ -1561,7 +1561,7 @@
     <string name="emi_share_error">No compatible sharing app is available.</string>
     <string name="emi_report_title">Loan repayment report</string>
     <string name="emi_report_page">Page %1$d</string>
-    <string name="emi_report_scenario">%1$s · %2$s</string>
+    <string name="emi_report_scenario" translatable="false">%1$s · %2$s</string>
     <string name="emi_share_summary">Loan amount: %1$s\nAnnual interest: %2$s%%\nPayments: %3$d\nMonthly EMI: %4$s\nTotal interest: %5$s\nTotal payment: %6$s\nEstimated payoff: %7$s\nInterest saved: %8$s\nMonths saved: %9$d\nFinal installment: %10$s</string>
     <string name="emi_history_summary">%1$s · %2$s%% · %3$d months</string>
     <string name="emi_history_hint">Open to restore this loan and its prepayments.</string>
@@ -1569,9 +1569,9 @@
     <string name="emi_space_limit">This window cannot fit the complete EMI workflow at the current text/display size. Increase the available window or reduce scaling.</string>
     <string name="emi_currency_new">New loans use the preferred currency in Settings. Existing loans retain their currency.</string>
     <string name="emi_graph_extra_detail">Prepayments reduce principal after each selected installment. The revised schedule uses the selected tenure/EMI method; savings compare posted interest against the unchanged original loan.</string>
-    <string name="emi_chart_point">%1$s · %2$s</string>
-    <string name="emi_rate_value">%1$s%%</string>
-    <string name="emi_term_value">%1$s %2$s</string>
+    <string name="emi_chart_point" translatable="false">%1$s · %2$s</string>
+    <string name="emi_rate_value" translatable="false">%1$s%%</string>
+    <string name="emi_term_value" translatable="false">%1$s %2$s</string>
     <string name="emi_schedule_detail">%1$s\nOpening: %2$s\nPayment: %3$s\nPrincipal: %4$s\nInterest: %5$s\nPrepayment: %6$s\nClosing: %7$s\nUnused extra payment: %8$s</string>
     <string name="emi_reset_question">Clear this loan and its prepayments? Saved history is retained.</string>
     <string name="emi_switch_units_error">Use a tenure that represents a whole number of months.</string>
@@ -1579,15 +1579,15 @@
     <string name="emi_missing_comparison">Complete both loans before comparing.</string>
     <string name="emi_chart_no_interest">No interest at a zero annual rate.</string>
     <string name="emi_payments_value">%1$d payments</string>
-    <string name="emi_percent_value">%1$s%%</string>
+    <string name="emi_percent_value" translatable="false">%1$s%%</string>
     <string name="emi_rule_after_payoff">Rules after payoff are not applied. Excess in the payoff installment is shown as unused.</string>
     <string name="emi_preferred_hint">Used by new loans and future monetary tools. Currency conversion selections stay independent.</string>
-    <string name="emi_report_range">%1$s – %2$s</string>
+    <string name="emi_report_range" translatable="false">%1$s – %2$s</string>
     <string name="emi_rule_position">Rule %1$d of %2$d</string>
     <string name="emi_editing_loan">Editing %1$s</string>
     <string name="emi_clear_field">Clear field</string>
     <string name="emi_choose_month">Choose installment</string>
-    <string name="emi_export_compare_summary">%1$s\n\n%2$s\n\n%3$s\n\n%4$s</string>
+    <string name="emi_export_compare_summary" translatable="false">%1$s\n\n%2$s\n\n%3$s\n\n%4$s</string>
     <string name="emi_csv_number">Installment</string>
     <string name="emi_csv_date">Date</string>
     <string name="emi_csv_currency">Currency symbol</string>
@@ -1599,7 +1599,7 @@
     <string name="emi_chart_help">Select a period to hear its balance.</string>
     <string name="emi_page_jump">Go</string>
     <string name="emi_preferred_symbol">Currency: %1$s</string>
-    <string name="emi_no_result">—</string>
+    <string name="emi_no_result" translatable="false">—</string>
     <string name="emi_initial_monthly">Initial monthly EMI</string>
     <string name="emi_changing_payments">EMI changes after prepayments; see the schedule.</string>
     <string name="emi_csv_end_date">End date</string>
@@ -1634,7 +1634,7 @@
     <string name="fuel_pick_distance">Distance unit</string>
     <string name="fuel_pick_efficiency">Efficiency unit</string>
     <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per liter and passengers.</string>
-    <string name="fuel_graphy_distance">%1$s %2$s%3$s</string>
+    <string name="fuel_graphy_distance" translatable="false">%1$s %2$s%3$s</string>
     <string name="fuel_graphy_fuel">Fuel used: %1$s</string>
     <string name="fuel_graphy_cost">Trip cost: %1$s</string>
     <string name="fuel_graphy_share">%1$d passengers · %2$s each</string>
@@ -1656,7 +1656,7 @@
     <string name="investment_step_enabled">Enable step-up</string>
     <string name="investment_amount_mode">Step-up amount</string>
     <string name="investment_percent_mode">Step-up percentage</string>
-    <string name="investment_percent">%</string>
+    <string name="investment_percent" translatable="false">%</string>
     <string name="investment_three_months">3 months</string>
     <string name="investment_six_months">6 months</string>
     <string name="investment_twelve_months">12 months</string>
@@ -1679,7 +1679,7 @@
     <string name="investment_yield">Effective annual yield</string>
     <string name="investment_reinvestment_yield">Reinvestment-equivalent annual yield</string>
     <string name="investment_receipts">Total receipts</string>
-    <string name="investment_metric">%1$s: %2$s</string>
+    <string name="investment_metric" translatable="false">%1$s: %2$s</string>
     <string name="investment_reset">Reset</string>
     <string name="investment_details">Details</string>
     <string name="investment_reset_confirm">Clear this calculator? Saved history is retained.</string>
@@ -1711,10 +1711,10 @@
     <string name="investment_step_operation">Apply step-up every %1$d months</string>
     <string name="investment_step_description">Increase the previous contribution by %1$s after each %2$d contributions.</string>
     <string name="investment_step_value">%1$s every %2$d months</string>
-    <string name="investment_formula_sip">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
-    <string name="investment_formula_rd">factor = (1 + annual percentage / 400)^(1/3)</string>
-    <string name="investment_formula_fd">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
-    <string name="investment_sign">±</string>
+    <string name="investment_formula_sip" translatable="false">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
+    <string name="investment_formula_rd" translatable="false">factor = (1 + annual percentage / 400)^(1/3)</string>
+    <string name="investment_formula_fd" translatable="false">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
+    <string name="investment_sign" translatable="false">±</string>
     <string name="investment_change_sign">Change return sign</string>
     <string name="investment_year">Year %1$d</string>
     <string name="investment_monthly_short">Monthly (%1$s)</string>
@@ -1735,15 +1735,15 @@
     <string name="percentage_percent_label">Percentage</string>
     <string name="percentage_part_label">Value</string>
     <string name="percentage_whole_label">Of (whole)</string>
-    <string name="percentage_percent_suffix">%</string>
+    <string name="percentage_percent_suffix" translatable="false">%</string>
     <string name="percentage_result_label">Result</string>
     <string name="percentage_amount_label">Amount</string>
     <string name="percentage_no_result">Enter values</string>
     <string name="percentage_invalid">Check the values for this mode.</string>
     <string name="percentage_reset">Reset</string>
     <string name="percentage_done">Done</string>
-    <string name="percentage_history_value">%1$s</string>
-    <string name="percentage_history_input">%1$s · %2$s · %3$s</string>
+    <string name="percentage_history_value" translatable="false">%1$s</string>
+    <string name="percentage_history_input" translatable="false">%1$s · %2$s · %3$s</string>
     <string name="percentage_explain_of">%1$s%% of %2$s = %3$s</string>
     <string name="percentage_explain_increase">Increase: %1$s + %2$s%% = %3$s</string>
     <string name="percentage_explain_decrease">Decrease: %1$s − %2$s%% = %3$s</string>
@@ -1789,7 +1789,7 @@
     <string name="tool_more_space">More screen space needed. Expand the window or rotate your device. Your input is kept.</string>
     <string name="tool_previous">Previous</string>
     <string name="tool_next">Next</string>
-    <string name="tool_page">%1$d / %2$d</string>
+    <string name="tool_page" translatable="false">%1$d / %2$d</string>
     <string name="language_en_in" translatable="false">English (India)</string>
     <string name="language_en_ie" translatable="false">English (Ireland)</string>
     <string name="language_en_nz" translatable="false">English (New Zealand)</string>

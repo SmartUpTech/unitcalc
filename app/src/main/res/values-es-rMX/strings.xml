@@ -7,4 +7,6 @@
     <string name="currency_name_thb">baht tailandés</string>
     <string name="currency_name_btn">ngultrum butanés</string>
     <string name="currency_name_zmw">kwacha zambiano</string>
+    <string name="title_activity_settings">Configuración</string>
+    <string name="settings_open">Abrir configuración</string>
 </resources>

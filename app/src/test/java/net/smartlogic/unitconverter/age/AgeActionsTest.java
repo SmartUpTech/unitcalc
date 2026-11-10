@@ -30,6 +30,8 @@ public class AgeActionsTest {
     @Test public void shareAndBothCalendarChoicesLaunchTheCurrentAgeSnapshot() {
         var app = RuntimeEnvironment.getApplication();
         Preferences.getInstance(app).getPreferences().edit().clear().commit();
+        // This test uses a stub Application; run the fresh-install migration normally owned by UnitConverter.
+        Preferences.getInstance(app).migrateRegionalPreferences(false);
         ThemeManager.init(app);
         AppConst.CURRENT_TAG = AppConst.TAG_CALC;
         var controller = Robolectric.buildActivity(MainActivity.class).setup().visible();

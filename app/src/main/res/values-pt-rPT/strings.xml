@@ -7,4 +7,11 @@
     <string name="regional_change_note">Mudar a região repõe o formato dos números e a moeda.</string>
     <string name="regional_default">Predefinição regional</string>
     <string name="regional_pattern">Agrupamento de algarismos</string>
+    <string name="title_activity_settings">Definições</string>
+    <string name="settings_open">Abrir definições</string>
+    <string name="prefs_startup_screen">Ecrã inicial</string>
+    <string name="pref_share_title">Partilhar aplicação</string>
+    <string name="pref_website_title">Site do programador</string>
+    <string name="pref_version_title">Versão da aplicação</string>
+    <string name="appearance_reset">Repor aparência</string>
 </resources>

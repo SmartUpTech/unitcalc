@@ -42,19 +42,23 @@ public final class PreferredCurrency {
     public static void showPicker(FragmentActivity activity) {
         var manager = activity.getSupportFragmentManager();
         if (manager.isStateSaved() || manager.findFragmentByTag(ConverterPickerDialogFragment.TAG) != null) return;
-        List<Currency> currencies = choices(activity);
+        createPicker(activity).showNow(manager, ConverterPickerDialogFragment.TAG);
+    }
+    /** Rebuild translated copy from the current context after locale recreation. */
+    public static ConverterPickerDialogFragment createPicker(Context context) {
+        List<Currency> currencies = choices(context);
         ArrayList<String> labels = new ArrayList<>(), details = new ArrayList<>(), keywords = new ArrayList<>();
         int selected = 0;
         int[] flags = new int[currencies.size()];
-        String preferred = Preferences.getInstance(activity).getPreferredCurrency();
+        String preferred = Preferences.getInstance(context).getPreferredCurrency();
         for (int i = 0; i < currencies.size(); i++) {
             Currency c = currencies.get(i);
             flags[i] = c.getFlagImageResource();
-            labels.add(activity.getString(R.string.emi_currency_choice, c.getCurrencyName(), c.getCurrencySymbol()));
+            labels.add(context.getString(R.string.emi_currency_choice, c.getCurrencyName(), c.getCurrencySymbol()));
             details.add(c.getCountry()); keywords.add(c.getCurrencyName() + " " + c.getCountry() + " " + c.getCurrencyISOCode());
             if (c.getCurrencyISOCode().equals(preferred)) selected = i;
         }
-        ConverterPickerDialogFragment.newInstance(activity.getString(R.string.emi_preferred_currency), false, 0,
-                selected, labels, details, keywords, flags).showNow(manager, ConverterPickerDialogFragment.TAG);
+        return ConverterPickerDialogFragment.newInstance(context.getString(R.string.emi_preferred_currency), false, 0,
+                selected, labels, details, keywords, flags).refreshPreferredCurrencyText();
     }
 }

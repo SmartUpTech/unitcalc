@@ -16,7 +16,13 @@ public final class RegionalDates {
         return AppLanguage.resourceContext(context).getResources().getConfiguration().getLocales().get(0);
     }
     public static String date(Context context, LocalDate date) {
-        String pattern = android.text.format.DateFormat.getBestDateTimePattern(region(context), "yMMMd");
+        // Extract order without retaining another language's literal words (e.g. Spanish "de").
+        String numeric = android.text.format.DateFormat.getBestDateTimePattern(region(context), "yMd")
+                .replaceAll("'[^']*'", "");
+        int year = numeric.indexOf('y'), month = numeric.indexOf('M'), day = numeric.indexOf('d');
+        if (month < 0) month = numeric.indexOf('L');
+        String pattern = year >= 0 && year < month && year < day ? "y MMM d"
+                : month >= 0 && month < day ? "MMM d, y" : "d MMM y";
         return date.format(DateTimeFormatter.ofPattern(pattern, words(context)).withDecimalStyle(DecimalStyle.STANDARD));
     }
     public static String instant(Context context, long epochMillis, String skeleton) {

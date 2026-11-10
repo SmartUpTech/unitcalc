@@ -14,17 +14,25 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 34)
 public class HistoryDateLabelsTest {
-    @Test public void datesUseLocaleAndIncludeOlderYear() {
-        Locale previous = Locale.getDefault();
-        try {
-            Locale.setDefault(Locale.FRANCE);
-            Calendar date = Calendar.getInstance();
-            date.clear();
-            date.set(2020, Calendar.SEPTEMBER, 2, 14, 34);
-            String section = HistoryDateLabels.sectionLabel(RuntimeEnvironment.getApplication(), date.getTimeInMillis());
-            assertTrue(section, section.contains("sept"));
-            assertTrue(section, section.contains("2020"));
-        } finally { Locale.setDefault(previous); }
+    @Test public void datesUseSelectedLanguageAndIndependentRegionAndIncludeOlderYear() {
+        Application app = RuntimeEnvironment.getApplication();
+        Preferences preferences = Preferences.getInstance(app);
+        preferences.getPreferences().edit().clear().commit();
+        preferences.migrateRegionalPreferences(false);
+        android.content.res.Configuration configuration = new android.content.res.Configuration(
+                app.getResources().getConfiguration());
+        configuration.setLocale(Locale.FRANCE);
+        android.content.Context french = app.createConfigurationContext(configuration);
+        Calendar date = Calendar.getInstance();
+        date.clear();
+        date.set(2020, Calendar.SEPTEMBER, 2, 14, 34);
+        String section = HistoryDateLabels.sectionLabel(french, date.getTimeInMillis());
+        assertTrue(section, section.startsWith("sept")); // US order, French month word.
+        assertTrue(section, section.contains("2020"));
+        preferences.applyRegion("FR");
+        String frenchOrder = HistoryDateLabels.sectionLabel(french, date.getTimeInMillis());
+        assertTrue(frenchOrder, frenchOrder.startsWith("2"));
+        assertTrue(frenchOrder, frenchOrder.contains("sept"));
     }
     @Test public void todayAndYesterdayHaveFriendlyLabels() {
         Application app = RuntimeEnvironment.getApplication();

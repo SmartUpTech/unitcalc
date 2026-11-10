@@ -29,6 +29,7 @@ public final class AppLanguage {
             if (AppCompatDelegate.getApplicationLocales().isEmpty())
                 AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en-US"));
         }
+        new RegionSuggestion(store).establishBaseline(current(context));
     }
 
     public static void select(Context context, SupportedLanguage selected) {

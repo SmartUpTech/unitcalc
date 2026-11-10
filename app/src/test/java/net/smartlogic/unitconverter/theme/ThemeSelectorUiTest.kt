@@ -249,7 +249,7 @@ class ThemeSelectorUiTest {
     private fun assertComposeSettingsAppBar(activity: SettingsActivity) {
         val view = activity.findViewById<android.view.ViewGroup>(R.id.settings).getChildAt(0) as ComposeView
         val headings = listOf(R.string.settings_section_general, R.string.settings_section_appearance,
-            R.string.settings_section_number_format, R.string.settings_section_rate_share,
+            R.string.regional_section, R.string.settings_section_rate_share,
             R.string.settings_section_privacy, R.string.settings_section_about).map { activity.getString(it) }
         val sectionNodes = headings.map { heading -> nodes(view).single {
             it.config.getOrNull(SemanticsProperties.Text)?.any { text -> text.text == heading } == true

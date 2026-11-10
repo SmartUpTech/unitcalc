@@ -1,0 +1,4 @@
+<resources>
+    <string name="title_activity_settings">Configuración</string>
+    <string name="settings_open">Abrir configuración</string>
+</resources>

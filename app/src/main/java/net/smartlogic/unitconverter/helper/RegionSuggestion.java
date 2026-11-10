@@ -14,6 +14,10 @@ public final class RegionSuggestion {
 
     public RegionSuggestion(SharedPreferences prefs) { this.prefs = prefs; }
 
+    public void establishBaseline(SupportedLanguage selected) {
+        if (!prefs.contains(OBSERVED)) prefs.edit().putString(OBSERVED, selected.tag).apply();
+    }
+
     public void observe(SupportedLanguage selected, RegionDefinition region) {
         Map<String, ?> values = prefs.getAll();
         Object previous = values.get(OBSERVED);

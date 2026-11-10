@@ -1,0 +1,15 @@
+<resources>
+    <string name="currency_name_byn">Weissrussischer Rubel</string>
+    <string name="sq_foot">Quadratfuss</string>
+    <string name="cubic_foot">Kubikfuss</string>
+    <string name="bmi_height">Körpergrösse</string>
+    <string name="bmi_close">Schliessen</string>
+    <string name="timer_action_dismiss">Schliessen</string>
+    <string name="timer_dismiss">Alarm schliessen</string>
+    <string name="theme_porcelain_white">Porzellanweiss</string>
+    <string name="converter_picker_close">Auswahl schliessen</string>
+    <string name="feet">Fuss</string>
+    <string name="settings_usage_analytics_summary">Hilf dabei, Calculator+ zu verbessern, indem du die Nutzung von Funktionen, Designs und Spielen mit Google Analytics for Firebase teilst. Berechnungen, Beträge und Verlauf sind ausgeschlossen. Das Teilen ist freiwillig und standardmässig deaktiviert. Du kannst deine Wahl hier jederzeit ändern. Bei Ablehnung endet die Erfassung und die Analysedaten auf diesem Gerät werden zurückgesetzt.</string>
+    <string name="theme_access_expired">Der Designzugriff ist abgelaufen. Porzellanweiss wird angewendet. Schalte Designs in den Einstellungen frei.</string>
+    <string name="theme_access_migrated">Porzellanweiss wird angewendet. Weitere Designs lassen sich jetzt in den Einstellungen für sieben Tage freischalten. Porzellanweiss, Perlmuttcreme und Titangrau bleiben kostenlos.</string>
+</resources>

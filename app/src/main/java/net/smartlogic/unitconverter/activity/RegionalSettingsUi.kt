@@ -61,7 +61,9 @@ internal fun RegionalSettings(preferences: Preferences, activity: FragmentActivi
     if (dialog == "numbers") RegionalNumberDialog(profile.numbers,
         onApply = { preferences.setNumberFormat(it); dialog = null }, onDismiss = { dialog = null })
     val pending = suggestions.pending(profile.region)
-    if (pending != null) AlertDialog(
+    val renderedLanguage = SupportedLanguage.resolve(
+        androidx.compose.ui.platform.LocalConfiguration.current.locales[0].toLanguageTag())
+    if (pending != null && pending.tag == renderedLanguage.tag) AlertDialog(
         onDismissRequest = { suggestions.keep(profile.region) },
         title = { Text(stringResource(R.string.regional_suggest_title,
             stringResource(RegionRegistry.find(pending.suggestedRegion).nameResource))) },
@@ -82,7 +84,7 @@ private fun showRegions(activity: FragmentActivity, selected: String) {
     ConverterPickerDialogFragment.newInstance(
         activity.getString(R.string.regional_region), false, REGION_PICKER,
         regions.indexOfFirst { it.code == selected }, labels, details, keywords, null
-    ).apply {
+    ).useLabelResources(R.string.regional_region, regions.map { it.nameResource }.toIntArray()).apply {
         requireArguments().putBoolean("regional_note", true)
         requireArguments().putInt("search_hint", R.string.regional_search)
     }

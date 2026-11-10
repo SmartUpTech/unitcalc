@@ -56,6 +56,8 @@ public class Preferences {
     private static Preferences mInstance;
     private final SharedPreferences mPrefs;
     private final Context mContext;
+    private java.util.List<Object> cachedRegionalValues;
+    private RegionalProfile cachedRegionalProfile;
 
     public static synchronized Preferences getInstance(Context context) {
         if (mInstance == null) {
@@ -129,8 +131,13 @@ public class Preferences {
         return value instanceof String ? (String) value : fallback;
     }
 
-    public RegionalProfile getRegionalProfile() {
+    public synchronized RegionalProfile getRegionalProfile() {
         Map<String, ?> values = mPrefs.getAll();
+        java.util.List<Object> effectiveKeys = java.util.Arrays.asList(values.get(PREFS_REGION),
+                values.get(PREFS_DECIMAL_SEPARATOR), values.get(PREFS_GROUP_SEPARATOR),
+                values.get(PREFS_GROUP_PATTERN), values.get(PREFS_NUMBER_OF_DECIMALS),
+                values.get(PREFS_PREFERRED_CURRENCY), values.get(PREFS_REGIONAL_VERSION));
+        if (effectiveKeys.equals(cachedRegionalValues)) return cachedRegionalProfile;
         RegionDefinition region;
         try { region = RegionRegistry.find(stringValue(values, PREFS_REGION, "US")); }
         catch (IllegalArgumentException invalid) { region = RegionRegistry.find("US"); }
@@ -151,8 +158,11 @@ public class Preferences {
         String currency = stringValue(values, PREFS_PREFERRED_CURRENCY, region.currency);
         try { PreferredCurrency.find(mContext, currency); }
         catch (IllegalArgumentException invalid) { currency = region.currency; }
-        return new RegionalProfile(region,
+        RegionalProfile profile = new RegionalProfile(region,
                 new NumberFormatSettings(decimal.charAt(0), group, pattern, places), currency);
+        cachedRegionalValues = effectiveKeys;
+        cachedRegionalProfile = profile;
+        return profile;
     }
 
     public synchronized void applyRegion(String code) {
