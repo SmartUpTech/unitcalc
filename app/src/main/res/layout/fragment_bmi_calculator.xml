@@ -48,7 +48,7 @@
         </FrameLayout>
         <net.smartlogic.unitconverter.calculator.tools.bmi.BmiSummaryLayout
             android:id="@+id/bmi_summary" android:layout_width="match_parent" android:layout_height="wrap_content" android:accessibilityLiveRegion="polite">
-            <TextView android:id="@+id/bmi_category_value" style="@style/BmiText" android:textStyle="bold" android:gravity="center" android:text="@string/bmi_no_result" />
+            <TextView android:id="@+id/bmi_category_value" style="@style/ToolResultDetail" android:textStyle="bold" android:gravity="center" android:text="@string/bmi_no_result" />
             <TextView android:id="@+id/bmi_difference_value" style="@style/BmiCaption" android:gravity="center" android:text="@string/bmi_no_result" />
             <TextView android:id="@+id/bmi_range_value" style="@style/BmiCaption" android:gravity="center" android:tag="content_primary" android:text="@string/bmi_no_result" />
             <TextView android:id="@+id/bmi_message" style="@style/BmiCaption" android:layout_width="match_parent" android:gravity="center" android:accessibilityLiveRegion="polite" />

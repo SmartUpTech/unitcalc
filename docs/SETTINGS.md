@@ -40,7 +40,10 @@ legacy absent-key defaults. Region is persisted explicitly, never inferred from
 the app language. A different region resets number overrides and preferred
 currency; selecting the same region preserves overrides. Reset keeps language
 and saved amounts. New financial scenarios use the preferred currency; saved
-scenarios and converter currency choices retain their existing identities.
+scenarios and converter currency choices retain their existing identities, except
+SIP: existing drafts and restored SIP calculations use the current preferred
+currency, including the Step-up amount segment. Returning from Preferences
+refreshes that denomination and recalculates without converting entered amounts.
 
 Number formatting is a staged draft with a live example, decimal/group separators,
 Indian/international grouping and 0–10 displayed places. Apply commits the draft;

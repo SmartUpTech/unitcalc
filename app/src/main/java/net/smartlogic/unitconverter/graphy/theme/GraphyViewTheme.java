@@ -96,6 +96,9 @@ public final class GraphyViewTheme {
     public float getOperationTextSize() {
         return dimen(R.dimen.graphy_operation_text_size);
     }
+    public float getOperationLabelTextSize() {
+        return dimen(R.dimen.graphy_operation_label_text_size);
+    }
 
     public float getResultTextSize() {
         return dimen(R.dimen.graphy_result_text_size);

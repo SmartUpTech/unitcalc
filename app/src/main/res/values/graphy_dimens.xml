@@ -16,6 +16,7 @@
     <dimen name="graphy_node_padding">4dp</dimen>
     <dimen name="graphy_value_text_size">16sp</dimen>
     <dimen name="graphy_operation_text_size">20sp</dimen>
+    <dimen name="graphy_operation_label_text_size">16sp</dimen>
     <dimen name="graphy_result_text_size">20sp</dimen>
     <dimen name="graphy_spacing_xs">4dp</dimen>
     <dimen name="graphy_spacing_sm">8dp</dimen>

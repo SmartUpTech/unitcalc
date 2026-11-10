@@ -3,6 +3,8 @@ package net.smartlogic.unitconverter.calculator.finance.emi;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,11 +15,18 @@ import net.smartlogic.unitconverter.widget.ViewportContent;
 public final class EmiLayout extends ViewGroup implements ViewportContent {
     private boolean fits, wide, reflowFields;
     private int resultRowGap, compactResultRowGap;
+    private CharSequence reservedGuidance;
     public void setResultRowSpacing(int regular, int compact) { resultRowGap = regular; compactResultRowGap = compact; requestLayout(); }
     public void setResultState(boolean ready, boolean editing) {
+        setResultState(ready, editing, null);
+    }
+    /** Keep loading and completed guidance in the same font-aware slot. */
+    public void setResultState(boolean showCard, boolean editing, CharSequence completedGuidance) {
+        reservedGuidance = completedGuidance;
         View card = findViewById(R.id.emi_summary), guidance = findViewById(R.id.emi_message);
-        card.setVisibility(ready && !editing ? VISIBLE : GONE);
+        card.setVisibility(showCard && !editing ? VISIBLE : GONE);
         getChildAt(1).setVisibility(card.getVisibility() == VISIBLE || guidance.getVisibility() == VISIBLE ? VISIBLE : GONE);
+        requestLayout();
     }
     private int inset, gap, column, summaryMargin;
     private int previousWidth = -1, previousHeight = -1, previousKeys = -1;
@@ -90,6 +99,16 @@ public final class EmiLayout extends ViewGroup implements ViewportContent {
                 dense ? compactResultRowGap : resultRowGap;
         guidance.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(dense ? R.dimen.h3_5 : R.dimen.graphy_value_text_size));
+        int guidanceHeight = 0;
+        if (reservedGuidance != null && reservedGuidance.length() > 0) {
+            int textWidth = Math.max(1, column - guidance.getCompoundPaddingLeft() - guidance.getCompoundPaddingRight());
+            guidanceHeight = StaticLayout.Builder.obtain(reservedGuidance, 0, reservedGuidance.length(), guidance.getPaint(), textWidth)
+                    .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                    .setIncludePad(guidance.getIncludeFontPadding())
+                    .setLineSpacing(guidance.getLineSpacingExtra(), guidance.getLineSpacingMultiplier())
+                    .build().getHeight() + guidance.getCompoundPaddingTop() + guidance.getCompoundPaddingBottom();
+        }
+        guidance.setMinHeight(guidanceHeight);
         for (int id : new int[]{R.id.emi_total_interest, R.id.emi_total_payment, R.id.investment_receipts}) {
             TextView supporting = findViewById(id);
             if (supporting != null) supporting.setTextSize(TypedValue.COMPLEX_UNIT_PX,

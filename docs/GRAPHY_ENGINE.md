@@ -33,7 +33,8 @@ details and accessibility; meaningful captions such as Exchange rate remain visi
 Node widths are bounded by shared resources and long text wraps without reducing
 font sizes. Role colors, border contrast and dash tokens are shared with the guide.
 Default value boxes and operator circles have a 32dp visual minimum; operators use
-20sp type and value boxes use 2dp vertical padding. Text scaling grows shapes as
+20sp type for compact symbols; descriptive operation labels use the shared 16sp
+role. Value boxes use 2dp vertical padding. Text scaling grows shapes as
 needed. Separate 48dp touch/accessibility bounds preserve usable targets without
 adding visible bulk. Connectors attach to visible borders with continuous shafts
 and destination arrowheads.

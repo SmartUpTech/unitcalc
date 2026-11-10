@@ -15,29 +15,54 @@ public final class FixedTableView extends LinearLayout implements ViewportConten
     private List<String> headers = java.util.Collections.emptyList();
     private List<List<String>> rows = java.util.Collections.emptyList();
     private int start, end, previousWidth = -1, previousHeight = -1;
+    private int pageWidth = -1, pageHeight = -1, pageBodyHeight;
+    private final java.util.ArrayDeque<Integer> previousStarts = new java.util.ArrayDeque<>();
     private boolean fits;
+    private boolean compact;
     private IntConsumer selected = i -> { };
     private Runnable changed = () -> { };
     public FixedTableView(Context c) { super(c); setOrientation(VERTICAL); }
+    public void setCompact(boolean compact) {
+        this.compact = compact; previousStarts.clear(); previousWidth = -1; requestLayout();
+    }
     public void setData(List<String> headers, List<List<String>> rows, int start, IntConsumer selected, Runnable changed) {
         this.headers = java.util.Collections.unmodifiableList(new java.util.ArrayList<>(headers)); this.rows = java.util.Collections.unmodifiableList(new java.util.ArrayList<>(rows)); this.start = Math.max(0, Math.min(start, rows.size() - 1));
+        previousStarts.clear();
         this.selected = selected; this.changed = changed; previousWidth = -1; requestLayout();
     }
     public int start() { return start; }
     public int end() { return end; }
     public int count() { return rows.size(); }
-    public void jump(int index) { start = Math.max(0, Math.min(index, rows.size() - 1)); previousWidth = -1; requestLayout(); }
-    public void next() { if (end < rows.size()) jump(end); }
-    public void previous() { jump(Math.max(0, start - Math.max(1, end - start))); }
+    public void jump(int index) { previousStarts.clear(); moveTo(index); }
+    private void moveTo(int index) { start = Math.max(0, Math.min(index, rows.size() - 1)); previousWidth = -1; requestLayout(); }
+    public void next() { if (end > start && end < rows.size()) { previousStarts.push(start); moveTo(end); } }
+    public void previous() {
+        if (start > 0) moveTo(previousStarts.isEmpty() ? previousPageStart() : previousStarts.pop());
+    }
+    /** Rebuild earlier boundaries after restoration or a viewport change. */
+    private int previousPageStart() {
+        int page = 0, used = 0;
+        for (int i = 0; i < start; i++) {
+            View row = row(rows.get(i), i); natural(row, pageWidth);
+            int height = row.getMeasuredHeight();
+            if (used > 0 && used + height > pageBodyHeight) { page = i; used = 0; }
+            used += height;
+        }
+        return page;
+    }
     @Override public void setViewportHeight(int h) { }
     @Override public boolean fitsViewport() { return fits; }
     @Override protected void onMeasure(int ws, int hs) {
         int width = MeasureSpec.getSize(ws), height = MeasureSpec.getSize(hs);
+        if (width != pageWidth || height != pageHeight) {
+            previousStarts.clear(); pageWidth = width; pageHeight = height;
+        }
         if (width != previousWidth || height != previousHeight) {
             previousWidth = width; previousHeight = height;
             removeAllViewsInLayout();
             int used = 0;
             if (!headers.isEmpty()) { View header = row(headers, -1); natural(header, width); used = header.getMeasuredHeight(); addViewInLayout(header, -1, new LayoutParams(-1, -2), true); }
+            pageBodyHeight = Math.max(0, height - used);
             end = start;
             while (end < rows.size()) {
                 View row = row(rows.get(end), end); natural(row, width);
@@ -59,6 +84,8 @@ public final class FixedTableView extends LinearLayout implements ViewportConten
             TextView cell = (TextView) android.view.LayoutInflater.from(getContext()).inflate(R.layout.emi_label, row, false);
             cell.setText(cells.get(i)); cell.setGravity(i == 0 ? Gravity.START | Gravity.CENTER_VERTICAL : Gravity.END | Gravity.CENTER_VERTICAL);
             cell.setPadding(gap, gap, gap, gap); cell.setTag(index < 0 ? "content_secondary" : "content_primary");
+            if (compact) cell.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,
+                    getResources().getDimension(R.dimen.finance_schedule_text_size));
             row.addView(cell, new LayoutParams(0, -2, 1));
         }
         if (index >= 0) {

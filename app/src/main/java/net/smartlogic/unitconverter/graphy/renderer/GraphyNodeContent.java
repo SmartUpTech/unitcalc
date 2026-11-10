@@ -14,13 +14,13 @@ record GraphyNodeContent(StaticLayout caption, StaticLayout value, float width, 
     static GraphyNodeContent measure(GraphyNode node, GraphyViewTheme theme, float maxWidth) {
         float padding = theme.getNodePadding();
         boolean operation = node.type() == GraphyNodeType.OPERATION;
+        String text = operation ? GraphLayoutEngine.formatOperator(node.displayValue()) : node.displayValue();
         TextPaint valuePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
         valuePaint.setTypeface(Typeface.create(theme.getTypeface(), node.type() == GraphyNodeType.RESULT
                 ? Typeface.BOLD : Typeface.NORMAL));
         valuePaint.setTextSize(node.type() == GraphyNodeType.RESULT ? theme.getResultTextSize()
-                : operation ? theme.getOperationTextSize() : theme.getValueTextSize());
+                : operation ? (text.length() > 3 ? theme.getOperationLabelTextSize() : theme.getOperationTextSize()) : theme.getValueTextSize());
         valuePaint.setColor(theme.nodeContent(node.type()));
-        String text = operation ? GraphLayoutEngine.formatOperator(node.displayValue()) : node.displayValue();
         boolean compact = operation && text.length() <= 3
                 && valuePaint.measureText(text) + padding * 2 <= theme.getOperationMarkerSize();
         TextPaint captionPaint = new TextPaint(valuePaint);

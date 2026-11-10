@@ -48,6 +48,7 @@ public final class InvestmentCalculatorFragment extends Fragment {
     private EmiFormatter display;
     private InvestmentDraft draft;
     private InvestmentResult result;
+    private InvestmentResult displayedResult;
     private Future<?> calculation;
     private int revision, epoch, focus, tab, pageStart;
     private int[] carets = {-1,-1,-1,-1,-1,-1,-1,-1};
@@ -101,7 +102,9 @@ public final class InvestmentCalculatorFragment extends Fragment {
     }
     private InvestmentDraft fresh() { return new InvestmentDraft(kind(), Preferences.getInstance(requireContext()).getPreferredCurrency()); }
     private InvestmentDraft read(String raw) {
-        InvestmentDraft restored = InvestmentDraft.read(raw, kind()); PreferredCurrency.find(requireContext(), restored.currency); return restored;
+        InvestmentDraft restored = InvestmentDraft.read(raw, kind());
+        if (kind() == InvestmentInputs.Kind.SIP) restored.currency = Preferences.getInstance(requireContext()).getPreferredCurrency();
+        PreferredCurrency.find(requireContext(), restored.currency); return restored;
     }
     @Nullable @Override public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle saved) {
         return inflater.inflate(R.layout.fragment_investment_calculator, parent, false);
@@ -364,26 +367,35 @@ public final class InvestmentCalculatorFragment extends Fragment {
         if(getView()==null) return;
         requireView().setBackgroundColor(ThemeManager.get().background());
         if(form!=null) {
+            boolean empty=draft.amount.isEmpty() || draft.rate.isEmpty() || draft.tenure.isEmpty();
+            boolean pending = result == null && !empty && error == null;
+            if (result != null) displayedResult = result;
+            InvestmentResult presentation = pending ? displayedResult : result;
             text(R.id.emi_value_label,getString(kind()==InvestmentInputs.Kind.SIP?R.string.investment_future:R.string.investment_maturity));
-            text(R.id.emi_value,result==null?getString(R.string.emi_no_result):money(result.maturity()));
+            text(R.id.emi_value,presentation==null?getString(R.string.emi_no_result):money(presentation.maturity()));
             if(kind()==InvestmentInputs.Kind.FD) {
-                metric(R.id.emi_total_interest,R.string.investment_interest,result==null?null:money(result.interest()));
-                metric(R.id.emi_total_payment,draft.periodic?R.string.investment_reinvestment_yield_short:R.string.investment_yield,result==null?null:getString(R.string.emi_rate_value,
-                        net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(result.annualYield(),2)));
+                metric(R.id.emi_total_interest,R.string.investment_interest,presentation==null?null:money(presentation.interest()));
+                metric(R.id.emi_total_payment,draft.periodic?R.string.investment_reinvestment_yield_short:R.string.investment_yield,presentation==null?null:getString(R.string.emi_rate_value,
+                        net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(presentation.annualYield(),2)));
             } else {
-                metric(R.id.emi_total_interest,kind()==InvestmentInputs.Kind.SIP?R.string.investment_invested:R.string.investment_total_deposits,result==null?null:money(result.invested()));
-                metric(R.id.emi_total_payment,kind()==InvestmentInputs.Kind.SIP?R.string.investment_gains:R.string.investment_interest,result==null?null:money(result.interest()));
+                metric(R.id.emi_total_interest,kind()==InvestmentInputs.Kind.SIP?R.string.investment_invested:R.string.investment_total_deposits,presentation==null?null:money(presentation.invested()));
+                metric(R.id.emi_total_payment,kind()==InvestmentInputs.Kind.SIP?R.string.investment_gains:R.string.investment_interest,presentation==null?null:money(presentation.interest()));
             }
             form.findViewById(R.id.investment_receipts).setVisibility(draft.periodic?View.VISIBLE:View.GONE);
-            metric(R.id.investment_receipts,R.string.investment_receipts,result==null?null:money(result.receipts()));
+            metric(R.id.investment_receipts,R.string.investment_receipts,presentation==null?null:money(presentation.receipts()));
+            for (int id : new int[]{R.id.emi_value, R.id.emi_total_interest, R.id.emi_total_payment, R.id.investment_receipts}) {
+                form.findViewById(id).setVisibility(id == R.id.investment_receipts && !draft.periodic ? View.GONE
+                        : pending ? View.INVISIBLE : View.VISIBLE);
+            }
             int notice = kind()==InvestmentInputs.Kind.SIP?R.string.investment_sip_notice:kind()==InvestmentInputs.Kind.RD?R.string.investment_rd_notice:draft.periodic?R.string.investment_periodic_notice:R.string.investment_estimate;
-            boolean empty=draft.amount.isEmpty() || draft.rate.isEmpty() || draft.tenure.isEmpty();
             String fullMessage = getString(result!=null?notice:empty?R.string.investment_empty:error==null?R.string.emi_loading:errorLabel());
             text(R.id.emi_message, keysOpen && result == null ? getString(empty ? R.string.investment_complete_short
                     : "overflow".equals(error) ? R.string.investment_overflow_short : R.string.investment_check_short) : fullMessage);
             form.findViewById(R.id.emi_message).setContentDescription(fullMessage);
             form.findViewById(R.id.emi_message).setVisibility(keysOpen && result != null ? View.GONE : View.VISIBLE);
-            ((EmiLayout) form.findViewById(R.id.emi_layout)).setResultState(result != null, keysOpen);
+            // Pending values use the same card and guidance space as completed results.
+            ((EmiLayout) form.findViewById(R.id.emi_layout)).setResultState(result != null || pending, keysOpen,
+                    !keysOpen && (result != null || pending) ? getString(notice) : null);
             form.findViewById(R.id.emi_more).setEnabled(result != null);
             // Errors stay associated with their field, without replacing entered text.
             for(int n=0;n<editors.length;n++) {
@@ -402,15 +414,29 @@ public final class InvestmentCalculatorFragment extends Fragment {
         FrameLayout body=schedule.findViewById(R.id.emi_body); header.removeAllViews(); footer.removeAllViews(); body.removeAllViews(); table=null;
         if(result==null) return;
         InvestmentResult snapshot=result;
-        LinearLayout modes=row(header); button(modes,R.string.emi_monthly_table,()->{yearly=false;pageStart=0;renderSchedule();}); button(modes,R.string.emi_yearly_table,()->{yearly=true;pageStart=0;renderSchedule();});
+        MaterialButtonToggleGroup modes = (MaterialButtonToggleGroup) getLayoutInflater().inflate(R.layout.investment_schedule_modes, header, false);
+        header.addView(modes);
+        modes.check(yearly ? R.id.investment_schedule_yearly : R.id.investment_schedule_monthly);
+        modes.addOnButtonCheckedListener((group, id, checked) -> {
+            if (checked) { yearly = id == R.id.investment_schedule_yearly; pageStart = 0; renderSchedule(); }
+        });
         var periods=periods(snapshot,yearly); List<List<String>> cells=new ArrayList<>();
         for(var p:periods) {
-            String label=yearly?getString(R.string.investment_year,(p.month()-1)/12+1):formatter().date(p.date());
+            String label=yearly?getString(R.string.investment_year,(p.month()-1)/12+1):formatter().period(p.date());
             cells.add(java.util.Arrays.asList(label,money(kind()==InvestmentInputs.Kind.FD?p.interest():p.contribution()),money(draft.periodic?p.payout():p.balance())));
         }
-        table=new FixedTableView(requireContext()); FixedTableView current=table;
-        TextView range=(TextView)getLayoutInflater().inflate(R.layout.emi_label,footer,false); footer.addView(range);
-        LinearLayout navigation=row(footer); MaterialButton previous=button(navigation,R.string.emi_previous,current::previous), next=button(navigation,R.string.emi_next,current::next);
+        table=new FixedTableView(requireContext()); table.setCompact(true); FixedTableView current=table;
+        LinearLayout navigation=row(footer); navigation.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        MaterialButton previous=button(navigation,R.string.emi_previous,current::previous);
+        TextView range=(TextView)getLayoutInflater().inflate(R.layout.emi_label,navigation,false);
+        range.setGravity(android.view.Gravity.CENTER);
+        range.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.finance_schedule_text_size));
+        navigation.addView(range,new LinearLayout.LayoutParams(0,-2,1));
+        MaterialButton next=button(navigation,R.string.emi_next,current::next);
+        for (MaterialButton action : new MaterialButton[]{previous,next}) {
+            action.setTag("theme_outline_action");
+            action.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.finance_schedule_text_size));
+        }
         current.setData(java.util.Arrays.asList(getString(R.string.emi_period),getString(kind()==InvestmentInputs.Kind.FD?R.string.investment_interest:R.string.investment_contribution),getString(draft.periodic?R.string.investment_payout:R.string.investment_balance)),cells,pageStart,index->{
             var p=periods.get(index); show(EmiDialogFragment.info(R.string.emi_schedule,getString(R.string.investment_period_detail,
                     formatter().date(p.date()),money(p.contribution()),money(p.invested()),money(p.interest()),money(p.payout()),money(p.balance()))));
@@ -467,9 +493,17 @@ public final class InvestmentCalculatorFragment extends Fragment {
     private void show(EmiDialogFragment dialog){if(!getChildFragmentManager().isStateSaved()&&getChildFragmentManager().findFragmentByTag(EmiDialogFragment.TAG)==null)dialog.showNow(getChildFragmentManager(),EmiDialogFragment.TAG);}
     private LinearLayout row(LinearLayout parent){LinearLayout row=new LinearLayout(requireContext());parent.addView(row,new LinearLayout.LayoutParams(-1,-2));return row;}
     private MaterialButton button(LinearLayout parent,int label,Runnable action){MaterialButton b=(MaterialButton)getLayoutInflater().inflate(R.layout.emi_action,parent,false);b.setText(label);b.setOnClickListener(v->action.run());parent.addView(b,new LinearLayout.LayoutParams(0,-2,1));return b;}
-    @Override public void onResume(){super.onResume();display=null;if(getView()!=null){ThemeApplier.apply(requireView());render();renderSchedule();}updateBack();}
+    private boolean refreshPreferredCurrency() {
+        if (kind() != InvestmentInputs.Kind.SIP) return false;
+        String currency = Preferences.getInstance(requireContext()).getPreferredCurrency();
+        if (currency.equals(draft.currency)) return false;
+        draft.currency = currency;
+        bindOptions();
+        return true;
+    }
+    @Override public void onResume(){super.onResume();display=null;if(getView()!=null){boolean currencyChanged=refreshPreferredCurrency();ThemeApplier.apply(requireView());if(currencyChanged)changed();else{render();renderSchedule();}}updateBack();}
     @Override public void onPause(){persist();super.onPause();updateBack();}
-    @Override public void onHiddenChanged(boolean hidden){super.onHiddenChanged(hidden);if(history!=null)history.visibilityChanged();updateBack();if(!hidden&&getView()!=null){display=null;ThemeApplier.apply(requireView());render();renderSchedule();}}
+    @Override public void onHiddenChanged(boolean hidden){super.onHiddenChanged(hidden);if(history!=null)history.visibilityChanged();updateBack();if(!hidden&&getView()!=null){display=null;boolean currencyChanged=refreshPreferredCurrency();ThemeApplier.apply(requireView());if(currencyChanged)changed();else{render();renderSchedule();}}}
     @Override public void onSaveInstanceState(@NonNull Bundle out){saveCarets();super.onSaveInstanceState(out);out.putString("draft",draft.json());out.putBoolean("keys",keysOpen);out.putInt("focus",focus);out.putInt("tab",tab);out.putInt("page",pageStart);out.putBoolean("yearly",yearly);out.putIntArray("carets",carets);if(history!=null)history.saveState(out);}
-    @Override public void onDestroyView(){persist();epoch++;if(calculation!=null)calculation.cancel(true);main.removeCallbacks(calculateLater);if(history!=null)history.invalidate();ThemeManager.removeListener(themeListener);if(tabs!=null)tabs.detach();tabs=null;graphy=null;display=null;form=schedule=null;editors=null;table=null;back.setEnabled(false);super.onDestroyView();}
+    @Override public void onDestroyView(){persist();epoch++;if(calculation!=null)calculation.cancel(true);main.removeCallbacks(calculateLater);if(history!=null)history.invalidate();ThemeManager.removeListener(themeListener);if(tabs!=null)tabs.detach();tabs=null;graphy=null;display=null;displayedResult=null;form=schedule=null;editors=null;table=null;back.setEnabled(false);super.onDestroyView();}
 }

@@ -56,8 +56,14 @@ public final class CurrencyRateStore {
         for (int i = 0; i < rows.length(); i++) {
             JSONObject row = rows.getJSONObject(i);
             String quote = row.getString("quote");
-            if (!"USD".equals(row.getString("base")) || !quote.matches("[A-Z]{3}")
-                    || rates.containsKey(quote)) throw new JSONException("Invalid currency identity");
+            if (!"USD".equals(row.getString("base"))) throw new JSONException("Invalid currency identity");
+            // Frankfurter also returns non-currency assets (for example AAVE/USDT).
+            // These are outside our three-letter currency contract, not a failed refresh.
+            if (!quote.matches("[A-Z]{3}")) {
+                if (quote.matches("[A-Z0-9]{2,16}")) continue;
+                throw new JSONException("Invalid currency identity");
+            }
+            if (rates.containsKey(quote)) throw new JSONException("Invalid currency identity");
             String date = row.getString("date");
             try { LocalDate.parse(date); }
             catch (RuntimeException invalid) { throw new JSONException("Invalid rate date"); }

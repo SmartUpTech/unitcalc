@@ -40,6 +40,16 @@ public class CurrencyRateStoreTest {
         assertEquals(0, snapshot.rates.get("EUR").compareTo(
                 CurrencyRateStore.readCache(snapshot.encode(), 0).rates.get("EUR")));
     }
+    @Test public void providerAssetRowsDoNotRejectValidCurrencyRates() throws Exception {
+        String assets = "{\"date\":\"2026-11-09\",\"base\":\"USD\",\"quote\":\"AAVE\",\"rate\":0.0076051},"
+                + "{\"date\":\"2026-11-09\",\"base\":\"USD\",\"quote\":\"USDT\",\"rate\":1},";
+        var snapshot = CurrencyRateStore.parseResponse("[" + assets + RESPONSE.substring(1), NOW);
+        assertFalse(snapshot.rates.containsKey("AAVE")); assertFalse(snapshot.rates.containsKey("USDT"));
+        assertEquals(0,new java.math.BigDecimal("80").compareTo(snapshot.rates.get("INR")));
+        assertEquals(snapshot.rates,CurrencyRateStore.readCache(snapshot.encode(),0).rates);
+        assertThrows(org.json.JSONException.class, () -> CurrencyRateStore.parseResponse("[" + assets.substring(0,assets.length()-1) + "]",NOW));
+        assertThrows(org.json.JSONException.class, () -> CurrencyRateStore.parseResponse(RESPONSE.replace("INR","???"),NOW));
+    }
 
     @Test public void rejectsMissingMalformedAndInvalidRates() {
         String[] invalid = {null, "", "[]", "{}", "not json", RESPONSE.replace("80}", "0}"),

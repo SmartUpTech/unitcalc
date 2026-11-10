@@ -1,0 +1,11 @@
+<net.smartlogic.unitconverter.widget.ConverterModeToggleGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/investment_schedule_modes" android:layout_width="match_parent" android:layout_height="wrap_content"
+    app:singleSelection="true" app:selectionRequired="true">
+    <com.google.android.material.button.MaterialButton android:id="@+id/investment_schedule_monthly"
+        style="@style/ConverterModeSegment" android:layout_width="0dp" android:layout_height="wrap_content"
+        android:layout_weight="1" android:text="@string/emi_monthly_table" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/investment_schedule_yearly"
+        style="@style/ConverterModeSegment" android:layout_width="0dp" android:layout_height="wrap_content"
+        android:layout_weight="1" android:text="@string/emi_yearly_table" />
+</net.smartlogic.unitconverter.widget.ConverterModeToggleGroup>

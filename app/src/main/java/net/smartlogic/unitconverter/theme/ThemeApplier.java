@@ -259,7 +259,8 @@ public final class ThemeApplier {
                             withAlpha(theme.secondaryContentColor(), 0x26), theme.background()), theme.background()}));
             chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.secondaryContentColor(), 0x88)));
         }
-        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode || id == R.id.investment_amount_mode || id == R.id.investment_percent_mode)
+        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode || id == R.id.investment_amount_mode || id == R.id.investment_percent_mode
+                || id == R.id.investment_schedule_monthly || id == R.id.investment_schedule_yearly)
                 && view instanceof com.google.android.material.button.MaterialButton button) {
             int[][] states = {{-android.R.attr.state_enabled, android.R.attr.state_checked}, {-android.R.attr.state_enabled}, {android.R.attr.state_checked}, {}};
             int disabledSurface = androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x26), theme.background());
@@ -278,7 +279,7 @@ public final class ThemeApplier {
             toggle.setThumbTintList(new ColorStateList(states, new int[]{theme.secondaryContentColor(), theme.accentContentColor(), theme.secondaryContentColor()}));
             toggle.setTrackTintList(new ColorStateList(states, new int[]{withAlpha(theme.secondaryContentColor(), 0x33), withAlpha(theme.accentContentColor(), 0x66), withAlpha(theme.secondaryContentColor(), 0x55)}));
         }
-        if (id == R.id.converter_mode_toggle || id == R.id.investment_step_modes) {
+        if (id == R.id.converter_mode_toggle || id == R.id.investment_step_modes || id == R.id.investment_schedule_modes) {
             GradientDrawable track = new GradientDrawable();
             track.setColor(androidx.core.graphics.ColorUtils.compositeColors(
                     withAlpha(theme.secondaryContentColor(), 0x18), theme.background()));

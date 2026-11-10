@@ -97,7 +97,9 @@ public final class AgeResultLayout extends ViewGroup {
         int heading = density >= 3 ? R.dimen.graphy_label_text_size : R.dimen.graphy_value_text_size;
         role(R.id.age_title, heading);
         role(R.id.age_next_label, heading);
-        role(R.id.age_summary_title, heading);
+        role(R.id.age_summary_title, density >= 3 ? R.dimen.graphy_label_text_size : R.dimen.tool_result_detail_size);
+        for (int id : new int[]{R.id.age_year_unit, R.id.age_birthday_details, R.id.age_remainder, R.id.age_birthday_countdown})
+            role(id, R.dimen.tool_result_detail_size);
         for (int id : new int[]{R.id.age_total_years, R.id.age_total_months, R.id.age_total_weeks,
                 R.id.age_total_days, R.id.age_total_hours, R.id.age_total_minutes}) role(id, density >= 2 ? R.dimen.graphy_value_text_size : R.dimen.age_summary_value_size);
     }

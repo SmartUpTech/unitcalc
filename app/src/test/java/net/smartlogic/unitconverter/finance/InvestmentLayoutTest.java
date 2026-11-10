@@ -20,6 +20,37 @@ import static org.junit.Assert.*;
 /** Native previews of real fragments, not hand-reconstructed screenshots. */
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class InvestmentLayoutTest extends InvestmentFragmentTest {
+    @Test public void sipScheduleUsesCompactRowsAndMeasuredPagination() throws Exception {
+        RuntimeEnvironment.setFontScale(1f);
+        var controller = Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            var f = launch(controller.get(), InvestmentInputs.Kind.SIP);
+            Preferences.getInstance(controller.get()).getPreferences().edit().putString(Appearance.FONT,Appearance.Font.OSWALD.name()).apply();
+            set(f,R.id.emi_principal,"500"); set(f,R.id.emi_rate,"12"); set(f,R.id.emi_tenure,"10"); drain(f);
+            for (var theme : new CalculatorTheme[]{CalculatorThemes.PORCELAIN_WHITE, CalculatorThemes.GRAPHITE_BLACK}) {
+                ReflectionHelpers.setStaticField(ThemeManager.class,"current",theme);
+                ReflectionHelpers.callInstanceMethod(f,"renderSchedule");
+                View schedule = ReflectionHelpers.getField(f,"schedule");
+                for (int i=0;i<3;i++) {
+                    Shadows.shadowOf(Looper.getMainLooper()).idle();
+                    schedule.forceLayout();
+                    schedule.measure(View.MeasureSpec.makeMeasureSpec(360,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(480,View.MeasureSpec.EXACTLY));
+                    schedule.layout(0,0,360,480);
+                }
+                net.smartlogic.unitconverter.widget.FixedTableView table = ReflectionHelpers.getField(f,"table");
+                assertTrue(table.fitsViewport()); assertTrue("At least six monthly rows in " + table.getWidth()+"x"+table.getHeight()+", actual="+(table.end()-table.start()),table.end()-table.start()>=6);
+                android.view.ViewGroup row=(android.view.ViewGroup)table.getChildAt(1);
+                assertTrue(row.getHeight()>=48);
+                assertEquals(schedule.getResources().getDimension(R.dimen.finance_schedule_text_size),((android.widget.TextView)row.getChildAt(0)).getTextSize(),.01f);
+                int end=table.end();table.next();schedule.requestLayout();
+                schedule.measure(View.MeasureSpec.makeMeasureSpec(360,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(480,View.MeasureSpec.EXACTLY));schedule.layout(0,0,360,480);
+                assertEquals(end,table.start());
+                Bitmap bitmap=Bitmap.createBitmap(360,480,Bitmap.Config.ARGB_8888);schedule.draw(new Canvas(bitmap));
+                File file=new File("build/reports/investments/SIP-schedule-"+theme.id()+".png");file.getParentFile().mkdirs();
+                try(var stream=new FileOutputStream(file)){bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);}bitmap.recycle();
+            }
+        } finally { controller.pause().stop().destroy(); }
+    }
     @Test public void sipLoadingKeepsResultAndControlBoundsStable() throws Exception {
         var controller = Robolectric.buildActivity(Host.class).setup().visible();
         try {

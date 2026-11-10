@@ -99,4 +99,26 @@ public class InvestmentFragmentTest {
         d.amount=".25";d.rate="0";d.tenure=".5";
         InvestmentCalculator.validate(d.inputs());assertEquals(6,d.inputs().months());
     }
+    @Test public void sipUsesPreferredCurrencyForExistingDraftAndPreferenceReturn() throws Exception {
+        var host = Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            Preferences preferences = Preferences.getInstance(host.get());
+            preferences.setPreferredCurrency("USD");
+            var f = launch(host.get(), InvestmentInputs.Kind.SIP);
+            assertEquals("$", ((TextView) form(f).findViewById(R.id.investment_amount_mode)).getText().toString());
+            set(f,R.id.emi_principal,"500"); set(f,R.id.emi_rate,"12"); set(f,R.id.emi_tenure,"10"); drain(f);
+            InvestmentResult dollars = ReflectionHelpers.getField(f,"result");
+            InvestmentDraft draft = ReflectionHelpers.getField(f,"draft");
+            String savedDollars = draft.json();
+            host.pause(); preferences.setPreferredCurrency("INR"); host.resume(); drain(f);
+            assertEquals("₹", ((TextView) form(f).findViewById(R.id.investment_amount_mode)).getText().toString());
+            assertEquals("500", ((EditText) form(f).findViewById(R.id.emi_principal)).getText().toString());
+            InvestmentResult rupees = ReflectionHelpers.getField(f,"result");
+            assertEquals(0, dollars.maturity().compareTo(rupees.maturity()));
+            assertEquals("INR", rupees.inputs().currency());
+            f.restoreFromHistory(savedDollars); drain(f);
+            draft = ReflectionHelpers.getField(f,"draft"); assertEquals("INR",draft.currency);
+            assertEquals("₹", ((TextView) form(f).findViewById(R.id.investment_amount_mode)).getText().toString());
+        } finally { host.pause().stop().destroy(); }
+    }
 }

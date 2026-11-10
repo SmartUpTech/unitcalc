@@ -151,8 +151,8 @@
     <dimen name="emi_summary_margin">16dp</dimen>
     <dimen name="emi_summary_compact_margin">8dp</dimen>
     <dimen name="emi_summary_dense_margin">4dp</dimen>
-    <dimen name="emi_summary_text_size">@dimen/graphy_value_text_size</dimen>
-    <dimen name="emi_summary_compact_text_size">@dimen/graphy_value_text_size</dimen>
+    <dimen name="emi_summary_text_size">@dimen/tool_result_detail_size</dimen>
+    <dimen name="emi_summary_compact_text_size">@dimen/tool_result_detail_size</dimen>
     <dimen name="emi_field_size">18sp</dimen>
     <dimen name="emi_label_fit_reduction">2sp</dimen>
     <dimen name="emi_wide_min_width">600dp</dimen>

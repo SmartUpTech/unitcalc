@@ -100,6 +100,13 @@ description: Core logic for mathematical evaluation, unit conversions, and the c
 
 ### Currency country coverage (2026-10-22)
 
+Refresh compatibility (2026-11-11): Frankfurter v2 also returns asset codes such as
+`AAVE` and `USDT`. `CurrencyRateStore` skips well-formed asset codes outside the
+three-letter currency contract rather than rejecting valid currency rows. Currency
+base, duplicate quotes, dates and positive decimal rates remain validated; an
+asset-only or invalid response never replaces the last valid cache. Verified against
+the live [Frankfurter API](https://frankfurter.dev/).
+
 - CurrencyConverterFragment defines 100 country/region entries representing 98 distinct
   Frankfurter v2 currency codes. Hong Kong is retained for compatibility. Bulgaria, Croatia
   and Germany share EUR; country names in the searchable picker distinguish these entries.

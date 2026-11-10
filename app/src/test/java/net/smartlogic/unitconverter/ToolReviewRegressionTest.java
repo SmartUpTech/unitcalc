@@ -102,7 +102,7 @@ public class ToolReviewRegressionTest {
                     >= host.getResources().getDimensionPixelSize(R.dimen.converter_spacing));
             assertEquals(results.getPaddingTop(), results.getPaddingBottom());
         }
-        assertEquals(host.getResources().getDimension(R.dimen.graphy_value_text_size),
+        assertEquals(host.getResources().getDimension(R.dimen.tool_result_detail_size),
                 ((android.widget.TextView) host.findViewById(R.id.fe_fuel_needed)).getTextSize(), .01f);
         assertFalse(host.isFinishing());
     }
