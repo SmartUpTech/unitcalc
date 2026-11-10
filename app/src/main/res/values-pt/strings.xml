@@ -1301,4 +1301,12 @@
     <string name="investment_period_detail">%1$s\nAporte: %2$s\nValor investido: %3$s\nJuros / crescimento: %4$s\nPagamento: %5$s\nValor final: %6$s</string>
     <string name="light_year">Ano-luz</string>
     <string name="store_listing_full_description">O Calculator+ reúne calculadora científica, conversor de unidades e de moedas para o dia a dia, estudo, trabalho e viagens.\n\nCÁLCULOS DIÁRIOS E CIENTÍFICOS\nUse aritmética, parênteses, percentuais, potências e raízes quadradas. Reveja os resultados salvos no histórico.\n\nCONVERTA UNIDADES\nComprimento, área, massa, temperatura, volume, velocidade, tempo e mais. Busque nomes e símbolos, de medidas culinárias a tamanhos de armazenamento.\n\nCOMPARE MOEDAS\nEscolha por nome, país ou código. Atualize o câmbio e confira a última atualização. Taxas são referências; taxas reais e tarifas podem variar. A atualização exige internet.\n\nPERSONALIZE\nEscolha temas e ajuste formato numérico, sons e vibração nas configurações.\n\nENTENDA COM GRAPHY\nVeja cálculos compatíveis explicados em etapas conectadas. Exporte diagramas em PDF ou PNG.\n\nRETOME CÁLCULOS\nConfira resultados salvos e reutilize expressões anteriores do histórico.\n\nPAUSA DIÁRIA PARA JOGOS\nAbra Jogar para jogos diários hospedados online. É preciso internet. Alguns temas e conjuntos extras de jogos estão disponíveis por anúncios opcionais com recompensa.\n\nDe uma soma rápida à conversão de medidas, o Calculator+ reúne ferramentas úteis.</string>
+    <string name="ft_lbf_s">Pé-libra-força/segundo</string>
+    <string name="kgf_m">Quilograma-força metro</string>
+    <string name="n_cm">Newton centímetro</string>
+    <string name="emi_graph_formula">Cálculo da parcela</string>
+    <string name="emi_formula">Fórmula da parcela</string>
+    <string name="investment_formula_sip">saldo = (saldo + aporte) × (1 + percentual anual / 1200)</string>
+    <string name="investment_formula_rd">fator = (1 + taxa anual / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Acumulativo: P × (1 + r/f)^períodosCompletos, depois juros simples no restante. Periódico: juros sobre P, pagos sem reinvestir.</string>
 </resources>

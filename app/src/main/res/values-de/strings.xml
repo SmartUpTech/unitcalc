@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nAnfangssaldo: %2$s\nZahlungen: %3$s\nTilgung: %4$s\nErhaltene Zinsen: %5$s\nSondertilgung: %6$s\nEndsaldo: %7$s\nUngenutzte Sonderzahlung: %8$s</string>
     <string name="investment_period_detail">%1$s\nBeitrag: %2$s\nAngelegter Betrag: %3$s\nZinsen / Wachstum: %4$s\nAuszahlung: %5$s\nEndwert: %6$s</string>
     <string name="store_listing_full_description">Calculator+ vereint wissenschaftlichen Rechner, Einheiten- und Währungsumrechner für Alltag, Lernen, Arbeit und Reisen.\n\nRECHNEN\nNutze Grundrechenarten, Klammern, Prozente, Potenzen und Quadratwurzeln. Gespeicherte Ergebnisse findest du im Verlauf.\n\nEINHEITEN UMRECHNEN\nLänge, Fläche, Masse, Temperatur, Volumen, Geschwindigkeit, Zeit und mehr. Suche nach Namen oder Symbolen, von Kochmengen bis Speichergrößen.\n\nWÄHRUNGEN VERGLEICHEN\nWähle nach Name, Land oder Währungscode. Aktualisiere Kurse und prüfe den letzten Abruf. Kurse sind Richtwerte; tatsächliche Transaktionskurse und Gebühren können abweichen. Aktualisierungen benötigen Internet.\n\nANPASSEN\nWähle Designs und ändere Zahlenformat, Tastentöne und Vibration in den Einstellungen.\n\nMIT GRAPHY VERSTEHEN\nSieh unterstützte Berechnungen als verbundene Schritte. Exportiere Diagramme als PDF oder PNG.\n\nBERECHNUNGEN WIEDERVERWENDEN\nPrüfe gespeicherte Ergebnisse und nutze frühere Ausdrücke aus dem Verlauf erneut.\n\nTÄGLICHE SPIELPAUSE\nÖffne Spielen für bereitgestellte tägliche Spiele. Internet erforderlich. Einige Designs und zusätzliche Spielrunden gibt es über freiwillige Videoanzeigen mit Belohnung.\n\nVon der schnellen Summe bis zur Umrechnung: Calculator+ bündelt nützliche Rechenwerkzeuge.</string>
+    <string name="ft_lbf_s">Fuß-Pfund-Kraft/Sekunde</string>
+    <string name="kgf_m">Kilogrammkraft-Meter</string>
+    <string name="n_cm">Newtonzentimeter</string>
+    <string name="emi_graph_formula">Ratenberechnung</string>
+    <string name="emi_formula">Ratenformel</string>
+    <string name="investment_formula_sip">Saldo = (Saldo + Beitrag) × (1 + Jahresprozentsatz / 1200)</string>
+    <string name="investment_formula_rd">Faktor = (1 + Jahreszins / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Ansammelnd: P × (1 + r/f)^vollePerioden, danach anteiliger einfacher Zins. Regelmäßig: Zinsen auf P, ohne Wiederanlage ausgezahlt.</string>
 </resources>

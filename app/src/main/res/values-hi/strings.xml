@@ -1102,7 +1102,7 @@
     <string name="emi_total">कुल भुगतान</string>
     <string name="emi_insights">जानकारी</string>
     <string name="emi_more">और</string>
-    <string name="emi_prepayments">समय से पहले भुगतान</string>
+    <string name="emi_prepayments">प्रीपेमेंट</string>
     <string name="emi_compare">लोन की तुलना करें</string>
     <string name="emi_report">रिपोर्ट सेव करें</string>
     <string name="emi_empty">लोन की रकम, सालाना ब्याज और अवधि डालें।</string>
@@ -1112,7 +1112,7 @@
     <string name="emi_jump">अवधि पर जाएँ</string>
     <string name="emi_period">अवधि</string>
     <string name="emi_principal">मूलधन</string>
-    <string name="emi_extra">समय से पहले भुगतान</string>
+    <string name="emi_extra">प्रीपेमेंट</string>
     <string name="emi_opening">शुरुआती बकाया</string>
     <string name="emi_closing">आख़िरी बकाया</string>
     <string name="emi_unused">इस्तेमाल न हुई अतिरिक्त रकम</string>
@@ -1124,7 +1124,7 @@
     <string name="emi_year_period">%1$d (%2$d भुगतान)</string>
     <string name="emi_breakdown">विवरण</string>
     <string name="emi_view_schedule">भुगतान शेड्यूल देखें</string>
-    <string name="emi_graph_prepay">पहले भुगतान का असर</string>
+    <string name="emi_graph_prepay">प्रीपेमेंट का असर</string>
     <string name="emi_monthly_rate">मासिक ब्याज दर</string>
     <string name="emi_payment_count">मासिक भुगतान</string>
     <string name="emi_rate_step">सालाना दर ÷ 12</string>
@@ -1134,8 +1134,8 @@
     <string name="emi_apply_extra">EMI के बाद अतिरिक्त मूलधन चुकाएँ</string>
     <string name="emi_saved_interest">बचा हुआ ब्याज</string>
     <string name="emi_saved_months">बचे हुए महीने</string>
-    <string name="emi_add_rule">पहले भुगतान जोड़ें</string>
-    <string name="emi_edit_rule">पहले भुगतान बदलें</string>
+    <string name="emi_add_rule">प्रीपेमेंट जोड़ें</string>
+    <string name="emi_edit_rule">प्रीपेमेंट बदलें</string>
     <string name="emi_rule_amount">अतिरिक्त रकम</string>
     <string name="emi_rule_first">पहली किस्त</string>
     <string name="emi_rule_last">आख़िरी किस्त</string>
@@ -1145,7 +1145,7 @@
     <string name="emi_every_year">हर साल</string>
     <string name="emi_reduce_tenure">अवधि घटाएँ</string>
     <string name="emi_reduce_emi">EMI घटाएँ</string>
-    <string name="emi_method">पहले भुगतान का तरीका</string>
+    <string name="emi_method">प्रीपेमेंट का तरीका</string>
     <string name="emi_loan_a">लोन A</string>
     <string name="emi_loan_b">लोन B</string>
     <string name="emi_edit_a">A बदलें</string>
@@ -1208,30 +1208,30 @@
     <string name="investment_complete_short">इनपुट पूरे करें।</string>
     <string name="investment_check_short">हाइलाइट किया इनपुट जाँचें।</string>
     <string name="investment_overflow_short">अनुमान उपलब्ध सीमा से ज़्यादा है।</string>
-    <string name="emi_invalid">रकम, ब्याज, अवधि और पहले भुगतान जाँचें। रकम में अधिकतम 12 पूर्णांक अंक; दर 0–100%; अवधि 1–600 पूरे महीने।</string>
+    <string name="emi_invalid">रकम, ब्याज, अवधि और प्रीपेमेंट जाँचें। रकम में अधिकतम 12 पूर्णांक अंक; दर 0–100%; अवधि 1–600 पूरे महीने।</string>
     <string name="emi_rounding">इस करेंसी की सटीकता पर भुगतान बकाया घटाने के लिए बहुत छोटा है। रकम बढ़ाएँ या अवधि घटाएँ।</string>
-    <string name="emi_rule_limit">अधिकतम 20 पहले भुगतान के नियम जोड़ सकते हैं।</string>
+    <string name="emi_rule_limit">अधिकतम 20 प्रीपेमेंट के नियम जोड़ सकते हैं।</string>
     <string name="emi_rule_error">रकम शून्य से ज़्यादा और करेंसी की सटीकता में हो। किस्तों की संख्या मूल अवधि के अंदर रखें।</string>
-    <string name="emi_no_rules">पहले भुगतान नहीं हैं। अतिरिक्त रकम चुनी हुई EMI के बाद लगती है।</string>
+    <string name="emi_no_rules">प्रीपेमेंट नहीं हैं। अतिरिक्त रकम चुनी हुई EMI के बाद लगती है।</string>
     <string name="emi_comparison_note">कुल लागत और अवधि की तुलना करें। दोनों लोन एक ही मुद्रा में हैं; रकम कन्वर्ट नहीं होती।</string>
     <string name="emi_export_error">रिपोर्ट बनी या सेव नहीं हुई। दूसरी जगह सेव करके देखें।</string>
     <string name="emi_share_error">शेयर करने के लिए कोई उपयुक्त ऐप नहीं है।</string>
-    <string name="emi_history_hint">यह लोन और उसके पहले भुगतान वापस लाने के लिए खोलें।</string>
+    <string name="emi_history_hint">यह लोन और उसके प्रीपेमेंट वापस लाने के लिए खोलें।</string>
     <string name="emi_state_error">सेव किया लोन वापस नहीं आया। मौजूदा इनपुट सुरक्षित हैं।</string>
     <string name="emi_space_limit">इस टेक्स्ट/डिस्प्ले साइज़ पर पूरी EMI स्क्रीन नहीं समाती। विंडो बड़ी करें या स्केलिंग घटाएँ।</string>
     <string name="emi_currency_new">नए लोन सेटिंग में चुनी पसंदीदा मुद्रा लेते हैं। पुराने लोन की मुद्रा वही रहती है।</string>
-    <string name="emi_reset_question">यह लोन और पहले भुगतान साफ़ करें? सेव की हिस्ट्री बनी रहेगी।</string>
+    <string name="emi_reset_question">यह लोन और प्रीपेमेंट साफ़ करें? सेव की हिस्ट्री बनी रहेगी।</string>
     <string name="emi_switch_units_error">अवधि पूरे महीनों के बराबर रखें।</string>
     <string name="emi_missing_comparison">तुलना से पहले दोनों लोन पूरे भरें।</string>
     <string name="emi_chart_no_interest">सालाना दर शून्य होने पर ब्याज नहीं है।</string>
     <string name="emi_rule_after_payoff">लोन चुकने के बाद नियम लागू नहीं होते। आख़िरी किस्त की अतिरिक्त रकम इस्तेमाल न हुई दिखती है।</string>
-    <string name="emi_rule_remove_question">पहले भुगतान का यह नियम हटाएँ?</string>
+    <string name="emi_rule_remove_question">प्रीपेमेंट का यह नियम हटाएँ?</string>
     <string name="emi_chart_help">बकाया सुनने के लिए अवधि चुनें।</string>
-    <string name="emi_changing_payments">पहले भुगतान के बाद EMI बदलती है; शेड्यूल देखें।</string>
+    <string name="emi_changing_payments">प्रीपेमेंट के बाद EMI बदलती है; शेड्यूल देखें।</string>
     <string name="emi_input_rejected">यह बदलाव उपलब्ध रेंज या सटीकता से बाहर है और लागू नहीं हुआ।</string>
-    <string name="emi_check_fields">रकम, दर, पूरे महीनों की अवधि और पहले भुगतान की रेंज जाँचें।</string>
+    <string name="emi_check_fields">रकम, दर, पूरे महीनों की अवधि और प्रीपेमेंट की रेंज जाँचें।</string>
     <string name="emi_rounding_short">रकम बढ़ाएँ या अवधि घटाएँ।</string>
-    <string name="emi_check_short">लोन के इनपुट और पहले भुगतान की रेंज जाँचें।</string>
+    <string name="emi_check_short">लोन के इनपुट और प्रीपेमेंट की रेंज जाँचें।</string>
     <string name="investment_reset_confirm">यह कैलकुलेटर साफ़ करें? सेव की हिस्ट्री बनी रहेगी।</string>
     <string name="investment_empty">रकम, सालाना दर और अवधि डालें।</string>
     <string name="investment_estimate">महीनों पर अनुमान · टैक्स से पहले</string>
@@ -1267,7 +1267,7 @@
     <string name="age_share_body">उम्र कैलकुलेटर\nजन्म की तारीख़: %1$s\nइस तारीख़ तक उम्र: %2$s\nउम्र: %3$s\nअगला जन्मदिन: %4$s (%5$s)\nकाउंटडाउन: %6$s\n\nसारांश\nसाल: %7$s\nमहीने: %8$s\nहफ़्ते: %9$s\nदिन: %10$s\nघंटे: %11$s\nमिनट: %12$s\nपूरी कैलेंडर यूनिट; जन्म समय के बिना 24 घंटे के दिन से घंटे और मिनट गिने गए हैं।</string>
     <string name="emi_assumptions">सिर्फ़ अनुमान। तय सालाना दर और हर महीने घटता बकाया। ब्याज और भुगतान मुद्रा की छोटी यूनिट तक HALF_EVEN से राउंड होते हैं; आख़िरी किस्त बकाया चुकाती है। तारीख़ें मासिक अवधि दिखाती हैं। फ़ीस, टैक्स, रोज़ का ब्याज, दर में बदलाव, भुगतान विराम और बड़े अंतिम भुगतान शामिल नहीं हैं। बैंक का शेड्यूल अलग हो सकता है।</string>
     <string name="emi_formula_detail">r = सालाना प्रतिशत ÷ 1200। EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1); शून्य ब्याज पर P ÷ n। मुद्रा की एंट्री HALF_EVEN से राउंड होती है। बकाया चुकाने के लिए आख़िरी किस्त बदलती है।</string>
-    <string name="emi_graph_extra_detail">पहले भुगतान हर चुनी किस्त के बाद मूलधन घटाते हैं। नया शेड्यूल चुने अवधि/EMI तरीके से बनता है; बचत में दर्ज ब्याज की तुलना बिना बदले मूल लोन से होती है।</string>
+    <string name="emi_graph_extra_detail">प्रीपेमेंट हर चुनी किस्त के बाद मूलधन घटाते हैं। नया शेड्यूल चुने अवधि/EMI तरीके से बनता है; बचत में दर्ज ब्याज की तुलना बिना बदले मूल लोन से होती है।</string>
     <string name="investment_assumptions">ऑफ़लाइन प्लानिंग का अनुमान बराबर मासिक अवधियों से है, बैंक की असली दिन-आधारित ब्याज गणना से नहीं। तारीख़ मूल दिन से जुड़ी और महीने के अंत तक सीमित रहती है। टैक्स, फ़ीस, जुर्माना और छूटी जमा शामिल नहीं। मुद्रा सिर्फ़ रकम की इकाई है, एक्सचेंज कन्वर्ज़न नहीं।</string>
     <string name="investment_sip_assumptions">निवेश हर अवधि की शुरुआत में होता है। मासिक रिटर्न = दी सालाना प्रतिशत दर ÷ 12। चुने अंतराल के बाद पिछली मासिक किस्त बढ़ती है और मुद्रा की सटीकता तक राउंड होती है। रिटर्न अनुमान हैं, गारंटी नहीं।</string>
     <string name="investment_rd_assumptions">तिमाही चक्रवृद्धि का बराबर मासिक बढ़ोतरी फ़ैक्टर (1 + सालाना दर / 400)^(1/3) है। हर जमा मासिक अवधि की शुरुआत में होती है। अधूरी तिमाही के मान अनुमान हैं।</string>
@@ -1298,7 +1298,15 @@
     <string name="bmi_feet_inches">@string/bmi_history_feet_inches</string>
     <string name="bmi_history_result">BMI: %1$s · %2$s\nस्वस्थ वज़न की रेंज: %3$s\nफ़र्क़: %4$s</string>
     <string name="emi_share_summary">ऋण राशि: %1$s\nसालाना ब्याज: %2$s%%\nभुगतान: %3$d\nमासिक EMI: %4$s\nकुल ब्याज: %5$s\nकुल भुगतान: %6$s\nलोन खत्म होने का अनुमान: %7$s\nबचा हुआ ब्याज: %8$s\nबचे हुए महीने: %9$d\nआख़िरी किस्त: %10$s</string>
-    <string name="emi_schedule_detail">%1$s\nशुरुआती बकाया: %2$s\nभुगतान: %3$s\nमूलधन: %4$s\nमिला हुआ ब्याज: %5$s\nसमय से पहले भुगतान: %6$s\nआख़िरी बकाया: %7$s\nइस्तेमाल न हुई अतिरिक्त रकम: %8$s</string>
+    <string name="emi_schedule_detail">%1$s\nशुरुआती बकाया: %2$s\nभुगतान: %3$s\nमूलधन: %4$s\nमिला हुआ ब्याज: %5$s\nप्रीपेमेंट: %6$s\nआख़िरी बकाया: %7$s\nइस्तेमाल न हुई अतिरिक्त रकम: %8$s</string>
     <string name="investment_period_detail">%1$s\nनिवेश की किस्त: %2$s\nनिवेश की गई रकम: %3$s\nब्याज / बढ़ोतरी: %4$s\nभुगतान: %5$s\nआख़िरी वैल्यू: %6$s</string>
     <string name="store_listing_full_description">Calculator+ रोज़ के हिसाब, पढ़ाई, काम और सफ़र के लिए साइंटिफ़िक कैलकुलेटर, यूनिट कन्वर्टर और करेंसी कन्वर्टर साथ लाता है।\n\nरोज़ और साइंटिफ़िक हिसाब\nजोड़-घटाव, ब्रैकेट, प्रतिशत, घात और वर्गमूल इस्तेमाल करें। सेव किए रिज़ल्ट कैलकुलेशन हिस्ट्री में फिर देखें।\n\nएक जगह यूनिट कन्वर्ज़न\nलंबाई, क्षेत्रफल, वज़न, तापमान, वॉल्यूम, रफ़्तार, समय और बहुत कुछ कन्वर्ट करें। खाना बनाने की मात्रा से स्टोरेज साइज़ तक यूनिट नाम या चिह्न से खोजें।\n\nकरेंसी की तुलना\nनाम, देश या करेंसी कोड से चुनें। एक्सचेंज रेट अपडेट करें और आख़िरी अपडेट देखें। रेट सिर्फ़ जानकारी के लिए हैं; असली लेनदेन के रेट और फ़ीस अलग हो सकते हैं। रेट अपडेट करने के लिए इंटरनेट चाहिए।\n\nअपनी पसंद की सेटिंग\nथीम चुनें और नंबर फ़ॉर्मैट, कीपैड साउंड और वाइब्रेशन बदलें।\n\nGraphy से समझें\nसमर्थित कैलकुलेशन जुड़े हुए चरणों में देखें। डायग्राम PDF या PNG में एक्सपोर्ट करें।\n\nसेव कैलकुलेशन फिर इस्तेमाल करें\nहिस्ट्री से पूरे रिज़ल्ट देखें और पुराने एक्सप्रेशन दोबारा इस्तेमाल करें।\n\nहर दिन गेम ब्रेक\nऑनलाइन रोज़ के गेम के लिए खेलें खोलें। इंटरनेट चाहिए। कुछ थीम और अतिरिक्त गेम सेट वैकल्पिक रिवॉर्ड वाले ऐड से मिलते हैं।\n\nछोटे हिसाब से यूनिट कन्वर्ज़न तक, उपयोगी टूल Calculator+ में साथ हैं।</string>
+    <string name="ft_lbf_s">फ़ुट-पाउंड बल/सेकंड</string>
+    <string name="kgf_m">किलोग्राम बल-मीटर</string>
+    <string name="n_cm">न्यूटन सेंटीमीटर</string>
+    <string name="emi_graph_formula">EMI कैलकुलेशन</string>
+    <string name="emi_formula">EMI फ़ॉर्मूला</string>
+    <string name="investment_formula_sip">बकाया = (बकाया + निवेश की किस्त) × (1 + सालाना प्रतिशत / 1200)</string>
+    <string name="investment_formula_rd">फ़ैक्टर = (1 + सालाना दर / 400)^(1/3)</string>
+    <string name="investment_formula_fd">संचयी: P × (1 + r/f)^पूरेअंतराल, फिर बचे समय पर साधारण ब्याज। नियमित: P पर ब्याज, दोबारा निवेश के बिना भुगतान।</string>
 </resources>

@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nSaldo inicial: %2$s\nPagos: %3$s\nCapital: %4$s\nInterés ganado: %5$s\nPago anticipado: %6$s\nSaldo final: %7$s\nPago extra no utilizado: %8$s</string>
     <string name="investment_period_detail">%1$s\nAportación: %2$s\nImporte invertido: %3$s\nInterés / crecimiento: %4$s\nPago: %5$s\nValor final: %6$s</string>
     <string name="store_listing_full_description">Calculator+ reúne calculadora científica y conversores de unidades y monedas para el día a día, estudio, trabajo y viajes.\n\nCÁLCULOS DIARIOS Y CIENTÍFICOS\nUsa aritmética, paréntesis, porcentajes, potencias y raíces cuadradas. Revisa los resultados guardados en el historial.\n\nCONVIERTE UNIDADES\nLongitud, área, masa, temperatura, volumen, velocidad, tiempo y más. Busca nombres y símbolos, desde medidas de cocina hasta tamaños de almacenamiento.\n\nCOMPARA MONEDAS\nElige por nombre, país o código. Actualiza tipos de cambio y consulta su fecha. Son orientativos; los tipos reales y comisiones pueden variar. Actualizar requiere Internet.\n\nPERSONALIZA\nElige temas y ajusta formato de números, sonidos y vibración en ajustes.\n\nENTIENDE CON GRAPHY\nVe cálculos compatibles explicados en pasos conectados. Exporta diagramas a PDF o PNG.\n\nRECUPERA CÁLCULOS\nRevisa resultados guardados y reutiliza expresiones del historial.\n\nPAUSA DE JUEGO DIARIA\nAbre Jugar para juegos diarios alojados en línea. Se requiere Internet. Algunos temas y tandas extra están disponibles mediante anuncios opcionales con recompensa.\n\nDe una suma rápida a una conversión, Calculator+ reúne herramientas útiles.</string>
+    <string name="ft_lbf_s">Pie-libra fuerza/segundo</string>
+    <string name="kgf_m">Kilogramo-fuerza metro</string>
+    <string name="n_cm">Newton centímetro</string>
+    <string name="emi_graph_formula">Cálculo de cuota</string>
+    <string name="emi_formula">Fórmula de cuota</string>
+    <string name="investment_formula_sip">saldo = (saldo + aportación) × (1 + porcentaje anual / 1200)</string>
+    <string name="investment_formula_rd">factor = (1 + tipo anual / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Acumulativo: P × (1 + r/f)^períodosCompletos, luego interés simple por el resto. Periódico: interés sobre P, pagado sin reinversión.</string>
 </resources>

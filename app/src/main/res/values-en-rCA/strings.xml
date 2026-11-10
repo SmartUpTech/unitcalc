@@ -35,4 +35,6 @@
     <string name="m_min">Metre/minute</string>
     <string name="litre">Litre</string>
     <string name="cubic_m">Cubic Metre</string>
+    <string name="kgf_m">Kilogram-force metre</string>
+    <string name="n_cm">Newton centimetre</string>
 </resources>

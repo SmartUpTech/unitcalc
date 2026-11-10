@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nSaldo początkowe: %2$s\nPłatności: %3$s\nKapitał: %4$s\nUzyskane odsetki: %5$s\nNadpłata: %6$s\nSaldo końcowe: %7$s\nNiewykorzystana nadpłata: %8$s</string>
     <string name="investment_period_detail">%1$s\nWpłata: %2$s\nZainwestowana kwota: %3$s\nOdsetki / wzrost: %4$s\nWypłata: %5$s\nWartość końcowa: %6$s</string>
     <string name="store_listing_full_description">Calculator+ łączy kalkulator naukowy, przelicznik jednostek i walut na co dzień, do nauki, pracy i podróży.\n\nOBLICZENIA CODZIENNE I NAUKOWE\nArytmetyka, nawiasy, procenty, potęgi i pierwiastki kwadratowe. Wracaj do wyników zapisanych w historii.\n\nPRZELICZAJ JEDNOSTKI\nDługość, powierzchnia, masa, temperatura, objętość, prędkość, czas i więcej. Szukaj nazw i symboli, od miar kuchennych po pamięć danych.\n\nPORÓWNUJ WALUTY\nWybierz nazwę, kraj lub kod. Odśwież kursy i sprawdź czas aktualizacji. Kursy są orientacyjne; rzeczywiste kursy i opłaty mogą się różnić. Aktualizacja wymaga internetu.\n\nDOSTOSUJ\nWybierz motyw, format liczb, dźwięki i wibracje w ustawieniach.\n\nZROZUM Z GRAPHY\nObsługiwane obliczenia są wyjaśniane połączonymi etapami. Eksportuj diagramy do PDF lub PNG.\n\nWRÓĆ DO OBLICZEŃ\nSprawdzaj wyniki i używaj ponownie wyrażeń z historii.\n\nCODZIENNA PRZERWA NA GRY\nOtwórz Gry, aby grać w udostępniane online codzienne gry. Wymagany internet. Niektóre motywy i dodatkowe zestawy są dostępne za opcjonalne reklamy z nagrodą.\n\nOd szybkiej sumy po przeliczenie miar — przydatne narzędzia razem w Calculator+.</string>
+    <string name="ft_lbf_s">Stopofunt-siła/sekunda</string>
+    <string name="kgf_m">Kilogram-siła metr</string>
+    <string name="n_cm">Niutonocentymetr</string>
+    <string name="emi_graph_formula">Obliczenie raty</string>
+    <string name="emi_formula">Wzór raty</string>
+    <string name="investment_formula_sip">saldo = (saldo + wpłata) × (1 + procent roczny / 1200)</string>
+    <string name="investment_formula_rd">czynnik = (1 + stopa roczna / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Z kapitalizacją: P × (1 + r/f)^pełneOkresy, potem prosty procent za resztę. Okresowo: odsetki od P, wypłata bez reinwestycji.</string>
 </resources>

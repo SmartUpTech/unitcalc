@@ -1301,4 +1301,12 @@
     <string name="investment_period_detail">%1$s\nKatkı: %2$s\nYatırılan tutar: %3$s\nFaiz / büyüme: %4$s\nÖdeme: %5$s\nKapanış değeri: %6$s</string>
     <string name="store_listing_full_description">Calculator+ günlük işler, öğrenim, çalışma ve seyahat için bilimsel hesap makinesi, birim ve döviz dönüştürücüyü birleştirir.\n\nGÜNLÜK VE BİLİMSEL HESAPLAR\nAritmetik, parantez, yüzde, üs ve karekök kullanın. Kaydedilen sonuçlara geçmişten dönün.\n\nBİRİMLERİ DÖNÜŞTÜRÜN\nUzunluk, alan, kütle, sıcaklık, hacim, hız, zaman ve dahası. Mutfak ölçülerinden depolama boyutlarına kadar ad veya simgeyle arayın.\n\nPARA BİRİMLERİNİ KARŞILAŞTIRIN\nAd, ülke veya kodla seçin. Kurları yenileyin ve son güncellemeyi kontrol edin. Kurlar referanstır; gerçek işlem kurları ve ücretler farklı olabilir. Yenilemek için internet gerekir.\n\nÖZELLEŞTİRİN\nAyarlarda tema, sayı biçimi, tuş sesi ve titreşimi değiştirin.\n\nGRAPHY İLE ANLAYIN\nDesteklenen hesapları bağlantılı adımlarla görün. Diyagramları PDF veya PNG olarak aktarın.\n\nHESAPLARA DÖNÜN\nKayıtlı sonuçları inceleyin ve geçmişteki ifadeleri yeniden kullanın.\n\nGÜNLÜK OYUN MOLASI\nÇevrimiçi sunulan günlük oyunlar için Oyna’yı açın. İnternet gerekir. Bazı temalar ve ek oyun setleri isteğe bağlı ödüllü reklamlarla açılır.\n\nHızlı toplamadan ölçü dönüşümüne, Calculator+ yararlı araçları bir arada tutar.</string>
     <string name="feet">Fit</string>
+    <string name="ft_lbf_s">Fit-libre kuvvet/saniye</string>
+    <string name="kgf_m">Kilogram-kuvvet metre</string>
+    <string name="n_cm">Newton santimetre</string>
+    <string name="emi_graph_formula">Taksit hesabı</string>
+    <string name="emi_formula">Taksit formülü</string>
+    <string name="investment_formula_sip">bakiye = (bakiye + katkı) × (1 + yıllık yüzde / 1200)</string>
+    <string name="investment_formula_rd">katsayı = (1 + yıllık oran / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Birikimli: P × (1 + r/f)^tamDönemler, sonra kalan süreye basit faiz. Dönemsel: P üzerinden faiz, yeniden yatırılmadan ödenir.</string>
 </resources>

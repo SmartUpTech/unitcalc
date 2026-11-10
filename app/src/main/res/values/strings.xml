@@ -259,7 +259,7 @@
     <string name="megawatt">Megawatt</string>
     <string name="hp">HP (metric)</string>
     <string name="hp_uk">HP (mechanical)</string>
-    <string name="ft_lbf_s" translatable="false">ft-lbf/second</string>
+    <string name="ft_lbf_s">ft-lbf/second</string>
     <string name="calorie_s">Calorie/second</string>
     <string name="btu_s">BTU/second</string>
     <string name="kva" translatable="false">kV-A</string>
@@ -556,8 +556,8 @@
     <string name="inch_mercury">Inch of mercury (conventional)</string>
     <string name="cm_water">Centimeter of water (conventional)</string>
     <string name="inch_water">Inch of water (conventional)</string>
-    <string name="kgf_m" translatable="false">Kilogram-force meter</string>
-    <string name="n_cm" translatable="false">Newton centimeter</string>
+    <string name="kgf_m">Kilogram-force meter</string>
+    <string name="n_cm">Newton centimeter</string>
     <string name="degree">Degree</string>
     <string name="radian">Radian</string>
     <string name="gradian">Gradian</string>
@@ -1510,13 +1510,13 @@
     <string name="emi_balance_chart">Balance</string>
     <string name="emi_view_schedule">View schedule</string>
     <string name="emi_assumptions">Estimate only. Fixed annual rate and monthly reducing balance. Interest and payments round HALF_EVEN to currency minor units; the final payment closes the balance. Dates label monthly periods. Fees, taxes, daily interest, rate changes, moratoriums and balloon payments are excluded. Actual lender schedules may differ.</string>
-    <string name="emi_graph_formula" translatable="false">EMI calculation</string>
+    <string name="emi_graph_formula">EMI calculation</string>
     <string name="emi_graph_prepay">Prepayment impact</string>
     <string name="emi_monthly_rate">Monthly rate</string>
     <string name="emi_payment_count">Monthly payments</string>
     <string name="emi_rate_step">Annual rate ÷ 12</string>
     <string name="emi_term_step">Tenure in months</string>
-    <string name="emi_formula" translatable="false">EMI formula</string>
+    <string name="emi_formula">EMI formula</string>
     <string name="emi_formula_detail">r = annual percentage ÷ 1200. EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1); at zero interest, P ÷ n. Currency postings use HALF_EVEN. The last installment is adjusted to close the balance.</string>
     <string name="emi_original">Original schedule</string>
     <string name="emi_revised">Revised schedule</string>
@@ -1711,9 +1711,9 @@
     <string name="investment_step_operation">Apply step-up every %1$d months</string>
     <string name="investment_step_description">Increase the previous contribution by %1$s after each %2$d contributions.</string>
     <string name="investment_step_value">%1$s every %2$d months</string>
-    <string name="investment_formula_sip" translatable="false">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
-    <string name="investment_formula_rd" translatable="false">factor = (1 + annual percentage / 400)^(1/3)</string>
-    <string name="investment_formula_fd" translatable="false">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
+    <string name="investment_formula_sip">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
+    <string name="investment_formula_rd">factor = (1 + annual percentage / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
     <string name="investment_sign" translatable="false">±</string>
     <string name="investment_change_sign">Change return sign</string>
     <string name="investment_year">Year %1$d</string>

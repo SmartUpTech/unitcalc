@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nSaldo awal: %2$s\nPembayaran: %3$s\nPokok: %4$s\nBunga diperoleh: %5$s\nPelunasan dipercepat: %6$s\nSaldo akhir: %7$s\nPembayaran ekstra tidak terpakai: %8$s</string>
     <string name="investment_period_detail">%1$s\nKontribusi: %2$s\nJumlah diinvestasikan: %3$s\nBunga / pertumbuhan: %4$s\nPembayaran: %5$s\nNilai akhir: %6$s</string>
     <string name="store_listing_full_description">Calculator+ menggabungkan kalkulator ilmiah, konverter satuan dan mata uang untuk kebutuhan sehari-hari, belajar, kerja dan perjalanan.\n\nHITUNGAN BIASA DAN ILMIAH\nGunakan aritmetika, tanda kurung, persentase, pangkat dan akar kuadrat. Lihat lagi hasil tersimpan di riwayat.\n\nKONVERSI SATUAN\nUbah panjang, luas, massa, suhu, volume, kecepatan, waktu dan lainnya. Cari nama dan simbol, dari takaran masak hingga ukuran penyimpanan.\n\nBANDINGKAN MATA UANG\nPilih berdasarkan nama, negara atau kode. Perbarui kurs dan periksa waktu pembaruannya. Kurs hanya referensi; kurs transaksi dan biaya nyata bisa berbeda. Pembaruan memerlukan internet.\n\nSESUAIKAN\nPilih tema serta atur format angka, suara dan getaran tombol di Setelan.\n\nPAHAMI DENGAN GRAPHY\nLihat perhitungan yang didukung dalam langkah terhubung. Ekspor diagram ke PDF atau PNG.\n\nPAKAI LAGI PERHITUNGAN\nPeriksa hasil tersimpan dan gunakan ekspresi sebelumnya dari Riwayat.\n\nISTIRAHAT DENGAN GAME HARIAN\nBuka Main untuk game harian yang dihosting online. Perlu internet. Beberapa tema dan set game ekstra tersedia lewat iklan berhadiah opsional.\n\nDari penjumlahan cepat hingga konversi ukuran, Calculator+ menyatukan alat yang berguna.</string>
+    <string name="ft_lbf_s">Kaki-pon gaya/detik</string>
+    <string name="kgf_m">Kilogram-gaya meter</string>
+    <string name="n_cm">Newton sentimeter</string>
+    <string name="emi_graph_formula">Perhitungan angsuran</string>
+    <string name="emi_formula">Rumus angsuran</string>
+    <string name="investment_formula_sip">saldo = (saldo + kontribusi) × (1 + persentase tahunan / 1200)</string>
+    <string name="investment_formula_rd">faktor = (1 + bunga tahunan / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Akumulatif: P × (1 + r/f)^periodePenuh, lalu bunga sederhana untuk sisanya. Berkala: bunga atas P, dibayar tanpa reinvestasi.</string>
 </resources>

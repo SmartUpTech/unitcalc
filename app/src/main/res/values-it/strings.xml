@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nSaldo iniziale: %2$s\nPagamenti: %3$s\nCapitale: %4$s\nInteressi maturati: %5$s\nRimborso anticipato: %6$s\nSaldo finale: %7$s\nPagamento extra non usato: %8$s</string>
     <string name="investment_period_detail">%1$s\nContributo: %2$s\nImporto investito: %3$s\nInteressi / crescita: %4$s\nPagamento: %5$s\nValore finale: %6$s</string>
     <string name="store_listing_full_description">Calculator+ riunisce calcolatrice scientifica, convertitore di unità e valute per ogni giorno, studio, lavoro e viaggi.\n\nCALCOLI QUOTIDIANI E SCIENTIFICI\nUsa aritmetica, parentesi, percentuali, potenze e radici quadrate. Ritrova i risultati salvati nella cronologia.\n\nCONVERTI UNITÀ\nLunghezza, area, massa, temperatura, volume, velocità, tempo e altro. Cerca nomi e simboli, dalle dosi in cucina allo spazio di archiviazione.\n\nCONFRONTA VALUTE\nScegli per nome, paese o codice. Aggiorna i cambi e controlla l’ultimo aggiornamento. I tassi sono indicativi; cambi e commissioni reali possono differire. Per aggiornare serve Internet.\n\nPERSONALIZZA\nScegli temi e regola formato dei numeri, suoni e vibrazione nelle impostazioni.\n\nCAPISCI CON GRAPHY\nVedi i calcoli supportati spiegati in passaggi collegati. Esporta diagrammi in PDF o PNG.\n\nRIPRENDI I CALCOLI\nEsamina i risultati salvati e riutilizza espressioni dalla cronologia.\n\nPAUSA GIOCO QUOTIDIANA\nApri Gioca per i giochi giornalieri ospitati online. Serve Internet. Alcuni temi e serie extra sono disponibili con annunci facoltativi con premio.\n\nDalle somme rapide alle conversioni, Calculator+ riunisce strumenti utili.</string>
+    <string name="ft_lbf_s">Piede-libbra forza/secondo</string>
+    <string name="kgf_m">Chilogrammo-forza metro</string>
+    <string name="n_cm">Newton centimetro</string>
+    <string name="emi_graph_formula">Calcolo della rata</string>
+    <string name="emi_formula">Formula della rata</string>
+    <string name="investment_formula_sip">saldo = (saldo + contributo) × (1 + percentuale annua / 1200)</string>
+    <string name="investment_formula_rd">fattore = (1 + tasso annuo / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Cumulativo: P × (1 + r/f)^periodiCompleti, poi interesse semplice sul resto. Periodico: interesse su P, pagato senza reinvestimento.</string>
 </resources>

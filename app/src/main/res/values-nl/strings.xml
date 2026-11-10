@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nBeginsaldo: %2$s\nBetalingen: %3$s\nHoofdsom: %4$s\nVerdiende rente: %5$s\nExtra aflossing: %6$s\nEindsaldo: %7$s\nOngebruikte extra betaling: %8$s</string>
     <string name="investment_period_detail">%1$s\nInleg: %2$s\nBelegd bedrag: %3$s\nRente / groei: %4$s\nUitbetaling: %5$s\nEindwaarde: %6$s</string>
     <string name="store_listing_full_description">Calculator+ combineert een wetenschappelijke rekenmachine met eenheden- en valutaomrekening voor dagelijks gebruik, studie, werk en reizen.\n\nDAGELIJKS EN WETENSCHAPPELIJK REKENEN\nGebruik rekenbewerkingen, haakjes, procenten, machten en vierkantswortels. Bekijk opgeslagen resultaten in de geschiedenis.\n\nEENHEDEN OMREKENEN\nLengte, oppervlakte, massa, temperatuur, inhoud, snelheid, tijd en meer. Zoek namen en symbolen, van kookmaten tot opslaggroottes.\n\nVALUTA VERGELIJKEN\nKies op naam, land of code. Vernieuw wisselkoersen en bekijk de laatste update. Koersen zijn indicatief; werkelijke koersen en kosten kunnen afwijken. Vernieuwen vereist internet.\n\nPERSONALISEREN\nKies thema\'s en pas getalnotatie, toetsgeluiden en trillingen aan in Instellingen.\n\nBEGRIJPEN MET GRAPHY\nBekijk ondersteunde berekeningen als verbonden stappen. Exporteer diagrammen als PDF of PNG.\n\nBEREKENINGEN HERGEBRUIKEN\nBekijk opgeslagen resultaten en gebruik eerdere uitdrukkingen uit de geschiedenis opnieuw.\n\nDAGELIJKSE SPELPAUZE\nOpen Spelen voor online aangeboden dagelijkse games. Internet vereist. Sommige thema\'s en extra sets zijn beschikbaar via vrijwillige beloningsadvertenties.\n\nVan een snelle som tot een omrekening: Calculator+ houdt handige hulpmiddelen bij elkaar.</string>
+    <string name="ft_lbf_s">Voet-pondkracht/seconde</string>
+    <string name="kgf_m">Kilogramkracht-meter</string>
+    <string name="n_cm">Newtoncentimeter</string>
+    <string name="emi_graph_formula">Termijnberekening</string>
+    <string name="emi_formula">Termijnformule</string>
+    <string name="investment_formula_sip">saldo = (saldo + inleg) × (1 + jaarpercentage / 1200)</string>
+    <string name="investment_formula_rd">factor = (1 + jaarrente / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Cumulatief: P × (1 + r/f)^helePerioden, daarna enkelvoudige rente over het restant. Periodiek: rente over P, uitbetaald zonder herbelegging.</string>
 </resources>

@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nSolde initial: %2$s\nPaiements: %3$s\nCapital: %4$s\nIntérêts perçus: %5$s\nRemboursement anticipé: %6$s\nSolde final: %7$s\nPaiement supplémentaire inutilisé: %8$s</string>
     <string name="investment_period_detail">%1$s\nVersement: %2$s\nMontant investi: %3$s\nIntérêts / croissance: %4$s\nVersement: %5$s\nValeur finale: %6$s</string>
     <string name="store_listing_full_description">Calculator+ réunit calculatrice scientifique, convertisseur d’unités et de devises pour le quotidien, les études, le travail et les voyages.\n\nCALCULS COURANTS ET SCIENTIFIQUES\nArithmétique, parenthèses, pourcentages, puissances et racines carrées. Retrouvez les résultats enregistrés dans l’historique.\n\nCONVERTIR LES UNITÉS\nLongueur, surface, masse, température, volume, vitesse, temps et plus. Cherchez noms et symboles, des mesures de cuisine aux tailles de stockage.\n\nCOMPARER LES DEVISES\nChoisissez par nom, pays ou code. Actualisez les taux et vérifiez leur date. Taux indicatifs : les taux réels et frais peuvent différer. Internet est nécessaire pour actualiser.\n\nPERSONNALISER\nChoisissez un thème et réglez format des nombres, sons et vibrations dans les paramètres.\n\nCOMPRENDRE AVEC GRAPHY\nLes calculs compatibles sont expliqués en étapes reliées. Exportez les diagrammes en PDF ou PNG.\n\nREPRENDRE LES CALCULS\nConsultez les résultats et réutilisez les expressions de l’historique.\n\nPAUSE JEU QUOTIDIENNE\nOuvrez Jouer pour les jeux quotidiens hébergés en ligne. Internet requis. Certains thèmes et séries supplémentaires sont accessibles via des publicités récompensées facultatives.\n\nDes additions rapides aux conversions, Calculator+ rassemble les outils utiles.</string>
+    <string name="ft_lbf_s">Pied-livre-force/seconde</string>
+    <string name="kgf_m">Kilogramme-force mètre</string>
+    <string name="n_cm">Newton centimètre</string>
+    <string name="emi_graph_formula">Calcul de mensualité</string>
+    <string name="emi_formula">Formule de mensualité</string>
+    <string name="investment_formula_sip">solde = (solde + versement) × (1 + pourcentage annuel / 1200)</string>
+    <string name="investment_formula_rd">facteur = (1 + taux annuel / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Cumulatif : P × (1 + r/f)^périodesComplètes, puis intérêt simple sur le reste. Périodique : intérêts sur P, versés sans réinvestissement.</string>
 </resources>

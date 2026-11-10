@@ -1301,4 +1301,12 @@
     <string name="emi_schedule_detail">%1$s\nDư đầu kỳ: %2$s\nLần trả: %3$s\nGốc: %4$s\nLãi thu được: %5$s\nTrả trước: %6$s\nDư cuối kỳ: %7$s\nTiền trả thêm chưa dùng: %8$s</string>
     <string name="investment_period_detail">%1$s\nKhoản góp: %2$s\nSố tiền đã đầu tư: %3$s\nLãi / tăng trưởng: %4$s\nChi trả: %5$s\nGiá trị cuối: %6$s</string>
     <string name="store_listing_full_description">Calculator+ kết hợp máy tính khoa học, đổi đơn vị và tiền tệ cho hằng ngày, học tập, công việc và du lịch.\n\nTÍNH TOÁN THÔNG THƯỜNG VÀ KHOA HỌC\nDùng số học, ngoặc, phần trăm, lũy thừa và căn bậc hai. Xem lại kết quả đã lưu trong lịch sử.\n\nĐỔI ĐƠN VỊ\nChiều dài, diện tích, khối lượng, nhiệt độ, thể tích, tốc độ, thời gian và hơn nữa. Tìm tên hoặc ký hiệu, từ lượng nấu ăn đến dung lượng lưu trữ.\n\nSO SÁNH TIỀN TỆ\nChọn theo tên, quốc gia hay mã. Cập nhật tỷ giá và kiểm tra lần cập nhật cuối. Tỷ giá chỉ tham khảo; tỷ giá giao dịch và phí thực có thể khác. Cập nhật cần Internet.\n\nTÙY CHỈNH\nChọn giao diện, định dạng số, âm thanh và rung phím trong cài đặt.\n\nHIỂU VỚI GRAPHY\nXem phép tính hỗ trợ được giải thích qua các bước liên kết. Xuất sơ đồ PDF hoặc PNG.\n\nDÙNG LẠI PHÉP TÍNH\nXem kết quả đã lưu và dùng lại biểu thức trong lịch sử.\n\nNGHỈ VỚI TRÒ CHƠI HẰNG NGÀY\nMở Chơi để chơi các trò hằng ngày được lưu trữ trực tuyến. Cần Internet. Một số giao diện và bộ trò chơi thêm có qua quảng cáo thưởng tùy chọn.\n\nTừ tính tổng nhanh đến đổi đơn vị, Calculator+ tập hợp công cụ hữu ích.</string>
+    <string name="ft_lbf_s">Foot-pound lực/giây</string>
+    <string name="kgf_m">Kilôgam lực mét</string>
+    <string name="n_cm">Niutơn xentimét</string>
+    <string name="emi_graph_formula">Tính khoản trả</string>
+    <string name="emi_formula">Công thức khoản trả</string>
+    <string name="investment_formula_sip">số dư = (số dư + khoản góp) × (1 + phần trăm năm / 1200)</string>
+    <string name="investment_formula_rd">hệ số = (1 + lãi suất năm / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Tích lũy: P × (1 + r/f)^sốKỳĐủ, rồi lãi đơn cho phần còn lại. Định kỳ: lãi trên P, chi trả không tái đầu tư.</string>
 </resources>
