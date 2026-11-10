@@ -1,114 +1,114 @@
 <resources>
     <item type="id" name="bmi_reference_tabs" />
     <item type="id" name="bmi_reference_scroll" />
-    <string name="bmi_months_zero">0 mo ▾</string>
-    <string name="bmi_months_button">%1$d mo ▾</string>
-    <string name="bmi_months_choice">%1$d months</string>
-    <string name="bmi_additional_months">Additional months (0–11)</string>
-    <string name="bmi_age_full">%1$s years %2$d months</string>
-    <string name="bmi_age_required">Enter age in years and months.</string>
-    <string name="bmi_infant_category">BMI classification not recommended</string>
-    <string name="bmi_infant_note">Under 2: use WHO weight-for-length assessment.</string>
-    <string name="bmi_child_note">CDC BMI-for-age · ages 2–19</string>
-    <string name="bmi_child_range">Reference BMI: %1$s–&lt;%2$s</string>
-    <string name="bmi_child_obesity">Obesity</string>
-    <string name="bmi_child_severe">Severe obesity</string>
-    <string name="bmi_child_low_band">Below 5th percentile</string>
-    <string name="bmi_child_healthy_band">5th–&lt;85th percentile</string>
-    <string name="bmi_child_over_band">85th–&lt;95th percentile</string>
-    <string name="bmi_child_obesity_band">At or above 95th percentile</string>
-    <string name="bmi_child_severe_band">≥95th percentile · severe</string>
-    <string name="bmi_child_severe_rule" formatted="false">≥120% of 95th percentile or BMI ≥35</string>
-    <string name="bmi_child_history">BMI: %1$s · %2$s\nBMI-for-age: %3$s\n%4$s\nCDC reference; screening only.</string>
-    <string name="bmi_infant_history">BMI: %1$s · Classification not recommended under 2. Use WHO weight-for-length assessment.</string>
-    <string name="bmi_group_infants">Under 2</string>
-    <string name="bmi_group_children">2–19</string>
-    <string name="bmi_group_adults">20+</string>
-    <string name="bmi_reference_title">BMI ranges and guidance</string>
-    <string name="bmi_infant_guidance">Under 2 years\nBMI-for-age classification is not recommended in this calculator. Infants should be assessed using WHO growth standards, including weight-for-length, with a healthcare professional. No adult category or weight target is shown.</string>
-    <string name="bmi_child_guidance">Children and teens, ages 2–19\nCDC BMI-for-age categories depend on age in months and sex used by the growth reference. The BMI number alone cannot be compared with adult cutoffs. The reference range is not a weight-loss target; growth and health need professional assessment.</string>
-    <string name="bmi_adult_guidance">Adults, ages 20 and over\nCDC adult cutoffs apply regardless of age or sex. BMI is a screening measure, not a diagnosis, and does not distinguish muscle from fat. Older adults need interpretation alongside muscle mass, nutrition and overall health. Pregnancy requires different assessment.</string>
-    <string name="bmi_child_current">Current reference: %1$s · %2$s</string>
-    <string name="bmi_child_reference_values">BMI at the 5th percentile: %1$s\n85th percentile: %2$s\n95th percentile: %3$s</string>
-    <string name="bmi_sources">Sources: CDC BMI categories and growth-reference data; CDC guidance on WHO infant growth standards. The CDC BMI-for-age reference population is the United States.</string>
-    <string name="bmi_read_source">Read official guidance</string>
-    <string name="bmi_infant_source_url" translatable="false">https://www.cdc.gov/growth-chart-training/hcp/using-growth-charts/who-using.html</string>
-    <string name="bmi_child_source_url" translatable="false">https://www.cdc.gov/bmi/child-teen-calculator/bmi-categories.html</string>
-    <string name="bmi_adult_source_url" translatable="false">https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html</string>
-    <string name="bmi_done_symbol">✓</string>
-    <string name="bmi_done">Calculate BMI and close keypad</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <item type="id" name="bmi_calculator" />
-    <string name="bmi_calculator">BMI Calculator</string>
-    <string name="bmi_age">Age · years</string>
-    <string name="bmi_age_input">Age in years</string>
-    <string name="bmi_gender">Gender</string>
-    <string name="bmi_gender_male">Male</string>
-    <string name="bmi_gender_female">Female</string>
-    <string name="bmi_height">Height</string>
-    <string name="bmi_weight">Weight</string>
-    <string name="bmi_height_cm">Height in centimetres</string>
-    <string name="bmi_height_ft">Height in whole feet</string>
-    <string name="bmi_height_in">Additional inches, less than 12</string>
-    <string name="bmi_weight_kg">Weight in kilograms</string>
-    <string name="bmi_weight_lb">Weight in pounds</string>
-    <string name="bmi_cm">cm</string>
-    <string name="bmi_ft">ft</string>
-    <string name="bmi_in">in</string>
-    <string name="bmi_kg">kg</string>
-    <string name="bmi_lb">lb</string>
-    <string name="bmi_height_unit">Height unit</string>
-    <string name="bmi_weight_unit">Weight unit</string>
-    <string name="bmi_metric_height">Centimetres (cm)</string>
-    <string name="bmi_imperial_height">Feet and inches (ft/in)</string>
-    <string name="bmi_metric_weight">Kilograms (kg)</string>
-    <string name="bmi_imperial_weight">Pounds (lb)</string>
-    <string name="bmi_unit_button">%1$s ▾</string>
-    <string name="bmi_label">BMI</string>
-    <string name="bmi_adult_label">BMI · Adults 20+</string>
-    <string name="bmi_category">Category</string>
-    <string name="bmi_healthy_range">Healthy weight range</string>
-    <string name="bmi_difference">Difference</string>
-    <string name="bmi_under_20_notice">Adult ranges apply from age 20.</string>
-    <string name="bmi_underweight">Underweight</string>
-    <string name="bmi_healthy">Healthy weight</string>
-    <string name="bmi_overweight">Overweight</string>
-    <string name="bmi_obesity_i">Obesity class I</string>
-    <string name="bmi_obesity_ii">Obesity class II</string>
-    <string name="bmi_obesity_iii">Obesity class III</string>
-    <string name="bmi_range_low">&lt;18.5</string>
-    <string name="bmi_range_healthy">18.5–&lt;25</string>
-    <string name="bmi_range_over">25–&lt;30</string>
-    <string name="bmi_range_i">30–&lt;35</string>
-    <string name="bmi_range_ii">35–&lt;40</string>
-    <string name="bmi_range_iii">≥40</string>
-    <string name="bmi_ranges_action">BMI ranges by age · More info</string>
-    <string name="bmi_ranges_short">Ranges · info</string>
-    <string name="bmi_result_accessibility">BMI %1$s. %2$s. %3$s. %4$s. Show BMI ranges by age.</string>
-    <string name="bmi_ranges_title">Adult BMI ranges</string>
-    <string name="bmi_your_range">%1$s · Your range</string>
-    <string name="bmi_screening">BMI is a screening measure.</string>
-    <string name="bmi_guidance">For adults aged 20 and over. These ranges are screening guidance, not a diagnosis. BMI does not distinguish muscle from fat and is not suitable for assessing pregnancy. Healthy weight uses BMI 18.5 up to, but not including, 25.</string>
-    <string name="bmi_close">Close</string>
-    <string name="bmi_empty">Enter height and weight</string>
-    <string name="bmi_invalid">Enter positive height and weight.</string>
-    <string name="bmi_invalid_imperial">Use whole feet and inches below 12.</string>
-    <string name="bmi_weight_range">%1$s–&lt;%2$s %3$s</string>
-    <string name="bmi_range_result">Healthy: %1$s</string>
-    <string name="bmi_within_range">Within range</string>
-    <string name="bmi_below_range">%1$s %2$s below range</string>
-    <string name="bmi_above_range">%1$s %2$s above range</string>
-    <string name="bmi_history_input">A:%1$s, G:%2$s, H:%3$s, W:%4$s</string>
-    <string name="bmi_history_age">%1$sY %2$dM</string>
-    <string name="bmi_history_male">M</string>
-    <string name="bmi_history_female">F</string>
-    <string name="bmi_history_measurement">%1$s%2$s</string>
-    <string name="bmi_history_feet_inches">%1$sft %2$sin</string>
-    <string name="bmi_history_hint">Opens BMI Calculator with the inputs from this record.</string>
-    <string name="bmi_measurement">%1$s %2$s</string>
-    <string name="bmi_feet_inches">%1$s ft %2$s in</string>
-    <string name="bmi_history_result">BMI: %1$s · %2$s\nHealthy weight range: %3$s\nDifference: %4$s</string>
-    <string name="bmi_reset">Reset BMI calculator</string>
-    <string name="bmi_no_result">—</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <dimen name="bmi_gauge_min_height">72dp</dimen>
     <dimen name="bmi_gauge_tight_height">64dp</dimen>
     <dimen name="bmi_gauge_edit_height">56dp</dimen>

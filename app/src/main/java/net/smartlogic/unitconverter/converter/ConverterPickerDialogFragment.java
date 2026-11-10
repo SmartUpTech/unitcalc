@@ -91,6 +91,13 @@ public final class ConverterPickerDialogFragment extends DialogFragment {
         TextView title = root.findViewById(R.id.converter_picker_title);
         title.setText(args.getString(TITLE));
         title.setTextColor(theme.primaryContentColor());
+        TextView note = root.findViewById(R.id.converter_picker_note);
+        if (args.containsKey("regional_note")) {
+            note.setText(R.string.regional_change_note);
+            note.setTextColor(theme.secondaryContentColor());
+            note.setVisibility(View.VISIBLE);
+            title.setText(R.string.regional_region);
+        }
         ImageView close = root.findViewById(R.id.converter_picker_close);
         close.setImageTintList(ColorStateList.valueOf(theme.primaryContentColor()));
         close.setOnClickListener(v -> dismiss());

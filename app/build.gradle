@@ -44,6 +44,9 @@ android {
 
     namespace "net.smartlogic.unitconverter"
 
+    // Every offered translation must be available for offline language switching.
+    bundle { language { enableSplit = false } }
+
     testOptions { unitTests.includeAndroidResources = true }
 
     buildFeatures {

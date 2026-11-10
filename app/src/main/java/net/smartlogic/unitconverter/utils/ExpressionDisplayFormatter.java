@@ -81,18 +81,7 @@ public final class ExpressionDisplayFormatter {
 
     @NonNull
     public static FormattedExpression format(@NonNull String rawExpression, @NonNull Preferences prefs) {
-        String groupSeparator = prefs.getGroupSeparator();
-        boolean useGrouping = groupSeparator.length() > 0
-                && !"None".equals(groupSeparator)
-                && groupSeparator.charAt(0) != 'N';
-        char groupChar = useGrouping ? firstChar(groupSeparator, ',') : ',';
-        return formatWithOptions(
-                rawExpression,
-                firstChar(prefs.getDecimalSeparator(), '.'),
-                groupChar,
-                prefs.getNumberDecimals(),
-                useGrouping
-        );
+        return formatWithSettings(rawExpression, prefs.getRegionalProfile().numbers);
     }
 
     @NonNull
@@ -103,6 +92,12 @@ public final class ExpressionDisplayFormatter {
             int maxDecimals,
             boolean useGrouping
     ) {
+        return formatWithSettings(rawExpression, new net.smartlogic.unitconverter.helper.NumberFormatSettings(
+                decimalSeparator, useGrouping ? String.valueOf(groupSeparator) : "", "international", maxDecimals));
+    }
+
+    private static FormattedExpression formatWithSettings(String rawExpression,
+            net.smartlogic.unitconverter.helper.NumberFormatSettings settings) {
         if (rawExpression.isEmpty()) {
             return new FormattedExpression(new ArrayList<>(), "");
         }
@@ -117,12 +112,7 @@ public final class ExpressionDisplayFormatter {
             if (rawExpression.charAt(i) == ')') depth--;
         }
         List<Token> tokens = tokenize(rawExpression);
-        NumberFormatter numberFormatter = new NumberFormatter(
-                decimalSeparator,
-                groupSeparator,
-                maxDecimals,
-                useGrouping
-        );
+        NumberFormatter numberFormatter = new NumberFormatter(settings);
         List<DisplaySegment> segments = new ArrayList<>();
         buildDisplaySegments(tokens, numberFormatter, segments, true);
 
@@ -394,39 +384,17 @@ public final class ExpressionDisplayFormatter {
     }
 
     private static final class NumberFormatter {
-        private final DecimalFormat decimalFormat;
-
-        NumberFormatter(
-                char decimalSeparator,
-                char groupSeparator,
-                int maxDecimals,
-                boolean useGrouping
-        ) {
-            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-            symbols.setDecimalSeparator(decimalSeparator);
-            symbols.setGroupingSeparator(groupSeparator);
-            decimalFormat = new DecimalFormat("#,##0.########", symbols);
-            decimalFormat.setMaximumFractionDigits(maxDecimals);
-            decimalFormat.setGroupingUsed(useGrouping);
+        private final net.smartlogic.unitconverter.helper.NumberFormatSettings settings;
+        NumberFormatter(net.smartlogic.unitconverter.helper.NumberFormatSettings settings) {
+            this.settings = settings;
         }
-
-        @NonNull
-        String format(@NonNull String rawNumber) {
+        @NonNull String format(@NonNull String rawNumber) {
             try {
-                // Input is editable data: preserve every typed decimal and trailing dot/zero.
-                // The decimal preference applies to results, never to the entered operand.
-                boolean negative = rawNumber.startsWith("-");
-                String digits = negative ? rawNumber.substring(1) : rawNumber;
-                int dot = digits.indexOf('.');
-                String integer = dot >= 0 ? digits.substring(0, dot) : digits;
-                if (integer.isEmpty()) integer = "0";
-                String formatted = decimalFormat.format(new java.math.BigDecimal(integer));
-                if (dot >= 0) formatted += decimalFormat.getDecimalFormatSymbols().getDecimalSeparator()
-                        + digits.substring(dot + 1);
-                return (negative ? "-" : "") + formatted;
-            } catch (NumberFormatException ignored) {
-                return rawNumber;
-            }
+                // Retain existing leading-zero presentation for .5 while preserving draft precision.
+                String value = rawNumber.startsWith(".") ? "0" + rawNumber : rawNumber;
+                if (value.startsWith("-.")) value = "-0" + value.substring(1);
+                return settings.displayCanonical(value);
+            } catch (IllegalArgumentException invalid) { return rawNumber; }
         }
     }
 

@@ -24,7 +24,8 @@ class TimerWidgetProvider : AppWidgetProvider() {
 }
 
 object TimerWidgetRenderer {
-    fun render(context: Context, snapshot: TimerEngine.WidgetSnapshot): RemoteViews {
+    fun render(baseContext: Context, snapshot: TimerEngine.WidgetSnapshot): RemoteViews {
+        val context = net.smartlogic.unitconverter.helper.AppLanguage.resourceContext(baseContext)
         val views = RemoteViews(context.packageName, R.layout.timer_widget)
         val defaultLabel = context.getString(R.string.timer_default_label)
         val label = when (val phase = snapshot.phase) {
@@ -42,6 +43,7 @@ object TimerWidgetRenderer {
         }
         views.setTextViewText(R.id.timer_widget_label, label)
         views.setTextViewText(R.id.timer_widget_time, timeText)
+        views.setContentDescription(R.id.timer_widget_label, context.getString(R.string.timer_widget_open))
         val openIntent = PendingIntent.getActivity(
             context,
             0,

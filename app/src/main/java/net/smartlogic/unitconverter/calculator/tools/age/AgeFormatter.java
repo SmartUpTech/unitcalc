@@ -19,10 +19,13 @@ public final class AgeFormatter {
     }
 
     public String date(LocalDate date) {
-        return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale));
+        return net.smartlogic.unitconverter.helper.RegionalDates.date(context, date);
     }
 
-    public String number(long value) { return NumberFormat.getIntegerInstance(locale).format(value); }
+    public String number(long value) {
+        return net.smartlogic.unitconverter.helper.Preferences.getInstance(context)
+                .getRegionalProfile().numbers.format(java.math.BigDecimal.valueOf(value), 0, false);
+    }
 
     public String years(int years) { return quantity(R.plurals.age_years, years); }
     public String months(int months) { return quantity(R.plurals.age_months, months); }

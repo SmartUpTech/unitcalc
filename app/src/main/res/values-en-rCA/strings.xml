@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_favorites">Favourites</string>
+    <string name="nav_play_favourites">Favourites</string>
+    <string name="no_favorites">No favourites yet</string>
+    <string name="toggle_favorite">Toggle favourite</string>
+    <string name="sq_kilometre">Sq Kilometre</string>
+    <string name="sq_centimetre">Sq Centimetre</string>
+    <string name="sq_decimetre">Sq Decimetre</string>
+    <string name="km_l">Kilometres/litre</string>
+    <string name="miles_l">Miles/litre</string>
+    <string name="kilometre">Kilometre</string>
+    <string name="centimetre">Centimetre</string>
+    <string name="millimetre">Millimetre</string>
+    <string name="micrometre">Micrometre</string>
+    <string name="nanometre">Nanometre</string>
+    <string name="decimetre">Decimetre</string>
+    <string name="picometre">Picometre</string>
+    <string name="km_h">Kilometre/hour</string>
+    <string name="km_s">Kilometre/second</string>
+    <string name="millilitre">Millilitre</string>
+    <string name="cubic_km">Cubic Kilometre</string>
+    <string name="sq_millimetre">Square millimetre</string>
+    <string name="microlitre">Microlitre</string>
+    <string name="centilitre">Centilitre</string>
+    <string name="decilitre">Decilitre</string>
+    <string name="cm_water">Centimetre of water (conventional)</string>
+    <string name="kgf_m">Kilogram-force metre</string>
+    <string name="n_cm">Newton centimetre</string>
+    <string name="bmi_height_cm">Height in centimetres</string>
+    <string name="bmi_metric_height">Centimetres (cm)</string>
+    <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per litre and passengers.</string>
+</resources>

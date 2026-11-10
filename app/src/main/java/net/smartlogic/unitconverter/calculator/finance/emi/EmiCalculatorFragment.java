@@ -159,7 +159,7 @@ public final class EmiCalculatorFragment extends Fragment {
         int[] labels = rule ? new int[]{R.string.emi_rule_amount, R.string.emi_rule_first, R.string.emi_rule_last} : new int[]{R.string.emi_loan_amount, R.string.emi_annual_rate, R.string.emi_tenure};
         for (int i = 0; i < editors.length; i++) {
             EditText field = editors[i]; int index = i;
-            field.setText(values[i]); field.setShowSoftInputOnFocus(false);
+            field.setText(values[i]); field.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(field);
             int[] caret = rule ? caretRule : editingB ? caretB : caretA;
             int length = field.length();
             field.setSelection(caret[i*2] < 0 ? length : Math.min(length, caret[i*2]), caret[i*2+1] < 0 ? length : Math.min(length, caret[i*2+1]));

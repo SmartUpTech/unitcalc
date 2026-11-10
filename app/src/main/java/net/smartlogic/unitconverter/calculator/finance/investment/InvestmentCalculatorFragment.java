@@ -153,7 +153,7 @@ public final class InvestmentCalculatorFragment extends Fragment {
         String[] values = {draft.amount, draft.rate, draft.tenure, draft.stepText()};
         int[] labels = {amountLabel(kind()), sip ? R.string.investment_return : R.string.emi_annual_rate, R.string.emi_tenure, R.string.investment_step};
         for (int n = 0; n < editors.length; n++) {
-            int index = n; EditText field = editors[n]; field.setText(values[n]); field.setShowSoftInputOnFocus(false);
+            int index = n; EditText field = editors[n]; field.setText(values[n]); field.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(field);
             field.setContentDescription(getString(labels[n]));
             field.setSelection(carets[n*2] < 0 ? field.length() : Math.min(field.length(), Math.max(0,carets[n*2])),
                     carets[n*2+1] < 0 ? field.length() : Math.min(field.length(), Math.max(0,carets[n*2+1])));

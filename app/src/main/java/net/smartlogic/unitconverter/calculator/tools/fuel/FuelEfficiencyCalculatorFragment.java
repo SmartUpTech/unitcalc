@@ -181,7 +181,7 @@ public final class FuelEfficiencyCalculatorFragment extends Fragment {
         for (int i = 0; i < fields().length; i++) {
             final int index = i;
             EditText field = fields()[i];
-            field.setShowSoftInputOnFocus(false);
+            field.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(field);
             field.setFilters(new InputFilter[]{
                     (source, start, end, dest, dstart, dend) -> {
                 if (binding) return null;

@@ -21,11 +21,19 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        net.smartlogic.unitconverter.helper.AppLanguage.initializeAfterActivityCreated(this);
         if (getSupportActionBar() != null) getSupportActionBar().hide();
         setContentView(R.layout.settings_activity);
         WindowChrome.apply(this);
         getSupportFragmentManager().setFragmentResultListener(
                 ConverterPickerDialogFragment.RESULT_KEY, this, (key, result) -> {
+            if (result.getInt(ConverterPickerDialogFragment.GROUP) == 100) {
+                int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
+                var regions = net.smartlogic.unitconverter.helper.RegionRegistry.ALL;
+                if (index >= 0 && index < regions.size())
+                    net.smartlogic.unitconverter.helper.Preferences.getInstance(this).applyRegion(regions.get(index).code);
+                return;
+            }
             var choices = net.smartlogic.unitconverter.helper.PreferredCurrency.choices(this);
             int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
             if (index >= 0 && index < choices.size()) net.smartlogic.unitconverter.helper.Preferences.getInstance(this)
@@ -51,6 +59,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        var preferences = net.smartlogic.unitconverter.helper.Preferences.getInstance(this);
+        new net.smartlogic.unitconverter.helper.RegionSuggestion(preferences.getPreferences()).observe(
+                net.smartlogic.unitconverter.helper.AppLanguage.current(this), preferences.getRegionalProfile().region);
         WindowChrome.apply(this);
     }
 

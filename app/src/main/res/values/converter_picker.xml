@@ -1,14 +1,14 @@
 <resources>
-    <string name="converter_picker_from_title">%1$s - Select From Value</string>
-    <string name="converter_picker_to_title">%1$s - Select To Value</string>
-    <string name="converter_picker_search_units">Search units</string>
-    <string name="converter_picker_search_currencies">Search currencies</string>
-    <string name="converter_picker_close">Close picker</string>
-    <string name="converter_picker_empty">No matching values. Try another name or symbol.</string>
-    <string name="converter_picker_selected">%1$s, selected</string>
-    <string name="converter_picker_unit_label">%1$s (%2$s)</string>
-    <string name="converter_picker_source_unit">%1$s, select source unit</string>
-    <string name="converter_picker_destination_unit">%1$s, select destination unit</string>
+
+
+
+
+
+
+
+
+
+
     <dimen name="converter_picker_max_width">480dp</dimen>
     <dimen name="converter_picker_max_height">640dp</dimen>
     <dimen name="converter_picker_margin">20dp</dimen>

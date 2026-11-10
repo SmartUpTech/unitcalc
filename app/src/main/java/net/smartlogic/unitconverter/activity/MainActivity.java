@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         SplashScreen.installSplashScreen(this);
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        net.smartlogic.unitconverter.helper.AppLanguage.initializeAfterActivityCreated(this);
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null) {
             var restoredBackStack = savedInstanceState.getIntegerArrayList("tool_back_stack");

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
+    <string name="region_ba">Bosnia y Herzegovina</string>
+    <string name="region_gg">Guernsey</string>
+    <string name="region_um">Islas menores alejadas de EE. UU.</string>
+    <string name="currency_name_thb">baht tailandés</string>
+    <string name="currency_name_btn">ngultrum butanés</string>
+    <string name="currency_name_zmw">kwacha zambiano</string>
+</resources>

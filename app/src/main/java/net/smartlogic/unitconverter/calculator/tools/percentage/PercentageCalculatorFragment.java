@@ -140,7 +140,7 @@ public final class PercentageCalculatorFragment extends Fragment {
         for (int i = 0; i < fields().length; i++) {
             final int index = i;
             EditText field = fields()[i];
-            field.setShowSoftInputOnFocus(false);
+            field.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(field);
             field.setFilters(new InputFilter[]{
                     (source, start, end, dest, dstart, dend) -> {
                         if (binding) return null;
@@ -321,14 +321,7 @@ public final class PercentageCalculatorFragment extends Fragment {
 
     private String formatNumber(BigDecimal value) {
         Preferences preferences = Preferences.getInstance(requireContext());
-        int decimals = preferences.getNumberDecimals();
-        String decimal = preferences.getDecimalSeparator();
-        String group = preferences.getGroupSeparator();
-        char dec = decimal.isEmpty() ? '.' : decimal.charAt(0);
-        char sep = group.isEmpty() ? ',' : group.charAt(0);
-        boolean grouping = !group.isEmpty() && !"None".equalsIgnoreCase(group)
-                && !group.equals(getString(R.string.group_separator_none)) && dec != sep;
-        return NumberUtils.formatCalculator(value, decimals, dec, sep, grouping);
+        return preferences.getRegionalProfile().numbers.format(value);
     }
 
     private void render() {

@@ -8,165 +8,165 @@
 
     <item name="sip_calculator" type="id" />
 
-    <string name="fd_calculator">FD Calculator</string>
 
-    <string name="rd_calculator">RD Calculator</string>
 
-    <string name="sip_calculator">SIP Calculator</string>
 
-    <string name="investment_monthly">Monthly investment</string>
 
-    <string name="investment_deposit">Monthly deposit</string>
 
-    <string name="investment_return">Expected annual return (%)</string>
 
-    <string name="investment_start">Start date</string>
 
-    <string name="investment_step_frequency">Step-up frequency</string>
 
-    <string name="investment_step">Step-up</string>
 
-    <string name="investment_step_enabled">Enable step-up</string>
 
-    <string name="investment_amount_mode">Step-up amount</string>
 
-    <string name="investment_percent_mode">Step-up percentage</string>
 
-    <string name="investment_percent">%</string>
 
-    <string name="investment_three_months">3 months</string>
 
-    <string name="investment_six_months">6 months</string>
 
-    <string name="investment_twelve_months">12 months</string>
 
-    <string name="investment_monthly_frequency">Monthly</string>
 
-    <string name="investment_quarterly">Quarterly</string>
 
-    <string name="investment_half_yearly">Half-yearly</string>
 
-    <string name="investment_yearly">Yearly</string>
 
-    <string name="investment_cumulative">Cumulative</string>
 
-    <string name="investment_periodic">Periodic</string>
 
-    <string name="investment_interest_options">Interest options</string>
 
-    <string name="investment_compounding">Compounding frequency</string>
 
-    <string name="investment_payout_frequency">Payout frequency</string>
 
-    <string name="investment_payout_mode">Interest payout</string>
 
-    <string name="investment_maturity">Maturity amount</string>
 
-    <string name="investment_future">Future value</string>
 
-    <string name="investment_invested">Invested amount</string>
 
-    <string name="investment_total_deposits">Total deposits</string>
 
-    <string name="investment_gains">Estimated gains / loss</string>
 
-    <string name="investment_interest">Interest earned</string>
 
-    <string name="investment_yield">Effective annual yield</string>
 
-    <string name="investment_reinvestment_yield">Reinvestment-equivalent annual yield</string>
 
-    <string name="investment_receipts">Total receipts</string>
 
-    <string name="investment_metric">%1$s: %2$s</string>
 
-    <string name="investment_reset">Reset</string>
 
-    <string name="investment_details">Details</string>
 
-    <string name="investment_reset_confirm">Clear this calculator? Saved history is retained.</string>
 
-    <string name="investment_empty">Enter amount, annual rate and duration.</string>
 
-    <string name="investment_estimate">Month-based estimate · before tax</string>
 
-    <string name="investment_sip_notice">Beginning-of-month investments · estimated returns</string>
 
-    <string name="investment_rd_notice">Quarterly compounding · deposits at period start</string>
 
-    <string name="investment_periodic_notice">Interest paid out · not compounded</string>
 
-    <string name="investment_assumptions">Offline planning estimate using equal monthly periods, not actual-day bank accrual. Dates are anchored to the original day and clamped at month ends. Taxes, fees, penalties and missed deposits are excluded. Currency is a denomination, not an exchange conversion.</string>
 
-    <string name="investment_sip_assumptions">Investments occur at the beginning of each period. Monthly return is the stated annual percentage divided by 12. Step-up increases the previous monthly contribution after each selected interval, rounded to currency precision. Returns are estimates and are not guaranteed.</string>
 
-    <string name="investment_rd_assumptions">Quarterly compounding uses the equivalent monthly growth factor (1 + annual rate / 400)^(1/3). Every deposit is made at the beginning of its monthly period. Fractional-quarter values are estimates.</string>
 
-    <string name="investment_fd_assumptions">Cumulative deposits compound completed periods and earn proportional simple interest for any final partial period. Periodic deposits pay interest on unchanged principal without reinvestment. Periodic annual yield assumes hypothetical reinvestment at the same rate; actual payouts are not reinvested.</string>
 
-    <string name="investment_amount_error">Use a positive amount below 1 trillion within currency precision.</string>
 
-    <string name="investment_rate_error">Use an annual rate from 0 to 100, with up to four decimal places.</string>
 
-    <string name="investment_sip_rate_error">Use a return from −99.99 to 100, with up to four decimal places.</string>
 
-    <string name="investment_tenure_error">Use 1–600 whole months. Years must convert exactly to months.</string>
 
-    <string name="investment_step_error">Step-up cannot be negative. Percentage must be 0–100; amounts must fit currency precision and remain below 1 trillion.</string>
 
-    <string name="investment_overflow_error">This projection exceeds the supported total of 1 quintillion. Reduce the amount, return, step-up or duration.</string>
 
-    <string name="investment_input_rejected">This edit is outside the field’s supported range or precision.</string>
 
-    <string name="investment_restore_error">This saved calculation is unsupported. Your current inputs were kept.</string>
 
-    <string name="investment_calculation_error">Check the selected options and start date.</string>
 
-    <string name="investment_contribution">Contribution</string>
 
-    <string name="investment_balance">Value</string>
 
-    <string name="investment_payout">Payout</string>
 
-    <string name="investment_period_detail">%1$s\nContribution: %2$s\nTotal invested: %3$s\nInterest / growth: %4$s\nPayout: %5$s\nClosing value: %6$s</string>
 
-    <string name="investment_history">%1$s · %2$s%% · %3$d months</string>
 
-    <string name="investment_growth_operation">Apply monthly growth</string>
 
-    <string name="investment_fd_operation">Accrue interest and apply payout rules</string>
 
-    <string name="investment_step_operation">Apply step-up every %1$d months</string>
 
-    <string name="investment_step_description">Increase the previous contribution by %1$s after each %2$d contributions.</string>
 
-    <string name="investment_step_value">%1$s every %2$d months</string>
 
-    <string name="investment_formula_sip">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
 
-    <string name="investment_formula_rd">factor = (1 + annual percentage / 400)^(1/3)</string>
 
-    <string name="investment_formula_fd">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
 
-    <string name="investment_sign">±</string>
 
-    <string name="investment_change_sign">Change return sign</string>
 
-    <string name="investment_year">Year %1$d</string>
 
-    <string name="investment_monthly_short">Monthly (%1$s)</string>
 
-    <string name="investment_rate_short">Rate (% p.a.)</string>
 
-    <string name="investment_return_short">Return (% p.a.)</string>
 
-    <string name="investment_reinvestment_yield_short">Reinvestment yield</string>
 
-    <string name="investment_complete_short">Complete the inputs.</string>
 
-    <string name="investment_check_short">Check the highlighted input.</string>
 
-    <string name="investment_overflow_short">Projection exceeds supported limits.</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <style name="InvestmentInput" parent="EmiInput">
         <item name="android:tag">converter_amount_compact</item>

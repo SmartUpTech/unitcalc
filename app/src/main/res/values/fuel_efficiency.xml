@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fuel_mpg_us">mpg US</string>
-    <string name="fuel_mpg_uk">mpg Imp</string>
-    <string name="fuel_volume">%1$s L</string>
-    <string name="fuel_done">Done</string>
+
+
+
+
     <item type="id" name="fuel_efficiency_calculator" />
-    <string name="fuel_efficiency_calculator">Fuel cost calculator</string>
-    <string name="fuel_trip_distance">Trip distance</string>
-    <string name="fuel_efficiency_label">Fuel efficiency</string>
-    <string name="fuel_price_label">Fuel price</string>
-    <string name="fuel_passengers">Passengers</string>
-    <string name="fuel_round_trip">Round trip</string>
-    <string name="fuel_round_trip_on">round trip</string>
-    <string name="fuel_trip_cost_label">Trip cost</string>
-    <string name="fuel_needed_label">Fuel needed</string>
-    <string name="fuel_cost_per_passenger">Cost per passenger</string>
-    <string name="fuel_no_result">Enter trip details</string>
-    <string name="fuel_invalid">Check distance, efficiency, price and passengers.</string>
-    <string name="fuel_price_unit_suffix">/L</string>
-    <string name="fuel_reset">Reset</string>
-    <string name="fuel_history_value">Trip: %1$s</string>
-    <string name="fuel_history_input">%1$s · %2$s · %3$s · %4$d pax%5$s</string>
-    <string name="fuel_history_round_trip"> · RT</string>
-    <string name="fuel_pick_distance">Distance unit</string>
-    <string name="fuel_pick_efficiency">Efficiency unit</string>
-    <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per litre and passengers.</string>
-    <string name="fuel_graphy_distance">%1$s %2$s%3$s</string>
-    <string name="fuel_graphy_fuel">Fuel used: %1$s</string>
-    <string name="fuel_graphy_cost">Trip cost: %1$s</string>
-    <string name="fuel_graphy_share">%1$d passengers · %2$s each</string>
-    <string name="fuel_graphy_step_fuel">Distance (km) × consumption (L/100 km) ÷ 100</string>
-    <string name="fuel_graphy_step_cost">Fuel × price</string>
-    <string name="fuel_graphy_step_share">Trip cost ÷ passengers</string>
-    <string name="fuel_result_accessibility">Trip cost %1$s. Fuel %2$s. %3$s per passenger.</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </resources>

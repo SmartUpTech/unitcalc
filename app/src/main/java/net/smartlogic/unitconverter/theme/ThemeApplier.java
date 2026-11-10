@@ -74,6 +74,9 @@ public final class ThemeApplier {
             return;
         }
         AppearanceTypography.apply(root);
+        View decimal = root.findViewById(R.id.dot);
+        if (decimal instanceof TextView) ((TextView) decimal).setText(
+                net.smartlogic.unitconverter.helper.Preferences.getInstance(root.getContext()).getDecimalSeparator());
         applyRecursive(root, ThemeManager.get(), Appearance.style(root.getContext()), Appearance.shape(root.getContext()), primaryKey(root));
     }
 
@@ -154,6 +157,8 @@ public final class ThemeApplier {
     private static void applyRecursive(@NonNull View view, @NonNull CalculatorTheme theme,
             Appearance.Style style, Appearance.Shape shape, @Nullable View primary) {
         int id = view.getId();
+        if (view instanceof net.smartlogic.unitconverter.widget.AutoSizeEditText)
+            ((net.smartlogic.unitconverter.widget.AutoSizeEditText) view).refreshDecimalDisplay();
         if (id == R.id.keypad) primary = primaryKey(view);
         if (id == R.id.cl
                 || id == R.id.drawer_layout

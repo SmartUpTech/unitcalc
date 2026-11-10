@@ -15,7 +15,7 @@
     <string name="url_other_apps">https://play.google.com/store/apps/dev?id=6614685995890456247</string>
     <string name="url_smartup_website">https://smartuptech.github.io</string>
     <string name="url_privacy_policy">https://smartuptech.github.io/privacy_policy.html</string>
-    <string name="description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
+    <string name="description">Scientific calculator, unit converter and currency converter for everyday math.</string>
     <string name="keywords">scientific calculator, unit converter, currency converter, calculation history</string>
     <string name="company">SMARTUP</string>
 
@@ -43,7 +43,7 @@
     <string name="nav_favorites">Favorites</string>
     <string name="nav_history">History</string>
     <string name="nav_play">Play</string>
-    <string name="nav_play_favourites">Favourites</string>
+    <string name="nav_play_favourites">Favorites</string>
     <string name="games_offline_title">Internet connection needed</string>
     <string name="games_offline_message">You are offline. Games need an Internet connection.</string>
     <string name="games_offline_action">OK</string>
@@ -173,16 +173,16 @@
     <string name="volume">Volume</string>
 
     <!-- Area -->
-    <string name="sq_kilometre">Sq Kilometre</string>
+    <string name="sq_kilometre">Sq Kilometer</string>
     <string name="sq_metre">Sq Metre</string>
-    <string name="sq_centimetre">Sq Centimetre</string>
+    <string name="sq_centimetre">Sq Centimeter</string>
     <string name="hectare">Hectare</string>
     <string name="sq_mile">Sq Mile</string>
     <string name="sq_yard">Sq Yard</string>
     <string name="sq_foot">Sq Foot</string>
     <string name="sq_inch">Sq Inch</string>
     <string name="acre">Acre</string>
-    <string name="sq_decimetre">Sq Decimetre</string>
+    <string name="sq_decimetre">Sq Decimeter</string>
 
     <!-- Digital Storage -->
     <string name="bit">Bit</string>
@@ -218,26 +218,26 @@
     <string name="mpg_us">Miles/gallon (US)</string>
     <string name="mpg_uk">Miles/gallon (UK)</string>
     <string name="l_100k">Litres/100km</string>
-    <string name="km_l">Kilometres/litre</string>
-    <string name="miles_l">Miles/litre</string>
+    <string name="km_l">Kilometers/liter</string>
+    <string name="miles_l">Miles/liter</string>
 
     <!-- Distance -->
-    <string name="kilometre">Kilometre</string>
+    <string name="kilometre">Kilometer</string>
     <string name="mile">Miles</string>
     <string name="metre">Metre</string>
-    <string name="centimetre">Centimetre</string>
-    <string name="millimetre">Millimetre</string>
-    <string name="micrometre">Micrometre</string>
-    <string name="nanometre">Nanometre</string>
+    <string name="centimetre">Centimeter</string>
+    <string name="millimetre">Millimeter</string>
+    <string name="micrometre">Micrometer</string>
+    <string name="nanometre">Nanometer</string>
     <string name="yard">Yard</string>
     <string name="feet">Feet</string>
     <string name="inch">Inch</string>
     <string name="nautical_mile">Nautical Mile</string>
     <string name="furlong">Furlong</string>
     <string name="light_year">Light Year</string>
-    <string name="decimetre">Decimetre</string>
+    <string name="decimetre">Decimeter</string>
     <string name="angstrom">Angstrom</string>
-    <string name="picometre">Picometre</string>
+    <string name="picometre">Picometer</string>
 
     <!-- Mass/Weight -->
     <string name="kilogram">Kilogram</string>
@@ -278,13 +278,13 @@
     <string name="hectopascal">Hectopascal</string>
 
     <!-- Speed -->
-    <string name="km_h">Kilometre/hour</string>
+    <string name="km_h">Kilometer/hour</string>
     <string name="mph">Mile/hour</string>
     <string name="m_s">Metre/second</string>
     <string name="fps">Foot/second</string>
     <string name="knot">Knot</string>
     <string name="m_min">Metre/minute</string>
-    <string name="km_s">Kilometre/second</string>
+    <string name="km_s">Kilometer/second</string>
 
     <!-- Temperature -->
     <string name="celsius">Celsius</string>
@@ -327,7 +327,7 @@
     <string name="pint_uk">Pint (UK)</string>
     <string name="gallon_uk">Gallon (UK)</string>
     <string name="barrel_uk">Barrel (UK)</string>
-    <string name="millilitre">Millilitre</string>
+    <string name="millilitre">Milliliter</string>
     <string name="litre">Litre</string>
     <string name="cubic_cm">Cubic cm</string>
     <string name="cubic_m">Cubic Metre</string>
@@ -335,7 +335,7 @@
     <string name="cubic_foot">Cubic Foot</string>
     <string name="cubic_yard">Cubic Yard</string>
     <string name="cubic_mm">Cubic mm</string>
-    <string name="cubic_km">Cubic Kilometre</string>
+    <string name="cubic_km">Cubic Kilometer</string>
 
     <string name="menu_other_apps">Other Apps</string>
 
@@ -437,9 +437,9 @@
         <item>,</item>
     </string-array>
 
-    <string name="default_number_decimals">4</string>
-    <string name="default_group_separator">None</string>
-    <string name="default_decimal_separator">.</string>
+    <string name="default_number_decimals" translatable="false">4</string>
+    <string name="default_group_separator" translatable="false">None</string>
+    <string name="default_decimal_separator" translatable="false">.</string>
     <string name="str_from">From</string>
     <string name="str_to">To</string>
     <string name="str_swap_units">Swap units</string>
@@ -453,13 +453,13 @@
     <string name="strContentDescription">Unit Convertor Image</string>
 
     <!--Admob Campaign Id    -->
-    <string name="am_app_id">ca-app-pub-9684723354540179~1910659108</string>
+    <string name="am_app_id" translatable="false">ca-app-pub-9684723354540179~1910659108</string>
 
     <!-- AdMob Real Ads -->
-    <string name="am_banner_ad_unit">XX</string>
-    <string name="am_interstitial_ad_unit">XX</string>
+    <string name="am_banner_ad_unit" translatable="false">XX</string>
+    <string name="am_interstitial_ad_unit" translatable="false">XX</string>
     <string name="am_rewarded_ad_unit" translatable="false">ca-app-pub-9684723354540179/3894533962</string>
-    <string name="am_app_open_ad_unit">ca-app-pub-9684723354540179/9180938172</string>
+    <string name="am_app_open_ad_unit" translatable="false">ca-app-pub-9684723354540179/9180938172</string>
 
 
     <!-- AdMob Test Ads (Next-Gen SDK test unit IDs) -->
@@ -532,7 +532,7 @@
     <string name="graphy_export_result">= %1$s</string>
     <!-- Explicit conversion variants; factors live in the unit registry. -->
     <string name="angle">Angle</string>
-    <string name="sq_millimetre">Square millimetre</string>
+    <string name="sq_millimetre">Square millimeter</string>
     <string name="guntha">Guntha (1/40 acre)</string>
     <string name="cent">Cent (1/100 acre)</string>
     <string name="marla">Marla (272.25 sq ft)</string>
@@ -542,9 +542,9 @@
     <string name="quintal">Quintal (metric)</string>
     <string name="tola">Tola (180 grains)</string>
     <string name="troy_ounce">Troy ounce</string>
-    <string name="microlitre">Microlitre</string>
-    <string name="centilitre">Centilitre</string>
-    <string name="decilitre">Decilitre</string>
+    <string name="microlitre">Microliter</string>
+    <string name="centilitre">Centiliter</string>
+    <string name="decilitre">Deciliter</string>
     <string name="oil_barrel_us">Oil barrel (US, 42 gal)</string>
     <string name="metric_cup">Cup (metric, 250 mL)</string>
     <string name="tablespoon_au">Tablespoon (Australia, 20 mL)</string>
@@ -554,10 +554,10 @@
     <string name="tablespoon_metric">Tablespoon (metric, 15 mL)</string>
     <string name="millibar">Millibar</string>
     <string name="inch_mercury">Inch of mercury (conventional)</string>
-    <string name="cm_water">Centimetre of water (conventional)</string>
+    <string name="cm_water">Centimeter of water (conventional)</string>
     <string name="inch_water">Inch of water (conventional)</string>
-    <string name="kgf_m">Kilogram-force metre</string>
-    <string name="n_cm">Newton centimetre</string>
+    <string name="kgf_m">Kilogram-force meter</string>
+    <string name="n_cm">Newton centimeter</string>
     <string name="degree">Degree</string>
     <string name="radian">Radian</string>
     <string name="gradian">Gradian</string>
@@ -618,8 +618,8 @@
     <string name="history_copy_content">Expression: %1$s\nResult: %2$s</string>
     <!-- Store listing copy: publish these values through Google Play Console. -->
     <string name="store_listing_title">Calculator+: Unit Converter</string>
-    <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday maths.</string>
-    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday maths, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful maths tools together.</string>
+    <string name="store_listing_short_description">Scientific calculator, unit converter and currency converter for everyday math.</string>
+    <string name="store_listing_full_description">Calculator+ brings a scientific calculator, unit converter and currency converter together for everyday math, study, work and travel.\n\nCALCULATE EVERYDAY AND SCIENTIFIC EXPRESSIONS\nWork with arithmetic, parentheses, percentages, powers and square roots, then revisit saved results in calculation history.\n\nCONVERT UNITS IN ONE PLACE\nConvert length, area, mass, temperature, volume, speed, time and more. Search unit names and symbols to find the measurement you need, from cooking quantities to storage sizes.\n\nCOMPARE CURRENCIES\nChoose currencies by name, country or currency code. Refresh exchange rates and check when they were last updated. Rates are for reference; actual transaction rates and fees may differ. Internet access is needed to refresh rates.\n\nMAKE IT YOURS\nChoose from app themes and adjust number formatting, key sounds and vibration in Settings.\n\nUNDERSTAND WITH GRAPHY\nSee supported calculations explained as connected steps. Export Graphy diagrams as PDF or PNG.\n\nRESTORE SAVED CALCULATIONS\nInspect saved results and reuse previous expressions from History.\n\nTAKE A DAILY GAME BREAK\nOpen Play for hosted daily games. Internet access is required. Some themes and extra game sets are available through optional rewarded ads.\n\nFrom a quick sum to a measurement conversion, Calculator+ keeps useful math tools together.</string>
     <string name="share_app_subject">%1$s: Calculate and convert</string>
     <string name="currency_copy_format">%1$s %2$s (%3$s) = %4$s %5$s (%6$s)</string>
     <string name="currency_rate_format">1 %1$s = %2$s %3$s</string>
@@ -1028,4 +1028,784 @@
     <string name="currency_symbol_pgk" translatable="false">K</string>
     <string name="currency_swap_destinations">Swap second and third currencies</string>
     <string name="theme_debug_unlocked">Available in debug</string>
+    <string name="region_ad">Andorra</string>
+    <string name="region_ae">United Arab Emirates</string>
+    <string name="region_al">Albania</string>
+    <string name="region_am">Armenia</string>
+    <string name="region_ao">Angola</string>
+    <string name="region_ar">Argentina</string>
+    <string name="region_as">American Samoa</string>
+    <string name="region_at">Austria</string>
+    <string name="region_au">Australia</string>
+    <string name="region_ax">Åland Islands</string>
+    <string name="region_az">Azerbaijan</string>
+    <string name="region_ba">Bosnia &amp; Herzegovina</string>
+    <string name="region_bb">Barbados</string>
+    <string name="region_bd">Bangladesh</string>
+    <string name="region_be">Belgium</string>
+    <string name="region_bg">Bulgaria</string>
+    <string name="region_bh">Bahrain</string>
+    <string name="region_bl">St. Barthélemy</string>
+    <string name="region_bn">Brunei</string>
+    <string name="region_bo">Bolivia</string>
+    <string name="region_bq">Caribbean Netherlands</string>
+    <string name="region_br">Brazil</string>
+    <string name="region_bs">Bahamas</string>
+    <string name="region_bt">Bhutan</string>
+    <string name="region_bv">Bouvet Island</string>
+    <string name="region_bw">Botswana</string>
+    <string name="region_by">Belarus</string>
+    <string name="region_bz">Belize</string>
+    <string name="region_ca">Canada</string>
+    <string name="region_cc">Cocos (Keeling) Islands</string>
+    <string name="region_ch">Switzerland</string>
+    <string name="region_ck">Cook Islands</string>
+    <string name="region_cl">Chile</string>
+    <string name="region_cn">China</string>
+    <string name="region_co">Colombia</string>
+    <string name="region_cr">Costa Rica</string>
+    <string name="region_cx">Christmas Island</string>
+    <string name="region_cy">Cyprus</string>
+    <string name="region_cz">Czechia</string>
+    <string name="region_de">Germany</string>
+    <string name="region_dk">Denmark</string>
+    <string name="region_dz">Algeria</string>
+    <string name="region_ec">Ecuador</string>
+    <string name="region_ee">Estonia</string>
+    <string name="region_eg">Egypt</string>
+    <string name="region_eh">Western Sahara</string>
+    <string name="region_es">Spain</string>
+    <string name="region_et">Ethiopia</string>
+    <string name="region_fi">Finland</string>
+    <string name="region_fj">Fiji</string>
+    <string name="region_fm">Micronesia</string>
+    <string name="region_fo">Faroe Islands</string>
+    <string name="region_fr">France</string>
+    <string name="region_gb">United Kingdom</string>
+    <string name="region_ge">Georgia</string>
+    <string name="region_gf">French Guiana</string>
+    <string name="region_gg">Guernsey</string>
+    <string name="region_gh">Ghana</string>
+    <string name="region_gl">Greenland</string>
+    <string name="region_gp">Guadeloupe</string>
+    <string name="region_gr">Greece</string>
+    <string name="region_gs">South Georgia &amp; South Sandwich Islands</string>
+    <string name="region_gt">Guatemala</string>
+    <string name="region_gu">Guam</string>
+    <string name="region_gy">Guyana</string>
+    <string name="region_hk">Hong Kong SAR China</string>
+    <string name="region_hm">Heard &amp; McDonald Islands</string>
+    <string name="region_hn">Honduras</string>
+    <string name="region_hr">Croatia</string>
+    <string name="region_ht">Haiti</string>
+    <string name="region_hu">Hungary</string>
+    <string name="region_id">Indonesia</string>
+    <string name="region_ie">Ireland</string>
+    <string name="region_il">Israel</string>
+    <string name="region_im">Isle of Man</string>
+    <string name="region_in">India</string>
+    <string name="region_io">British Indian Ocean Territory</string>
+    <string name="region_iq">Iraq</string>
+    <string name="region_is">Iceland</string>
+    <string name="region_it">Italy</string>
+    <string name="region_je">Jersey</string>
+    <string name="region_jm">Jamaica</string>
+    <string name="region_jo">Jordan</string>
+    <string name="region_jp">Japan</string>
+    <string name="region_ke">Kenya</string>
+    <string name="region_kg">Kyrgyzstan</string>
+    <string name="region_kh">Cambodia</string>
+    <string name="region_ki">Kiribati</string>
+    <string name="region_kr">South Korea</string>
+    <string name="region_kw">Kuwait</string>
+    <string name="region_kz">Kazakhstan</string>
+    <string name="region_la">Laos</string>
+    <string name="region_lb">Lebanon</string>
+    <string name="region_li">Liechtenstein</string>
+    <string name="region_lk">Sri Lanka</string>
+    <string name="region_ls">Lesotho</string>
+    <string name="region_lt">Lithuania</string>
+    <string name="region_lu">Luxembourg</string>
+    <string name="region_lv">Latvia</string>
+    <string name="region_ma">Morocco</string>
+    <string name="region_mc">Monaco</string>
+    <string name="region_md">Moldova</string>
+    <string name="region_me">Montenegro</string>
+    <string name="region_mf">St. Martin</string>
+    <string name="region_mh">Marshall Islands</string>
+    <string name="region_mk">North Macedonia</string>
+    <string name="region_mm">Myanmar (Burma)</string>
+    <string name="region_mn">Mongolia</string>
+    <string name="region_mp">Northern Mariana Islands</string>
+    <string name="region_mq">Martinique</string>
+    <string name="region_mt">Malta</string>
+    <string name="region_mu">Mauritius</string>
+    <string name="region_mx">Mexico</string>
+    <string name="region_my">Malaysia</string>
+    <string name="region_na">Namibia</string>
+    <string name="region_nf">Norfolk Island</string>
+    <string name="region_ng">Nigeria</string>
+    <string name="region_nl">Netherlands</string>
+    <string name="region_no">Norway</string>
+    <string name="region_np">Nepal</string>
+    <string name="region_nr">Nauru</string>
+    <string name="region_nu">Niue</string>
+    <string name="region_nz">New Zealand</string>
+    <string name="region_om">Oman</string>
+    <string name="region_pa">Panama</string>
+    <string name="region_pe">Peru</string>
+    <string name="region_pg">Papua New Guinea</string>
+    <string name="region_ph">Philippines</string>
+    <string name="region_pk">Pakistan</string>
+    <string name="region_pl">Poland</string>
+    <string name="region_pm">St. Pierre &amp; Miquelon</string>
+    <string name="region_pn">Pitcairn Islands</string>
+    <string name="region_pr">Puerto Rico</string>
+    <string name="region_ps">Palestinian Territories</string>
+    <string name="region_pt">Portugal</string>
+    <string name="region_pw">Palau</string>
+    <string name="region_py">Paraguay</string>
+    <string name="region_qa">Qatar</string>
+    <string name="region_re">Réunion</string>
+    <string name="region_ro">Romania</string>
+    <string name="region_rs">Serbia</string>
+    <string name="region_ru">Russia</string>
+    <string name="region_sa">Saudi Arabia</string>
+    <string name="region_se">Sweden</string>
+    <string name="region_sg">Singapore</string>
+    <string name="region_si">Slovenia</string>
+    <string name="region_sj">Svalbard &amp; Jan Mayen</string>
+    <string name="region_sk">Slovakia</string>
+    <string name="region_sm">San Marino</string>
+    <string name="region_sv">El Salvador</string>
+    <string name="region_tc">Turks &amp; Caicos Islands</string>
+    <string name="region_tf">French Southern Territories</string>
+    <string name="region_th">Thailand</string>
+    <string name="region_tj">Tajikistan</string>
+    <string name="region_tk">Tokelau</string>
+    <string name="region_tl">Timor-Leste</string>
+    <string name="region_tn">Tunisia</string>
+    <string name="region_tr">Türkiye</string>
+    <string name="region_tt">Trinidad &amp; Tobago</string>
+    <string name="region_tv">Tuvalu</string>
+    <string name="region_tw">Taiwan</string>
+    <string name="region_tz">Tanzania</string>
+    <string name="region_ua">Ukraine</string>
+    <string name="region_ug">Uganda</string>
+    <string name="region_um">U.S. Outlying Islands</string>
+    <string name="region_us">United States</string>
+    <string name="region_uy">Uruguay</string>
+    <string name="region_uz">Uzbekistan</string>
+    <string name="region_va">Vatican City</string>
+    <string name="region_vg">British Virgin Islands</string>
+    <string name="region_vi">U.S. Virgin Islands</string>
+    <string name="region_vn">Vietnam</string>
+    <string name="region_yt">Mayotte</string>
+    <string name="region_za">South Africa</string>
+    <string name="region_zm">Zambia</string>
+    <string name="region_zw">Zimbabwe</string>
+    <string name="language_en" translatable="false">English (United States)</string>
+    <string name="language_en_gb" translatable="false">English (United Kingdom)</string>
+    <string name="language_en_ca" translatable="false">English (Canada)</string>
+    <string name="language_en_au" translatable="false">English (Australia)</string>
+    <string name="language_hi" translatable="false">हिन्दी</string>
+    <string name="language_es" translatable="false">Español (España)</string>
+    <string name="language_es_mx" translatable="false">Español (México)</string>
+    <string name="language_fr" translatable="false">Français</string>
+    <string name="language_pt" translatable="false">Português (Brasil)</string>
+    <string name="language_ru" translatable="false">Русский</string>
+    <string name="language_id" translatable="false">Bahasa Indonesia</string>
+    <string name="language_de" translatable="false">Deutsch</string>
+    <string name="language_tr" translatable="false">Türkçe</string>
+    <string name="language_vi" translatable="false">Tiếng Việt</string>
+    <string name="language_it" translatable="false">Italiano</string>
+    <string name="language_pl" translatable="false">Polski</string>
+    <string name="language_nl" translatable="false">Nederlands</string>
+    <string name="regional_section">Language &amp; region</string>
+    <string name="regional_language">App language</string>
+    <string name="regional_region">Region</string>
+    <string name="regional_currency">Currency</string>
+    <string name="regional_numbers">Number format</string>
+    <string name="regional_reset">Reset to region defaults</string>
+    <string name="regional_reset_description">Resets number format and currency.</string>
+    <string name="regional_change_note">Changing region resets number format and currency.</string>
+    <string name="regional_default">Regional default</string>
+    <string name="regional_custom">Custom</string>
+    <string name="regional_suggest_title">Switch region to %1$s?</string>
+    <string name="regional_switch">Switch</string>
+    <string name="regional_keep">Keep current</string>
+    <string name="regional_apply">Apply</string>
+    <string name="regional_collision">Choose different decimal and group separators.</string>
+    <string name="regional_pattern">Grouping pattern</string>
+    <string name="regional_international">International: 1,234,567</string>
+    <string name="regional_indian">Indian: 12,34,567</string>
+    <string name="regional_dot">Dot</string>
+    <string name="regional_comma">Comma</string>
+    <string name="regional_space">Space</string>
+    <string name="regional_nbsp">Non-breaking space</string>
+    <string name="regional_nnbsp">Narrow non-breaking space</string>
+    <string name="regional_apostrophe">Apostrophe</string>
+    <string name="regional_currency_label">%1$s · %2$s</string>
+    <string name="regional_format_summary">%1$s · %2$s</string>
+    <string name="regional_search">Search regions</string>
+    <string name="regional_invalid_number">Check the number format.</string>
+
+    <!-- age.xml -->
+    <string name="age_calculator">Age Calculator</string>
+    <string name="drawer_section_tools">Tools</string>
+    <string name="age_birth">Date of birth</string>
+    <string name="age_as_of">Age as of</string>
+    <string name="age_today">Today</string>
+    <string name="age_empty_title">Choose a date of birth</string>
+    <string name="age_check_dates">Check the selected dates</string>
+    <string name="age_select_date">Select date</string>
+    <string name="age_year">Year</string>
+    <string name="age_month">Month</string>
+    <string name="age_day">Day</string>
+    <string name="age_search_date_values">Search</string>
+    <string name="age_placeholder">—</string>
+    <string name="age_date_button">%1$s\n%2$s</string>
+    <string name="age_result">Age</string>
+    <string name="age_next_birthday">Next birthday</string>
+    <string name="age_birthday">Birthday</string>
+    <string name="age_summary">Summary</string>
+    <string name="age_years_label">Years</string>
+    <string name="age_months_label">Months</string>
+    <string name="age_weeks_label">Weeks</string>
+    <string name="age_days_label">Days</string>
+    <string name="age_hours_label">Hours</string>
+    <string name="age_minutes_label">Minutes</string>
+    <string name="age_empty">Your age, next birthday and calendar totals will appear here.</string>
+    <string name="age_invalid">Date of birth must be on or before Age as of.</string>
+    <string name="age_totals_note">Calendar totals · 24-hour days</string>
+    <string name="age_breakdown">%1$s, %2$s, %3$s</string>
+    <string name="age_remaining">%1$s | %2$s</string>
+    <string name="age_graphy_step_years">Years</string>
+    <string name="age_graphy_step_months">Months</string>
+    <string name="age_graphy_step_days">Days</string>
+    <string name="age_birthday_details">%1$s\n%2$s\n%3$s</string>
+    <string name="age_birthday_when">%1$s · %2$s</string>
+    <string name="age_add_calendar">Add to Calendar</string>
+    <string name="age_calendar_question">Birthday: %1$s. Add it once or repeat yearly? Review the date, repetition and reminders in your calendar app before saving.</string>
+    <string name="age_calendar_once">Next birthday only</string>
+    <string name="age_calendar_yearly">Repeat yearly</string>
+    <string name="age_calendar_unavailable">No compatible calendar app is available.</string>
+    <string name="age_share_unavailable">No app is available to share this result.</string>
+    <string name="age_date_interval">%1$s → %2$s</string>
+    <string name="age_completed_years">Completed years</string>
+    <string name="age_completed_months">Completed months</string>
+    <string name="age_remaining_days">Remaining days</string>
+    <string name="age_anniversary">Last anniversary</string>
+    <string name="age_month_anchor">After completed months</string>
+    <string name="age_year_step">%1$s → %2$s</string>
+    <string name="age_month_step">%1$s → %2$s</string>
+    <string name="age_day_step">%1$s → %2$s: %3$s</string>
+    <string name="age_calendar_rule">Count completed years from the birth date, then completed months from that anniversary, then the remaining calendar days. February 29 anniversaries use February 28 in non-leap years. Month additions clamp to the last valid day of the target month.</string>
+    <string name="age_share_body">Age Calculator\nDate of birth: %1$s\nAge as of: %2$s\nAge: %3$s\nNext birthday: %4$s (%5$s)\nCountdown: %6$s\n\nSummary\nYears: %7$s\nMonths: %8$s\nWeeks: %9$s\nDays: %10$s\nHours: %11$s\nMinutes: %12$s\nCompleted calendar units; hours and minutes use 24-hour days without time of birth.</string>
+    <plurals name="age_years"><item quantity="one">%1$s year</item><item quantity="other">%1$s years</item></plurals>
+    <plurals name="age_year_unit"><item quantity="one">year</item><item quantity="other">years</item></plurals>
+    <plurals name="age_months"><item quantity="one">%1$s month</item><item quantity="other">%1$s months</item></plurals>
+    <plurals name="age_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
+
+    <!-- appearance.xml -->
+    <string name="appearance_customise">Customise</string>
+    <string name="appearance_buttons">Buttons</string>
+    <string name="appearance_font">Text Font</string>
+    <string name="appearance_reset">Reset customisation</string>
+    <string name="appearance_reset_message">Restore Flat (Borderless), Rounded and Oswald? Your theme will stay selected.</string>
+    <string name="appearance_style">Button Style</string>
+    <string name="appearance_shape">Button Shape</string>
+    <string name="appearance_flat_shape">Not applicable for Flat style.</string>
+    <string name="appearance_apply">Apply</string>
+    <string name="appearance_preview">Live keypad preview</string>
+    <string name="appearance_font_preview_text">A fresh look with %1$s.</string>
+    <string name="appearance_font_choice">Font</string>
+    <string name="button_style_flat">Flat (Borderless)</string>
+    <string name="button_style_soft_fill">Soft Fill</string>
+    <string name="button_style_outline">Outline</string>
+    <string name="button_style_tonal">Tonal</string>
+    <string name="button_style_raised">Raised</string>
+    <string name="button_style_inset">Inset</string>
+    <string name="button_style_bevel">Bevel</string>
+    <string name="button_style_satin">Satin</string>
+    <string name="button_shape_square">Square</string>
+    <string name="button_shape_rounded">Rounded</string>
+    <string name="button_shape_squircle">Squircle</string>
+    <string name="button_shape_circle">Circle</string>
+
+    <!-- bmi.xml -->
+    <string name="bmi_months_zero">0 mo ▾</string>
+    <string name="bmi_months_button">%1$d mo ▾</string>
+    <string name="bmi_months_choice">%1$d months</string>
+    <string name="bmi_additional_months">Additional months (0–11)</string>
+    <string name="bmi_age_full">%1$s years %2$d months</string>
+    <string name="bmi_age_required">Enter age in years and months.</string>
+    <string name="bmi_infant_category">BMI classification not recommended</string>
+    <string name="bmi_infant_note">Under 2: use WHO weight-for-length assessment.</string>
+    <string name="bmi_child_note">CDC BMI-for-age · ages 2–19</string>
+    <string name="bmi_child_range">Reference BMI: %1$s–&lt;%2$s</string>
+    <string name="bmi_child_obesity">Obesity</string>
+    <string name="bmi_child_severe">Severe obesity</string>
+    <string name="bmi_child_low_band">Below 5th percentile</string>
+    <string name="bmi_child_healthy_band">5th–&lt;85th percentile</string>
+    <string name="bmi_child_over_band">85th–&lt;95th percentile</string>
+    <string name="bmi_child_obesity_band">At or above 95th percentile</string>
+    <string name="bmi_child_severe_band">≥95th percentile · severe</string>
+    <string name="bmi_child_severe_rule" formatted="false">≥120% of 95th percentile or BMI ≥35</string>
+    <string name="bmi_child_history">BMI: %1$s · %2$s\nBMI-for-age: %3$s\n%4$s\nCDC reference; screening only.</string>
+    <string name="bmi_infant_history">BMI: %1$s · Classification not recommended under 2. Use WHO weight-for-length assessment.</string>
+    <string name="bmi_group_infants">Under 2</string>
+    <string name="bmi_group_children">2–19</string>
+    <string name="bmi_group_adults">20+</string>
+    <string name="bmi_reference_title">BMI ranges and guidance</string>
+    <string name="bmi_infant_guidance">Under 2 years\nBMI-for-age classification is not recommended in this calculator. Infants should be assessed using WHO growth standards, including weight-for-length, with a healthcare professional. No adult category or weight target is shown.</string>
+    <string name="bmi_child_guidance">Children and teens, ages 2–19\nCDC BMI-for-age categories depend on age in months and sex used by the growth reference. The BMI number alone cannot be compared with adult cutoffs. The reference range is not a weight-loss target; growth and health need professional assessment.</string>
+    <string name="bmi_adult_guidance">Adults, ages 20 and over\nCDC adult cutoffs apply regardless of age or sex. BMI is a screening measure, not a diagnosis, and does not distinguish muscle from fat. Older adults need interpretation alongside muscle mass, nutrition and overall health. Pregnancy requires different assessment.</string>
+    <string name="bmi_child_current">Current reference: %1$s · %2$s</string>
+    <string name="bmi_child_reference_values">BMI at the 5th percentile: %1$s\n85th percentile: %2$s\n95th percentile: %3$s</string>
+    <string name="bmi_sources">Sources: CDC BMI categories and growth-reference data; CDC guidance on WHO infant growth standards. The CDC BMI-for-age reference population is the United States.</string>
+    <string name="bmi_read_source">Read official guidance</string>
+    <string name="bmi_infant_source_url" translatable="false">https://www.cdc.gov/growth-chart-training/hcp/using-growth-charts/who-using.html</string>
+    <string name="bmi_child_source_url" translatable="false">https://www.cdc.gov/bmi/child-teen-calculator/bmi-categories.html</string>
+    <string name="bmi_adult_source_url" translatable="false">https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html</string>
+    <string name="bmi_done_symbol">✓</string>
+    <string name="bmi_done">Calculate BMI and close keypad</string>
+    <string name="bmi_calculator">BMI Calculator</string>
+    <string name="bmi_age">Age · years</string>
+    <string name="bmi_age_input">Age in years</string>
+    <string name="bmi_gender">Gender</string>
+    <string name="bmi_gender_male">Male</string>
+    <string name="bmi_gender_female">Female</string>
+    <string name="bmi_height">Height</string>
+    <string name="bmi_weight">Weight</string>
+    <string name="bmi_height_cm">Height in centimeters</string>
+    <string name="bmi_height_ft">Height in whole feet</string>
+    <string name="bmi_height_in">Additional inches, less than 12</string>
+    <string name="bmi_weight_kg">Weight in kilograms</string>
+    <string name="bmi_weight_lb">Weight in pounds</string>
+    <string name="bmi_cm">cm</string>
+    <string name="bmi_ft">ft</string>
+    <string name="bmi_in">in</string>
+    <string name="bmi_kg">kg</string>
+    <string name="bmi_lb">lb</string>
+    <string name="bmi_height_unit">Height unit</string>
+    <string name="bmi_weight_unit">Weight unit</string>
+    <string name="bmi_metric_height">Centimeters (cm)</string>
+    <string name="bmi_imperial_height">Feet and inches (ft/in)</string>
+    <string name="bmi_metric_weight">Kilograms (kg)</string>
+    <string name="bmi_imperial_weight">Pounds (lb)</string>
+    <string name="bmi_unit_button">%1$s ▾</string>
+    <string name="bmi_label">BMI</string>
+    <string name="bmi_adult_label">BMI · Adults 20+</string>
+    <string name="bmi_category">Category</string>
+    <string name="bmi_healthy_range">Healthy weight range</string>
+    <string name="bmi_difference">Difference</string>
+    <string name="bmi_under_20_notice">Adult ranges apply from age 20.</string>
+    <string name="bmi_underweight">Underweight</string>
+    <string name="bmi_healthy">Healthy weight</string>
+    <string name="bmi_overweight">Overweight</string>
+    <string name="bmi_obesity_i">Obesity class I</string>
+    <string name="bmi_obesity_ii">Obesity class II</string>
+    <string name="bmi_obesity_iii">Obesity class III</string>
+    <string name="bmi_range_low">&lt;18.5</string>
+    <string name="bmi_range_healthy">18.5–&lt;25</string>
+    <string name="bmi_range_over">25–&lt;30</string>
+    <string name="bmi_range_i">30–&lt;35</string>
+    <string name="bmi_range_ii">35–&lt;40</string>
+    <string name="bmi_range_iii">≥40</string>
+    <string name="bmi_ranges_action">BMI ranges by age · More info</string>
+    <string name="bmi_ranges_short">Ranges · info</string>
+    <string name="bmi_result_accessibility">BMI %1$s. %2$s. %3$s. %4$s. Show BMI ranges by age.</string>
+    <string name="bmi_ranges_title">Adult BMI ranges</string>
+    <string name="bmi_your_range">%1$s · Your range</string>
+    <string name="bmi_screening">BMI is a screening measure.</string>
+    <string name="bmi_guidance">For adults aged 20 and over. These ranges are screening guidance, not a diagnosis. BMI does not distinguish muscle from fat and is not suitable for assessing pregnancy. Healthy weight uses BMI 18.5 up to, but not including, 25.</string>
+    <string name="bmi_close">Close</string>
+    <string name="bmi_empty">Enter height and weight</string>
+    <string name="bmi_invalid">Enter positive height and weight.</string>
+    <string name="bmi_invalid_imperial">Use whole feet and inches below 12.</string>
+    <string name="bmi_weight_range">%1$s–&lt;%2$s %3$s</string>
+    <string name="bmi_range_result">Healthy: %1$s</string>
+    <string name="bmi_within_range">Within range</string>
+    <string name="bmi_below_range">%1$s %2$s below range</string>
+    <string name="bmi_above_range">%1$s %2$s above range</string>
+    <string name="bmi_history_input">A:%1$s, G:%2$s, H:%3$s, W:%4$s</string>
+    <string name="bmi_history_age">%1$sY %2$dM</string>
+    <string name="bmi_history_male">M</string>
+    <string name="bmi_history_female">F</string>
+    <string name="bmi_history_measurement">%1$s%2$s</string>
+    <string name="bmi_history_feet_inches">%1$sft %2$sin</string>
+    <string name="bmi_history_hint">Opens BMI Calculator with the inputs from this record.</string>
+    <string name="bmi_measurement">%1$s %2$s</string>
+    <string name="bmi_feet_inches">%1$s ft %2$s in</string>
+    <string name="bmi_history_result">BMI: %1$s · %2$s\nHealthy weight range: %3$s\nDifference: %4$s</string>
+    <string name="bmi_reset">Reset BMI calculator</string>
+    <string name="bmi_no_result">—</string>
+
+    <!-- converter_picker.xml -->
+    <string name="converter_picker_from_title">%1$s - Select From Value</string>
+    <string name="converter_picker_to_title">%1$s - Select To Value</string>
+    <string name="converter_picker_search_units">Search units</string>
+    <string name="converter_picker_search_currencies">Search currencies</string>
+    <string name="converter_picker_close">Close picker</string>
+    <string name="converter_picker_empty">No matching values. Try another name or symbol.</string>
+    <string name="converter_picker_selected">%1$s, selected</string>
+    <string name="converter_picker_unit_label">%1$s (%2$s)</string>
+    <string name="converter_picker_source_unit">%1$s, select source unit</string>
+    <string name="converter_picker_destination_unit">%1$s, select destination unit</string>
+
+    <!-- emi.xml -->
+    <string name="drawer_section_finance">Finance</string>
+    <string name="emi_calculator">EMI Calculator</string>
+    <string name="emi_preferred_currency">Preferred currency</string>
+    <string name="emi_currency_choice">%1$s (%2$s)</string>
+    <string name="emi_money">%1$s%2$s</string>
+    <string name="emi_schedule">Schedule</string>
+    <string name="emi_loan_amount">Loan amount</string>
+    <string name="emi_annual_rate">Annual interest (%)</string>
+    <string name="emi_tenure">Tenure</string>
+    <string name="emi_first_date">First EMI</string>
+    <string name="emi_monthly">Monthly EMI</string>
+    <string name="emi_interest">Total interest</string>
+    <string name="emi_total">Total payment</string>
+    <string name="emi_insights">Insights</string>
+    <string name="emi_more">More</string>
+    <string name="emi_prepayments">Prepayments</string>
+    <string name="emi_compare">Compare loans</string>
+    <string name="emi_report">Save report</string>
+    <string name="emi_share">Share</string>
+    <string name="emi_reset">Reset</string>
+    <string name="emi_empty">Enter loan amount, annual interest and tenure.</string>
+    <string name="emi_invalid">Check the amount, rate, tenure and prepayments. Amount: up to 12 integer digits; rate: 0–100%; tenure: 1–600 whole months.</string>
+    <string name="emi_rounding">This payment is too small to reduce the balance at this currency’s precision. Increase the amount or shorten the tenure.</string>
+    <string name="emi_loading">Calculating…</string>
+    <string name="emi_fixed">Fixed rate · Monthly reducing balance</string>
+    <string name="emi_years">Years</string>
+    <string name="emi_months">Months</string>
+    <string name="emi_next_field">Next field</string>
+    <string name="emi_done">Done</string>
+    <string name="emi_monthly_table">Monthly</string>
+    <string name="emi_yearly_table">Yearly</string>
+    <string name="emi_previous">Previous</string>
+    <string name="emi_next">Next</string>
+    <string name="emi_jump">Jump to period</string>
+    <string name="emi_period">Period</string>
+    <string name="emi_principal">Principal</string>
+    <string name="emi_interest_paid">Interest</string>
+    <string name="emi_balance">Balance</string>
+    <string name="emi_payment">Payment</string>
+    <string name="emi_extra">Prepayment</string>
+    <string name="emi_opening">Opening balance</string>
+    <string name="emi_closing">Closing balance</string>
+    <string name="emi_unused">Unused extra payment</string>
+    <string name="emi_final">Final installment</string>
+    <string name="emi_count">Payments</string>
+    <string name="emi_payoff">Estimated payoff</string>
+    <string name="emi_page_range">%1$d–%2$d of %3$d</string>
+    <string name="emi_table_hint">Tap a period for full details. Currency: %1$s</string>
+    <string name="emi_year_period">%1$d (%2$d payments)</string>
+    <string name="emi_pdf">PDF</string>
+    <string name="emi_csv">CSV</string>
+    <string name="emi_breakdown">Breakdown</string>
+    <string name="emi_balance_chart">Balance</string>
+    <string name="emi_view_schedule">View schedule</string>
+    <string name="emi_assumptions">Estimate only. Fixed annual rate and monthly reducing balance. Interest and payments round HALF_EVEN to currency minor units; the final payment closes the balance. Dates label monthly periods. Fees, taxes, daily interest, rate changes, moratoriums and balloon payments are excluded. Actual lender schedules may differ.</string>
+    <string name="emi_graph_formula">EMI calculation</string>
+    <string name="emi_graph_prepay">Prepayment impact</string>
+    <string name="emi_monthly_rate">Monthly rate</string>
+    <string name="emi_payment_count">Monthly payments</string>
+    <string name="emi_rate_step">Annual rate ÷ 12</string>
+    <string name="emi_term_step">Tenure in months</string>
+    <string name="emi_formula">EMI formula</string>
+    <string name="emi_formula_detail">r = annual percentage ÷ 1200. EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1); at zero interest, P ÷ n. Currency postings use HALF_EVEN. The last installment is adjusted to close the balance.</string>
+    <string name="emi_original">Original schedule</string>
+    <string name="emi_revised">Revised schedule</string>
+    <string name="emi_apply_extra">Apply extra principal after EMI</string>
+    <string name="emi_saved_interest">Interest saved</string>
+    <string name="emi_saved_months">Months saved</string>
+    <string name="emi_add_rule">Add prepayment</string>
+    <string name="emi_edit_rule">Edit prepayment</string>
+    <string name="emi_rule_amount">Extra amount</string>
+    <string name="emi_rule_first">First installment</string>
+    <string name="emi_rule_last">Last installment</string>
+    <string name="emi_rule_frequency">Frequency</string>
+    <string name="emi_once">One time</string>
+    <string name="emi_every_month">Every month</string>
+    <string name="emi_every_year">Every year</string>
+    <string name="emi_reduce_tenure">Reduce tenure</string>
+    <string name="emi_reduce_emi">Reduce EMI</string>
+    <string name="emi_method">Prepayment method</string>
+    <string name="emi_rule_label">%1$s · %2$s · %3$d–%4$d</string>
+    <string name="emi_rule_limit">A maximum of 20 prepayment rules is supported.</string>
+    <string name="emi_rule_error">Enter a positive amount within currency precision and installment numbers within the original tenure.</string>
+    <string name="emi_no_rules">No prepayments. Extra payments are applied after the selected EMI.</string>
+    <string name="emi_save">Save</string>
+    <string name="emi_cancel">Cancel</string>
+    <string name="emi_delete">Delete</string>
+    <string name="emi_back">Back</string>
+    <string name="emi_loan_a">Loan A</string>
+    <string name="emi_loan_b">Loan B</string>
+    <string name="emi_edit_a">Edit A</string>
+    <string name="emi_edit_b">Edit B</string>
+    <string name="emi_apply">Apply</string>
+    <string name="emi_discard">Discard</string>
+    <string name="emi_comparison_note">Compare total cost and duration. Both loans use the same currency; amounts are not converted.</string>
+    <string name="emi_difference">B − A</string>
+    <string name="emi_export_comparison">Export comparison</string>
+    <string name="emi_share_text">Text summary</string>
+    <string name="emi_share_pdf">Share PDF</string>
+    <string name="emi_share_csv">Share CSV</string>
+    <string name="emi_export_busy">Preparing report…</string>
+    <string name="emi_export_error">Could not create or save the report. Please try another destination.</string>
+    <string name="emi_export_saved">Report saved</string>
+    <string name="emi_share_error">No compatible sharing app is available.</string>
+    <string name="emi_report_title">Loan repayment report</string>
+    <string name="emi_report_page">Page %1$d</string>
+    <string name="emi_report_scenario">%1$s · %2$s</string>
+    <string name="emi_share_summary">Loan amount: %1$s\nAnnual interest: %2$s%%\nPayments: %3$d\nMonthly EMI: %4$s\nTotal interest: %5$s\nTotal payment: %6$s\nEstimated payoff: %7$s\nInterest saved: %8$s\nMonths saved: %9$d\nFinal installment: %10$s</string>
+    <string name="emi_history_summary">%1$s · %2$s%% · %3$d months</string>
+    <string name="emi_history_hint">Open to restore this loan and its prepayments.</string>
+    <string name="emi_state_error">This saved loan could not be restored. Your current inputs have been kept.</string>
+    <string name="emi_space_limit">This window cannot fit the complete EMI workflow at the current text/display size. Increase the available window or reduce scaling.</string>
+    <string name="emi_currency_new">New loans use the preferred currency in Settings. Existing loans retain their currency.</string>
+    <string name="emi_graph_extra_detail">Prepayments reduce principal after each selected installment. The revised schedule uses the selected tenure/EMI method; savings compare posted interest against the unchanged original loan.</string>
+    <string name="emi_chart_point">%1$s · %2$s</string>
+    <string name="emi_rate_value">%1$s%%</string>
+    <string name="emi_term_value">%1$s %2$s</string>
+    <string name="emi_schedule_detail">%1$s\nOpening: %2$s\nPayment: %3$s\nPrincipal: %4$s\nInterest: %5$s\nPrepayment: %6$s\nClosing: %7$s\nUnused extra payment: %8$s</string>
+    <string name="emi_reset_question">Clear this loan and its prepayments? Saved history is retained.</string>
+    <string name="emi_switch_units_error">Use a tenure that represents a whole number of months.</string>
+    <string name="emi_choose_export">Report format</string>
+    <string name="emi_missing_comparison">Complete both loans before comparing.</string>
+    <string name="emi_chart_no_interest">No interest at a zero annual rate.</string>
+    <string name="emi_payments_value">%1$d payments</string>
+    <string name="emi_percent_value">%1$s%%</string>
+    <string name="emi_rule_after_payoff">Rules after payoff are not applied. Excess in the payoff installment is shown as unused.</string>
+    <string name="emi_preferred_hint">Used by new loans and future monetary tools. Currency conversion selections stay independent.</string>
+    <string name="emi_report_range">%1$s – %2$s</string>
+    <string name="emi_rule_position">Rule %1$d of %2$d</string>
+    <string name="emi_editing_loan">Editing %1$s</string>
+    <string name="emi_clear_field">Clear field</string>
+    <string name="emi_choose_month">Choose installment</string>
+    <string name="emi_export_compare_summary">%1$s\n\n%2$s\n\n%3$s\n\n%4$s</string>
+    <string name="emi_csv_number">Installment</string>
+    <string name="emi_csv_date">Date</string>
+    <string name="emi_csv_currency">Currency symbol</string>
+    <string name="emi_rule_remove_question">Delete this prepayment rule?</string>
+    <string name="emi_balance_start">Start</string>
+    <string name="emi_operation_schedule">Build posted monthly schedule</string>
+    <string name="emi_baseline_interest">Original interest</string>
+    <string name="emi_revised_interest">Revised interest</string>
+    <string name="emi_chart_help">Select a period to hear its balance.</string>
+    <string name="emi_page_jump">Go</string>
+    <string name="emi_preferred_symbol">Currency: %1$s</string>
+    <string name="emi_no_result">—</string>
+    <string name="emi_initial_monthly">Initial monthly EMI</string>
+    <string name="emi_changing_payments">EMI changes after prepayments; see the schedule.</string>
+    <string name="emi_csv_end_date">End date</string>
+    <string name="emi_csv_periods">Payment count</string>
+    <string name="emi_input_rejected">This edit exceeds the allowed range or precision and was not applied.</string>
+    <string name="emi_check_fields">Check the amount, rate, whole-month tenure and prepayment ranges.</string>
+    <string name="emi_rounding_short">Increase the amount or shorten the tenure.</string>
+    <string name="emi_check_short">Check loan inputs and prepayment ranges.</string>
+
+    <!-- fuel_efficiency.xml -->
+    <string name="fuel_mpg_us">mpg US</string>
+    <string name="fuel_mpg_uk">mpg Imp</string>
+    <string name="fuel_volume">%1$s L</string>
+    <string name="fuel_done">Done</string>
+    <string name="fuel_efficiency_calculator">Fuel cost calculator</string>
+    <string name="fuel_trip_distance">Trip distance</string>
+    <string name="fuel_efficiency_label">Fuel efficiency</string>
+    <string name="fuel_price_label">Fuel price</string>
+    <string name="fuel_passengers">Passengers</string>
+    <string name="fuel_round_trip">Round trip</string>
+    <string name="fuel_round_trip_on">round trip</string>
+    <string name="fuel_trip_cost_label">Trip cost</string>
+    <string name="fuel_needed_label">Fuel needed</string>
+    <string name="fuel_cost_per_passenger">Cost per passenger</string>
+    <string name="fuel_no_result">Enter trip details</string>
+    <string name="fuel_invalid">Check distance, efficiency, price and passengers.</string>
+    <string name="fuel_price_unit_suffix">/L</string>
+    <string name="fuel_reset">Reset</string>
+    <string name="fuel_history_value">Trip: %1$s</string>
+    <string name="fuel_history_input">%1$s · %2$s · %3$s · %4$d pax%5$s</string>
+    <string name="fuel_history_round_trip"> · RT</string>
+    <string name="fuel_pick_distance">Distance unit</string>
+    <string name="fuel_pick_efficiency">Efficiency unit</string>
+    <string name="fuel_graphy_rule">Trip fuel and cost use distance, consumption, price per liter and passengers.</string>
+    <string name="fuel_graphy_distance">%1$s %2$s%3$s</string>
+    <string name="fuel_graphy_fuel">Fuel used: %1$s</string>
+    <string name="fuel_graphy_cost">Trip cost: %1$s</string>
+    <string name="fuel_graphy_share">%1$d passengers · %2$s each</string>
+    <string name="fuel_graphy_step_fuel">Distance (km) × consumption (L/100 km) ÷ 100</string>
+    <string name="fuel_graphy_step_cost">Fuel × price</string>
+    <string name="fuel_graphy_step_share">Trip cost ÷ passengers</string>
+    <string name="fuel_result_accessibility">Trip cost %1$s. Fuel %2$s. %3$s per passenger.</string>
+
+    <!-- investments.xml -->
+    <string name="fd_calculator">FD Calculator</string>
+    <string name="rd_calculator">RD Calculator</string>
+    <string name="sip_calculator">SIP Calculator</string>
+    <string name="investment_monthly">Monthly investment</string>
+    <string name="investment_deposit">Monthly deposit</string>
+    <string name="investment_return">Expected annual return (%)</string>
+    <string name="investment_start">Start date</string>
+    <string name="investment_step_frequency">Step-up frequency</string>
+    <string name="investment_step">Step-up</string>
+    <string name="investment_step_enabled">Enable step-up</string>
+    <string name="investment_amount_mode">Step-up amount</string>
+    <string name="investment_percent_mode">Step-up percentage</string>
+    <string name="investment_percent">%</string>
+    <string name="investment_three_months">3 months</string>
+    <string name="investment_six_months">6 months</string>
+    <string name="investment_twelve_months">12 months</string>
+    <string name="investment_monthly_frequency">Monthly</string>
+    <string name="investment_quarterly">Quarterly</string>
+    <string name="investment_half_yearly">Half-yearly</string>
+    <string name="investment_yearly">Yearly</string>
+    <string name="investment_cumulative">Cumulative</string>
+    <string name="investment_periodic">Periodic</string>
+    <string name="investment_interest_options">Interest options</string>
+    <string name="investment_compounding">Compounding frequency</string>
+    <string name="investment_payout_frequency">Payout frequency</string>
+    <string name="investment_payout_mode">Interest payout</string>
+    <string name="investment_maturity">Maturity amount</string>
+    <string name="investment_future">Future value</string>
+    <string name="investment_invested">Invested amount</string>
+    <string name="investment_total_deposits">Total deposits</string>
+    <string name="investment_gains">Estimated gains / loss</string>
+    <string name="investment_interest">Interest earned</string>
+    <string name="investment_yield">Effective annual yield</string>
+    <string name="investment_reinvestment_yield">Reinvestment-equivalent annual yield</string>
+    <string name="investment_receipts">Total receipts</string>
+    <string name="investment_metric">%1$s: %2$s</string>
+    <string name="investment_reset">Reset</string>
+    <string name="investment_details">Details</string>
+    <string name="investment_reset_confirm">Clear this calculator? Saved history is retained.</string>
+    <string name="investment_empty">Enter amount, annual rate and duration.</string>
+    <string name="investment_estimate">Month-based estimate · before tax</string>
+    <string name="investment_sip_notice">Beginning-of-month investments · estimated returns</string>
+    <string name="investment_rd_notice">Quarterly compounding · deposits at period start</string>
+    <string name="investment_periodic_notice">Interest paid out · not compounded</string>
+    <string name="investment_assumptions">Offline planning estimate using equal monthly periods, not actual-day bank accrual. Dates are anchored to the original day and clamped at month ends. Taxes, fees, penalties and missed deposits are excluded. Currency is a denomination, not an exchange conversion.</string>
+    <string name="investment_sip_assumptions">Investments occur at the beginning of each period. Monthly return is the stated annual percentage divided by 12. Step-up increases the previous monthly contribution after each selected interval, rounded to currency precision. Returns are estimates and are not guaranteed.</string>
+    <string name="investment_rd_assumptions">Quarterly compounding uses the equivalent monthly growth factor (1 + annual rate / 400)^(1/3). Every deposit is made at the beginning of its monthly period. Fractional-quarter values are estimates.</string>
+    <string name="investment_fd_assumptions">Cumulative deposits compound completed periods and earn proportional simple interest for any final partial period. Periodic deposits pay interest on unchanged principal without reinvestment. Periodic annual yield assumes hypothetical reinvestment at the same rate; actual payouts are not reinvested.</string>
+    <string name="investment_amount_error">Use a positive amount below 1 trillion within currency precision.</string>
+    <string name="investment_rate_error">Use an annual rate from 0 to 100, with up to four decimal places.</string>
+    <string name="investment_sip_rate_error">Use a return from −99.99 to 100, with up to four decimal places.</string>
+    <string name="investment_tenure_error">Use 1–600 whole months. Years must convert exactly to months.</string>
+    <string name="investment_step_error">Step-up cannot be negative. Percentage must be 0–100; amounts must fit currency precision and remain below 1 trillion.</string>
+    <string name="investment_overflow_error">This projection exceeds the supported total of 1 quintillion. Reduce the amount, return, step-up or duration.</string>
+    <string name="investment_input_rejected">This edit is outside the field’s supported range or precision.</string>
+    <string name="investment_restore_error">This saved calculation is unsupported. Your current inputs were kept.</string>
+    <string name="investment_calculation_error">Check the selected options and start date.</string>
+    <string name="investment_contribution">Contribution</string>
+    <string name="investment_balance">Value</string>
+    <string name="investment_payout">Payout</string>
+    <string name="investment_period_detail">%1$s\nContribution: %2$s\nTotal invested: %3$s\nInterest / growth: %4$s\nPayout: %5$s\nClosing value: %6$s</string>
+    <string name="investment_history">%1$s · %2$s%% · %3$d months</string>
+    <string name="investment_growth_operation">Apply monthly growth</string>
+    <string name="investment_fd_operation">Accrue interest and apply payout rules</string>
+    <string name="investment_step_operation">Apply step-up every %1$d months</string>
+    <string name="investment_step_description">Increase the previous contribution by %1$s after each %2$d contributions.</string>
+    <string name="investment_step_value">%1$s every %2$d months</string>
+    <string name="investment_formula_sip">balance = (balance + contribution) × (1 + annual percentage / 1200)</string>
+    <string name="investment_formula_rd">factor = (1 + annual percentage / 400)^(1/3)</string>
+    <string name="investment_formula_fd">Cumulative: P × (1 + r/f)^completePeriods, then simple interest for the remainder. Periodic: interest on P, paid without reinvestment.</string>
+    <string name="investment_sign">±</string>
+    <string name="investment_change_sign">Change return sign</string>
+    <string name="investment_year">Year %1$d</string>
+    <string name="investment_monthly_short">Monthly (%1$s)</string>
+    <string name="investment_rate_short">Rate (% p.a.)</string>
+    <string name="investment_return_short">Return (% p.a.)</string>
+    <string name="investment_reinvestment_yield_short">Reinvestment yield</string>
+    <string name="investment_complete_short">Complete the inputs.</string>
+    <string name="investment_check_short">Check the highlighted input.</string>
+    <string name="investment_overflow_short">Projection exceeds supported limits.</string>
+
+    <!-- percentage.xml -->
+    <string name="percentage_calculator">Percentage Calculator</string>
+    <string name="percentage_mode_of">Percent of</string>
+    <string name="percentage_mode_increase">Increase</string>
+    <string name="percentage_mode_decrease">Decrease</string>
+    <string name="percentage_mode_what">What %</string>
+    <string name="percentage_base_amount">Base amount</string>
+    <string name="percentage_percent_label">Percentage</string>
+    <string name="percentage_part_label">Value</string>
+    <string name="percentage_whole_label">Of (whole)</string>
+    <string name="percentage_percent_suffix">%</string>
+    <string name="percentage_result_label">Result</string>
+    <string name="percentage_amount_label">Amount</string>
+    <string name="percentage_no_result">Enter values</string>
+    <string name="percentage_invalid">Check the values for this mode.</string>
+    <string name="percentage_reset">Reset</string>
+    <string name="percentage_done">Done</string>
+    <string name="percentage_history_value">%1$s</string>
+    <string name="percentage_history_input">%1$s · %2$s · %3$s</string>
+    <string name="percentage_explain_of">%1$s%% of %2$s = %3$s</string>
+    <string name="percentage_explain_increase">Increase: %1$s + %2$s%% = %3$s</string>
+    <string name="percentage_explain_decrease">Decrease: %1$s − %2$s%% = %3$s</string>
+    <string name="percentage_explain_what">%1$s is %3$s%% of %2$s</string>
+    <string name="percentage_graphy_rule">Percentage results use base × percent ÷ 100, then add or subtract when increasing or decreasing.</string>
+    <string name="percentage_graphy_step_of">Base × percent ÷ 100</string>
+    <string name="percentage_graphy_step_increase">Base + percent amount</string>
+    <string name="percentage_graphy_step_decrease">Base − percent amount</string>
+    <string name="percentage_graphy_step_what">Part × 100 ÷ whole</string>
+
+    <!-- settings_strings.xml -->
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_number_format">Number format</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_section_rate_share">Feedback</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_analytics_allowed">Allowed</string>
+    <string name="settings_analytics_not_allowed">Not allowed</string>
+    <string name="settings_decimal_point_example">Point — 1.23</string>
+    <string name="settings_decimal_comma_example">Comma — 1,23</string>
+    <string name="settings_group_comma_example">Comma — 1,234</string>
+    <string name="settings_group_point_example">Point — 1.234</string>
+    <string name="settings_group_space_example">Space — 1 234</string>
+    <string name="settings_group_none_example">None — 1234</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_interaction">Interaction</string>
+    <string name="settings_navigate_back">Back</string>
+
+    <!-- timer.xml -->
+    <string name="timer_preset_minutes">%1$d min</string>
+    <string name="timer_ends_at">Ends at %1$s</string>
+    <string name="timer_paused">Paused</string>
+    <string name="timer_empty_recents">Your recent timers will appear here.</string>
+    <string name="timer_label_save">Save</string>
+    <string name="timer_action_start">Start</string>
+    <string name="timer_action_pause">Pause</string>
+    <string name="timer_action_resume">Resume</string>
+    <string name="timer_action_reset">Reset</string>
+    <string name="timer_action_restart">Restart</string>
+    <string name="timer_action_dismiss">Dismiss</string>
+
+    <!-- tool_layout.xml -->
+    <string name="tool_more_space">More screen space needed. Expand the window or rotate your device. Your input is kept.</string>
+    <string name="tool_previous">Previous</string>
+    <string name="tool_next">Next</string>
+    <string name="tool_page">%1$d / %2$d</string>
+    <string name="language_en_in" translatable="false">English (India)</string>
+    <string name="language_en_ie" translatable="false">English (Ireland)</string>
+    <string name="language_en_nz" translatable="false">English (New Zealand)</string>
+    <string name="language_en_sg" translatable="false">English (Singapore)</string>
+    <string name="language_en_za" translatable="false">English (South Africa)</string>
+    <string name="language_es_ar" translatable="false">Español (Argentina)</string>
+    <string name="language_es_cl" translatable="false">Español (Chile)</string>
+    <string name="language_es_co" translatable="false">Español (Colombia)</string>
+    <string name="language_es_pe" translatable="false">Español (Perú)</string>
+    <string name="language_es_us" translatable="false">Español (Estados Unidos)</string>
+    <string name="language_fr_ca" translatable="false">Français (Canada)</string>
+    <string name="language_fr_be" translatable="false">Français (Belgique)</string>
+    <string name="language_fr_ch" translatable="false">Français (Suisse)</string>
+    <string name="language_pt_pt" translatable="false">Português (Portugal)</string>
+    <string name="language_de_at" translatable="false">Deutsch (Österreich)</string>
+    <string name="language_de_ch" translatable="false">Deutsch (Schweiz)</string>
+    <string name="language_it_ch" translatable="false">Italiano (Svizzera)</string>
+    <string name="language_nl_be" translatable="false">Nederlands (België)</string>
 </resources>

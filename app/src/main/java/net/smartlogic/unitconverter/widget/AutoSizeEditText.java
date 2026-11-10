@@ -16,6 +16,52 @@ public final class AutoSizeEditText extends AppCompatEditText {
     private float maximumSp;
     private final float styledMaximumSp;
     private final int styledMinimumHeight;
+    private boolean canonicalInput;
+    private char displayedDecimal;
+
+    public static void useCanonicalInput(android.widget.EditText field) {
+        if (field instanceof AutoSizeEditText) {
+            AutoSizeEditText editor = (AutoSizeEditText) field;
+            editor.canonicalInput = true;
+            editor.refreshDecimalDisplay();
+        }
+    }
+
+    /** A length-preserving display transformation keeps selection and saved text canonical. */
+    public void refreshDecimalDisplay() {
+        if (!canonicalInput) return;
+        final char decimal = net.smartlogic.unitconverter.helper.Preferences.getInstance(getContext())
+                .getDecimalSeparator().charAt(0);
+        if (decimal == displayedDecimal) return;
+        displayedDecimal = decimal;
+        int start = getSelectionStart(), end = getSelectionEnd();
+        setTransformationMethod(new android.text.method.ReplacementTransformationMethod() {
+            @Override protected char[] getOriginal() { return new char[]{'.'}; }
+            @Override protected char[] getReplacement() { return new char[]{decimal}; }
+        });
+        if (start >= 0 && end >= 0) setSelection(Math.min(start, length()), Math.min(end, length()));
+    }
+
+    @Override public boolean onTextContextMenuItem(int id) {
+        if (canonicalInput && (id == android.R.id.paste || id == android.R.id.pasteAsPlainText)) {
+            var clipboard = (android.content.ClipboardManager) getContext()
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            var clip = clipboard.getPrimaryClip();
+            if (clip == null || clip.getItemCount() != 1 || getText() == null) return true;
+            try {
+                String canonical = net.smartlogic.unitconverter.helper.Preferences.getInstance(getContext())
+                        .getRegionalProfile().numbers.normalizeInput(clip.getItemAt(0).coerceToText(getContext()).toString());
+                int start = Math.max(0, Math.min(getSelectionStart(), getSelectionEnd()));
+                int end = Math.max(0, Math.max(getSelectionStart(), getSelectionEnd()));
+                String proposed = getText().subSequence(0, start) + canonical + getText().subSequence(end, length());
+                if (proposed.matches("[+-]?[0-9]*(?:\\.[0-9]*)?")) getText().replace(start, end, canonical);
+            } catch (IllegalArgumentException invalid) {
+                announceForAccessibility(getContext().getString(R.string.regional_invalid_number));
+            }
+            return true;
+        }
+        return super.onTextContextMenuItem(id);
+    }
 
     public AutoSizeEditText(Context context, AttributeSet attrs) {
         super(context, attrs);

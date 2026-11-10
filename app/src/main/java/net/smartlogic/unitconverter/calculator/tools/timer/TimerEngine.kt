@@ -388,6 +388,19 @@ class TimerEngine private constructor(
     )
 
     companion object {
+        /** Redraw labels only; never restart alarms, change deadlines or publish timer transitions. */
+        @JvmStatic fun refreshLanguageIfActive() {
+            val engine = instance ?: return
+            val helper = TimerNotificationHelper(engine.context)
+            when (val phase = engine.uiState.value.phase) {
+                is TimerPhase.Running -> helper.showRunning(phase.label,
+                    engine.remainingForRunning(phase).coerceAtLeast(0L), false)
+                is TimerPhase.Paused -> helper.showRunning(phase.label, engine.uiState.value.remainingMs, true)
+                is TimerPhase.Completed -> helper.showCompleted(phase.label)
+                is TimerPhase.Setting -> Unit
+            }
+            engine.widgetUpdater.update(engine)
+        }
         @Volatile
         private var instance: TimerEngine? = null
 

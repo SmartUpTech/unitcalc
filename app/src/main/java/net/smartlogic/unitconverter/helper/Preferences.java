@@ -39,6 +39,9 @@ public class Preferences {
     public static final String PREFS_NUMBER_OF_DECIMALS = "number_decimals";
     public static final String PREFS_DECIMAL_SEPARATOR = "decimal_separator";
     public static final String PREFS_GROUP_SEPARATOR = "group_separator";
+    public static final String PREFS_REGION = "regional_region";
+    public static final String PREFS_GROUP_PATTERN = "regional_group_pattern";
+    public static final String PREFS_REGIONAL_VERSION = "regional_version";
     public static final String PREFS_KEY_SOUNDS = "key_sounds";
     public static final String PREFS_KEY_VIBRATION = "key_vibration";
     private static final String PREFS_LAST_CONVERSION = "last_conversion";
@@ -69,6 +72,8 @@ public class Preferences {
 
     public static final String PREFS_PREFERRED_CURRENCY = "preferred_currency";
     public String getPreferredCurrency() {
+        if (Integer.valueOf(1).equals(mPrefs.getAll().get(PREFS_REGIONAL_VERSION)))
+            return getRegionalProfile().currency;
         var supported = PreferredCurrency.choices(mContext).stream().map(net.smartlogic.unitconverter.model.Currency::getCurrencyISOCode).collect(java.util.stream.Collectors.toList());
         String value;
         try { value = mPrefs.getString(PREFS_PREFERRED_CURRENCY, null); }
@@ -86,6 +91,98 @@ public class Preferences {
 
     public SharedPreferences getPreferences() {
         return mPrefs;
+    }
+
+    /** Called before locale initialization or any read-generated default. */
+    public synchronized void migrateRegionalPreferences(boolean existingInstallation) {
+        Map<String, ?> values = mPrefs.getAll();
+        if (Integer.valueOf(1).equals(values.get(PREFS_REGIONAL_VERSION))) return;
+        RegionDefinition us = RegionRegistry.find("US");
+        NumberFormatSettings defaults = us.defaults();
+        String decimal = existingInstallation ? stringValue(values, PREFS_DECIMAL_SEPARATOR, ".") : ".";
+        if (!(decimal.equals(".") || decimal.equals(","))) decimal = ".";
+        String group = existingInstallation ? stringValue(values, PREFS_GROUP_SEPARATOR, "") : defaults.groupSeparator;
+        if (group.equals("None")) group = "";
+        if (group.length() > 1 || group.equals(decimal)) group = "";
+        int places = 4;
+        if (existingInstallation) {
+            try { places = Integer.parseInt(stringValue(values, PREFS_NUMBER_OF_DECIMALS, "4")); }
+            catch (NumberFormatException ignored) { }
+            if (places < 0 || places > 10) places = 4;
+        }
+        var supported = PreferredCurrency.choices(mContext).stream()
+                .map(net.smartlogic.unitconverter.model.Currency::getCurrencyISOCode)
+                .collect(java.util.stream.Collectors.toList());
+        String currency = existingInstallation ? stringValue(values, PREFS_PREFERRED_CURRENCY,
+                PreferredCurrency.regionDefault(java.util.Locale.getDefault(), supported)) : "USD";
+        if (!supported.contains(currency)) currency = "USD";
+        mPrefs.edit().putInt(PREFS_REGIONAL_VERSION, 1).putString(PREFS_REGION, "US")
+                .putString(PREFS_DECIMAL_SEPARATOR, decimal)
+                .putString(PREFS_GROUP_SEPARATOR, group.isEmpty() ? "None" : group)
+                .putString(PREFS_GROUP_PATTERN, NumberFormatSettings.INTERNATIONAL)
+                .putString(PREFS_NUMBER_OF_DECIMALS, Integer.toString(places))
+                .putString(PREFS_PREFERRED_CURRENCY, currency).apply();
+    }
+
+    private static String stringValue(Map<String, ?> values, String key, String fallback) {
+        Object value = values.get(key);
+        return value instanceof String ? (String) value : fallback;
+    }
+
+    public RegionalProfile getRegionalProfile() {
+        Map<String, ?> values = mPrefs.getAll();
+        RegionDefinition region;
+        try { region = RegionRegistry.find(stringValue(values, PREFS_REGION, "US")); }
+        catch (IllegalArgumentException invalid) { region = RegionRegistry.find("US"); }
+        NumberFormatSettings defaults = region.defaults();
+        String decimal = stringValue(values, PREFS_DECIMAL_SEPARATOR, String.valueOf(defaults.decimalSeparator));
+        if (decimal.length() != 1 || !(decimal.equals(".") || decimal.equals(",")
+                || decimal.charAt(0) == defaults.decimalSeparator)) decimal = String.valueOf(defaults.decimalSeparator);
+        String group = stringValue(values, PREFS_GROUP_SEPARATOR, defaults.groupSeparator);
+        if (group.equals("None")) group = "";
+        if (group.length() > 1 || group.equals(decimal)) group = "";
+        String pattern = stringValue(values, PREFS_GROUP_PATTERN, defaults.groupingPattern);
+        if (!NumberFormatSettings.INTERNATIONAL.equals(pattern) && !NumberFormatSettings.INDIAN.equals(pattern))
+            pattern = defaults.groupingPattern;
+        int places = 4;
+        try { places = Integer.parseInt(stringValue(values, PREFS_NUMBER_OF_DECIMALS, "4")); }
+        catch (NumberFormatException ignored) { }
+        if (places < 0 || places > 10) places = 4;
+        String currency = stringValue(values, PREFS_PREFERRED_CURRENCY, region.currency);
+        try { PreferredCurrency.find(mContext, currency); }
+        catch (IllegalArgumentException invalid) { currency = region.currency; }
+        return new RegionalProfile(region,
+                new NumberFormatSettings(decimal.charAt(0), group, pattern, places), currency);
+    }
+
+    public synchronized void applyRegion(String code) {
+        RegionDefinition region = RegionRegistry.find(code);
+        if (getRegionalProfile().region.code.equals(code)) {
+            mPrefs.edit().remove("regional_pending").apply();
+            return;
+        }
+        writeRegionDefaults(region);
+    }
+
+    public synchronized void resetRegionDefaults() {
+        writeRegionDefaults(getRegionalProfile().region);
+    }
+
+    private void writeRegionDefaults(RegionDefinition region) {
+        NumberFormatSettings defaults = region.defaults();
+        mPrefs.edit().putString(PREFS_REGION, region.code)
+                .putString(PREFS_PREFERRED_CURRENCY, region.currency)
+                .putString(PREFS_DECIMAL_SEPARATOR, String.valueOf(defaults.decimalSeparator))
+                .putString(PREFS_GROUP_SEPARATOR, defaults.groupSeparator.isEmpty() ? "None" : defaults.groupSeparator)
+                .putString(PREFS_GROUP_PATTERN, defaults.groupingPattern)
+                .putString(PREFS_NUMBER_OF_DECIMALS, "4").remove("regional_pending").apply();
+    }
+
+    public void setNumberFormat(NumberFormatSettings settings) {
+        mPrefs.edit().putString(PREFS_DECIMAL_SEPARATOR, String.valueOf(settings.decimalSeparator))
+                .putString(PREFS_GROUP_SEPARATOR, settings.groupSeparator.isEmpty() ? "None" : settings.groupSeparator)
+                .putString(PREFS_GROUP_PATTERN, settings.groupingPattern)
+                .putString(PREFS_NUMBER_OF_DECIMALS, Integer.toString(settings.decimalPlaces)).apply();
     }
 
     private static final String PREFS_BMI_STATE = "bmi_state_v2";
@@ -259,6 +356,8 @@ public class Preferences {
     }
 
     public int getNumberDecimals() {
+        if (Integer.valueOf(1).equals(mPrefs.getAll().get(PREFS_REGIONAL_VERSION)))
+            return getRegionalProfile().numbers.decimalPlaces;
         try {
             return Integer.parseInt(mPrefs.getString(PREFS_NUMBER_OF_DECIMALS, mContext.getString(R.string.default_number_decimals)));
         } catch (NumberFormatException e) {
@@ -267,10 +366,16 @@ public class Preferences {
     }
 
     public String getDecimalSeparator() {
+        if (Integer.valueOf(1).equals(mPrefs.getAll().get(PREFS_REGIONAL_VERSION)))
+            return String.valueOf(getRegionalProfile().numbers.decimalSeparator);
         return mPrefs.getString(PREFS_DECIMAL_SEPARATOR, mContext.getString(R.string.default_decimal_separator));
     }
 
     public String getGroupSeparator() {
+        if (Integer.valueOf(1).equals(mPrefs.getAll().get(PREFS_REGIONAL_VERSION))) {
+            String group = getRegionalProfile().numbers.groupSeparator;
+            return group.isEmpty() ? "None" : group;
+        }
         return mPrefs.getString(PREFS_GROUP_SEPARATOR, mContext.getString(R.string.default_group_separator));
     }
 

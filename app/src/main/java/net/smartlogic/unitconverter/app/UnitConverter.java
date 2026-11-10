@@ -13,6 +13,14 @@ public class UnitConverter extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        boolean existingInstallation = !androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(this).getAll().isEmpty();
+        try {
+            var info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            existingInstallation |= info.firstInstallTime != info.lastUpdateTime;
+        } catch (android.content.pm.PackageManager.NameNotFoundException ignored) { }
+        net.smartlogic.unitconverter.helper.Preferences.getInstance(this)
+                .migrateRegionalPreferences(existingInstallation);
         net.smartlogic.unitconverter.helper.UsageAnalytics.initialize(this);
         AdMobManager.getInstance(this);
         AppOpenManager.getInstance(this);

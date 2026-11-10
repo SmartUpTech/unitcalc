@@ -293,11 +293,9 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         }
     }
 
-    private static String formatCurrency(BigDecimal value) {
-        NumberFormat format = NumberFormat.getInstance();
-        format.setMaximumFractionDigits(2);
-        format.setGroupingUsed(false);
-        return format.format(value);
+    private String formatCurrency(BigDecimal value) {
+        return net.smartlogic.unitconverter.helper.Preferences.getInstance(requireContext())
+                .getRegionalProfile().numbers.format(value, 2, false);
     }
 
     private void convertAdditional(String input) {
@@ -418,7 +416,7 @@ public class CurrencyConverterFragment extends Fragment implements OnClickListen
         rlFromUnit.setOnClickListener(this);
         rlToUnit.setOnClickListener(this);
 
-        inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(inputValue);
 
         inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
                 | InputType.TYPE_NUMBER_FLAG_SIGNED);

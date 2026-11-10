@@ -26,7 +26,8 @@ fun TimerRunningSection(
     val colors = MaterialTheme.colorScheme
     val gap = dimensionResource(R.dimen.timer_compact_gap)
     val timeSize = with(LocalDensity.current) { dimensionResource(R.dimen.timer_countdown_size).toSp() }
-    val end = DateFormat.getTimeFormat(LocalContext.current).format(Date(System.currentTimeMillis() + remainingMs))
+    val end = net.smartlogic.unitconverter.helper.RegionalDates.instant(LocalContext.current,
+        System.currentTimeMillis() + remainingMs, "jm")
     val status = if (paused) stringResource(R.string.timer_paused) else stringResource(R.string.timer_ends_at, end)
     val touch = dimensionResource(R.dimen.converter_touch_target)
     val wideAt = dimensionResource(R.dimen.timer_wide_breakpoint)

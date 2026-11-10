@@ -48,7 +48,7 @@ fun TimerWheelPicker(
     modifier: Modifier = Modifier,
 ) {
     val semantic = GraphyThemeTokens.semanticColors
-    val locale = LocalConfiguration.current.locales[0]
+    val locale = java.util.Locale.US
     val values = range.toList()
     val itemHeight = maxOf(dimensionResource(R.dimen.timer_wheel_row_height),
         with(LocalDensity.current) { MaterialTheme.typography.headlineSmall.lineHeight.toDp() })

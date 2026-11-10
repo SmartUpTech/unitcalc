@@ -13,6 +13,10 @@
             android:background="?attr/selectableItemBackgroundBorderless" android:padding="@dimen/converter_spacing"
             android:src="@drawable/ic_picker_close" android:contentDescription="@string/converter_picker_close"/>
     </LinearLayout>
+    <TextView android:id="@+id/converter_picker_note"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:fontFamily="@font/app_text" android:textSize="@dimen/converter_picker_item_size"
+        android:visibility="gone" />
     <com.google.android.material.textfield.TextInputLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/converter_picker_search_box"

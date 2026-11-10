@@ -18,11 +18,14 @@ Deliver complete, offline, resource-based localization with independent language
 
 ## 2. Translation options and region availability
 
-Provide these 14 translation options representing 13 languages. A translation's region suffix identifies wording, not the user's selected formatting region.
+Provide these core translation options representing 13 languages, plus the regional variants listed below. The user added British, Canadian and Australian English on 2026-11-10. British English uses the BCP 47 tag en-GB (not en-UK). A translation's region suffix identifies wording, not the user's selected formatting region.
 
 | Option | Native label | Translation tag | Suggested region when needed |
 | --- | --- | --- | --- |
 | English (United States) | English (United States) | en-US | US |
+| English (United Kingdom) | English (United Kingdom) | en-GB | GB |
+| English (Canada) | English (Canada) | en-CA | CA |
+| English (Australia) | English (Australia) | en-AU | AU |
 | Hindi | हिन्दी | hi-IN | IN |
 | Spanish (Spain) | Español (España) | es-ES | ES |
 | Spanish (Mexico) | Español (México) | es-MX | MX |
@@ -36,6 +39,12 @@ Provide these 14 translation options representing 13 languages. A translation's 
 | Italian | Italiano | it-IT | IT |
 | Polish | Polski | pl-PL | PL |
 | Dutch | Nederlands | nl-NL | NL |
+
+The user subsequently authorized additional regional variants within the supported languages.
+The implementation adds en-IN, en-IE, en-NZ, en-SG, en-ZA, es-AR, es-CL, es-CO,
+es-PE, es-US, fr-CA, fr-BE, fr-CH, pt-PT, de-AT, de-CH, it-CH and nl-BE: 35 choices
+across the same 13 languages. Base resources are shared; regional overrides contain
+actual wording differences. No language variant changes formatting implicitly.
 
 Chinese, Korean and Arabic translations are excluded. Countries using those languages can still be selected as regions.
 
@@ -220,14 +229,14 @@ Do not stop after scaffolding, partial translations or unit tests alone. Do not 
 ### Resource/build tests
 
 - Check string/plural/array coverage, duplicate keys, placeholder signatures, XML escaping, required plural quantities and accidental translated machine values.
-- Confirm en-US fallback and all 14 translation choices resolve correctly; resource-qualified variants do not alter the selected region.
+- Confirm en-US fallback and all offered translation choices resolve correctly; resource-qualified variants do not alter the selected region.
 - Build and inspect offline release language packaging as well as debug resources. No translation SDK or extra network permission.
 - Run ./gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --console=plain with a compatible existing JDK. Record baseline failures separately from introduced failures.
 
 ### Runtime and visual tests
 
 - Exercise Settings on API 26–32 and API 33+; include latest supported platform when available. Test language changes through both app and Android settings.
-- All 14 translation options: resource smoke tests and actual screen review. Review standard Hindi, Cyrillic, Vietnamese diacritics, Turkish case handling, long German/Polish/French labels and Spanish variants.
+- All offered translation options: resource smoke tests and actual screen review. Review standard Hindi, Cyrillic, Vietnamese diacritics, Turkish case handling, long German/Polish/French labels and Spanish variants.
 - US/IN/CA/AU/DE presets plus custom formats across basic, unit/currency, age, BMI, fuel, percentage, EMI, FD/RD/SIP, Timer and shared screens. Exercise Graphy and generated exports where supported.
 - Every theme at a representative viewport; constrained portrait/short-wide configurations and increased font/display scaling; focused keyboard/IME tests; Back/Up/tab navigation and process recreation with unfinished input.
 - Preserve canonical keypad parity and no-scrolling primary tool workflows. Never clip controls, shrink essential text illegibly or add a scrolling fallback. Mark impossible accessibility configurations unresolved.

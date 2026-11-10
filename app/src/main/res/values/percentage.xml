@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="percentage_calculator" />
-    <string name="percentage_calculator">Percentage Calculator</string>
-    <string name="percentage_mode_of">Percent of</string>
-    <string name="percentage_mode_increase">Increase</string>
-    <string name="percentage_mode_decrease">Decrease</string>
-    <string name="percentage_mode_what">What %</string>
-    <string name="percentage_base_amount">Base amount</string>
-    <string name="percentage_percent_label">Percentage</string>
-    <string name="percentage_part_label">Value</string>
-    <string name="percentage_whole_label">Of (whole)</string>
-    <string name="percentage_percent_suffix">%</string>
-    <string name="percentage_result_label">Result</string>
-    <string name="percentage_amount_label">Amount</string>
-    <string name="percentage_no_result">Enter values</string>
-    <string name="percentage_invalid">Check the values for this mode.</string>
-    <string name="percentage_reset">Reset</string>
-    <string name="percentage_done">Done</string>
-    <string name="percentage_history_value">%1$s</string>
-    <string name="percentage_history_input">%1$s · %2$s · %3$s</string>
-    <string name="percentage_explain_of">%1$s%% of %2$s = %3$s</string>
-    <string name="percentage_explain_increase">Increase: %1$s + %2$s%% = %3$s</string>
-    <string name="percentage_explain_decrease">Decrease: %1$s − %2$s%% = %3$s</string>
-    <string name="percentage_explain_what">%1$s is %3$s%% of %2$s</string>
-    <string name="percentage_graphy_rule">Percentage results use base × percent ÷ 100, then add or subtract when increasing or decreasing.</string>
-    <string name="percentage_graphy_step_of">Base × percent ÷ 100</string>
-    <string name="percentage_graphy_step_increase">Base + percent amount</string>
-    <string name="percentage_graphy_step_decrease">Base − percent amount</string>
-    <string name="percentage_graphy_step_what">Part × 100 ÷ whole</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <style name="PercentageModeButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>

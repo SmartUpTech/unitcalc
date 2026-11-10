@@ -91,7 +91,7 @@ public final class BmiCalculatorFragment extends Fragment {
         });
         for (EditText field : new EditText[]{age, height, inches, weight}) {
             final EditText bound = field;
-            field.setShowSoftInputOnFocus(false);
+            field.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(field);
             field.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
                 if (binding) return null;
                 String next = dest.subSequence(0, dstart).toString() + source.subSequence(start, end) + dest.subSequence(dend, dest.length());

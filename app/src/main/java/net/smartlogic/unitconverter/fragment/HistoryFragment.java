@@ -347,7 +347,7 @@ public class HistoryFragment extends Fragment {
                 CalculationHistoryItem item = (CalculationHistoryItem) row;
                 Context context = view.getContext();
                 String calculator = CalculatorCatalog.titleForId(context, item.calculatorId());
-                String time = HistoryDateLabels.formatTime(item.createdAt());
+                String time = HistoryDateLabels.formatTime(context, item.createdAt());
                 ((TextView) view.findViewById(R.id.tv_history_calculator)).setText(time.isEmpty() ? calculator
                         : context.getString(R.string.history_metadata, calculator, time));
                 // Structured tool inputs retain their labels and currency symbols.

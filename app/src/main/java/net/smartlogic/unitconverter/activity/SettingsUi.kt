@@ -177,10 +177,6 @@ private fun SettingsScreen(
             SettingsSwitchRow(stringResource(R.string.prefs_key_vibration_title),
                 preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
             SettingsDivider()
-            SettingsRow(stringResource(R.string.emi_preferred_currency),
-                value = net.smartlogic.unitconverter.helper.PreferredCurrency.label(context),
-                onClick = { net.smartlogic.unitconverter.helper.PreferredCurrency.showPicker(activity as androidx.fragment.app.FragmentActivity) })
-
             SettingsSection(R.string.settings_section_appearance)
             Text(stringResource(R.string.prefs_title_theme),
                 modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm),
@@ -202,19 +198,7 @@ private fun SettingsScreen(
             SettingsRow(stringResource(R.string.appearance_reset),
                 onClick = { activeChoiceKey = "appearance_reset" })
 
-            SettingsSection(R.string.settings_section_number_format)
-            choices.forEachIndexed { index, choice ->
-                val value = preferences.preferences.getString(choice.key, stringResource(choice.defaultValue))
-                    ?: stringResource(choice.defaultValue)
-                SettingsRow(
-                    title = stringResource(choice.title),
-                    value = if (choice.key == Preferences.PREFS_NUMBER_OF_DECIMALS) value else null,
-                    summary = if (choice.key != Preferences.PREFS_NUMBER_OF_DECIMALS)
-                        separatorLabel(choice.key, value) else null,
-                    onClick = { activeChoiceKey = choice.key },
-                )
-                if (index < choices.lastIndex) SettingsDivider()
-            }
+            RegionalSettings(preferences, activity as androidx.fragment.app.FragmentActivity)
 
             SettingsSection(R.string.settings_section_rate_share)
             SettingsRow(stringResource(R.string.pref_rate_title), onClick = {
@@ -321,7 +305,7 @@ private fun SettingsScreen(
 }
 
 @Composable
-private fun SettingsSection(title: Int) {
+internal fun SettingsSection(title: Int) {
     val spacing = GraphyThemeTokens.spacing
     Text(stringResource(title), modifier = Modifier.fillMaxWidth()
         .padding(start = spacing.lg, end = spacing.lg, top = spacing.lg, bottom = spacing.sm),
@@ -331,7 +315,7 @@ private fun SettingsSection(title: Int) {
 }
 
 @Composable
-private fun SettingsRow(title: String, value: String? = null, summary: String? = null,
+internal fun SettingsRow(title: String, value: String? = null, summary: String? = null,
     onClick: (() -> Unit)? = null) {
     val spacing = GraphyThemeTokens.spacing
     Row(
@@ -383,7 +367,7 @@ private fun SettingsDivider() {
 }
 
 @Composable
-private fun SettingsSelectionDialog(
+internal fun SettingsSelectionDialog(
     title: String, values: Array<String>, selected: String?,
     onSelect: (String) -> Unit, onDismiss: () -> Unit,
     description: String? = null,

@@ -13,7 +13,8 @@ import net.smartlogic.unitconverter.activity.MainActivity
 import net.smartlogic.unitconverter.calculator.tools.timer.TimerDurationFormatter
 import net.smartlogic.unitconverter.calculator.tools.timer.service.TimerActionReceiver
 
-class TimerNotificationHelper(private val context: Context) {
+class TimerNotificationHelper(private val baseContext: Context) {
+    private val context: Context get() = net.smartlogic.unitconverter.helper.AppLanguage.resourceContext(baseContext)
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

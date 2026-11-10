@@ -71,13 +71,7 @@ public final class FuelEfficiencyGraphBuilder {
 
     static String formatVolume(Context context, java.math.BigDecimal litres) {
         var preferences = net.smartlogic.unitconverter.helper.Preferences.getInstance(context);
-        String decimal = preferences.getDecimalSeparator(), group = preferences.getGroupSeparator();
-        char dec = decimal.isEmpty() ? '.' : decimal.charAt(0);
-        char sep = group.isEmpty() ? ',' : group.charAt(0);
-        boolean grouping = !group.isEmpty() && !"None".equalsIgnoreCase(group)
-                && !group.equals(context.getString(R.string.group_separator_none)) && dec != sep;
-        String number = net.smartlogic.unitconverter.utils.NumberUtils.formatCalculator(litres,
-                preferences.getNumberDecimals(), dec, sep, grouping);
+        String number = preferences.getRegionalProfile().numbers.format(litres);
         return context.getString(R.string.fuel_volume, number);
     }
 

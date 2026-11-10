@@ -31,8 +31,11 @@ public final class HistoryDateLabels {
             return context.getString(R.string.history_yesterday);
         }
         String skeleton = then.get(Calendar.YEAR) == today.get(Calendar.YEAR) ? "dMMM" : "dMMMy";
-        return new SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton),
-                Locale.getDefault()).format(then.getTime());
+        return RegionalDates.instant(context, epochMillis, skeleton);
+    }
+
+    public static String formatTime(Context context, long epochMillis) {
+        return epochMillis <= 0L ? "" : RegionalDates.instant(context, epochMillis, "jm");
     }
 
     public static String formatTime(long epochMillis) {

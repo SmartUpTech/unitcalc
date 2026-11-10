@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="regional_language">Idioma da aplicação</string>
+    <string name="regional_search">Procurar regiões</string>
+    <string name="regional_reset">Repor predefinições da região</string>
+    <string name="regional_reset_description">Repõe o formato dos números e a moeda.</string>
+    <string name="regional_change_note">Mudar a região repõe o formato dos números e a moeda.</string>
+    <string name="regional_default">Predefinição regional</string>
+    <string name="regional_pattern">Agrupamento de algarismos</string>
+</resources>

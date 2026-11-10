@@ -754,10 +754,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private String formatResult(java.math.BigDecimal value) {
-        String group = mPrefs.getGroupSeparator();
-        boolean grouping = !group.isEmpty() && !group.equals(getString(R.string.group_separator_none));
-        return NumberUtils.formatCalculator(value, mPrefs.getNumberDecimals(),
-                mPrefs.getDecimalSeparator().charAt(0), grouping ? group.charAt(0) : ',', grouping);
+        return mPrefs.getRegionalProfile().numbers.format(value);
     }
 
     private void copyExpressionAndResult() {

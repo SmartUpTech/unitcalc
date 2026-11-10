@@ -186,7 +186,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
 
         backspace.setOnLongClickListener(this);
 
-        inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(inputValue);
         inputValue.setCursorVisible(false);
         inputValue.setFocusable(false);
         inputValue.setClickable(false);
@@ -341,7 +341,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
     public String applyFormatting(java.math.BigDecimal res) {
         String s;
         try {
-            s = getDecimalFormat().format(res);
+            s = mPrefs.getRegionalProfile().numbers.format(res);
         }
         catch (Exception e){
             s = "";
@@ -630,7 +630,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         inputValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL
                 | ((categoryId == Conversion.TEMPERATURE || categoryId == Conversion.ANGLE)
                         ? InputType.TYPE_NUMBER_FLAG_SIGNED : 0));
-        inputValue.setShowSoftInputOnFocus(false);
+        inputValue.setShowSoftInputOnFocus(false); net.smartlogic.unitconverter.widget.AutoSizeEditText.useCanonicalInput(inputValue);
         inputValue.setCursorVisible(false);
         inputValue.setFocusable(false);
         inputValue.setClickable(false);
