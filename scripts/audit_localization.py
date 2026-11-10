@@ -39,6 +39,20 @@ def text(element):
     return "".join(element.itertext())
 
 
+def resolve(element, available, seen=()):
+    """Follow Android string aliases before comparing text and format arguments."""
+    value = text(element)
+    if element.tag != "string" or not value.startswith("@string/"):
+        return element
+    name = value[len("@string/"):]
+    if name in seen:
+        raise ValueError("Cyclic string alias: " + " -> ".join((*seen, name)))
+    target = available.get(("string", name))
+    if target is None:
+        raise ValueError("Missing string alias target: " + name)
+    return resolve(target, available, (*seen, name))
+
+
 def audit(scope="all"):
     base, errors = resources(RES / "values")
     required = {key: value for key, value in base.items() if value.get("translatable") != "false"}
@@ -70,7 +84,14 @@ def audit(scope="all"):
             source = base[key]
             if source.get("translatable") == "false" and target is not source:
                 errors.append(f"{tag}: translated machine resource {key}")
-            if key[0] == "string" and placeholders(text(source)) != placeholders(text(target)):
+            try:
+                source = resolve(source, base)
+                target = resolve(target, {**base, **translated})
+            except ValueError as problem:
+                errors.append(f"{tag}: {problem}")
+                continue
+            if (key[0] == "string" and source.get("formatted") != "false"
+                    and placeholders(text(source)) != placeholders(text(target))):
                 errors.append(f"{tag}: placeholder mismatch {key}")
             if key[0] == "string-array" and len(source) != len(target):
                 errors.append(f"{tag}: array length mismatch {key}")
@@ -78,6 +99,8 @@ def audit(scope="all"):
                 quantities = {item.get("quantity") for item in target}
                 if "other" not in quantities:
                     errors.append(f"{tag}: missing other plural {key}")
+                if language in ("ru", "pl") and not {"one", "few", "many", "other"} <= quantities:
+                    errors.append(f"{tag}: missing Slavic plural forms {key}")
                 signature = placeholders(text(source.find("item[@quantity='other']")))
                 if any(placeholders(text(item)) != signature for item in target):
                     errors.append(f"{tag}: plural placeholder mismatch {key}")
