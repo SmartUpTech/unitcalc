@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 34, qualifiers = "mdpi")
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
 public class EmiFragmentTest {
     public static class Host extends AppCompatActivity {

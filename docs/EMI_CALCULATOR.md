@@ -37,3 +37,15 @@ Official references checked 2026-11-02:
 - https://support.google.com/googleplay/android-developer/answer/10144311
 
 Actual lender schedules can differ. Fees/APR, taxes, daily-interest adjustments, floating/flat rates, moratoriums and balloon payments are excluded. Publishing and Play Console declarations are separate release tasks.
+
+## Recorded review evidence — 2026-11-02
+
+EMI checkpoint `866a44a`, with native graphics enabled for `EmiFragmentTest`, has 37 passing focused checks across calculation, state, UI, catalog/navigation, history and document lifecycle coverage. The native graphics setting is required for the bundled fonts to have real measurements; legacy font measurements do not establish viewport compliance. An isolated checkout was used for the final fragment checks while other finance tools were being developed in the primary checkout.
+
+Debug assembly succeeded. The latest project lint run completed with zero errors and 506 warnings. The full suite ran 380 tests: seven failed and seven were skipped. The EMI measurement test and the obsolete four-category expectation were subsequently corrected and verified in the focused checks. Five broader UI failures remain: Graphy panel output refresh, Age search-cursor contrast, BMI equals-icon color, and two converter viewport checks. Production release remains uncleared.
+
+On-device checks used a separate review installation, preserving the existing app and its data. Recorded screens cover the third Finance category, calculation, editing, incomplete/rounding states, schedule, Insights/balance, history restoration and Graphy. The Graphy heading was removed; the persistent notice is one line, with complete assumptions retained in help. Secondary pages hide the underlying workspace from accessibility.
+
+The saved reference report was pulled through the document-picker workflow and rendered for review: 16 A4 pages, portrait summary and landscape tables. Its extracted 240 schedule rows reconcile principal, interest and total payments to the reference fixture, with a zero closing balance. Currency symbols and the selected Oswald font render correctly. The broader device/font/currency PDF matrix and extreme accessibility configurations still require release validation; the tested 320×300 viewport at 2× text scale is explicitly unsupported rather than clipped.
+
+Review artifacts are stored outside the build directory under the calling chat's `emi-review` visualization folder, including screenshots, the native PDF and focused/full-suite XML evidence.

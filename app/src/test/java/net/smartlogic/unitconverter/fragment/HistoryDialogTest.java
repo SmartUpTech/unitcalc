@@ -47,4 +47,22 @@ public class HistoryDialogTest {
             assertEquals(42, HistoryDialogFragment.item(result[0]).id());
         } finally { controller.pause().stop().destroy(); }
     }
+    @Test public void financePayloadsOfferReuseWithoutLegacyWarning() {
+        ThemeManager.init(RuntimeEnvironment.getApplication());
+        var controller = Robolectric.buildActivity(FragmentActivity.class);
+        controller.get().setTheme(R.style.AppTheme);
+        controller.setup();
+        try {
+            for (String tool : new String[]{CalculatorCatalog.ID_FD, CalculatorCatalog.ID_RD, CalculatorCatalog.ID_SIP}) {
+                var item = new CalculationHistoryItem("100", "120", 123L, tool, 42L, "saved-inputs");
+                var fragment = HistoryDialogFragment.create(HistoryDialogFragment.DETAILS, item);
+                fragment.showNow(controller.get().getSupportFragmentManager(), "finance-details");
+                AlertDialog dialog = (AlertDialog) fragment.requireDialog();
+                assertEquals(android.view.View.GONE, dialog.findViewById(R.id.history_legacy_hint).getVisibility());
+                assertEquals(controller.get().getString(R.string.history_reuse), dialog.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString());
+                assertEquals("saved-inputs", HistoryDialogFragment.item(fragment.requireArguments()).payload());
+                fragment.dismissNow();
+            }
+        } finally { controller.pause().stop().destroy(); }
+    }
 }

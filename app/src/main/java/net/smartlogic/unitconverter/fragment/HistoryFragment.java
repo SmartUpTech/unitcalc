@@ -352,7 +352,8 @@ public class HistoryFragment extends Fragment {
                         : context.getString(R.string.history_metadata, calculator, time));
                 // Structured tool inputs retain their labels and currency symbols.
                 ((TextView) view.findViewById(R.id.tv_history_expression)).setText(
-                        CalculatorCatalog.ID_BMI.equals(item.calculatorId()) || CalculatorCatalog.ID_EMI.equals(item.calculatorId()) ? item.expression()
+                        CalculatorCatalog.ID_BMI.equals(item.calculatorId()) || CalculatorCatalog.ID_EMI.equals(item.calculatorId())
+                                || CalculatorCatalog.ID_FD.equals(item.calculatorId()) || CalculatorCatalog.ID_RD.equals(item.calculatorId()) || CalculatorCatalog.ID_SIP.equals(item.calculatorId()) ? item.expression()
                                 : ExpressionDisplayFormatter.formatSpannable(item.expression(),
                                         Preferences.getInstance(context), ExpressionDisplayFormatter.GraphySemanticTheme.from(context)));
                 ((TextView) view.findViewById(R.id.tv_history_result)).setText(item.result());

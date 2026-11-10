@@ -86,7 +86,9 @@ public class HistoryDialogFragment extends DialogFragment {
                     : getString(R.string.history_metadata, calculator, date));
             ((TextView) content.findViewById(R.id.tv_history_expression)).setText(item.expression());
             ((TextView) content.findViewById(R.id.tv_history_result)).setText(item.result());
-            boolean reusable = CalculatorCatalog.ID_BASIC.equals(item.calculatorId()) || CalculatorCatalog.ID_EMI.equals(item.calculatorId());
+            boolean reusable = CalculatorCatalog.ID_BASIC.equals(item.calculatorId()) || CalculatorCatalog.ID_EMI.equals(item.calculatorId())
+                    || CalculatorCatalog.ID_FD.equals(item.calculatorId()) || CalculatorCatalog.ID_RD.equals(item.calculatorId())
+                    || CalculatorCatalog.ID_SIP.equals(item.calculatorId());
             content.findViewById(R.id.history_legacy_hint).setVisibility(reusable ? View.GONE : View.VISIBLE);
             if (CalculatorCatalog.ID_BMI.equals(item.calculatorId()))
                 ((TextView) content.findViewById(R.id.history_legacy_hint)).setText(R.string.bmi_history_hint);

@@ -74,7 +74,7 @@ public final class ThemeApplier {
             return;
         }
         AppearanceTypography.apply(root);
-        applyRecursive(root, ThemeManager.get(), Appearance.style(root.getContext()), Appearance.shape(root.getContext()));
+        applyRecursive(root, ThemeManager.get(), Appearance.style(root.getContext()), Appearance.shape(root.getContext()), primaryKey(root));
     }
 
     public static void applyNavigation(
@@ -151,8 +151,9 @@ public final class ThemeApplier {
     }
 
     private static void applyRecursive(@NonNull View view, @NonNull CalculatorTheme theme,
-            Appearance.Style style, Appearance.Shape shape) {
+            Appearance.Style style, Appearance.Shape shape, @Nullable View primary) {
         int id = view.getId();
+        if (id == R.id.keypad) primary = primaryKey(view);
         if (id == R.id.cl
                 || id == R.id.drawer_layout
                 || id == R.id.settings
@@ -199,7 +200,7 @@ public final class ThemeApplier {
             int disabledSurface = androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x18), theme.background());
             button.setTextColor(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
                     new int[]{CalculatorTheme.readableColor(theme.secondaryContentColor(), filled ? disabledSurface : theme.background()), ink}));
-            button.setIconTint(ColorStateList.valueOf(ink));
+            button.setIconTint(button.getTextColors());
             button.setBackgroundTintList(new ColorStateList(new int[][]{{-android.R.attr.state_enabled}, {}},
                     new int[]{filled ? disabledSurface : theme.background(), filled ? theme.accentContentColor() : theme.background()}));
             button.setStrokeColor(ColorStateList.valueOf(theme.secondaryContentColor()));
@@ -249,28 +250,35 @@ public final class ThemeApplier {
                             withAlpha(theme.secondaryContentColor(), 0x26), theme.background()), theme.background()}));
             chip.setChipStrokeColor(ColorStateList.valueOf(withAlpha(theme.secondaryContentColor(), 0x88)));
         }
-        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode)
+        if ((id == R.id.btn_unit_mode || id == R.id.btn_currency_mode || id == R.id.investment_amount_mode || id == R.id.investment_percent_mode)
                 && view instanceof com.google.android.material.button.MaterialButton button) {
-            int[][] states = {{android.R.attr.state_checked}, {}};
+            int[][] states = {{-android.R.attr.state_enabled, android.R.attr.state_checked}, {-android.R.attr.state_enabled}, {android.R.attr.state_checked}, {}};
+            int disabledSurface = androidx.core.graphics.ColorUtils.compositeColors(withAlpha(theme.secondaryContentColor(), 0x26), theme.background());
+            int disabledInk = CalculatorTheme.readableColor(theme.secondaryContentColor(), disabledSurface);
             int selectedText = theme.onAccentColor();
             button.setTextColor(new ColorStateList(states,
-                    new int[]{selectedText, theme.primaryContentColor()}));
+                    new int[]{disabledInk, disabledInk, selectedText, theme.primaryContentColor()}));
             button.setBackgroundTintList(new ColorStateList(states,
-                    new int[]{theme.accentContentColor(), Color.TRANSPARENT}));
+                    new int[]{disabledSurface, Color.TRANSPARENT, theme.accentContentColor(), Color.TRANSPARENT}));
             button.setStrokeWidth(0);
             button.setRippleColor(new ColorStateList(states, new int[]{
-                    withAlpha(selectedText, 0x22), withAlpha(theme.primaryContentColor(), 0x22)}));
+                    Color.TRANSPARENT, Color.TRANSPARENT, withAlpha(selectedText, 0x22), withAlpha(theme.primaryContentColor(), 0x22)}));
         }
-        if (id == R.id.converter_mode_toggle) {
+        if (id == R.id.investment_step_switch && view instanceof androidx.appcompat.widget.SwitchCompat toggle) {
+            int[][] states = {{-android.R.attr.state_enabled}, {android.R.attr.state_checked}, {}};
+            toggle.setThumbTintList(new ColorStateList(states, new int[]{theme.secondaryContentColor(), theme.accentContentColor(), theme.secondaryContentColor()}));
+            toggle.setTrackTintList(new ColorStateList(states, new int[]{withAlpha(theme.secondaryContentColor(), 0x33), withAlpha(theme.accentContentColor(), 0x66), withAlpha(theme.secondaryContentColor(), 0x55)}));
+        }
+        if (id == R.id.converter_mode_toggle || id == R.id.investment_step_modes) {
             GradientDrawable track = new GradientDrawable();
             track.setColor(androidx.core.graphics.ColorUtils.compositeColors(
                     withAlpha(theme.secondaryContentColor(), 0x18), theme.background()));
-            track.setCornerRadius(view.getResources().getDimension(R.dimen.converter_mode_height));
+            track.setCornerRadius(view.getResources().getDimension(id == R.id.investment_step_modes ? R.dimen.converter_selector_radius : R.dimen.converter_mode_height));
             int inset = view.getResources().getDimensionPixelSize(R.dimen.converter_mode_vertical_inset);
             view.setBackground(new android.graphics.drawable.InsetDrawable(track, 0, inset, 0, inset));
             view.setPadding(0, 0, 0, 0);
         }
-        if ("converter_selector".equals(view.getTag()) || "converter_amount".equals(view.getTag())) {
+        if ("converter_selector".equals(view.getTag()) || "converter_amount".equals(view.getTag()) || "converter_amount_compact".equals(view.getTag())) {
             if (view instanceof TextView amount) {
                 amount.setTextColor(theme.primaryContentColor());
                 amount.setHintTextColor(theme.secondaryContentColor());
@@ -285,11 +293,16 @@ public final class ThemeApplier {
                     view.getResources().getDimension(R.dimen.converter_selector_radius));
             outline.setStroke(view.getResources().getDimensionPixelSize(R.dimen.converter_divider_height),
                     theme.secondaryContentColor());
-            view.setBackground(outline);
+            int verticalInset = "converter_amount_compact".equals(view.getTag()) ? view.getResources().getDimensionPixelSize(R.dimen.converter_small_spacing) : 0;
+            view.setBackground(verticalInset == 0 ? outline : new android.graphics.drawable.InsetDrawable(outline, 0, verticalInset, 0, verticalInset));
             view.setPadding(left, 0, right, 0);
         }
 
         KeyAppearanceDrawable.Role keyRole = keyRole(id);
+        if (keyRole != null) {
+            if (view == primary) keyRole = KeyAppearanceDrawable.Role.EQUAL;
+            else if (keyRole == KeyAppearanceDrawable.Role.EQUAL) keyRole = KeyAppearanceDrawable.Role.UTILITY;
+        }
         boolean isKey = keyRole != null;
 
         if (contains(ICON_IDS, id) || contains(CLEAR_BACKGROUND_IDS, id)) {
@@ -326,14 +339,35 @@ public final class ThemeApplier {
 
         if (view instanceof ViewGroup group) {
             for (int i = 0; i < group.getChildCount(); i++) {
-                applyRecursive(group.getChildAt(i), theme, style, shape);
+                applyRecursive(group.getChildAt(i), theme, style, shape, primary);
             }
         }
     }
 
+    /** Each keypad has exactly one accent action: Equal, Done, AC, then Backspace. */
+    @Nullable private static View primaryKey(View root) {
+        View key = findKey(root, R.id.equal, false);
+        if (key == null) key = findKey(root, R.id.equal, true);
+        if (key == null) key = findKey(root, R.id.ac, null);
+        if (key == null) key = findKey(root, R.id.backspace, null);
+        return key;
+    }
+    @Nullable private static View findKey(View root, int id, @Nullable Boolean icon) {
+        if (root.getId() == id && (icon == null || icon == (root instanceof ImageView))) return root;
+        if (root instanceof ViewGroup group) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (child.getVisibility() == View.GONE) continue;
+                View match = findKey(child, id, icon);
+                if (match != null) return match;
+            }
+        }
+        return null;
+    }
+
     /** Canonical semantic roles for every numeric keypad and its previews. */
     @Nullable public static KeyAppearanceDrawable.Role keyRole(int id) {
-        if (id == R.id.equal || id == R.id.ac) return KeyAppearanceDrawable.Role.EQUAL;
+        if (id == R.id.equal) return KeyAppearanceDrawable.Role.EQUAL;
         if (contains(NUMBER_IDS, id)) return KeyAppearanceDrawable.Role.NUMBER;
         if (contains(FUNCTION_IDS, id)) return KeyAppearanceDrawable.Role.FUNCTION;
         if (contains(OPERATOR_IDS, id)) return KeyAppearanceDrawable.Role.OPERATOR;

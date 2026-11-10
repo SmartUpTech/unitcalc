@@ -28,7 +28,7 @@ the draft. Drafts survive saved-state restoration like the Buttons dialog.
 native Views inside Compose previews. Shapes fit within each existing key's touch
 bounds; Circle uses the smaller dimension for its diameter. Style spacing stays
 inside those bounds, so tool layout geometry and click listeners are preserved.
-The Equal role uses accent fill and readable on-accent ink even for Flat/Outline.
+Each keypad highlights one available action in priority order: Equal, Tick/Done, AC, then Backspace. Tick/Done shares Equal’s accent fill and readable on-accent ink even for Flat/Outline. AC uses its normal function style whenever Equal or Tick/Done is present. Settings previews follow the same role mapping.
 Press ripples use the same geometry and semantic foreground. Gradients and edge
 shading are limited to the finish styles.
 

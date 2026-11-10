@@ -288,4 +288,31 @@ public class AppearanceTest {
             assertEquals(Appearance.Font.ROBOTO_MONO, equal.getTag(R.id.appearance_font_applied));
         }
     }
+    @Test public void oneAccentActionFollowsPriorityAndKeepsKeypadsIndependent() {
+        var root = new android.widget.LinearLayout(context);
+        var first = new android.widget.LinearLayout(context);first.setId(R.id.keypad);root.addView(first);
+        var equal = new android.widget.TextView(context);equal.setId(R.id.equal);first.addView(equal);
+        var done = new android.widget.ImageView(context);done.setId(R.id.equal);first.addView(done);
+        var clear = new android.widget.TextView(context);clear.setId(R.id.ac);first.addView(clear);
+        var backspace = new android.widget.ImageView(context);backspace.setId(R.id.backspace);first.addView(backspace);
+        View converter = inflate(context, R.layout.converter_keypad);root.addView(converter);
+        for (CalculatorTheme theme : CalculatorThemes.all()) {
+            org.robolectric.util.ReflectionHelpers.setStaticField(ThemeManager.class,"current",theme);
+            for (Appearance.Style style : Appearance.Style.values()) {
+                Appearance.applyButtons(context,style,Appearance.Shape.ROUNDED);
+                for (int primary=0;primary<4;primary++) {
+                    View[] actions={equal,done,clear,backspace};
+                    for(int i=0;i<4;i++)actions[i].setVisibility(i<primary?View.GONE:View.VISIBLE);
+                    ThemeApplier.apply(root);
+                    for(int i=primary;i<4;i++) {
+                        KeyAppearanceDrawable key=(KeyAppearanceDrawable)actions[i].getBackground();
+                        if(i==primary)assertEquals(theme.accentContentColor(),key.surface());
+                        else assertNotEquals(theme.accentContentColor(),key.surface());
+                    }
+                    assertEquals(theme.accentContentColor(),((KeyAppearanceDrawable)converter.findViewById(R.id.ac).getBackground()).surface());
+                }
+            }
+        }
+    }
+
 }

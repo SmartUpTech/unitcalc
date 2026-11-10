@@ -26,7 +26,11 @@ public class CalculatorCatalogTest {
                 sections.get(0).entries.get(1).destination);
         assertEquals(R.string.drawer_section_converter, sections.get(1).titleRes);
         assertEquals(R.string.drawer_section_finance, sections.get(2).titleRes);
-        assertEquals(1, sections.get(2).entries.size());
+        assertEquals(4, sections.get(2).entries.size());
+        assertEquals(CalculatorCatalog.ID_FD, sections.get(2).entries.get(1).id);
+        assertEquals(CalculatorCatalog.ID_RD, sections.get(2).entries.get(2).id);
+        assertEquals(CalculatorCatalog.ID_SIP, sections.get(2).entries.get(3).id);
+        for (var entry : sections.get(2).entries) assertTrue(entry.isFavoriteEligible());
         assertEquals(CalculatorCatalog.ID_EMI, sections.get(2).entries.get(0).id);
         assertEquals(R.string.drawer_section_tools, sections.get(3).titleRes);
         assertEquals(CalculatorCatalog.ID_AGE, sections.get(3).entries.get(0).id);

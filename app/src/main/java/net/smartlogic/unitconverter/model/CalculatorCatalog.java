@@ -25,6 +25,7 @@ public final class CalculatorCatalog {
     public static final String ID_TIMER = "timer";
     public static final String ID_AGE = "age_calculator";
     public static final String ID_EMI = "emi_calculator";
+    public static final String ID_FD = "fd_calculator", ID_RD = "rd_calculator", ID_SIP = "sip_calculator";
     public static final String ID_BMI = "bmi_calculator";
     public static final String ID_FUEL_EFFICIENCY = "fuel_efficiency_calculator";
     public static final String ID_PERCENTAGE = "percentage_calculator";
@@ -45,6 +46,9 @@ public final class CalculatorCatalog {
         FUEL_EFFICIENCY_CALCULATOR,
         PERCENTAGE_CALCULATOR,
         EMI_CALCULATOR,
+        FD_CALCULATOR,
+        RD_CALCULATOR,
+        SIP_CALCULATOR,
         RATE_APP,
         SHARE_APP
     }
@@ -76,7 +80,10 @@ public final class CalculatorCatalog {
                     || destination == Destination.UNIT_CATEGORY
                     || destination == Destination.CURRENCY
                     || destination == Destination.TIMER
-                    || destination == Destination.EMI_CALCULATOR;
+                    || destination == Destination.EMI_CALCULATOR
+                    || destination == Destination.FD_CALCULATOR
+                    || destination == Destination.RD_CALCULATOR
+                    || destination == Destination.SIP_CALCULATOR;
         }
     }
 
@@ -162,10 +169,13 @@ public final class CalculatorCatalog {
         tools.add(register(entry(ID_FUEL_EFFICIENCY, R.string.fuel_efficiency_calculator, R.drawable.ic_fuel,
                 Destination.FUEL_EFFICIENCY_CALCULATOR, -1)));
         // Append registration to retain every existing catalog/menu identity.
-        // Finance is the third drawer category; future FD/RD/SIP tools belong here.
+        // Finance registration is appended to preserve existing menu identities.
         List<Entry> finance = new ArrayList<>();
         finance.add(register(entry(ID_EMI, R.string.emi_calculator, R.drawable.ic_calculator,
                 Destination.EMI_CALCULATOR, -1)));
+        finance.add(register(entry(ID_FD, R.string.fd_calculator, R.drawable.ic_calculator, Destination.FD_CALCULATOR, -1)));
+        finance.add(register(entry(ID_RD, R.string.rd_calculator, R.drawable.ic_calculator, Destination.RD_CALCULATOR, -1)));
+        finance.add(register(entry(ID_SIP, R.string.sip_calculator, R.drawable.ic_calculator, Destination.SIP_CALCULATOR, -1)));
         tools.add(BY_ID.get(ID_TIMER));
         SECTIONS.add(SECTIONS.size() - 1, new Section(R.string.drawer_section_tools, tools));
         SECTIONS.add(2, new Section(R.string.drawer_section_finance, finance));
