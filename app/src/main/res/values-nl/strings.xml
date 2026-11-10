@@ -743,8 +743,8 @@
     <string name="theme_access_migrated">Porseleinwit wordt toegepast. Extra thema’s kun je nu zeven dagen ontgrendelen via Instellingen. Porseleinwit, Parelmoercrème en Titaangrijs blijven gratis.</string>
     <string name="appearance_reset_message">Plat (zonder rand), Afgerond en Oswald herstellen? Je geselecteerde thema blijft behouden.</string>
     <string name="emi_preferred_hint">Wordt gebruikt voor nieuwe leningen en toekomstige geldtools. Valutakeuzes in de omrekenfunctie blijven onafhankelijk.</string>
-    <string name="prefs_key_sounds_summary">Zachte geluiden afspelen bij toetsgebruik</string>
-    <string name="prefs_key_vibration_summary">Lichte trilling gebruiken bij toetsgebruik</string>
+    <string name="prefs_key_sounds_summary">Zacht geluid bij het indrukken van een toets</string>
+    <string name="prefs_key_vibration_summary">Licht trillen bij het indrukken van een toets</string>
     <string name="prefs_summary_number_decimals">Kies het aantal decimalen in het resultaat</string>
     <string name="prefs_summary_group_separator">Kies het scheidingsteken voor groepen in het resultaat</string>
     <string name="prefs_summary_decimal_separator">Kies het decimaalteken in het resultaat</string>

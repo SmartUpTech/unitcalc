@@ -286,7 +286,7 @@
     <string name="regional_reset_description">Resetuje format liczb i walutę.</string>
     <string name="regional_change_note">Zmiana regionu resetuje format liczb i walutę.</string>
     <string name="regional_default">Domyślny dla regionu</string>
-    <string name="regional_custom">Niestandardowy</string>
+    <string name="regional_custom">Własny</string>
     <string name="regional_suggest_title">Ustawić region „%1$s”?</string>
     <string name="regional_switch">Zmień</string>
     <string name="regional_keep">Zachowaj obecny</string>

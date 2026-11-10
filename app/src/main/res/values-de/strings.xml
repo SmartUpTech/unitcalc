@@ -282,14 +282,14 @@
     <string name="regional_region">Region</string>
     <string name="regional_currency">Währung</string>
     <string name="regional_numbers">Zahlenformat</string>
-    <string name="regional_reset">Regionale Standards wiederherstellen</string>
+    <string name="regional_reset">Regionseinstellungen zurücksetzen</string>
     <string name="regional_reset_description">Setzt Zahlenformat und Währung zurück.</string>
     <string name="regional_change_note">Ein Regionswechsel setzt Zahlenformat und Währung zurück.</string>
     <string name="regional_default">Regionaler Standard</string>
     <string name="regional_custom">Benutzerdefiniert</string>
     <string name="regional_suggest_title">Region „%1$s“ verwenden?</string>
     <string name="regional_switch">Wechseln</string>
-    <string name="regional_keep">Beibehalten</string>
+    <string name="regional_keep">Aktuelle Region behalten</string>
     <string name="regional_apply">Anwenden</string>
     <string name="regional_collision">Wähle unterschiedliche Dezimal- und Gruppentrennzeichen.</string>
     <string name="regional_pattern">Zifferngruppierung</string>

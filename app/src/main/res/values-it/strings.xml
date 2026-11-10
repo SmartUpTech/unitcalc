@@ -281,10 +281,10 @@
     <string name="regional_language">Lingua dell’app</string>
     <string name="regional_region">Area geografica</string>
     <string name="regional_currency">Valuta</string>
-    <string name="regional_numbers">Formato numerico</string>
+    <string name="regional_numbers">Formato dei numeri</string>
     <string name="regional_reset">Ripristina impostazioni regionali</string>
-    <string name="regional_reset_description">Ripristina il formato numerico e la valuta.</string>
-    <string name="regional_change_note">Cambiare area ripristina il formato numerico e la valuta.</string>
+    <string name="regional_reset_description">Ripristina il formato dei numeri e la valuta.</string>
+    <string name="regional_change_note">Cambiare area ripristina il formato dei numeri e la valuta.</string>
     <string name="regional_default">Predefinito regionale</string>
     <string name="regional_custom">Personalizzato</string>
     <string name="regional_suggest_title">Passare all’area %1$s?</string>
@@ -302,7 +302,7 @@
     <string name="regional_nnbsp">Spazio unificatore stretto</string>
     <string name="regional_apostrophe">Apostrofo</string>
     <string name="regional_search">Cerca aree</string>
-    <string name="regional_invalid_number">Controlla il formato numerico.</string>
+    <string name="regional_invalid_number">Controlla il formato dei numeri.</string>
     <string name="prefs_title_number_decimals">Cifre decimali</string>
     <string name="prefs_title_group_separator">Separatore delle migliaia</string>
     <string name="prefs_title_decimal_separator">Separatore decimale</string>
@@ -699,7 +699,7 @@
     <string name="rd_calculator">Calcolatore risparmio periodico</string>
     <string name="sip_calculator">Calcolatore investimento periodico</string>
     <string name="percentage_calculator">Calcolatore percentuali</string>
-    <string name="settings_section_number_format">Formato numerico</string>
+    <string name="settings_section_number_format">Formato dei numeri</string>
     <string name="settings_decimal_point_example">Punto — 1.23</string>
     <string name="settings_decimal_comma_example">Virgola — 1,23</string>
     <string name="settings_group_comma_example">Virgola — 1,234</string>

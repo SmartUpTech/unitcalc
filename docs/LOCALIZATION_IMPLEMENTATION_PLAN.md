@@ -14,7 +14,7 @@ Deliver complete, offline, resource-based localization with independent language
 - Computation precision, rounding, formulas, unit factors, financial assumptions, timers, saved currency identities and rate-provider behavior remain unchanged.
 - All app-owned translatable text lives in locale-qualified Android strings.xml resources. No translation libraries, runtime translators, translation APIs or network requirement.
 - Numeric output and keypad digits always use Western 0–9. Decimal/grouping conventions can vary. No native-digit preference.
-- User-facing messages are short. Translations are friendly, professional, standard and natural, without slang or unnecessary formality.
+- User-facing messages are short. Translations use everyday, natural app language without slang or unnecessary formality. Per the user’s 2026-11-11 clarification, prefer familiar local app terms and loanwords (for example Hindi वाइब्रेशन rather than कंपन). Do not mechanically replace natural local words with English.
 
 ## 2. Translation options and region availability
 

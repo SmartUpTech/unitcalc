@@ -282,7 +282,7 @@
     <string name="regional_region">Wilayah</string>
     <string name="regional_currency">Mata uang</string>
     <string name="regional_numbers">Format angka</string>
-    <string name="regional_reset">Pulihkan default wilayah</string>
+    <string name="regional_reset">Reset ke setelan wilayah</string>
     <string name="regional_reset_description">Mereset format angka dan mata uang.</string>
     <string name="regional_change_note">Mengubah wilayah mereset format angka dan mata uang.</string>
     <string name="regional_default">Default wilayah</string>
@@ -471,8 +471,8 @@
     <string name="nav_history">Riwayat</string>
     <string name="nav_play">Main</string>
     <string name="nav_play_favourites">Favorit</string>
-    <string name="prefs_key_sounds_title">Suara papan tombol</string>
-    <string name="prefs_key_vibration_title">Getaran papan tombol</string>
+    <string name="prefs_key_sounds_title">Suara tombol</string>
+    <string name="prefs_key_vibration_title">Getaran tombol</string>
     <string name="games_retry">Coba lagi</string>
     <string name="no_favorites">Belum ada favorit</string>
     <string name="drawer_section_calculators">Kalkulator</string>

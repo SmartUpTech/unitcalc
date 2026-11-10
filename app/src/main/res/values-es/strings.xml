@@ -281,11 +281,11 @@
     <string name="regional_language">Idioma de la aplicación</string>
     <string name="regional_region">Región</string>
     <string name="regional_currency">Moneda</string>
-    <string name="regional_numbers">Formato numérico</string>
+    <string name="regional_numbers">Formato de números</string>
     <string name="regional_reset">Restablecer valores regionales</string>
-    <string name="regional_reset_description">Restablece el formato numérico y la moneda.</string>
-    <string name="regional_change_note">Cambiar de región restablece el formato numérico y la moneda.</string>
-    <string name="regional_default">Predeterminado regional</string>
+    <string name="regional_reset_description">Restablece el formato de números y la moneda.</string>
+    <string name="regional_change_note">Cambiar de región restablece el formato de números y la moneda.</string>
+    <string name="regional_default">Por defecto de la región</string>
     <string name="regional_custom">Personalizado</string>
     <string name="regional_suggest_title">¿Cambiar la región a %1$s?</string>
     <string name="regional_switch">Cambiar</string>
@@ -302,7 +302,7 @@
     <string name="regional_nnbsp">Espacio estrecho de no separación</string>
     <string name="regional_apostrophe">Apóstrofo</string>
     <string name="regional_search">Buscar regiones</string>
-    <string name="regional_invalid_number">Comprueba el formato numérico.</string>
+    <string name="regional_invalid_number">Comprueba el formato de números.</string>
     <string name="prefs_title_number_decimals">Decimales</string>
     <string name="prefs_title_group_separator">Separador de miles</string>
     <string name="prefs_title_decimal_separator">Separador decimal</string>
@@ -716,7 +716,7 @@
     <string name="rd_calculator">Calculadora de ahorro periódico</string>
     <string name="sip_calculator">Calculadora de inversión periódica</string>
     <string name="percentage_calculator">Calculadora de porcentajes</string>
-    <string name="settings_section_number_format">Formato numérico</string>
+    <string name="settings_section_number_format">Formato de números</string>
     <string name="settings_decimal_point_example">Punto — 1.23</string>
     <string name="settings_decimal_comma_example">Coma — 1,23</string>
     <string name="settings_group_comma_example">Coma — 1,234</string>

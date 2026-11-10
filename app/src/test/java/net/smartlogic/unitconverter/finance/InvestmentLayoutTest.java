@@ -20,6 +20,53 @@ import static org.junit.Assert.*;
 /** Native previews of real fragments, not hand-reconstructed screenshots. */
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class InvestmentLayoutTest extends InvestmentFragmentTest {
+    @Test public void sipLoadingKeepsResultAndControlBoundsStable() throws Exception {
+        var controller = Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            var f = launch(controller.get(), InvestmentInputs.Kind.SIP);
+            set(f, R.id.emi_principal, "500");
+            set(f, R.id.emi_rate, "12");
+            set(f, R.id.emi_tenure, "10");
+            drain(f);
+            for (var theme : CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class, "current", theme);
+                for (float scale : new float[]{1f, 1.3f}) {
+                    for (int[] viewport : new int[][]{{360, 528}, {412, 660}, {800, 400}}) {
+                        render(f, theme.id(), scale, viewport[0], viewport[1], false, true, "before-loading");
+                        int[] ready = resultBounds(f);
+                        // An option change recalculates with the keypad closed.
+                        ReflectionHelpers.callInstanceMethod(f, "changed");
+                        assertNull(ReflectionHelpers.getField(f, "result"));
+                        assertEquals(f.getString(R.string.emi_loading),
+                                ((android.widget.TextView) form(f).findViewById(R.id.emi_message)).getText().toString());
+                        render(f, theme.id(), scale, viewport[0], viewport[1], false, true, "loading");
+                        assertArrayEquals(theme.id() + " pending " + scale, ready, resultBounds(f));
+                        assertFalse(form(f).findViewById(R.id.emi_more).isEnabled());
+                        drain(f);
+                        render(f, theme.id(), scale, viewport[0], viewport[1], false, true, "after-loading");
+                        assertArrayEquals(theme.id() + " completed " + scale, ready, resultBounds(f));
+                    }
+                }
+            }
+            set(f, R.id.emi_rate, "");
+            drain(f);
+            assertEquals(View.GONE, form(f).findViewById(R.id.emi_summary).getVisibility());
+        } finally {
+            RuntimeEnvironment.setFontScale(1f);
+            controller.pause().stop().destroy();
+        }
+    }
+    private int[] resultBounds(InvestmentCalculatorFragment f) {
+        int[] ids = {R.id.emi_fields, R.id.emi_result_section, R.id.emi_summary, R.id.emi_message, R.id.emi_actions};
+        int[] bounds = new int[ids.length * 4];
+        for (int i = 0; i < ids.length; i++) {
+            View view = form(f).findViewById(ids[i]);
+            assertEquals(View.VISIBLE, view.getVisibility());
+            bounds[i * 4] = view.getLeft(); bounds[i * 4 + 1] = view.getTop();
+            bounds[i * 4 + 2] = view.getRight(); bounds[i * 4 + 3] = view.getBottom();
+        }
+        return bounds;
+    }
     @Test public void financeNativePreviewsAllThemesAndScaledLayouts()throws Exception{
         for(var kind:InvestmentInputs.Kind.values()) {
             var controller=Robolectric.buildActivity(Host.class).setup().visible();

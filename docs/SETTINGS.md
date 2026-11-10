@@ -28,6 +28,12 @@ language; Settings text, dialog copy, theme/status labels, country names and
 currency names come from native XML resources. Font-family names, currency ISO
 codes, unit symbols and language self-names retain their identities.
 
+Settings copy uses everyday app vocabulary. Prefer familiar loanwords where they
+are easier to recognize (Hindi वाइब्रेशन, कॉमा, प्राइवेसी, फ़ीडबैक), and retain
+natural local terms elsewhere (Turkish titreşim, Indonesian getaran). Explain
+technical concepts plainly; preserve consent meaning, numeric examples and
+format placeholders. This wording review does not replace native-speaker review.
+
 Fresh installs use en-US, US, USD, Western digits and four displayed decimal
 places. The versioned migration preserves existing effective preferences, including
 legacy absent-key defaults. Region is persisted explicitly, never inferred from

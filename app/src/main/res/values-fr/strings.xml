@@ -285,7 +285,7 @@
     <string name="regional_reset">Rétablir les paramètres régionaux</string>
     <string name="regional_reset_description">Réinitialise le format des nombres et la devise.</string>
     <string name="regional_change_note">Changer de région réinitialise le format des nombres et la devise.</string>
-    <string name="regional_default">Valeur régionale par défaut</string>
+    <string name="regional_default">Par défaut pour la région</string>
     <string name="regional_custom">Personnalisé</string>
     <string name="regional_suggest_title">Choisir la région %1$s ?</string>
     <string name="regional_switch">Changer</string>
@@ -751,8 +751,8 @@
     <string name="theme_access_migrated">Blanc porcelaine est appliqué. Vous pouvez désormais débloquer d’autres thèmes pendant sept jours dans les paramètres. Blanc porcelaine, Crème nacrée et Gris titane restent gratuits.</string>
     <string name="appearance_reset_message">Rétablir Plat (sans bordure), Arrondi et Oswald ? Le thème sélectionné sera conservé.</string>
     <string name="emi_preferred_hint">Utilisée pour les nouveaux prêts et les futurs outils monétaires. Les devises du convertisseur restent indépendantes.</string>
-    <string name="prefs_key_sounds_summary">Émettre des sons discrets lors de l’utilisation des touches</string>
-    <string name="prefs_key_vibration_summary">Vibrer légèrement lors de l’utilisation des touches</string>
+    <string name="prefs_key_sounds_summary">Un son discret à chaque touche</string>
+    <string name="prefs_key_vibration_summary">Une légère vibration à chaque touche</string>
     <string name="prefs_summary_number_decimals">Choisir le nombre de décimales du résultat</string>
     <string name="prefs_summary_group_separator">Choisir le séparateur de groupes du résultat</string>
     <string name="prefs_summary_decimal_separator">Choisir le séparateur décimal du résultat</string>

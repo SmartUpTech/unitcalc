@@ -45,9 +45,9 @@ public class SettingsLanguageResourcesTest {
         assertEquals("सेटिंग", hindi.getString(R.string.title_activity_settings));
         assertEquals("सामान्य", hindi.getString(R.string.settings_section_general));
         assertEquals("दिखावट", hindi.getString(R.string.settings_section_appearance));
-        assertEquals("निजता", hindi.getString(R.string.settings_section_privacy));
-        assertEquals("उपयोग का विश्लेषण", hindi.getString(R.string.settings_privacy_choices));
-        assertEquals("सपाट (बिना किनारे)", hindi.getString(R.string.button_style_flat));
+        assertEquals("प्राइवेसी", hindi.getString(R.string.settings_section_privacy));
+        assertEquals("इस्तेमाल का डेटा", hindi.getString(R.string.settings_privacy_choices));
+        assertEquals("फ़्लैट (बिना बॉर्डर)", hindi.getString(R.string.button_style_flat));
         assertEquals("ऐप का वर्शन", hindi.getString(R.string.pref_version_title));
         assertFalse(hindi.getString(R.string.settings_usage_analytics_summary).contains("Sharing is optional"));
     }

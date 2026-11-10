@@ -477,7 +477,7 @@
     <string name="nav_history">Lịch sử</string>
     <string name="nav_play">Chơi</string>
     <string name="nav_play_favourites">Yêu thích</string>
-    <string name="prefs_key_sounds_title">Âm bàn phím</string>
+    <string name="prefs_key_sounds_title">Âm thanh bàn phím</string>
     <string name="prefs_key_vibration_title">Rung bàn phím</string>
     <string name="games_retry">Thử lại</string>
     <string name="no_favorites">Chưa có mục yêu thích</string>
@@ -727,7 +727,7 @@
     <string name="theme_access_migrated">Đang áp dụng Trắng sứ. Giờ bạn có thể mở khóa các chủ đề khác trong bảy ngày từ Cài đặt. Trắng sứ, Kem ngọc trai và Xám titan vẫn miễn phí.</string>
     <string name="appearance_reset_message">Khôi phục Phẳng (không viền), Bo góc và Oswald? Chủ đề đã chọn được giữ nguyên.</string>
     <string name="emi_preferred_hint">Dùng cho khoản vay mới và các công cụ tiền tệ sau này. Lựa chọn tiền tệ trong bộ chuyển đổi vẫn độc lập.</string>
-    <string name="prefs_key_sounds_summary">Phát âm nhẹ khi bấm phím</string>
+    <string name="prefs_key_sounds_summary">Phát âm thanh nhẹ khi bấm phím</string>
     <string name="prefs_key_vibration_summary">Rung nhẹ khi bấm phím</string>
     <string name="prefs_summary_number_decimals">Chọn số chữ số thập phân trong kết quả</string>
     <string name="prefs_summary_group_separator">Chọn dấu phân cách nhóm trong kết quả</string>
