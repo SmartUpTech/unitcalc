@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.ComposeView;
 import androidx.fragment.app.Fragment;
 
 import net.smartlogic.unitconverter.R;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
 import net.smartlogic.unitconverter.theme.WindowChrome;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -24,9 +25,9 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_activity);
         WindowChrome.apply(this);
         getSupportFragmentManager().setFragmentResultListener(
-                net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment.RESULT_KEY, this, (key, result) -> {
+                ConverterPickerDialogFragment.RESULT_KEY, this, (key, result) -> {
             var choices = net.smartlogic.unitconverter.helper.PreferredCurrency.choices(this);
-            int index = result.getInt(net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment.INDEX, -1);
+            int index = result.getInt(ConverterPickerDialogFragment.INDEX, -1);
             if (index >= 0 && index < choices.size()) net.smartlogic.unitconverter.helper.Preferences.getInstance(this)
                     .setPreferredCurrency(choices.get(index).getCurrencyISOCode());
         });

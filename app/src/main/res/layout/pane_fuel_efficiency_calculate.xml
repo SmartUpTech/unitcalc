@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.smartlogic.unitconverter.fuel.FuelEfficiencyLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fuel_root"
     android:layout_width="match_parent"
@@ -342,7 +342,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fe_keypad_host"
-        android:name="net.smartlogic.unitconverter.fuel.FuelEfficiencyKeypadFragment"
+        android:name="net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyKeypadFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</net.smartlogic.unitconverter.fuel.FuelEfficiencyLayout>
+</net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyLayout>

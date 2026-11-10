@@ -67,7 +67,7 @@
         </activity>
 
         <service
-            android:name=".timer.service.TimerForegroundService"
+            android:name=".calculator.tools.timer.service.TimerForegroundService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
@@ -76,7 +76,7 @@
         </service>
 
         <receiver
-            android:name=".timer.service.TimerAlarmReceiver"
+            android:name=".calculator.tools.timer.service.TimerAlarmReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="net.smartlogic.unitconverter.timer.ALARM" />
@@ -84,7 +84,7 @@
         </receiver>
 
         <receiver
-            android:name=".timer.service.TimerActionReceiver"
+            android:name=".calculator.tools.timer.service.TimerActionReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="net.smartlogic.unitconverter.timer.PAUSE" />
@@ -94,7 +94,7 @@
         </receiver>
 
         <receiver
-            android:name=".timer.widget.TimerWidgetProvider"
+            android:name=".calculator.tools.timer.widget.TimerWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

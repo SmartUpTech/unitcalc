@@ -1,6 +1,6 @@
 package net.smartlogic.unitconverter.app;
 
-import net.smartlogic.unitconverter.fragment.ConverterFragment;
+import net.smartlogic.unitconverter.converter.ConverterFragment;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

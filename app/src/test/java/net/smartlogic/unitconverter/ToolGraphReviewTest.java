@@ -2,8 +2,7 @@ package net.smartlogic.unitconverter;
 
 import android.app.Application;
 import java.math.BigDecimal;
-import net.smartlogic.unitconverter.fuel.*;
-import net.smartlogic.unitconverter.percentage.*;
+
 import net.smartlogic.unitconverter.graphy.model.*;
 import net.smartlogic.unitconverter.model.*;
 import net.smartlogic.unitconverter.utils.Conversions;

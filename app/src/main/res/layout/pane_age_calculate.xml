@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.smartlogic.unitconverter.age.AgeCalculateLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/age_calculate_pane" android:layout_width="match_parent" android:layout_height="match_parent">
+<net.smartlogic.unitconverter.calculator.tools.age.AgeCalculateLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/age_calculate_pane" android:layout_width="match_parent" android:layout_height="match_parent">
 
     <LinearLayout android:id="@+id/age_inputs" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:baselineAligned="false">
@@ -12,7 +12,8 @@
         </LinearLayout>
     </LinearLayout>
 
-    <net.smartlogic.unitconverter.age.AgeResultLayout android:id="@+id/age_result_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_converter_card" android:tag="theme_outlined_surface">
+    <net.smartlogic.unitconverter.calculator.tools.age.AgeResultLayout
+        android:id="@+id/age_result_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_converter_card" android:tag="theme_outlined_surface">
     <LinearLayout android:id="@+id/age_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 <!--        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="true">-->
 <!--            <TextView android:id="@+id/age_title" style="@style/AgeCaption" android:layout_width="0dp" android:layout_weight="1" android:gravity="center" android:text="@string/age_result" android:tag="content_secondary" />-->
@@ -106,10 +107,10 @@
         <TextView android:id="@+id/age_empty_title" style="@style/AgeText" android:textSize="@dimen/graphy_result_text_size" android:text="@string/age_empty_title" android:layout_marginTop="@dimen/converter_spacing" />
         <TextView android:id="@+id/age_empty_description" style="@style/AgeText" android:tag="content_secondary" android:text="@string/age_empty" android:layout_marginTop="@dimen/converter_spacing" android:accessibilityLiveRegion="polite" />
     </LinearLayout>
-    </net.smartlogic.unitconverter.age.AgeResultLayout>
+    </net.smartlogic.unitconverter.calculator.tools.age.AgeResultLayout>
 
     <LinearLayout android:id="@+id/age_actions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
         <com.google.android.material.button.MaterialButton android:id="@+id/age_calendar" style="@style/AgeDateButton" android:tag="theme_filled_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/h3" android:text="@string/age_add_calendar" />
         <com.google.android.material.button.MaterialButton android:id="@+id/age_share" style="@style/AgeDateButton" android:tag="theme_text_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="@dimen/h3" android:text="@string/share" />
     </LinearLayout>
-</net.smartlogic.unitconverter.age.AgeCalculateLayout>
+</net.smartlogic.unitconverter.calculator.tools.age.AgeCalculateLayout>

@@ -1,0 +1,67 @@
+package net.smartlogic.unitconverter.calculator.tools.timer
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import net.smartlogic.unitconverter.calculator.tools.timer.model.RecentTimer
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerDraft
+import net.smartlogic.unitconverter.calculator.tools.timer.model.TimerUiState
+
+class TimerViewModel(
+    private val engine: TimerEngine,
+) : ViewModel() {
+    val uiState: StateFlow<TimerUiState> =
+        engine.uiState.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            engine.uiState.value,
+        )
+
+    private var displayJob: Job? = null
+
+    fun setScreenVisible(visible: Boolean) {
+        if (!visible) {
+            displayJob?.cancel()
+            displayJob = null
+            return
+        }
+        if (displayJob?.isActive == true) return
+        engine.refreshDisplay()
+        displayJob = viewModelScope.launch {
+            while (isActive) {
+                delay(250L)
+                engine.refreshDisplay()
+            }
+        }
+    }
+
+    fun updateDraft(draft: TimerDraft) = engine.updateDraft(draft)
+    fun startFromDraft() = engine.startFromDraft()
+    fun startRecent(recent: RecentTimer) = engine.startRecent(recent)
+    fun confirmReplaceRecent() = engine.confirmReplaceRecent()
+    fun dismissReplaceRecent() = engine.dismissReplaceRecent()
+    fun pause() = engine.pause()
+    fun resume() = engine.resume()
+    fun restart() = engine.restart()
+    fun reset() = engine.reset()
+    fun dismissCompleted() = engine.dismissCompleted()
+}
+
+class TimerViewModelFactory(
+    private val engine: TimerEngine,
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TimerViewModel::class.java)) {
+            return TimerViewModel(engine) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}

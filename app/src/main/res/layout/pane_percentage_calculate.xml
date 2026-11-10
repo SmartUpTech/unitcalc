@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.smartlogic.unitconverter.percentage.PercentageLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.smartlogic.unitconverter.calculator.tools.percentage.PercentageLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/percentage_root"
     android:layout_width="match_parent"
@@ -158,7 +158,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/percentage_keypad_host"
-        android:name="net.smartlogic.unitconverter.percentage.PercentageKeypadFragment"
+        android:name="net.smartlogic.unitconverter.calculator.tools.percentage.PercentageKeypadFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</net.smartlogic.unitconverter.percentage.PercentageLayout>
+</net.smartlogic.unitconverter.calculator.tools.percentage.PercentageLayout>

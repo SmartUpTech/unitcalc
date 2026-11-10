@@ -3,7 +3,7 @@ package net.smartlogic.unitconverter.helper;
 import android.content.Context;
 import androidx.fragment.app.FragmentActivity;
 import net.smartlogic.unitconverter.R;
-import net.smartlogic.unitconverter.fragment.ConverterPickerDialogFragment;
+import net.smartlogic.unitconverter.converter.ConverterPickerDialogFragment;
 import net.smartlogic.unitconverter.model.Currency;
 import net.smartlogic.unitconverter.model.CurrencyCatalog;
 import java.util.ArrayList;

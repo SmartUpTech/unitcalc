@@ -29,8 +29,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import net.smartlogic.unitconverter.R;
 import net.smartlogic.unitconverter.app.AppConst;
-import net.smartlogic.unitconverter.fragment.CalculatorFragment;
-import net.smartlogic.unitconverter.fragment.ConverterFragment;
+import net.smartlogic.unitconverter.calculator.basic.CalculatorFragment;
+import net.smartlogic.unitconverter.converter.ConverterFragment;
 import net.smartlogic.unitconverter.fragment.ExploreFragment;
 import net.smartlogic.unitconverter.fragment.FavoritesFragment;
 import net.smartlogic.unitconverter.fragment.HistoryFragment;
@@ -43,14 +43,14 @@ import net.smartlogic.unitconverter.model.CalculatorCatalog;
 import net.smartlogic.unitconverter.theme.ThemeApplier;
 import net.smartlogic.unitconverter.theme.ThemeManager;
 import net.smartlogic.unitconverter.theme.WindowChrome;
-import net.smartlogic.unitconverter.timer.TimerFragment;
-import net.smartlogic.unitconverter.age.AgeCalculatorFragment;
-import net.smartlogic.unitconverter.bmi.BmiCalculatorFragment;
-import net.smartlogic.unitconverter.emi.EmiCalculatorFragment;
-import net.smartlogic.unitconverter.fuel.FuelEfficiencyCalculatorFragment;
-import net.smartlogic.unitconverter.percentage.PercentageCalculatorFragment;
-import net.smartlogic.unitconverter.finance.InvestmentCalculatorFragment;
-import net.smartlogic.unitconverter.finance.InvestmentInputs;
+import net.smartlogic.unitconverter.calculator.tools.timer.TimerFragment;
+import net.smartlogic.unitconverter.calculator.tools.age.AgeCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.tools.bmi.BmiCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.finance.emi.EmiCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.tools.fuel.FuelEfficiencyCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.tools.percentage.PercentageCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.finance.investment.InvestmentCalculatorFragment;
+import net.smartlogic.unitconverter.calculator.finance.investment.InvestmentInputs;
 
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 

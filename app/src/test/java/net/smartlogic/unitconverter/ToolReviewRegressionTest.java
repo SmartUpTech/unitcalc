@@ -6,8 +6,7 @@ import android.widget.FrameLayout;
 import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import net.smartlogic.unitconverter.fuel.*;
-import net.smartlogic.unitconverter.percentage.*;
+
 import net.smartlogic.unitconverter.helper.Preferences;
 import org.junit.Test;
 import org.junit.runner.RunWith;
