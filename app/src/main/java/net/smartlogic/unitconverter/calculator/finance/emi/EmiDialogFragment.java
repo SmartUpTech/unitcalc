@@ -22,6 +22,9 @@ public final class EmiDialogFragment extends DialogFragment {
     public static EmiDialogFragment confirm(int title, String message, int action) {
         EmiDialogFragment d = info(title, message); d.requireArguments().putInt("confirm", action); return d;
     }
+    public static EmiDialogFragment infoWithAction(int title, String message, int action) {
+        EmiDialogFragment d = info(title, message); d.requireArguments().putInt("neutral", action); return d;
+    }
     @NonNull @Override public Dialog onCreateDialog(Bundle state) {
         var theme = ThemeManager.get(); Bundle a = requireArguments();
         var builder = new MaterialAlertDialogBuilder(requireContext(), R.style.GraphyAlertDialogTheme)
@@ -40,6 +43,8 @@ public final class EmiDialogFragment extends DialogFragment {
             if (a.containsKey("confirm")) builder.setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok, (d, which) -> send(a.getInt("confirm")));
             else builder.setPositiveButton(android.R.string.ok, null);
+            if (a.containsKey("neutral")) builder.setNeutralButton(a.getInt("neutral"),
+                    (d, which) -> send(a.getInt("neutral")));
         }
         return builder.create();
     }

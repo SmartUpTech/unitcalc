@@ -31,7 +31,7 @@ android {
         applicationId "net.smartlogic.unitconverter"
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
-        versionCode 12
+        versionCode 11
         versionName "2.0"
         (1..4).each { index ->
             def keyName = "CURRENCY_RATE_KEY_${index}"

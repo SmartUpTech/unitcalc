@@ -18,17 +18,12 @@ public class Preferences {
 
     public String getStartupScreen() {
         Object value = mPrefs.getAll().get(PREFS_STARTUP_SCREEN);
-        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(value)
-                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(value)) {
-            return (String) value;
-        }
+        if (value instanceof String && net.smartlogic.unitconverter.model.CalculatorCatalog.isStartupId((String) value)) return (String) value;
         return net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC;
     }
 
     public void setStartupScreen(String screen) {
-        if (net.smartlogic.unitconverter.model.CalculatorCatalog.ID_BASIC.equals(screen)
-                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT.equals(screen)
-                || net.smartlogic.unitconverter.model.CalculatorCatalog.ID_CURRENCY.equals(screen)) {
+        if (net.smartlogic.unitconverter.model.CalculatorCatalog.isStartupId(screen)) {
             mPrefs.edit().putString(PREFS_STARTUP_SCREEN, screen).apply();
         }
     }

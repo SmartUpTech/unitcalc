@@ -447,8 +447,7 @@ public class ConverterFragment extends Fragment {
             return;
         }
 
-        net.smartlogic.unitconverter.helper.UsageAnalytics.event("tool_opened", "tool_id",
-                tabIndex == TAB_CURRENCY ? "currency" : "unit_converter");
+
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         if (activeChild != null) {
@@ -457,5 +456,6 @@ public class ConverterFragment extends Fragment {
         transaction.show(target);
         transaction.commit();
         activeChild = target;
+        if (getActivity() instanceof net.smartlogic.unitconverter.activity.MainActivity main) main.onToolDestinationChanged();
     }
 }

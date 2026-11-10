@@ -1,10 +1,10 @@
-# Usage analytics and review — 2026-10-27
+# Usage analytics and review — 2026-11-10
 
 ## Firebase setup
 
 Register Android package `net.smartlogic.unitconverter` in the owner's Analytics-enabled Firebase project and put its `google-services.json` in `app/` (gitignored). The Google Services plugin is applied only when this registration exists. Without it, the app works and analytics is inactive. No fabricated Firebase identity is included.
 
-Collection defaults off in the manifest. Settings > Share usage analytics is an explicit opt-in with explanatory text; switching off disables collection, denies Analytics storage and resets local analytics data. Ad storage, ad user data and personalization stay denied for this Analytics integration. Analytics advertising-ID collection and automatic screen reporting are disabled. This consent is separate from AdMob UMP and does not grant advertising consent.
+Collection defaults off in the manifest. Settings > Usage analytics offers an explicit Allowed / Not allowed dialog; declining disables collection, denies Analytics storage and resets local analytics data. Ad storage, ad user data and personalization stay denied for this Analytics integration. Analytics advertising-ID collection and automatic screen reporting are disabled. This consent is separate from AdMob UMP and does not grant advertising consent.
 
 Before release, update the published privacy policy and Play Data safety for the SDK's actual collection, including app-instance identifiers, diagnostics and automatically collected events. Inspect Firebase retention, region, access controls and consent requirements. Switching off cannot retract historical server data; apply the owner's documented deletion/retention process.
 
@@ -13,7 +13,7 @@ Before release, update the published privacy policy and Play Data safety for the
 | Event | Dimension | Intended use |
 | --- | --- | --- |
 | screen_view | screen_name | Native tab navigation frequency |
-| tool_opened | tool_id | Catalog tools and unit/currency mode popularity |
+| tool_opened | tool_id, tool_family | Visible calculator/converter activation, including startup, bottom navigation, drawer, Explore/Favorites, history returns and Timer intents |
 | calculation_saved | tool_id | Accepted history writes per tool; excludes history previews |
 | theme_selected | theme_id | Explicit successful theme selections |
 | theme_active | theme_id | Current theme on MainActivity resume and analytics opt-in |
@@ -31,6 +31,8 @@ Before release, update the published privacy policy and Play Data safety for the
 | setting_changed | setting | Decimal and separator setting changes |
 
 Register event-scoped custom dimensions for these fields. Compare event count and active users by tool/theme/game; derive game completion/start ratios with repeat starts in mind. These are activity counts, not exact unique puzzle attempts. Theme selection frequency is not time spent in a theme. No expression, numeric amount, score, history text, currency credentials, raw web payload, ad ID or custom user ID is passed to events.
+
+`MainActivity.onToolDestinationChanged()` coalesces navigation work and records a tool only when its stable catalog identity changes. Repeated selection, resume, appearance refresh and recreation do not add opens. Leaving a tool for History/Explore/Favorites clears the active identity so returning counts again. Settings/backgrounding alone do not count as another use. Unit categories use `unit:<category-id>` consistently across the drawer, category strip and bottom navigation; `tool_family=unit_converter` groups those categories for overall Unit Converter popularity. Other tools use their catalog ID for both dimensions. Currency uses `currency`; finance and utility calculators use their catalog IDs. General menu actions are excluded. Use `tool_opened` event count ranked by the event-scoped `tool_family` dimension for overall tool popularity or `tool_id` for individual converter categories, alongside active users and `calculation_saved`, to compare popularity; this measures activations rather than time spent or every keypad edit.
 
 ## Useful next measures
 

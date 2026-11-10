@@ -59,14 +59,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     private long lastExitBackAt = -1L;
     private android.widget.Toast exitToast;
     private static final String SAVED_TAB_TAG = "main_tab_tag";
-    private static final String SAVED_HISTORY_RETURN = "history_return_tab";
-    private int historyReturnTab = R.id.calculator;
-    private int ageReturnTab = R.id.calculator;
-    private int emiReturnTab = R.id.calculator;
-    private int financeReturnTab = R.id.calculator;
-    private int bmiReturnTab = R.id.calculator;
-    private int fuelReturnTab = R.id.calculator;
-    private int percentageReturnTab = R.id.calculator;
+    private final java.util.ArrayList<Integer> toolBackStack = new java.util.ArrayList<>();
+    private String lastOpenedTool;
+    private boolean toolReportPending;
 
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
@@ -92,13 +87,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState != null) historyReturnTab = savedInstanceState.getInt(SAVED_HISTORY_RETURN, R.id.calculator);
-        if (savedInstanceState != null) ageReturnTab = savedInstanceState.getInt("age_return_tab", R.id.calculator);
-        if (savedInstanceState != null) financeReturnTab = savedInstanceState.getInt("finance_return_tab", R.id.calculator);
-        if (savedInstanceState != null) emiReturnTab = savedInstanceState.getInt("emi_return_tab", R.id.calculator);
-        if (savedInstanceState != null) bmiReturnTab = savedInstanceState.getInt("bmi_return_tab", R.id.calculator);
-        if (savedInstanceState != null) fuelReturnTab = savedInstanceState.getInt("fuel_return_tab", R.id.calculator);
-        if (savedInstanceState != null) percentageReturnTab = savedInstanceState.getInt("percentage_return_tab", R.id.calculator);
+        if (savedInstanceState != null) {
+            var restoredBackStack = savedInstanceState.getIntegerArrayList("tool_back_stack");
+            if (restoredBackStack != null) toolBackStack.addAll(restoredBackStack);
+            lastOpenedTool = savedInstanceState.getString("last_opened_tool");
+        }
         // Root fallback: later drawer, Timer and workspace callbacks keep priority.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
@@ -169,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         if (savedInstanceState == null) {
             String startupScreen = Preferences.getInstance(this).getStartupScreen();
-            AppConst.CURRENT_TAG = CalculatorCatalog.ID_BASIC.equals(startupScreen)
-                    ? AppConst.TAG_CALC : AppConst.TAG_CONVERTER;
+            AppConst.CURRENT_TAG = (CalculatorCatalog.ID_UNIT.equals(startupScreen) || CalculatorCatalog.ID_CURRENCY.equals(startupScreen))
+                    ? AppConst.TAG_CONVERTER : AppConst.TAG_CALC;
             AppConst.CONVERTER_TAB = CalculatorCatalog.ID_CURRENCY.equals(startupScreen)
                     ? ConverterFragment.TAB_CURRENCY : ConverterFragment.TAB_UNIT;
         }
@@ -182,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         ThemeApplier.applyNavigation(bottomNavigationView, navigationView);
         if (shouldOpenTimer(getIntent())) {
             showTimerScreen();
+        } else if (savedInstanceState == null) {
+            navigateToEntry(CalculatorCatalog.getById(Preferences.getInstance(this).getStartupScreen()));
         }
     }
 
@@ -239,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
     }
 
     public void navigateToEntry(@NonNull CalculatorCatalog.Entry entry) {
-        net.smartlogic.unitconverter.helper.UsageAnalytics.event("tool_opened", "tool_id", entry.id);
         switch (entry.destination) {
             case BASIC_CALCULATOR:
                 selectTab(R.id.calculator);
@@ -493,6 +487,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
         if (!initialTabSelected) {
             initialTabSelected = true;
+            if (timerVisible) return;
             int restoredId = resolveMenuIdForTag(AppConst.CURRENT_TAG);
             if (restoredId == R.id.history || restoredId == R.id.age_calculator || restoredId == R.id.bmi_calculator
                     || restoredId == R.id.fuel_efficiency_calculator || restoredId == R.id.percentage_calculator
@@ -507,32 +502,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     private void selectTab(int itemId, boolean openWorkspace) {
         lastExitBackAt = -1L;
-        if (openWorkspace && isInvestmentId(itemId) && !(activeFragment instanceof InvestmentCalculatorFragment)
-                && !(activeFragment instanceof HistoryFragment && isInvestmentId(historyReturnTab)))
-            financeReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        if (openWorkspace && itemId == R.id.age_calculator && !(activeFragment instanceof AgeCalculatorFragment)) {
-            ageReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        }
-        if (openWorkspace && itemId == R.id.bmi_calculator && !(activeFragment instanceof BmiCalculatorFragment)
-                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.bmi_calculator)) {
-            bmiReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        }
-        if (openWorkspace && itemId == R.id.emi_calculator && !(activeFragment instanceof EmiCalculatorFragment)
-                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.emi_calculator))
-            emiReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        if (openWorkspace && itemId == R.id.fuel_efficiency_calculator
-                && !(activeFragment instanceof FuelEfficiencyCalculatorFragment)
-                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.fuel_efficiency_calculator)) {
-            fuelReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        }
-        if (openWorkspace && itemId == R.id.percentage_calculator
-                && !(activeFragment instanceof PercentageCalculatorFragment)
-                && !(activeFragment instanceof HistoryFragment && historyReturnTab == R.id.percentage_calculator)) {
-            percentageReturnTab = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-        }
-        if (itemId == R.id.history && !(activeFragment instanceof HistoryFragment)) {
-            int previous = resolveMenuIdForTag(AppConst.CURRENT_TAG);
-            if (previous != R.id.history) historyReturnTab = previous;
+        int previous = resolveMenuIdForTag(AppConst.CURRENT_TAG);
+        if (openWorkspace && itemId != previous) {
+            if (isDetailDestination(itemId)) {
+                int existing = toolBackStack.indexOf(itemId);
+                if (existing >= 0) toolBackStack.subList(existing, toolBackStack.size()).clear();
+                else toolBackStack.add(previous);
+            } else toolBackStack.clear();
         }
         Fragment fragment = tabFragments.get(itemId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -565,26 +541,38 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         }
         updateCurrentTag(itemId);
         updateHistoryChrome(itemId == R.id.history);
+        onToolDestinationChanged();
     }
 
     public void closeHistory() {
         net.smartlogic.unitconverter.helper.InAppReview.maybeRequest(this);
-        selectTab(historyReturnTab == R.id.history ? R.id.calculator : historyReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
 
     private void closeAge() {
-        selectTab(ageReturnTab == R.id.age_calculator ? R.id.calculator : ageReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
 
     private void closeEmi() {
         if (activeFragment instanceof EmiCalculatorFragment emi && emi.handleBack()) return;
-        selectTab(emiReturnTab == R.id.emi_calculator || emiReturnTab == R.id.history ? R.id.calculator : emiReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
+    }
+
+    private static boolean isDetailDestination(int id) {
+        return id == R.id.history || id == R.id.age_calculator || id == R.id.bmi_calculator
+                || id == R.id.fuel_efficiency_calculator || id == R.id.percentage_calculator
+                || id == R.id.emi_calculator || isInvestmentId(id);
+    }
+
+    private void returnToPreviousTool() {
+        int previous = toolBackStack.isEmpty() ? R.id.calculator : toolBackStack.remove(toolBackStack.size() - 1);
+        selectTab(previous, false);
     }
 
     private static boolean isInvestmentId(int itemId) {
@@ -593,28 +581,25 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     private void closeInvestment() {
         if (activeFragment instanceof InvestmentCalculatorFragment investment && investment.handleBack()) return;
-        selectTab(isInvestmentId(financeReturnTab) || financeReturnTab == R.id.history
-                ? R.id.calculator : financeReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
 
     private void closeBmi() {
-        selectTab(bmiReturnTab == R.id.bmi_calculator || bmiReturnTab == R.id.history ? R.id.calculator : bmiReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
 
     private void closeFuel() {
-        selectTab(fuelReturnTab == R.id.fuel_efficiency_calculator || fuelReturnTab == R.id.history
-                ? R.id.calculator : fuelReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
 
     private void closePercentage() {
-        selectTab(percentageReturnTab == R.id.percentage_calculator || percentageReturnTab == R.id.history
-                ? R.id.calculator : percentageReturnTab, false);
+        returnToPreviousTool();
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
     }
@@ -757,6 +742,30 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         return AppConst.TAG_CALC;
     }
 
+    /** Coalesce destination/mode/category changes after pending fragment UI work. */
+    public void onToolDestinationChanged() {
+        if (toolReportPending) return;
+        toolReportPending = true;
+        findViewById(R.id.frame_layout).post(() -> {
+            toolReportPending = false;
+            if (isFinishing() || isDestroyed()) return;
+            String id = null;
+            if (activeFragment instanceof ConverterFragment converter) id = converter.getActiveCatalogId();
+            else if (timerVisible) id = CalculatorCatalog.ID_TIMER;
+            else {
+                String tag = AppConst.CURRENT_TAG;
+                if (AppConst.TAG_CALC.equals(tag)) id = CalculatorCatalog.ID_BASIC;
+                else if (CalculatorCatalog.getById(tag) != null) id = tag;
+            }
+            var entry = id == null ? null : CalculatorCatalog.getById(id);
+            if (entry == null || !entry.isTool()) id = null;
+            if (!java.util.Objects.equals(lastOpenedTool, id)) {
+                lastOpenedTool = id;
+                if (id != null) net.smartlogic.unitconverter.helper.UsageAnalytics.toolOpened(id);
+            }
+        });
+    }
+
     private void refreshActiveCalculatorId() {
         if (timerVisible) {
             activeCalculatorId = CalculatorCatalog.ID_TIMER;
@@ -806,6 +815,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         updateHistoryChrome(false);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
+        onToolDestinationChanged();
     }
 
     private void hideTimerScreen(boolean restoreTab) {
@@ -827,6 +837,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
         updateHistoryChrome(activeFragment instanceof HistoryFragment);
         refreshActiveCalculatorId();
         updateFavoriteMenuItem();
+        onToolDestinationChanged();
     }
 
     private void updateFavoriteMenuItem() {
@@ -977,13 +988,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
     @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(SAVED_TAB_TAG, AppConst.CURRENT_TAG);
-        outState.putInt(SAVED_HISTORY_RETURN, historyReturnTab);
-        outState.putInt("age_return_tab", ageReturnTab);
-        outState.putInt("bmi_return_tab", bmiReturnTab);
-        outState.putInt("fuel_return_tab", fuelReturnTab);
-        outState.putInt("percentage_return_tab", percentageReturnTab);
-        outState.putInt("emi_return_tab", emiReturnTab);
-        outState.putInt("finance_return_tab", financeReturnTab);
+        outState.putIntegerArrayList("tool_back_stack", new java.util.ArrayList<>(toolBackStack));
+        outState.putString("last_opened_tool", lastOpenedTool);
         super.onSaveInstanceState(outState);
     }
 }

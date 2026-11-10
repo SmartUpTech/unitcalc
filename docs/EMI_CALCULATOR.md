@@ -14,7 +14,7 @@ Reference posting fixture: 1,000,000 at 8.5% over 240 months: regular EMI 8,678.
 
 ## UI and reuse
 
-Calculate/Schedule/Graphy use the shared workspace pager and tab controller. Native Calculate keeps inputs, both totals and the converter keypad together. `EmiLayout` compacts spacing and reflows wide windows; `CalculationViewport` exposes physically impossible configurations using the shared `ViewportContent` measurement contract. No scrolling fallback exists. Schedule and prepayments use `FixedTableView` measured pagination. Secondary views retain bottom navigation. Charts have textual equivalents and native keyboard/TalkBack selection.
+Calculate/Schedule/Graphy use the shared workspace pager and tab controller. Native Calculate keeps inputs visible while the shared converter keypad replaces the result card during editing. Done/Back collapses the keypad and reveals a valid result. Filled Details and text Share match Age actions; Details retains prepayments, comparison, report/export, Reset and Insights. `EmiLayout` compacts spacing and reflows wide windows; `CalculationViewport` exposes physically impossible configurations using the shared `ViewportContent` measurement contract. No scrolling fallback exists. Schedule and prepayments use `FixedTableView` measured pagination. Secondary views retain bottom navigation. Charts have textual equivalents and native keyboard/TalkBack selection.
 
 Themes, bundled fonts, button styles/shapes and feedback use the existing owners. Amount labels use currency symbols only. Chart data is content-only; `ValueChartRenderer` owns shared drawing for UI/PDF. Graphy uses existing input/operation/derived/result primitives, including the zero-interest rule and prepayment-interest comparison.
 

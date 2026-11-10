@@ -37,10 +37,29 @@ public final class UsageAnalytics {
     }
 
     public static void event(String name, String dimension, String value) {
-        FirebaseAnalytics target = analytics;
-        if (!enabled || target == null) return;
         Bundle parameters = new Bundle();
         if (value != null) parameters.putString(dimension, value.substring(0, Math.min(100, value.length())));
-        target.logEvent(name, parameters);
+        log(name, parameters);
+    }
+
+    public static void toolOpened(String id) {
+        Bundle parameters = toolParameters(id);
+        if (parameters != null) log("tool_opened", parameters);
+    }
+
+    static Bundle toolParameters(String id) {
+        var entry = net.smartlogic.unitconverter.model.CalculatorCatalog.getById(id);
+        if (entry == null || !entry.isTool()) return null;
+        Bundle parameters = new Bundle();
+        parameters.putString("tool_id", entry.id);
+        parameters.putString("tool_family", entry.destination
+                == net.smartlogic.unitconverter.model.CalculatorCatalog.Destination.UNIT_CATEGORY
+                ? net.smartlogic.unitconverter.model.CalculatorCatalog.ID_UNIT : entry.id);
+        return parameters;
+    }
+
+    private static void log(String name, Bundle parameters) {
+        FirebaseAnalytics target = analytics;
+        if (enabled && target != null) target.logEvent(name, parameters);
     }
 }

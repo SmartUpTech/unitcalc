@@ -31,6 +31,7 @@ public class EmiLayoutTest {
     @Test public void summaryAndLandscapeReflowAndImpossibleViewport() throws Exception {
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 600, false, true);
         render(CalculatorThemes.GRAPHITE_BLACK, Appearance.Font.OSWALD, 1f, 800, 350, true, true);
+        render(CalculatorThemes.GRAPHITE_BLACK, Appearance.Font.OSWALD, 1f, 800, 350, false, true);
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 480, true, true);
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.OSWALD, 1f, 360, 480, true, true, true);
         render(CalculatorThemes.PORCELAIN_WHITE, Appearance.Font.ROBOTO_MONO, 2f, 320, 300, true, false);
@@ -65,13 +66,14 @@ public class EmiLayoutTest {
                 viewport.findViewById(R.id.emi_message).setVisibility(View.VISIBLE);
             }
             viewport.findViewById(R.id.emi_keys).setVisibility(editing ? View.VISIBLE : View.GONE); viewport.findViewById(R.id.emi_actions).setVisibility(editing ? View.GONE : View.VISIBLE);
+            content.setResultState(!empty, editing);
             ThemeApplier.apply(viewport);
             for (int i = 0; i < 3; i++) { viewport.forceLayout(); viewport.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)); viewport.layout(0, 0, width, height); viewport.getViewTreeObserver().dispatchOnPreDraw(); }
             String name = theme.id() + "-" + font.name() + "-" + scale + "-" + width + "x" + height + "-" + editing + (empty ? "-empty" : "");
             assertEquals(name, expected, content.fitsViewport());
             if (expected && editing) {
-                View summary = viewport.findViewById(R.id.emi_summary), keys = viewport.findViewById(R.id.emi_keys);
-                if (width < height) {
+                View summary = viewport.findViewById(R.id.emi_result_section), keys = viewport.findViewById(R.id.emi_keys);
+                if (width < height && summary.getVisibility() == View.VISIBLE) {
                     int margin = app.getResources().getDimensionPixelSize(R.dimen.emi_summary_dense_margin);
                     assertTrue(name + " result top space", summary.getTop() - viewport.findViewById(R.id.emi_fields).getBottom() >= margin);
                     assertTrue(name + " result bottom space", keys.getTop() - summary.getBottom() >= margin);
@@ -81,6 +83,11 @@ public class EmiLayoutTest {
                 assertTrue("numeric key width", viewport.findViewById(R.id.seven).getMeasuredWidth() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
                 assertTrue("numeric key height", viewport.findViewById(R.id.seven).getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target));
                 assertTrue(keys.getMeasuredHeight() >= app.getResources().getDimensionPixelSize(R.dimen.converter_touch_target) * 4);
+            }
+            View note = viewport.findViewById(R.id.emi_message);
+            if (expected && note.getVisibility() == View.VISIBLE && note.getRootView().findViewById(R.id.emi_summary).getVisibility() == View.VISIBLE) {
+                assertEquals(R.id.emi_result_section, ((View) note.getParent()).getId());
+                assertTrue("Notes stay below the result card", note.getTop() >= viewport.findViewById(R.id.emi_summary).getBottom());
             }
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888); viewport.draw(new Canvas(bitmap));
             File file = new File("build/reports/emi/" + name + ".png"); file.getParentFile().mkdirs();

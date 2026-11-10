@@ -181,10 +181,13 @@ public final class ThemeApplier {
             if ("content_accent".equals(view.getTag())) text.setTextColor(theme.accentContentColor());
         }
         if ("theme_outlined_surface".equals(view.getTag())) {
+            int left = view.getPaddingLeft(), top = view.getPaddingTop();
+            int right = view.getPaddingRight(), bottom = view.getPaddingBottom();
             int outline = view.getResources().getDimensionPixelSize(R.dimen.theme_outline);
             GradientDrawable surface = roundedFill(theme.background(), view.getResources().getDimension(R.dimen.converter_card_padding));
             surface.setStroke(outline, withAlpha(theme.secondaryContentColor(), 0x66));
             view.setBackground(new android.graphics.drawable.InsetDrawable(surface, outline, outline, outline, outline));
+            view.setPadding(left, top, right, bottom);
         }
         if ("theme_divider".equals(view.getTag())) view.setBackgroundColor(withAlpha(theme.secondaryContentColor(), 0x44));
         if ("content_accent".equals(view.getTag()) && view instanceof ImageView icon) {

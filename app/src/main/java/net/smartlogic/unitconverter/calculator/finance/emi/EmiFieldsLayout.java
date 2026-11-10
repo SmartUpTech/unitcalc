@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.util.TypedValue;
 import net.smartlogic.unitconverter.R;
 
 /** Reflows input rows into two columns in short wide windows, preserving labels. */
@@ -53,10 +55,37 @@ public final class EmiFieldsLayout extends ViewGroup {
         for (int i = 0; i < rows.size();) {
             int columns = columns(i), column = (width - gap * (columns - 1)) / columns;
             int rowHeight = 0;
+            int labelHeight = 0;
             for (int j = i; j < Math.min(i + columns, rows.size()); j++) {
-                View v = rows.get(j);
+                ViewGroup v = (ViewGroup) rows.get(j);
+                TextView label = (TextView) v.getChildAt(0);
+                label.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+                float normal = getResources().getDimension(R.dimen.graphy_value_text_size);
+                android.text.TextPaint paint = new android.text.TextPaint(label.getPaint());
+                paint.setTextSize(normal);
+                int labelSpace = twoColumns ? column : column / 2;
+                boolean longLabel = paint.measureText(label.getText().toString())
+                        > labelSpace - label.getPaddingLeft() - label.getPaddingRight();
+                label.setTextSize(TypedValue.COMPLEX_UNIT_PX, normal - (longLabel
+                        ? getResources().getDimension(R.dimen.emi_label_fit_reduction) : 0));
+                label.forceLayout();
+                v.forceLayout();
                 v.measure(MeasureSpec.makeMeasureSpec(Math.max(0, column), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                labelHeight = Math.max(labelHeight, label.getMeasuredHeight());
                 rowHeight = Math.max(rowHeight, v.getMeasuredHeight());
+            }
+            if (twoColumns) {
+                rowHeight = 0;
+                for (int j = i; j < Math.min(i + columns, rows.size()); j++) {
+                    ViewGroup v = (ViewGroup) rows.get(j);
+                    // Equal label slots keep numeric editors level even in long translations.
+                    v.getChildAt(0).getLayoutParams().height = labelHeight;
+                    v.getChildAt(0).forceLayout();
+                    v.forceLayout();
+                    v.measure(MeasureSpec.makeMeasureSpec(Math.max(0, column), MeasureSpec.EXACTLY),
+                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                    rowHeight = Math.max(rowHeight, v.getMeasuredHeight());
+                }
             }
             height += rowHeight + (i > 0 ? gap : 0);
             i += columns;

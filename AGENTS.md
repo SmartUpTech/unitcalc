@@ -28,6 +28,15 @@ Paths below are relative to docs/. Confirm implementation when a document is sta
 ## PROTOCOL
 1. Analyze task. 2. Load relevant docs. 3. Target files. 4. Implement/Validate.
 
+## SOURCE GROUPS
+Java/Kotlin paths below are relative to `app/src/main/java/net/smartlogic/unitconverter/`.
+- Basic calculator: `calculator/basic/`.
+- Finance: `calculator/finance/emi/` and `calculator/finance/investment/` (shared FD/RD/SIP implementation).
+- Other tools: `calculator/tools/{age,bmi,fuel,percentage,timer}/`.
+- Converters: `converter/` with `unit/` and `currency/` implementations.
+- Destination metadata: `model/CalculatorCatalog.java`; navigation: `activity/MainActivity.java`; Preferences UI: `activity/SettingsUi.kt`.
+Use the catalog for tool identities/start-up choices and shared theme/layout owners for visual changes. Confirm package declarations when locating tests; some test directories retain their earlier grouping.
+
 ## SOURCE ROUTING (POST-REFACTOR)
 Paths below are relative to `app/src/main/java/net/smartlogic/unitconverter/`.
 - Basic calculator -> `calculator/basic/`.

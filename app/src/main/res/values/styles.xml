@@ -527,4 +527,20 @@
     <style name="ConverterOperatorKey" parent="CalculatorKey.Operator" />
 
     <style name="ConverterActionKey" parent="CalculatorKey.Function" />
+    <!-- Shared outlined result surface; content-specific layouts own only arrangement. -->
+    <style name="ToolResultCard">
+        <item name="android:background">@drawable/bg_converter_card</item>
+        <item name="android:tag">theme_outlined_surface</item>
+        <item name="android:padding">@dimen/graphy_spacing_md</item>
+    </style>
+    <style name="ToolResultValue" parent="AgeText">
+        <item name="android:textSize">@dimen/bmi_value_size</item>
+        <item name="android:tag">content_accent</item>
+    </style>
+    <style name="ToolResultCaption" parent="AgeCaption">
+        <item name="android:textSize">@dimen/graphy_value_text_size</item>
+    </style>
+    <style name="ToolResultDetail" parent="AgeText">
+        <item name="android:textSize">@dimen/graphy_value_text_size</item>
+    </style>
 </resources>

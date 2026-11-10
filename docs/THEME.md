@@ -17,8 +17,10 @@ ink; filled converter segments pair that accent with on-accent content.
 
 All catalog palettes supply readable primary, secondary and accent ink directly.
 Glacier, Sage Green and Golden Poppy use dark accents on their lighter surfaces;
-Purple Majesty uses deep-purple ink. Burnt Orange uses the deeper
-approved background to retain warm light text. Theme IDs, unlock ranks and
+Steel Blue uses the exact `#3F5A62` background with pale text and a cool blue accent.
+Burnt Peach uses the exact `#FE8254` background with dark warm text and accents.
+Their existing `purple_mountain_majesty` / `burnt_orange` IDs and internal constants
+remain stable so selections and unlocks persist. Theme IDs, unlock ranks and
 catalog order remain permanent. System-bar icon mode chooses the higher-contrast
 black/white foreground, rather than using a fixed brightness threshold.
 

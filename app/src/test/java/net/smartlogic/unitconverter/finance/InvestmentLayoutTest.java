@@ -49,6 +49,7 @@ public class InvestmentLayoutTest extends InvestmentFragmentTest {
                     org.robolectric.util.ReflectionHelpers.callInstanceMethod(f,"choice",org.robolectric.util.ReflectionHelpers.ClassParameter.from(int.class,R.string.investment_cumulative));drain(f);
                 }
                 render(f,"landscape",1f,800,400,true,true,"editing");
+                render(f,"landscape",1f,800,400,false,true,"results");
                 render(f,"extreme",2f,320,300,true,false,"space-limit");
                 RuntimeEnvironment.setFontScale(1f);
                 if(kind==InvestmentInputs.Kind.SIP){
@@ -96,7 +97,25 @@ public class InvestmentLayoutTest extends InvestmentFragmentTest {
         View root=f.requireView();for(int n=0;n<3;n++){root.forceLayout();root.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));root.layout(0,0,width,height);root.getViewTreeObserver().dispatchOnPreDraw();Shadows.shadowOf(Looper.getMainLooper()).idle();}
         EmiLayout content=form(f).findViewById(R.id.emi_layout);String name=f.kind()+"-"+theme+"-"+scale+"-"+width+"x"+height+"-"+state;
         assertEquals(name,expected,content.fitsViewport());
-        if(expected&&editing){View keys=form(f).findViewById(R.id.emi_keys),summary=form(f).findViewById(R.id.emi_summary);if(width<height){
+        if (expected) {
+            android.view.ViewGroup fields = form(f).findViewById(R.id.emi_fields);
+            View first = fields.getChildAt(0), second = fields.getChildAt(1);
+            if (first.getTop() == second.getTop()) {
+                android.graphics.Rect principal = new android.graphics.Rect(), rate = new android.graphics.Rect();
+                View principalInput = form(f).findViewById(R.id.emi_principal);
+                View rateInput = form(f).findViewById(R.id.emi_rate);
+                principalInput.getDrawingRect(principal); rateInput.getDrawingRect(rate);
+                fields.offsetDescendantRectToMyCoords(principalInput, principal);
+                fields.offsetDescendantRectToMyCoords(rateInput, rate);
+                assertEquals(name + " paired numeric editor alignment", principal.top, rate.top);
+            }
+        }
+        View note = form(f).findViewById(R.id.emi_message);
+        if (expected && note.getVisibility() == View.VISIBLE && note.getRootView().findViewById(R.id.emi_summary).getVisibility() == View.VISIBLE) {
+            assertEquals(R.id.emi_result_section, ((View) note.getParent()).getId());
+            assertTrue(name + " note below result card", note.getTop() >= form(f).findViewById(R.id.emi_summary).getBottom());
+        }
+        if(expected&&editing){View keys=form(f).findViewById(R.id.emi_keys),summary=form(f).findViewById(R.id.emi_result_section);if(width<height&&summary.getVisibility()==View.VISIBLE){
             int margin=root.getResources().getDimensionPixelSize(R.dimen.emi_summary_dense_margin);
             assertTrue(name+" result top space",summary.getTop()-form(f).findViewById(R.id.emi_fields).getBottom()>=margin);
             assertTrue(name+" result bottom space",keys.getTop()-summary.getBottom()>=margin);

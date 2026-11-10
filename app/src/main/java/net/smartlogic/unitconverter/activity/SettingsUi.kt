@@ -164,9 +164,9 @@ private fun SettingsScreen(
                 .padding(bottom = spacing.lg),
         ) {
             SettingsSection(R.string.settings_section_general)
-            val startupLabels = arrayOf(stringResource(R.string.calculator),
-                stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
-            val startupIds = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
+            val startupEntries = CalculatorCatalog.getStartupEntries()
+            val startupLabels = startupEntries.map { stringResource(it.titleRes) }.toTypedArray()
+            val startupIds = startupEntries.map { it.id }
             SettingsRow(stringResource(R.string.prefs_startup_screen),
                 value = startupLabels[startupIds.indexOf(preferences.startupScreen)],
                 onClick = { activeChoiceKey = Preferences.PREFS_STARTUP_SCREEN })
@@ -176,6 +176,10 @@ private fun SettingsScreen(
             SettingsDivider()
             SettingsSwitchRow(stringResource(R.string.prefs_key_vibration_title),
                 preferences.isKeyVibrationEnabled(), preferences::setKeyVibrationEnabled)
+            SettingsDivider()
+            SettingsRow(stringResource(R.string.emi_preferred_currency),
+                value = net.smartlogic.unitconverter.helper.PreferredCurrency.label(context),
+                onClick = { net.smartlogic.unitconverter.helper.PreferredCurrency.showPicker(activity as androidx.fragment.app.FragmentActivity) })
 
             SettingsSection(R.string.settings_section_appearance)
             Text(stringResource(R.string.prefs_title_theme),
@@ -197,11 +201,6 @@ private fun SettingsScreen(
                 onClick = { activeChoiceKey = Appearance.FONT })
             SettingsRow(stringResource(R.string.appearance_reset),
                 onClick = { activeChoiceKey = "appearance_reset" })
-
-            SettingsRow(stringResource(R.string.emi_preferred_currency),
-                value = net.smartlogic.unitconverter.helper.PreferredCurrency.label(context),
-                summary = stringResource(R.string.emi_preferred_hint),
-                onClick = { net.smartlogic.unitconverter.helper.PreferredCurrency.showPicker(activity as androidx.fragment.app.FragmentActivity) })
 
             SettingsSection(R.string.settings_section_number_format)
             choices.forEachIndexed { index, choice ->
@@ -292,9 +291,9 @@ private fun SettingsScreen(
         )
     }
     if (activeChoiceKey == Preferences.PREFS_STARTUP_SCREEN) {
-        val ids = listOf(CalculatorCatalog.ID_BASIC, CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY)
-        val labels = arrayOf(stringResource(R.string.calculator),
-            stringResource(R.string.drawer_unit_converter), stringResource(R.string.startup_currency_converter))
+        val entries = CalculatorCatalog.getStartupEntries()
+        val ids = entries.map { it.id }
+        val labels = entries.map { stringResource(it.titleRes) }.toTypedArray()
         SettingsSelectionDialog(
             title = stringResource(R.string.prefs_startup_screen), values = labels,
             selected = labels[ids.indexOf(preferences.startupScreen)],

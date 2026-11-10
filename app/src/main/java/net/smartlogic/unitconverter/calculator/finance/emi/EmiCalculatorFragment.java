@@ -206,13 +206,13 @@ public final class EmiCalculatorFragment extends Fragment {
                 AgeDialogFragment.forDate("emi_date", draft().firstEmi, R.string.emi_first_date).show(getChildFragmentManager(), AgeDialogFragment.TAG);
         });
         page.findViewById(R.id.emi_insights).setOnClickListener(v -> {
-            if (rule) saveRule(); else if (screen.equals("edit")) finishEdit(true); else open("insights");
+            if (rule) saveRule(); else if (screen.equals("edit")) finishEdit(true); else more();
         });
         page.findViewById(R.id.emi_more).setOnClickListener(v -> {
-            if (rule) open("rules"); else if (screen.equals("edit")) show(EmiDialogFragment.choices(R.string.emi_more, R.string.emi_prepayments, R.string.emi_apply, R.string.emi_discard)); else more();
+            if (rule) open("rules"); else if (screen.equals("edit")) show(EmiDialogFragment.choices(R.string.emi_more, R.string.emi_prepayments, R.string.emi_apply, R.string.emi_discard)); else shareText();
         });
-        text(page, R.id.emi_insights, getString(rule ? R.string.emi_save : screen.equals("edit") ? R.string.emi_apply : R.string.emi_insights));
-        text(page, R.id.emi_more, getString(rule ? R.string.emi_cancel : R.string.emi_more));
+        text(page, R.id.emi_insights, getString(rule ? R.string.emi_save : screen.equals("edit") ? R.string.emi_apply : R.string.investment_details));
+        text(page, R.id.emi_more, getString(rule ? R.string.emi_cancel : screen.equals("edit") ? R.string.emi_more : R.string.emi_share));
         View keys = page.findViewById(R.id.emi_keys);
         View minus = keys.findViewById(R.id.minus);
         if (minus != null) { ViewGroup row = (ViewGroup) minus.getParent();
@@ -301,10 +301,13 @@ public final class EmiCalculatorFragment extends Fragment {
         if (screen.equals("rule")) {
             formPage.findViewById(R.id.emi_insights).setEnabled(true);
             text(formPage, R.id.emi_value_label, getString(R.string.emi_prepayments)); text(formPage, R.id.emi_value, "");
-            text(formPage, R.id.emi_total_interest, ""); text(formPage, R.id.emi_total_payment, ""); text(formPage, R.id.emi_message, getString(R.string.emi_rule_after_payoff)); return;
+            text(formPage, R.id.emi_total_interest, ""); text(formPage, R.id.emi_total_payment, ""); text(formPage, R.id.emi_message, getString(R.string.emi_rule_after_payoff));
+            formPage.findViewById(R.id.emi_message).setVisibility(View.VISIBLE);
+            ((EmiLayout) formPage.findViewById(R.id.emi_layout)).setResultState(false, keysOpen); return;
         }
         EmiResult r = result(); EmiFormatter f = new EmiFormatter(requireContext());
-        formPage.findViewById(R.id.emi_insights).setEnabled(r != null);
+        formPage.findViewById(R.id.emi_insights).setEnabled(!screen.equals("edit") || r != null);
+        formPage.findViewById(R.id.emi_more).setEnabled(screen.equals("edit") || r != null);
         int failure = editingB ? errorB : errorA;
         boolean changes = !draft().rules.isEmpty() && draft().method == EmiInputs.Method.REDUCE_EMI;
         text(formPage, R.id.emi_value_label, getString(changes ? R.string.emi_initial_monthly : R.string.emi_monthly));
@@ -319,6 +322,7 @@ public final class EmiCalculatorFragment extends Fragment {
             else if (failure != 0 || validInputs(draft()) == null && !draft().principal.isEmpty() && !draft().rate.isEmpty()) message.setText(R.string.emi_check_short);
         } else formPage.findViewById(R.id.emi_message).setContentDescription(null);
         formPage.findViewById(R.id.emi_message).setVisibility(keysOpen && r != null ? View.GONE : View.VISIBLE);
+        ((EmiLayout) formPage.findViewById(R.id.emi_layout)).setResultState(r != null, keysOpen);
     }
     private void renderGraph() {
         if (graphy == null) return;
@@ -327,7 +331,7 @@ public final class EmiCalculatorFragment extends Fragment {
         graphPage.findViewById(R.id.emi_graph_mode).setVisibility(resultA != null && !a.rules.isEmpty() ? View.VISIBLE : View.GONE);
         graphy.update(resultA == null ? null : EmiGraphBuilder.build(requireContext(), resultA, extra, a.years));
     }
-    private void more() { show(EmiDialogFragment.choices(R.string.emi_more, R.string.emi_prepayments, R.string.emi_compare, R.string.emi_report, R.string.emi_share, R.string.emi_reset)); }
+    private void more() { show(EmiDialogFragment.choices(R.string.investment_details, R.string.emi_prepayments, R.string.emi_compare, R.string.emi_report, R.string.emi_share, R.string.emi_reset, R.string.emi_insights)); }
     private void choice(int action) {
         if (action == R.string.emi_prepayments) {
             try { EmiCalculator.validate(draft().inputs().withoutPrepayments()); open("rules"); }
@@ -341,6 +345,7 @@ public final class EmiCalculatorFragment extends Fragment {
         else if (action == R.string.emi_pdf || action == R.string.emi_csv || action == R.string.emi_share_pdf || action == R.string.emi_share_csv)
             export(action == R.string.emi_pdf || action == R.string.emi_share_pdf, action == R.string.emi_share_pdf || action == R.string.emi_share_csv);
         else if (action == R.string.emi_share_text) shareText();
+        else if (action == R.string.emi_insights) { if (resultA != null) open("insights"); else toast(R.string.emi_invalid); }
         else if (action == R.string.emi_reset) show(EmiDialogFragment.confirm(R.string.emi_reset, getString(R.string.emi_reset_question), R.string.emi_clear_field));
         else if (action == R.string.emi_clear_field) { a = new EmiDraft(Preferences.getInstance(requireContext()).getPreferredCurrency()); b = null; editingB = false; tab = 0; pageStart = 0; keysOpen = false; open("main"); changed(); }
         else if (action == R.string.emi_apply) finishEdit(true);

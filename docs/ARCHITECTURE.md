@@ -30,7 +30,7 @@ All package paths above are relative to `net.smartlogic.unitconverter`. Navigati
 ## CORE RULES
 - **Logic Placement**: Keep logic in Helpers/Models. Fragments should focus on UI binding and Lifecycle.
 - **Data Flow**: UI -> Model/Helper. Minimize state within Fragments.
-- **Navigation**: Managed via `ViewPager2` and `TabLayout`. Reference `CalculatorCatalog` for destinations.
+- **Navigation**: `MainActivity` owns root/detail fragment destinations and a saved `tool_back_stack`; calculator workspace pages use `ViewPager2` and `TabLayout`. Forward detail navigation records the preceding destination, Back consumes the trail, and revisiting an earlier destination removes the loop. Timer remains an overlay on the current workspace. Reference `CalculatorCatalog` for destinations and start-up choices. Tool usage telemetry is coalesced at the Activity destination boundary; converters notify it after mode/category changes rather than logging duplicate opens themselves.
 - **Threading**: Use existing bounded executors or coroutines for background tasks. `View.post` schedules work on the UI thread; it is not a background executor. Never perform SQL or network calls on the Main Thread.
 - **Persistence**: Use the `Preferences` helper for settings and `DatabaseHelper` for history.
 - **Files**: One class per file. Avoid premature abstraction. Maintain strict naming conventions.

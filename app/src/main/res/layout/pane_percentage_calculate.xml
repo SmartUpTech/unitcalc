@@ -122,7 +122,7 @@
         android:id="@+id/percentage_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_converter_card"
+        style="@style/ToolResultCard"
         android:orientation="vertical"
         android:padding="@dimen/converter_spacing"
         android:tag="theme_outlined_surface">
@@ -131,7 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/percentage_result_caption"
-            style="@style/ConverterLabel"
+            style="@style/ToolResultCaption"
             android:gravity="center"
             android:tag="content_secondary"
             android:text="@string/percentage_result_label" />
@@ -140,7 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/percentage_result_value"
-            style="@style/ResultDisplay"
+            style="@style/ToolResultValue"
             android:accessibilityLiveRegion="polite"
             android:gravity="center"
             android:tag="content_accent"
@@ -150,7 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/percentage_result_explain"
-            style="@style/ConverterLabel"
+            style="@style/ToolResultDetail"
             android:layout_marginTop="@dimen/converter_small_spacing"
             android:gravity="center"
             android:tag="content_primary" />

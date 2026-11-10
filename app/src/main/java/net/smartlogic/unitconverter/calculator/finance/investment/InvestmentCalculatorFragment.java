@@ -1,6 +1,8 @@
 package net.smartlogic.unitconverter.calculator.finance.investment;
 
 import android.os.Bundle;
+import android.content.Intent;
+import android.content.ActivityNotFoundException;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -206,10 +208,10 @@ public final class InvestmentCalculatorFragment extends Fragment {
         form.findViewById(R.id.investment_payout_mode).setOnClickListener(v -> show(EmiDialogFragment.choices(R.string.investment_payout_mode, R.string.investment_cumulative, R.string.investment_periodic)));
         form.findViewById(R.id.investment_frequency).setOnClickListener(v -> show(EmiDialogFragment.choices(draft.periodic ? R.string.investment_payout_frequency : R.string.investment_compounding,
                 R.string.investment_monthly_frequency, R.string.investment_quarterly, R.string.investment_half_yearly, R.string.investment_yearly)));
-        text(R.id.emi_insights, getString(R.string.investment_reset));
-        text(R.id.emi_more, getString(R.string.investment_details));
-        form.findViewById(R.id.emi_insights).setOnClickListener(v -> show(EmiDialogFragment.confirm(R.string.investment_reset, getString(R.string.investment_reset_confirm), R.string.investment_reset)));
-        form.findViewById(R.id.emi_more).setOnClickListener(v -> details());
+        text(R.id.emi_insights, getString(R.string.investment_details));
+        text(R.id.emi_more, getString(R.string.emi_share));
+        form.findViewById(R.id.emi_insights).setOnClickListener(v -> details());
+        form.findViewById(R.id.emi_more).setOnClickListener(v -> shareText());
         View keys = form.findViewById(R.id.emi_keys), minus = keys.findViewById(R.id.minus);
         ViewGroup row = (ViewGroup) minus.getParent(); int position = row.indexOfChild(minus); ViewGroup.LayoutParams lp = minus.getLayoutParams(); row.removeView(minus);
         View done = getLayoutInflater().inflate(R.layout.bmi_keypad_done, row, false); done.setContentDescription(getString(R.string.emi_done)); row.addView(done, position, lp);
@@ -252,6 +254,9 @@ public final class InvestmentCalculatorFragment extends Fragment {
         binding = previous;
     }
     private void choice(int action) {
+        if (action == R.string.emi_reset) {
+            show(EmiDialogFragment.confirm(R.string.investment_reset, getString(R.string.investment_reset_confirm), R.string.investment_reset)); return;
+        }
         if (action == R.string.investment_reset) { draft = fresh(); pageStart = tab = focus = 0; yearly = false; carets = new int[]{-1,-1,-1,-1,-1,-1,-1,-1};
             if (form != null) { binding = true; String[] values={draft.amount,draft.rate,draft.tenure,draft.stepText()}; for (int n=0;n<4;n++) editors[n].setText(values[n]); binding = false; }
             if (tabs != null) tabs.selectTab(0); setKeys(false);
@@ -378,6 +383,8 @@ public final class InvestmentCalculatorFragment extends Fragment {
                     : "overflow".equals(error) ? R.string.investment_overflow_short : R.string.investment_check_short) : fullMessage);
             form.findViewById(R.id.emi_message).setContentDescription(fullMessage);
             form.findViewById(R.id.emi_message).setVisibility(keysOpen && result != null ? View.GONE : View.VISIBLE);
+            ((EmiLayout) form.findViewById(R.id.emi_layout)).setResultState(result != null, keysOpen);
+            form.findViewById(R.id.emi_more).setEnabled(result != null);
             // Errors stay associated with their field, without replacing entered text.
             for(int n=0;n<editors.length;n++) {
                 String field=new String[]{"amount","rate","tenure","step"}[n];
@@ -422,7 +429,23 @@ public final class InvestmentCalculatorFragment extends Fragment {
     }
     private void details() {
         String detail=getString(R.string.investment_assumptions)+"\n\n"+getString(kind()==InvestmentInputs.Kind.SIP?R.string.investment_sip_assumptions:kind()==InvestmentInputs.Kind.RD?R.string.investment_rd_assumptions:R.string.investment_fd_assumptions);
-        show(EmiDialogFragment.info(title(kind()),detail));
+        show(EmiDialogFragment.infoWithAction(title(kind()),detail,R.string.emi_reset));
+    }
+    private void shareText() {
+        if (result == null) return;
+        StringBuilder summary = new StringBuilder(getString(title(kind())));
+        summary.append("\n").append(getString(R.string.investment_history,
+                money(result.inputs().amount()), result.inputs().annualRate().toPlainString(), result.inputs().months()));
+        summary.append("\n").append(getString(R.string.investment_metric,
+                ((TextView)form.findViewById(R.id.emi_value_label)).getText(),
+                ((TextView)form.findViewById(R.id.emi_value)).getText()));
+        for (int id : new int[]{R.id.emi_total_interest, R.id.emi_total_payment, R.id.investment_receipts, R.id.emi_message}) {
+            TextView line = form.findViewById(id);
+            if (line.getVisibility() == View.VISIBLE) summary.append("\n").append(line.getText());
+        }
+        try { startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, summary.toString()), getString(R.string.emi_share))); }
+        catch (ActivityNotFoundException unavailable) { toast(R.string.emi_share_error); }
     }
     public void restoreFromHistory(String payload) {
         try {

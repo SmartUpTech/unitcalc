@@ -24,8 +24,8 @@ public class StartupScreenPreferenceTest {
 
     @Test public void converterChoicesPersistAndInvalidUpdatesPreserveSelection() {
         Preferences preferences = Preferences.getInstance(RuntimeEnvironment.getApplication());
-        for (String id : new String[]{CalculatorCatalog.ID_UNIT, CalculatorCatalog.ID_CURRENCY,
-                CalculatorCatalog.ID_BASIC}) {
+        for (var entry : CalculatorCatalog.getStartupEntries()) {
+            String id = entry.id;
             preferences.setStartupScreen(id);
             assertEquals(id, preferences.getPreferences().getString(Preferences.PREFS_STARTUP_SCREEN, null));
             preferences.setStartupScreen("removed_tool");

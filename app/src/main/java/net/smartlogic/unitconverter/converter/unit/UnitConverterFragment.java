@@ -643,6 +643,7 @@ public class UnitConverterFragment extends Fragment implements OnClickListener, 
         inputValue.setText("");
         convertAndDisplay("");
         mPrefs.setLastConversion(categoryId);
+        if (getActivity() instanceof net.smartlogic.unitconverter.activity.MainActivity main) main.onToolDestinationChanged();
         mPrefs.setLastFromConversion(0);
         mPrefs.setLastToConversion(1);
         initialDropDown(conversions.getById(categoryId));

@@ -1,6 +1,6 @@
-# Fuel Efficiency Calculator
+# Fuel cost calculator
 
-Trip fuel volume and cost from distance, fuel consumption, price per litre, passengers, and optional round trip. Registered under **Drawer → Tools** as `fuel_efficiency_calculator`. Distinct from the **Fuel** unit converter category (`unit:6`), which only converts consumption units.
+Trip fuel volume and cost from distance, fuel consumption, price per litre, passengers, and optional round trip. Display name: **Fuel cost calculator**. Registered under **Drawer → Tools** with the unchanged stable ID `fuel_efficiency_calculator`. Distinct from the **Fuel** unit converter category (`unit:6`), which only converts consumption units. Existing source/resource names, saved drafts and analytics IDs remain compatible. Fuel needed uses the shared 16sp primary supporting-result role rather than the 12sp input-label role.
 
 ## Calculation
 

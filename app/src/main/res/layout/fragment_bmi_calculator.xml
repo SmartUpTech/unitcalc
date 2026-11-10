@@ -37,7 +37,7 @@
         </LinearLayout>
     </LinearLayout>
     <net.smartlogic.unitconverter.calculator.tools.bmi.BmiResultLayout
-        android:id="@+id/bmi_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_converter_card" android:padding="@dimen/converter_spacing" android:tag="theme_outlined_surface" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground" android:accessibilityLiveRegion="polite">
+        style="@style/ToolResultCard" android:id="@+id/bmi_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="@dimen/converter_spacing" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground" android:accessibilityLiveRegion="polite">
         <FrameLayout android:id="@+id/bmi_gauge_container" android:layout_width="match_parent" android:layout_height="wrap_content">
             <net.smartlogic.unitconverter.calculator.tools.bmi.BmiGaugeView
                 android:id="@+id/bmi_gauge" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="no" />

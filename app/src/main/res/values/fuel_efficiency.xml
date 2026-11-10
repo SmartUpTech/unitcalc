@@ -5,7 +5,7 @@
     <string name="fuel_volume">%1$s L</string>
     <string name="fuel_done">Done</string>
     <item type="id" name="fuel_efficiency_calculator" />
-    <string name="fuel_efficiency_calculator">Fuel Efficiency Calculator</string>
+    <string name="fuel_efficiency_calculator">Fuel cost calculator</string>
     <string name="fuel_trip_distance">Trip distance</string>
     <string name="fuel_efficiency_label">Fuel efficiency</string>
     <string name="fuel_price_label">Fuel price</string>

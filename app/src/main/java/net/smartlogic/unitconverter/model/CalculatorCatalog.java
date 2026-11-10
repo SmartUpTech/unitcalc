@@ -85,6 +85,16 @@ public final class CalculatorCatalog {
                     || destination == Destination.RD_CALCULATOR
                     || destination == Destination.SIP_CALCULATOR;
         }
+
+        public boolean isTool() {
+            return switch (destination) {
+                case BASIC_CALCULATOR, UNIT_CONVERTER, UNIT_CATEGORY, CURRENCY, TIMER,
+                        AGE_CALCULATOR, BMI_CALCULATOR, FUEL_EFFICIENCY_CALCULATOR,
+                        PERCENTAGE_CALCULATOR, EMI_CALCULATOR, FD_CALCULATOR,
+                        RD_CALCULATOR, SIP_CALCULATOR -> true;
+                default -> false;
+            };
+        }
     }
 
     public static final class Section {
@@ -206,6 +216,20 @@ public final class CalculatorCatalog {
     @NonNull
     public static List<Section> getSections() {
         return Collections.unmodifiableList(SECTIONS);
+    }
+
+    /** Main tools in drawer order; category choices remain inside Unit Converter. */
+    @NonNull public static List<Entry> getStartupEntries() {
+        List<Entry> entries = new ArrayList<>();
+        for (Section section : SECTIONS) for (Entry entry : section.entries) {
+            if (entry.isTool() && entry.destination != Destination.UNIT_CATEGORY) entries.add(entry);
+        }
+        return Collections.unmodifiableList(entries);
+    }
+
+    public static boolean isStartupId(String id) {
+        Entry entry = BY_ID.get(id);
+        return entry != null && entry.isTool() && entry.destination != Destination.UNIT_CATEGORY;
     }
 
     @NonNull

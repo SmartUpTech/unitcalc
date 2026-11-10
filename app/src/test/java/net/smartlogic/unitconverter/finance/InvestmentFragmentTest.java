@@ -50,9 +50,30 @@ public class InvestmentFragmentTest {
                 field.dispatchTouchEvent(android.view.MotionEvent.obtain(0,1,android.view.MotionEvent.ACTION_UP,8,8,0));
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 assertEquals(View.VISIBLE,form(f).findViewById(R.id.emi_keys).getVisibility());
+                assertEquals(View.GONE,form(f).findViewById(R.id.emi_summary).getVisibility());
+                form(f).findViewById(R.id.equal).performClick();
+                assertEquals(View.GONE,form(f).findViewById(R.id.emi_keys).getVisibility());
+                assertEquals(View.VISIBLE,form(f).findViewById(R.id.emi_summary).getVisibility());
+                form(f).findViewById(R.id.emi_more).performClick();
+                android.content.Intent chooser=Shadows.shadowOf(host.get()).getNextStartedActivity();
+                assertEquals(android.content.Intent.ACTION_CHOOSER,chooser.getAction());
+                android.content.Intent share=chooser.getParcelableExtra(android.content.Intent.EXTRA_INTENT);
+                assertEquals(android.content.Intent.ACTION_SEND,share.getAction());
+                assertEquals("text/plain",share.getType());
+                assertTrue(share.getStringExtra(android.content.Intent.EXTRA_TEXT).contains(((TextView)form(f).findViewById(R.id.emi_value)).getText()));
                 assertEquals(kind==InvestmentInputs.Kind.SIP?View.GONE:View.VISIBLE,form(f).findViewById(R.id.investment_date_row).getVisibility());
                 set(f,R.id.emi_rate,"");assertNull(ReflectionHelpers.getField(f,"result"));drain(f);
+                assertEquals(View.GONE,form(f).findViewById(R.id.emi_summary).getVisibility());
+                assertFalse(form(f).findViewById(R.id.emi_more).isEnabled());
                 assertEquals(host.get().getString(R.string.emi_no_result),((TextView)form(f).findViewById(R.id.emi_value)).getText().toString());
+                form(f).findViewById(R.id.emi_insights).performClick();
+                EmiDialogFragment details=(EmiDialogFragment)f.getChildFragmentManager().findFragmentByTag(EmiDialogFragment.TAG);
+                ((androidx.appcompat.app.AlertDialog)details.requireDialog()).getButton(android.content.DialogInterface.BUTTON_NEUTRAL).performClick();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                EmiDialogFragment reset=(EmiDialogFragment)f.getChildFragmentManager().findFragmentByTag(EmiDialogFragment.TAG);
+                ((androidx.appcompat.app.AlertDialog)reset.requireDialog()).getButton(android.content.DialogInterface.BUTTON_POSITIVE).performClick();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertEquals("",((EditText)form(f).findViewById(R.id.emi_principal)).getText().toString());
             }finally{host.pause().stop().destroy();}
         }
     }

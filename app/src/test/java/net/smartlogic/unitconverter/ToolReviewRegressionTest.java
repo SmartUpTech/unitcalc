@@ -95,6 +95,15 @@ public class ToolReviewRegressionTest {
         host.getOnBackPressedDispatcher().onBackPressed();
         assertEquals(View.GONE, host.findViewById(R.id.fe_keypad_host).getVisibility());
         assertEquals(View.VISIBLE, host.findViewById(R.id.fe_results).getVisibility());
+        View results = host.findViewById(R.id.fe_results);
+        for (int i = 0; i < 2; i++) {
+            net.smartlogic.unitconverter.theme.ThemeApplier.apply(fragment.requireView());
+            assertTrue("Result padding survives theme application", results.getPaddingTop()
+                    >= host.getResources().getDimensionPixelSize(R.dimen.converter_spacing));
+            assertEquals(results.getPaddingTop(), results.getPaddingBottom());
+        }
+        assertEquals(host.getResources().getDimension(R.dimen.graphy_value_text_size),
+                ((android.widget.TextView) host.findViewById(R.id.fe_fuel_needed)).getTextSize(), .01f);
         assertFalse(host.isFinishing());
     }
 

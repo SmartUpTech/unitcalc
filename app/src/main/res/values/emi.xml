@@ -146,14 +146,15 @@
     <string name="emi_preferred_symbol">Currency: %1$s</string>
     <string name="emi_no_result">—</string>
     <item name="emi_calculator" type="id" />
-    <dimen name="emi_result_size">28sp</dimen>
+    <dimen name="emi_result_size">@dimen/bmi_value_size</dimen>
     <dimen name="emi_result_compact_size">22sp</dimen>
     <dimen name="emi_summary_margin">16dp</dimen>
     <dimen name="emi_summary_compact_margin">8dp</dimen>
     <dimen name="emi_summary_dense_margin">4dp</dimen>
-    <dimen name="emi_summary_text_size">@dimen/emi_field_size</dimen>
+    <dimen name="emi_summary_text_size">@dimen/graphy_value_text_size</dimen>
     <dimen name="emi_summary_compact_text_size">@dimen/graphy_value_text_size</dimen>
     <dimen name="emi_field_size">18sp</dimen>
+    <dimen name="emi_label_fit_reduction">2sp</dimen>
     <dimen name="emi_wide_min_width">600dp</dimen>
     <dimen name="emi_chart_height">180dp</dimen>
     <dimen name="emi_max_content_width">600dp</dimen>
@@ -167,9 +168,7 @@
     <integer name="emi_report_row_height">26</integer>
     <style name="EmiText" parent="BmiText" />
     <style name="EmiCaption" parent="BmiCaption" />
-    <style name="EmiResultCaption" parent="EmiCaption">
-        <item name="android:textSize">@dimen/graphy_value_text_size</item>
-    </style>
+    <style name="EmiResultCaption" parent="ToolResultCaption" />
     <style name="EmiInput" parent="BmiInput">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_weight">0</item>

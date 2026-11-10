@@ -69,8 +69,10 @@ public class EmiFragmentTest {
             EmiCalculatorFragment f = launch(controller.get()); assertNotNull(ReflectionHelpers.getField(f, "resultA"));
             ((EditText) form(f).findViewById(R.id.emi_principal)).performClick();
             assertEquals(View.VISIBLE, form(f).findViewById(R.id.emi_keys).getVisibility());
-            assertTrue(form(f).findViewById(R.id.emi_value).getVisibility() == View.VISIBLE);
-            f.handleBack();
+            assertEquals(View.GONE, form(f).findViewById(R.id.emi_summary).getVisibility());
+            form(f).findViewById(R.id.equal).performClick();
+            assertEquals(View.GONE, form(f).findViewById(R.id.emi_keys).getVisibility());
+            assertEquals(View.VISIBLE, form(f).findViewById(R.id.emi_summary).getVisibility());
             EditText rate = form(f).findViewById(R.id.emi_rate);
             rate.getText().replace(0, rate.length(), "101"); assertEquals("8.5", rate.getText().toString());
             rate.getText().replace(0, rate.length(), "8.50001"); assertEquals("8.5", rate.getText().toString());
@@ -79,6 +81,8 @@ public class EmiFragmentTest {
             principal.getText().replace(1, 4, "NaN"); assertEquals("1000000", principal.getText().toString());
             set(f, R.id.emi_rate, ""); assertNull(ReflectionHelpers.getField(f, "resultA")); drain(f);
             assertEquals("—", ((TextView) form(f).findViewById(R.id.emi_value)).getText().toString());
+            assertEquals(View.GONE, form(f).findViewById(R.id.emi_summary).getVisibility());
+            assertFalse(form(f).findViewById(R.id.emi_more).isEnabled());
             set(f, R.id.emi_rate, "8.5"); drain(f);
             principal.performClick(); set(f, R.id.emi_principal, "1"); drain(f);
             View root = f.requireView();
@@ -94,12 +98,12 @@ public class EmiFragmentTest {
                     + " message=" + ((TextView) form(f).findViewById(R.id.emi_message)).getText(),
                     ((EmiLayout) form(f).findViewById(R.id.emi_layout)).fitsViewport());
             set(f, R.id.emi_principal, "1000000"); drain(f); f.handleBack();
-            form(f).findViewById(R.id.emi_more).performClick(); menu(f, 0);
+            form(f).findViewById(R.id.emi_insights).performClick(); menu(f, 0);
             assertEquals("rules", ReflectionHelpers.getField(f, "screen"));
             text(f.requireView().findViewById(R.id.emi_secondary), f.getString(R.string.emi_add_rule)).performClick();
             set(f, R.id.emi_principal, "10000"); set(f, R.id.emi_rate, "12"); form(f).findViewById(R.id.emi_insights).performClick(); drain(f);
             EmiResult result = ReflectionHelpers.getField(f, "resultA"); assertTrue(result.interestSaved().signum() > 0);
-            f.handleBack(); form(f).findViewById(R.id.emi_more).performClick(); menu(f, 2);
+            f.handleBack(); form(f).findViewById(R.id.emi_insights).performClick(); menu(f, 2);
             // Selecting Save report opens a second dialog after the first menu is removed.
             EmiDialogFragment export = (EmiDialogFragment) f.getChildFragmentManager().findFragmentByTag(EmiDialogFragment.TAG);
             assertNotNull(export); assertEquals(2, ((AlertDialog) export.requireDialog()).getListView().getAdapter().getCount());
@@ -109,7 +113,7 @@ public class EmiFragmentTest {
         var controller = Robolectric.buildActivity(Host.class).setup().visible();
         try {
             EmiCalculatorFragment f = launch(controller.get());
-            form(f).findViewById(R.id.emi_more).performClick(); menu(f, 1); drain(f);
+            form(f).findViewById(R.id.emi_insights).performClick(); menu(f, 1); drain(f);
             text(f.requireView().findViewById(R.id.emi_secondary), f.getString(R.string.emi_edit_b)).performClick();
             set(f, R.id.emi_rate, "8"); drain(f); form(f).findViewById(R.id.emi_insights).performClick(); drain(f);
             EmiDraft a = ReflectionHelpers.getField(f, "a"), b = ReflectionHelpers.getField(f, "b"); assertEquals("8.5", a.rate); assertEquals("8", b.rate);

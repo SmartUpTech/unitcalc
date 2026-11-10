@@ -32,7 +32,7 @@ public final class CalculatorThemes {
             ThemePalette.PALETTE_25272A, ThemePalette.PALETTE_D0D2D4, ThemePalette.PALETTE_9EA1A5, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_F7F7F7);
     public static final CalculatorTheme PURPLE_MOUNTAIN_MAJESTY = theme(
             "purple_mountain_majesty", R.string.theme_purple_mountain_majesty, 5,
-            ThemePalette.PALETTE_9678B6, ThemePalette.PALETTE_18121F, ThemePalette.PALETTE_211A2A, ThemePalette.PALETTE_18121F, ThemePalette.PALETTE_18121F);
+            ThemePalette.PALETTE_3F5A62, ThemePalette.PALETTE_F7F7F7, ThemePalette.PALETTE_D0D2D4, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_B8D7E8);
     public static final CalculatorTheme GLACIER = theme(
             "glacier", R.string.theme_glacier, 6,
             ThemePalette.PALETTE_B8D7E8, ThemePalette.PALETTE_3E464B, ThemePalette.PALETTE_4C5A63, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_243F55);
@@ -44,7 +44,7 @@ public final class CalculatorThemes {
             ThemePalette.PALETTE_9CAF88, ThemePalette.PALETTE_303A31, ThemePalette.PALETTE_303D2C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_293D2B);
     public static final CalculatorTheme BURNT_ORANGE = theme(
             "burnt_orange", R.string.theme_burnt_orange, 9,
-            ThemePalette.PALETTE_AE4300, ThemePalette.PALETTE_FFF0E5, ThemePalette.PALETTE_FFE0C8, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFE8D6);
+            ThemePalette.PALETTE_FE8254, ThemePalette.PALETTE_3F231B, ThemePalette.PALETTE_513326, ThemePalette.PALETTE_3F231B, ThemePalette.PALETTE_44251B);
     public static final CalculatorTheme GOLDEN_POPPY = theme(
             "golden_poppy", R.string.theme_golden_poppy, 10,
             ThemePalette.PALETTE_FCC200, ThemePalette.PALETTE_39372F, ThemePalette.PALETTE_5C512C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_483B0A);

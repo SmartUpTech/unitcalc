@@ -13,7 +13,7 @@
     </LinearLayout>
 
     <net.smartlogic.unitconverter.calculator.tools.age.AgeResultLayout
-        android:id="@+id/age_result_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_converter_card" android:tag="theme_outlined_surface">
+        style="@style/ToolResultCard" android:id="@+id/age_result_card" android:padding="@dimen/spacing_0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
     <LinearLayout android:id="@+id/age_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 <!--        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="true">-->
 <!--            <TextView android:id="@+id/age_title" style="@style/AgeCaption" android:layout_width="0dp" android:layout_weight="1" android:gravity="center" android:text="@string/age_result" android:tag="content_secondary" />-->
