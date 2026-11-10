@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="fuel_mpg_us">mpg US</string>
+    <string name="fuel_mpg_uk">mpg Imp</string>
+    <string name="fuel_volume">%1$s L</string>
+    <string name="fuel_done">Done</string>
     <item type="id" name="fuel_efficiency_calculator" />
     <string name="fuel_efficiency_calculator">Fuel Efficiency Calculator</string>
     <string name="fuel_trip_distance">Trip distance</string>
@@ -25,7 +29,7 @@
     <string name="fuel_graphy_fuel">Fuel used: %1$s</string>
     <string name="fuel_graphy_cost">Trip cost: %1$s</string>
     <string name="fuel_graphy_share">%1$d passengers · %2$s each</string>
-    <string name="fuel_graphy_step_fuel">Distance × efficiency</string>
+    <string name="fuel_graphy_step_fuel">Distance (km) × consumption (L/100 km) ÷ 100</string>
     <string name="fuel_graphy_step_cost">Fuel × price</string>
     <string name="fuel_graphy_step_share">Trip cost ÷ passengers</string>
     <string name="fuel_result_accessibility">Trip cost %1$s. Fuel %2$s. %3$s per passenger.</string>

@@ -3,6 +3,8 @@ package net.smartlogic.unitconverter.percentage;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
+@org.robolectric.annotation.Config(application = android.app.Application.class, sdk = 34)
 public class PercentageHistoryStateTest {
     @Test public void payloadRoundTrip() {
         PercentageHistoryState original = new PercentageHistoryState(

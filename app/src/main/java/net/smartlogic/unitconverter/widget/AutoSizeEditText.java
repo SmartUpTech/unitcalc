@@ -27,7 +27,8 @@ public final class AutoSizeEditText extends AppCompatEditText {
         styledMinimumHeight = getMinimumHeight();
     }
 
-    void setCompactValue(boolean compact) {
+    /** Selects the shared compact numeric typography for constrained tool layouts. */
+    public void setCompactValue(boolean compact) {
         float compactSp = getResources().getInteger(R.integer.converter_compact_value_max_sp);
         float maximum = compact ? Math.min(styledMaximumSp, compactSp) : styledMaximumSp;
         if (maximumSp != maximum) {

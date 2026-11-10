@@ -4,6 +4,8 @@ import net.smartlogic.unitconverter.model.Unit;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
+@org.robolectric.annotation.Config(application = android.app.Application.class, sdk = 34)
 public class FuelHistoryStateTest {
     @Test public void payloadRoundTrip() {
         FuelHistoryState original = new FuelHistoryState(

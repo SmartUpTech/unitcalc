@@ -6,8 +6,9 @@ import org.json.JSONObject;
 
 /** Serializable fuel calculator inputs for history payload and legacy expression fallback. */
 public final class FuelHistoryState {
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
+    public final String currencyCode;
     public final String distance;
     public final String efficiency;
     public final String price;
@@ -24,6 +25,12 @@ public final class FuelHistoryState {
             int distanceUnitId,
             int efficiencyUnitId,
             boolean roundTrip) {
+        this(distance, efficiency, price, passengers, distanceUnitId, efficiencyUnitId, roundTrip, null);
+    }
+
+    public FuelHistoryState(String distance, String efficiency, String price, String passengers,
+            int distanceUnitId, int efficiencyUnitId, boolean roundTrip, String currencyCode) {
+        this.currencyCode = currencyCode;
         this.distance = distance == null ? "" : distance;
         this.efficiency = efficiency == null ? "" : efficiency;
         this.price = price == null ? "" : price;
@@ -37,6 +44,7 @@ public final class FuelHistoryState {
         try {
             return new JSONObject()
                     .put("version", VERSION)
+                    .put("currency", currencyCode)
                     .put("distance", distance)
                     .put("efficiency", efficiency)
                     .put("price", price)
@@ -57,7 +65,7 @@ public final class FuelHistoryState {
         if (payload == null || payload.isBlank()) return null;
         try {
             JSONObject json = new JSONObject(payload);
-            if (json.optInt("version", 0) != VERSION) return null;
+            if (json.optInt("version", 0) < 1 || json.optInt("version", 0) > VERSION) return null;
             return fromJson(json);
         } catch (Exception ignored) {
             return null;
@@ -115,7 +123,8 @@ public final class FuelHistoryState {
                 json.optString("passengers", "1"),
                 json.optInt("distanceUnit", Unit.KILOMETRE),
                 json.optInt("efficiencyUnit", Unit.L_100K),
-                json.optBoolean("roundTrip"));
+                json.optBoolean("roundTrip"),
+                json.optString("currency", null));
     }
 
     /** Best-effort digits from a formatted `{symbol}102.50/L` history segment. */
