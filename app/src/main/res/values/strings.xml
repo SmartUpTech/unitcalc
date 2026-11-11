@@ -22,7 +22,6 @@
     <string name="note_share_body">Meet %1$s: a scientific calculator, unit converter and currency converter in one app. Calculate, convert and revisit your calculation history.\n\nTry it on Google Play:\n%2$s</string>
 
     <string name="share">Share</string>
-    <string name="url_exchangeratesapi" translatable="false">exchangeratesapi.io</string>
 
     <string name="unit_converter">Unit</string>
     <string name="currency_converter">Currency</string>
