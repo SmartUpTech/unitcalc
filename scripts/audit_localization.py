@@ -12,6 +12,14 @@ import xml.etree.ElementTree as ET
 
 RES = Path(__file__).resolve().parents[1] / "app/src/main/res"
 TEXT = {"string", "plurals", "string-array"}
+# Categories used by the supported languages (CLDR 48; checked by Android lint).
+PLURAL_CATEGORIES = {
+    "en": {"one", "other"}, "de": {"one", "other"}, "hi": {"one", "other"},
+    "ru": {"one", "few", "many", "other"}, "pl": {"one", "few", "many", "other"},
+    "es": {"one", "many", "other"}, "fr": {"one", "many", "other"},
+    "it": {"one", "many", "other"}, "pt": {"one", "many", "other"},
+    "id": {"other"}, "vi": {"other"}, "nl": {"one", "other"}, "tr": {"one", "other"},
+}
 
 
 def resources(directory):
@@ -99,8 +107,11 @@ def audit(scope="all"):
                 quantities = {item.get("quantity") for item in target}
                 if "other" not in quantities:
                     errors.append(f"{tag}: missing other plural {key}")
-                if language in ("ru", "pl") and not {"one", "few", "many", "other"} <= quantities:
-                    errors.append(f"{tag}: missing Slavic plural forms {key}")
+                expected = PLURAL_CATEGORIES.get(language, {"other"})
+                if expected - quantities:
+                    errors.append(f"{tag}: missing plural forms {sorted(expected - quantities)} {key}")
+                if language in PLURAL_CATEGORIES and quantities - expected:
+                    errors.append(f"{tag}: unused plural forms {sorted(quantities - expected)} {key}")
                 signature = placeholders(text(source.find("item[@quantity='other']")))
                 if any(placeholders(text(item)) != signature for item in target):
                     errors.append(f"{tag}: plural placeholder mismatch {key}")

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Emiratos Árabes Unidos</string>
@@ -762,9 +762,9 @@
     <string name="pref_privacy_summary">Tu privacidad nos importa.</string>
     <string name="share_app_subject">%1$s: calcula y convierte</string>
     <string name="note_share_body">Descubre %1$s: calculadora científica y conversores de unidades y monedas en una aplicación. Calcula, convierte y consulta tu historial.\n\nPruébala en Google Play:\n%2$s</string>
-    <plurals name="theme_remaining_days"><item quantity="one">Queda %1$d día</item><item quantity="other">Quedan %1$d días</item></plurals>
-    <plurals name="theme_remaining_hours"><item quantity="one">Queda %1$d hora</item><item quantity="other">Quedan %1$d horas</item></plurals>
-    <plurals name="theme_remaining_minutes"><item quantity="one">Queda %1$d minuto</item><item quantity="other">Quedan %1$d minutos</item></plurals>
+    <plurals name="theme_remaining_days"><item quantity="one">Queda %1$d día</item><item quantity="other">Quedan %1$d días</item><item quantity="many">Quedan %1$d días</item></plurals>
+    <plurals name="theme_remaining_hours"><item quantity="one">Queda %1$d hora</item><item quantity="other">Quedan %1$d horas</item><item quantity="many">Quedan %1$d horas</item></plurals>
+    <plurals name="theme_remaining_minutes"><item quantity="one">Queda %1$d minuto</item><item quantity="other">Quedan %1$d minutos</item><item quantity="many">Quedan %1$d minutos</item></plurals>
     <string name="fuel_consumption">Combustible</string>
     <string name="fuel_trip_distance">Distancia del viaje</string>
     <string name="fuel_efficiency_label">Rendimiento de combustible</string>
@@ -1255,8 +1255,8 @@
     <string name="investment_change_sign">Cambiar signo de rentabilidad</string>
     <string name="investment_year">Año %1$d</string>
     <string name="investment_monthly_short">Mensual (%1$s)</string>
-    <string name="investment_rate_short">Tipo (% anual)</string>
-    <string name="investment_return_short">Rentabilidad (% anual)</string>
+    <string name="investment_rate_short" formatted="false">Tipo (% anual)</string>
+    <string name="investment_return_short" formatted="false">Rentabilidad (% anual)</string>
     <string name="tool_more_space">Se necesita más espacio. Amplía la ventana o gira el dispositivo. Los datos se conservan.</string>
     <string name="age_calendar_rule">Se cuentan años completos desde el nacimiento, meses desde ese aniversario y días restantes. El 29 de febrero se toma como 28 en años no bisiestos. Al sumar meses, la fecha se limita al último día válido del mes de destino.</string>
     <string name="bmi_infant_guidance">Menores de 2 años\nNo se recomienda aquí clasificar el IMC por edad. Un profesional debe evaluar al bebé con los estándares de crecimiento de la OMS, incluido peso para la longitud. No se muestran categoría adulta ni peso objetivo.</string>
@@ -1281,11 +1281,12 @@
     <string name="bmi_history_female">M</string>
     <string name="bmi_history_hint">Abre la calculadora IMC con los datos de este registro.</string>
     <string name="store_listing_title">Calculator+: conversor de unidades</string>
-    <plurals name="age_years"><item quantity="one">%1$s año</item><item quantity="other">%1$s años</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">año</item><item quantity="other">años</item></plurals>
-    <plurals name="age_months"><item quantity="one">%1$s mes</item><item quantity="other">%1$s meses</item></plurals>
-    <plurals name="age_days"><item quantity="one">%1$s día</item><item quantity="other">%1$s días</item></plurals>
-    <plurals name="graphy_stage_calculations"><item quantity="one">%d cálculo</item><item quantity="other">%d cálculos</item></plurals>
+    <plurals name="age_years"><item quantity="one">%1$s año</item><item quantity="other">%1$s años</item><item quantity="many">%1$s años</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">año</item><item quantity="other">años</item><item quantity="many">años</item></plurals>
+    <plurals name="age_months"><item quantity="one">%1$s mes</item><item quantity="other">%1$s meses</item><item quantity="many">%1$s meses</item></plurals>
+    <plurals name="age_days"><item quantity="one">%1$s día</item><item quantity="other">%1$s días</item><item quantity="many">%1$s días</item></plurals>
+    <plurals name="graphy_stage_calculations"><item quantity="one">%d cálculo</item><item quantity="other">%d cálculos</item><item quantity="many">%d cálculos</item></plurals>
     <string name="investment_three_months">3 meses</string>
     <string name="investment_six_months">6 meses</string>
     <string name="investment_twelve_months">12 meses</string>

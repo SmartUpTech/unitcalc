@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Birleşik Arap Emirlikleri</string>
@@ -1253,8 +1253,8 @@
     <string name="investment_change_sign">Getiri işaretini değiştir</string>
     <string name="investment_year">Yıl %1$d</string>
     <string name="investment_monthly_short">Aylık (%1$s)</string>
-    <string name="investment_rate_short">Oran (yıllık %)</string>
-    <string name="investment_return_short">Getiri (yıllık %)</string>
+    <string name="investment_rate_short" formatted="false">Oran (yıllık %)</string>
+    <string name="investment_return_short" formatted="false">Getiri (yıllık %)</string>
     <string name="tool_more_space">Daha fazla ekran alanı gerekli. Pencereyi büyütün veya cihazı döndürün. Girişler korunur.</string>
     <string name="age_calendar_rule">Doğumdan itibaren tamamlanan yıllar, ardından yıl dönümünden tam aylar ve kalan takvim günleri sayılır. Artık olmayan yıllarda 29 Şubat için 28 Şubat kullanılır. Ay eklerken tarih hedef ayın son geçerli günüyle sınırlanır.</string>
     <string name="bmi_infant_guidance">2 yaş altı\nBu hesaplayıcıda yaşa göre BKİ sınıflaması önerilmez. Bebekler, boya göre ağırlık dahil WHO büyüme standartlarıyla bir sağlık uzmanı tarafından değerlendirilmelidir. Yetişkin kategorisi veya hedef ağırlık gösterilmez.</string>
@@ -1281,7 +1281,8 @@
     <string name="bmi_history_hint">Bu kaydın girişleriyle BKİ hesaplayıcısını açar.</string>
     <string name="store_listing_title">Calculator+: Birim Dönüştürücü</string>
     <plurals name="age_years"><item quantity="one">%1$s yıl</item><item quantity="other">%1$s yıl</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">yıl</item><item quantity="other">yıl</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">yıl</item><item quantity="other">yıl</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s ay</item><item quantity="other">%1$s ay</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s gün</item><item quantity="other">%1$s gün</item></plurals>
     <plurals name="graphy_stage_calculations"><item quantity="one">%d hesaplama</item><item quantity="other">%d hesaplama</item></plurals>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">एंडोरा</string>
     <string name="region_ae">संयुक्त अरब अमीरात</string>
@@ -1255,8 +1255,8 @@
     <string name="investment_change_sign">रिटर्न का चिह्न बदलें</string>
     <string name="investment_year">साल %1$d</string>
     <string name="investment_monthly_short">मासिक (%1$s)</string>
-    <string name="investment_rate_short">दर (% सालाना)</string>
-    <string name="investment_return_short">रिटर्न (% सालाना)</string>
+    <string name="investment_rate_short" formatted="false">दर (% सालाना)</string>
+    <string name="investment_return_short" formatted="false">रिटर्न (% सालाना)</string>
     <string name="tool_more_space">स्क्रीन पर और जगह चाहिए। विंडो बड़ी करें या डिवाइस घुमाएँ। इनपुट सुरक्षित हैं।</string>
     <string name="age_calendar_rule">जन्म से पूरे साल गिनें, फिर उस सालगिरह से पूरे महीने और बाक़ी कैलेंडर दिन। गैर-लीप साल में 29 फ़रवरी की सालगिरह 28 फ़रवरी मानी जाती है। महीने जोड़ने पर तारीख़ उस महीने के आख़िरी मान्य दिन से आगे नहीं जाती।</string>
     <string name="bmi_infant_guidance">2 साल से कम\nइस कैलकुलेटर में उम्र के हिसाब से BMI कैटेगरी सुझाई नहीं जाती। बच्चों का आकलन स्वास्थ्य विशेषज्ञ से WHO ग्रोथ मानकों, जैसे लंबाई के हिसाब से वज़न, से कराएँ। वयस्क कैटेगरी या लक्ष्य वज़न नहीं दिखाया जाता।</string>
@@ -1282,7 +1282,8 @@
     <string name="bmi_history_hint">इस रिकॉर्ड के इनपुट से BMI कैलकुलेटर खुलेगा।</string>
     <string name="store_listing_title">Calculator+: यूनिट कन्वर्टर</string>
     <plurals name="age_years"><item quantity="one">%1$s साल</item><item quantity="other">%1$s साल</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">साल</item><item quantity="other">साल</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">साल</item><item quantity="other">साल</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s महीना</item><item quantity="other">%1$s महीने</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s दिन</item><item quantity="other">%1$s दिन</item></plurals>
     <plurals name="graphy_stage_calculations"><item quantity="one">%d कैलकुलेशन</item><item quantity="other">%d कैलकुलेशन</item></plurals>

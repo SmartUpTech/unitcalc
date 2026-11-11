@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Vereinigte Arabische Emirate</string>
@@ -1255,8 +1255,8 @@
     <string name="investment_change_sign">Renditevorzeichen ändern</string>
     <string name="investment_year">Jahr %1$d</string>
     <string name="investment_monthly_short">Monatlich (%1$s)</string>
-    <string name="investment_rate_short">Zins (% p. a.)</string>
-    <string name="investment_return_short">Rendite (% p. a.)</string>
+    <string name="investment_rate_short" formatted="false">Zins (% p. a.)</string>
+    <string name="investment_return_short" formatted="false">Rendite (% p. a.)</string>
     <string name="tool_more_space">Mehr Platz nötig. Vergrößere das Fenster oder drehe das Gerät. Deine Eingabe bleibt erhalten.</string>
     <string name="age_calendar_rule">Zähle volle Jahre ab Geburt, dann volle Monate ab diesem Jahrestag und die restlichen Kalendertage. Für den 29. Februar gilt in Nichtschaltjahren der 28. Februar. Monatsadditionen enden spätestens am letzten gültigen Tag des Zielmonats.</string>
     <string name="bmi_infant_guidance">Unter 2 Jahren\nEine BMI-Alterseinstufung wird hier nicht empfohlen. Säuglinge sollten mit einer medizinischen Fachkraft nach WHO-Wachstumsstandards beurteilt werden, einschließlich Gewicht zur Körperlänge. Es werden keine Erwachsenenkategorie oder Zielgewichte gezeigt.</string>
@@ -1282,7 +1282,8 @@
     <string name="bmi_history_hint">Öffnet den BMI-Rechner mit den Eingaben dieses Eintrags.</string>
     <string name="store_listing_title">Calculator+: Einheitenumrechner</string>
     <plurals name="age_years"><item quantity="one">%1$s Jahr</item><item quantity="other">%1$s Jahre</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">Jahr</item><item quantity="other">Jahre</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">Jahr</item><item quantity="other">Jahre</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s Monat</item><item quantity="other">%1$s Monate</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s Tag</item><item quantity="other">%1$s Tage</item></plurals>
     <plurals name="graphy_stage_calculations"><item quantity="one">%d Berechnung</item><item quantity="other">%d Berechnungen</item></plurals>

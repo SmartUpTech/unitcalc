@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Verenigde Arabische Emiraten</string>
@@ -1254,8 +1254,8 @@
     <string name="investment_change_sign">Rendementsteken wijzigen</string>
     <string name="investment_year">Jaar %1$d</string>
     <string name="investment_monthly_short">Maandelijks (%1$s)</string>
-    <string name="investment_rate_short">Rente (% per jaar)</string>
-    <string name="investment_return_short">Rendement (% per jaar)</string>
+    <string name="investment_rate_short" formatted="false">Rente (% per jaar)</string>
+    <string name="investment_return_short" formatted="false">Rendement (% per jaar)</string>
     <string name="tool_more_space">Meer schermruimte nodig. Vergroot het venster of draai het apparaat. Je invoer blijft bewaard.</string>
     <string name="age_calendar_rule">Tel hele jaren vanaf de geboorte, dan hele maanden vanaf die verjaardag en resterende kalenderdagen. Voor 29 februari geldt in niet-schrikkeljaren 28 februari. Bij maanden optellen wordt de dag begrensd op de laatste geldige dag van de doelmaand.</string>
     <string name="bmi_infant_guidance">Onder 2 jaar\nBMI-naar-leeftijdindeling wordt hier niet aanbevolen. Laat baby\'s met een zorgprofessional beoordelen volgens WHO-groeinormen, waaronder gewicht naar lengte. Er wordt geen volwassenencategorie of streefgewicht getoond.</string>
@@ -1282,7 +1282,8 @@
     <string name="bmi_history_hint">Opent de BMI-rekenmachine met de invoer van dit item.</string>
     <string name="store_listing_title">Calculator+: eenheden omrekenen</string>
     <plurals name="age_years"><item quantity="one">%1$s jaar</item><item quantity="other">%1$s jaar</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">jaar</item><item quantity="other">jaar</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">jaar</item><item quantity="other">jaar</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s maand</item><item quantity="other">%1$s maanden</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s dag</item><item quantity="other">%1$s dagen</item></plurals>
     <plurals name="graphy_stage_calculations"><item quantity="one">%d berekening</item><item quantity="other">%d berekeningen</item></plurals>

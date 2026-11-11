@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andora</string>
     <string name="region_ae">Zjednoczone Emiraty Arabskie</string>
@@ -1255,8 +1255,8 @@
     <string name="investment_change_sign">Zmień znak zwrotu</string>
     <string name="investment_year">Rok %1$d</string>
     <string name="investment_monthly_short">Miesięcznie (%1$s)</string>
-    <string name="investment_rate_short">Stopa (% rocznie)</string>
-    <string name="investment_return_short">Zwrot (% rocznie)</string>
+    <string name="investment_rate_short" formatted="false">Stopa (% rocznie)</string>
+    <string name="investment_return_short" formatted="false">Zwrot (% rocznie)</string>
     <string name="tool_more_space">Potrzeba więcej miejsca. Powiększ okno lub obróć urządzenie. Dane są zachowane.</string>
     <string name="age_calendar_rule">Liczone są pełne lata od urodzenia, potem pełne miesiące od rocznicy i pozostałe dni. Dla 29 lutego w roku nieprzestępnym używa się 28 lutego. Dodawanie miesięcy ogranicza datę do ostatniego poprawnego dnia miesiąca docelowego.</string>
     <string name="bmi_infant_guidance">Poniżej 2 lat\nKlasyfikacja BMI do wieku nie jest tu zalecana. Niemowlęta powinien ocenić specjalista według standardów wzrastania WHO, w tym masy do długości ciała. Nie pokazuje się kategorii dorosłych ani docelowej masy.</string>
@@ -1282,7 +1282,8 @@
     <string name="bmi_history_hint">Otwiera kalkulator BMI z danymi tego wpisu.</string>
     <string name="store_listing_title">Calculator+: przelicznik jednostek</string>
     <plurals name="age_years"><item quantity="one">%1$s rok</item><item quantity="other">%1$s roku</item><item quantity="few">%1$s lata</item><item quantity="many">%1$s lat</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">rok</item><item quantity="other">roku</item><item quantity="few">lata</item><item quantity="many">lat</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">rok</item><item quantity="other">roku</item><item quantity="few">lata</item><item quantity="many">lat</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s miesiąc</item><item quantity="other">%1$s miesiąca</item><item quantity="few">%1$s miesiące</item><item quantity="many">%1$s miesięcy</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s dzień</item><item quantity="other">%1$s dnia</item><item quantity="few">%1$s dni</item><item quantity="many">%1$s dni</item></plurals>
     <plurals name="graphy_stage_calculations"><item quantity="one">%d obliczenie</item><item quantity="other">%d obliczenia</item><item quantity="few">%d obliczenia</item><item quantity="many">%d obliczeń</item></plurals>

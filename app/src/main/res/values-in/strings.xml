@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Uni Emirat Arab</string>
@@ -758,9 +758,9 @@
     <string name="pref_privacy_summary">Privasi Anda penting bagi kami.</string>
     <string name="share_app_subject">%1$s: hitung dan konversi</string>
     <string name="note_share_body">Kenali %1$s: kalkulator ilmiah, konverter satuan, dan konverter mata uang dalam satu aplikasi. Hitung, konversi, dan lihat kembali riwayat perhitungan.\n\nCoba di Google Play:\n%2$s</string>
-    <plurals name="theme_remaining_days"><item quantity="one">Tersisa %1$d hari</item><item quantity="other">Tersisa %1$d hari</item></plurals>
-    <plurals name="theme_remaining_hours"><item quantity="one">Tersisa %1$d jam</item><item quantity="other">Tersisa %1$d jam</item></plurals>
-    <plurals name="theme_remaining_minutes"><item quantity="one">Tersisa %1$d menit</item><item quantity="other">Tersisa %1$d menit</item></plurals>
+    <plurals name="theme_remaining_days"><item quantity="other">Tersisa %1$d hari</item></plurals>
+    <plurals name="theme_remaining_hours"><item quantity="other">Tersisa %1$d jam</item></plurals>
+    <plurals name="theme_remaining_minutes"><item quantity="other">Tersisa %1$d menit</item></plurals>
     <string name="fuel_consumption">Bahan bakar</string>
     <string name="fuel_trip_distance">Jarak perjalanan</string>
     <string name="fuel_efficiency_label">Efisiensi bahan bakar</string>
@@ -1254,8 +1254,8 @@
     <string name="investment_change_sign">Ubah tanda imbal hasil</string>
     <string name="investment_year">Tahun %1$d</string>
     <string name="investment_monthly_short">Bulanan (%1$s)</string>
-    <string name="investment_rate_short">Bunga (% per tahun)</string>
-    <string name="investment_return_short">Imbal hasil (% per tahun)</string>
+    <string name="investment_rate_short" formatted="false">Bunga (% per tahun)</string>
+    <string name="investment_return_short" formatted="false">Imbal hasil (% per tahun)</string>
     <string name="tool_more_space">Perlu layar lebih luas. Perbesar jendela atau putar perangkat. Masukan tetap disimpan.</string>
     <string name="age_calendar_rule">Hitung tahun penuh sejak lahir, lalu bulan penuh sejak tanggal ulang tahun itu dan sisa hari kalender. Ulang tahun 29 Februari memakai 28 Februari pada tahun biasa. Penambahan bulan dibatasi hari terakhir yang valid pada bulan tujuan.</string>
     <string name="bmi_infant_guidance">Di bawah 2 tahun\nKlasifikasi IMT menurut usia tidak disarankan di kalkulator ini. Bayi perlu dinilai bersama tenaga kesehatan memakai standar pertumbuhan WHO, termasuk berat menurut panjang badan. Kategori dewasa dan target berat tidak ditampilkan.</string>
@@ -1281,11 +1281,12 @@
     <string name="bmi_history_female">P</string>
     <string name="bmi_history_hint">Buka kalkulator IMT dengan masukan dari catatan ini.</string>
     <string name="store_listing_title">Calculator+: Konverter Satuan</string>
-    <plurals name="age_years"><item quantity="one">%1$s tahun</item><item quantity="other">%1$s tahun</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">tahun</item><item quantity="other">tahun</item></plurals>
-    <plurals name="age_months"><item quantity="one">%1$s bulan</item><item quantity="other">%1$s bulan</item></plurals>
-    <plurals name="age_days"><item quantity="one">%1$s hari</item><item quantity="other">%1$s hari</item></plurals>
-    <plurals name="graphy_stage_calculations"><item quantity="one">%d perhitungan</item><item quantity="other">%d perhitungan</item></plurals>
+    <plurals name="age_years"><item quantity="other">%1$s tahun</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="other">tahun</item></plurals>
+    <plurals name="age_months"><item quantity="other">%1$s bulan</item></plurals>
+    <plurals name="age_days"><item quantity="other">%1$s hari</item></plurals>
+    <plurals name="graphy_stage_calculations"><item quantity="other">%d perhitungan</item></plurals>
     <string name="investment_three_months">3 bulan</string>
     <string name="investment_six_months">6 bulan</string>
     <string name="investment_twelve_months">12 bulan</string>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Territory and currency names: Unicode CLDR release-48; Unicode License v3. -->
     <string name="region_ad">Andorra</string>
     <string name="region_ae">Các Tiểu Vương quốc Ả Rập Thống nhất</string>
@@ -738,9 +738,9 @@
     <string name="pref_privacy_summary">Quyền riêng tư của bạn rất quan trọng với chúng tôi.</string>
     <string name="share_app_subject">%1$s: tính toán và chuyển đổi</string>
     <string name="note_share_body">Khám phá %1$s: máy tính khoa học, bộ đổi đơn vị và tiền tệ trong một ứng dụng. Tính toán, chuyển đổi và xem lại lịch sử.\n\nDùng thử trên Google Play:\n%2$s</string>
-    <plurals name="theme_remaining_days"><item quantity="one">Còn %1$d ngày</item><item quantity="other">Còn %1$d ngày</item></plurals>
-    <plurals name="theme_remaining_hours"><item quantity="one">Còn %1$d giờ</item><item quantity="other">Còn %1$d giờ</item></plurals>
-    <plurals name="theme_remaining_minutes"><item quantity="one">Còn %1$d phút</item><item quantity="other">Còn %1$d phút</item></plurals>
+    <plurals name="theme_remaining_days"><item quantity="other">Còn %1$d ngày</item></plurals>
+    <plurals name="theme_remaining_hours"><item quantity="other">Còn %1$d giờ</item></plurals>
+    <plurals name="theme_remaining_minutes"><item quantity="other">Còn %1$d phút</item></plurals>
     <string name="fuel_consumption">Nhiên liệu</string>
     <string name="fuel_trip_distance">Quãng đường</string>
     <string name="fuel_efficiency_label">Mức tiêu hao nhiên liệu</string>
@@ -1249,8 +1249,8 @@
     <string name="investment_change_sign">Đổi dấu lợi suất</string>
     <string name="investment_year">Năm %1$d</string>
     <string name="investment_monthly_short">Hằng tháng (%1$s)</string>
-    <string name="investment_rate_short">Lãi suất (%/năm)</string>
-    <string name="investment_return_short">Lợi suất (%/năm)</string>
+    <string name="investment_rate_short" formatted="false">Lãi suất (%/năm)</string>
+    <string name="investment_return_short" formatted="false">Lợi suất (%/năm)</string>
     <string name="tool_more_space">Cần thêm không gian. Mở rộng cửa sổ hoặc xoay thiết bị. Dữ liệu được giữ.</string>
     <string name="age_calendar_rule">Đếm năm tròn từ ngày sinh, rồi tháng tròn từ ngày kỷ niệm đó và các ngày lịch còn lại. Ngày 29/2 dùng ngày 28/2 trong năm không nhuận. Khi cộng tháng, ngày bị giới hạn ở ngày hợp lệ cuối của tháng đích.</string>
     <string name="bmi_infant_guidance">Dưới 2 tuổi\nMáy tính không khuyến nghị phân loại BMI theo tuổi. Trẻ nhỏ cần được chuyên gia y tế đánh giá theo chuẩn tăng trưởng WHO, gồm cân nặng theo chiều dài. Không hiển thị phân loại người lớn hay cân nặng mục tiêu.</string>
@@ -1281,11 +1281,12 @@
     <string name="bmi_history_female">Nữ</string>
     <string name="bmi_history_hint">Mở máy tính BMI với dữ liệu từ mục này.</string>
     <string name="store_listing_title">Calculator+: Đổi đơn vị</string>
-    <plurals name="age_years"><item quantity="one">%1$s năm</item><item quantity="other">%1$s năm</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">năm</item><item quantity="other">năm</item></plurals>
-    <plurals name="age_months"><item quantity="one">%1$s tháng</item><item quantity="other">%1$s tháng</item></plurals>
-    <plurals name="age_days"><item quantity="one">%1$s ngày</item><item quantity="other">%1$s ngày</item></plurals>
-    <plurals name="graphy_stage_calculations"><item quantity="one">%d phép tính</item><item quantity="other">%d phép tính</item></plurals>
+    <plurals name="age_years"><item quantity="other">%1$s năm</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="other">năm</item></plurals>
+    <plurals name="age_months"><item quantity="other">%1$s tháng</item></plurals>
+    <plurals name="age_days"><item quantity="other">%1$s ngày</item></plurals>
+    <plurals name="graphy_stage_calculations"><item quantity="other">%d phép tính</item></plurals>
     <string name="investment_three_months">3 tháng</string>
     <string name="investment_six_months">6 tháng</string>
     <string name="investment_twelve_months">12 tháng</string>

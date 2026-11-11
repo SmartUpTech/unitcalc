@@ -1303,7 +1303,8 @@
     <string name="age_calendar_rule">Count completed years from the birth date, then completed months from that anniversary, then the remaining calendar days. February 29 anniversaries use February 28 in non-leap years. Month additions clamp to the last valid day of the target month.</string>
     <string name="age_share_body">Age Calculator\nDate of birth: %1$s\nAge as of: %2$s\nAge: %3$s\nNext birthday: %4$s (%5$s)\nCountdown: %6$s\n\nSummary\nYears: %7$s\nMonths: %8$s\nWeeks: %9$s\nDays: %10$s\nHours: %11$s\nMinutes: %12$s\nCompleted calendar units; hours and minutes use 24-hour days without time of birth.</string>
     <plurals name="age_years"><item quantity="one">%1$s year</item><item quantity="other">%1$s years</item></plurals>
-    <plurals name="age_year_unit"><item quantity="one">year</item><item quantity="other">years</item></plurals>
+    <!-- Unit-only caption; the number is rendered in the adjacent age_years view. -->
+    <plurals name="age_year_unit" tools:ignore="ImpliedQuantity"><item quantity="one">year</item><item quantity="other">years</item></plurals>
     <plurals name="age_months"><item quantity="one">%1$s month</item><item quantity="other">%1$s months</item></plurals>
     <plurals name="age_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
 
@@ -1718,8 +1719,8 @@
     <string name="investment_change_sign">Change return sign</string>
     <string name="investment_year">Year %1$d</string>
     <string name="investment_monthly_short">Monthly (%1$s)</string>
-    <string name="investment_rate_short">Rate (% p.a.)</string>
-    <string name="investment_return_short">Return (% p.a.)</string>
+    <string name="investment_rate_short" formatted="false">Rate (% p.a.)</string>
+    <string name="investment_return_short" formatted="false">Return (% p.a.)</string>
     <string name="investment_reinvestment_yield_short">Reinvestment yield</string>
     <string name="investment_complete_short">Complete the inputs.</string>
     <string name="investment_check_short">Check the highlighted input.</string>
