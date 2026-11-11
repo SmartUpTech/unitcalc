@@ -16,16 +16,23 @@ public final class EmiLayout extends ViewGroup implements ViewportContent {
     private boolean fits, wide, reflowFields;
     private int resultRowGap, compactResultRowGap;
     private CharSequence reservedGuidance;
+    private boolean editing;
     public void setResultRowSpacing(int regular, int compact) { resultRowGap = regular; compactResultRowGap = compact; requestLayout(); }
     public void setResultState(boolean ready, boolean editing) {
         setResultState(ready, editing, null);
     }
     /** Keep loading and completed guidance in the same font-aware slot. */
     public void setResultState(boolean showCard, boolean editing, CharSequence completedGuidance) {
+        this.editing = editing;
         reservedGuidance = completedGuidance;
         View card = findViewById(R.id.emi_summary), guidance = findViewById(R.id.emi_message);
         card.setVisibility(showCard && !editing ? VISIBLE : GONE);
-        getChildAt(1).setVisibility(card.getVisibility() == VISIBLE || guidance.getVisibility() == VISIBLE ? VISIBLE : GONE);
+        // Validation must not insert/remove a section while a field is being edited.
+        if (editing && guidance.getVisibility() != VISIBLE) {
+            guidance.setVisibility(INVISIBLE);
+            ((TextView) guidance).setText("");
+        }
+        getChildAt(1).setVisibility(editing || card.getVisibility() == VISIBLE || guidance.getVisibility() == VISIBLE ? VISIBLE : GONE);
         requestLayout();
     }
     private int inset, gap, column, summaryMargin;
@@ -100,13 +107,15 @@ public final class EmiLayout extends ViewGroup implements ViewportContent {
         guidance.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(dense ? R.dimen.h3_5 : R.dimen.graphy_value_text_size));
         int guidanceHeight = 0;
-        if (reservedGuidance != null && reservedGuidance.length() > 0) {
-            int textWidth = Math.max(1, column - guidance.getCompoundPaddingLeft() - guidance.getCompoundPaddingRight());
-            guidanceHeight = StaticLayout.Builder.obtain(reservedGuidance, 0, reservedGuidance.length(), guidance.getPaint(), textWidth)
-                    .setAlignment(Layout.Alignment.ALIGN_CENTER)
-                    .setIncludePad(guidance.getIncludeFontPadding())
-                    .setLineSpacing(guidance.getLineSpacingExtra(), guidance.getLineSpacingMultiplier())
-                    .build().getHeight() + guidance.getCompoundPaddingTop() + guidance.getCompoundPaddingBottom();
+        int textWidth = Math.max(1, column - guidance.getCompoundPaddingLeft() - guidance.getCompoundPaddingRight());
+        if (reservedGuidance != null) guidanceHeight = guidanceHeight(guidance, reservedGuidance, textWidth);
+        if (editing) {
+            // Measure every editing status up front, including translated/scaled wraps.
+            for (int message : new int[]{R.string.investment_complete_short, R.string.investment_check_short,
+                    R.string.investment_overflow_short, R.string.emi_empty, R.string.emi_loading,
+                    R.string.emi_check_short, R.string.emi_rounding_short}) {
+                guidanceHeight = Math.max(guidanceHeight, guidanceHeight(guidance, getResources().getText(message), textWidth));
+            }
         }
         guidance.setMinHeight(guidanceHeight);
         for (int id : new int[]{R.id.emi_total_interest, R.id.emi_total_payment, R.id.investment_receipts}) {
@@ -135,6 +144,12 @@ public final class EmiLayout extends ViewGroup implements ViewportContent {
         return insetVertical() * 2 + required <= height;
     }
     private int visibleHeight(View view) { return view.getVisibility() == GONE ? 0 : view.getMeasuredHeight(); }
+    private int guidanceHeight(TextView view, CharSequence text, int width) {
+        return StaticLayout.Builder.obtain(text, 0, text.length(), view.getPaint(), width)
+                .setAlignment(Layout.Alignment.ALIGN_CENTER).setIncludePad(view.getIncludeFontPadding())
+                .setLineSpacing(view.getLineSpacingExtra(), view.getLineSpacingMultiplier()).build().getHeight()
+                + view.getCompoundPaddingTop() + view.getCompoundPaddingBottom();
+    }
     private int insetVertical() { return gap; }
     private int dim(int id) { return getResources().getDimensionPixelSize(id); }
     private void place(View v, int x, int y) {

@@ -49,7 +49,8 @@
     <color name="pad_button_equal">@color/key_equals_bg</color>
     <color name="colorHighlighter">@color/key_operator_text</color>
     <!-- Theme catalog palette. ThemePalette is generated from these values at build time. -->
-    <color name="palette_fe8254">#FE8254</color>
+    <color name="palette_906d4b">#906D4B</color>
+    <color name="palette_ca9c68">#CA9C68</color>
     <color name="palette_3f231b">#3F231B</color>
     <color name="palette_513326">#513326</color>
     <color name="palette_44251b">#44251B</color>

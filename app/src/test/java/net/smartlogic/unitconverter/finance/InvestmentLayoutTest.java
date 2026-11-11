@@ -20,6 +20,51 @@ import static org.junit.Assert.*;
 /** Native previews of real fragments, not hand-reconstructed screenshots. */
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class InvestmentLayoutTest extends InvestmentFragmentTest {
+    @Test public void validationMessagesDoNotMoveEditingControls() throws Exception {
+        var controller=Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            var f=launch(controller.get(),InvestmentInputs.Kind.SIP);
+            set(f,R.id.emi_principal,"500");set(f,R.id.emi_rate,"12");set(f,R.id.emi_tenure,"10");drain(f);
+            form(f).findViewById(R.id.emi_principal).performClick();
+            for(var theme:CalculatorThemes.all()) {
+                ReflectionHelpers.setStaticField(ThemeManager.class,"current",theme);
+                for(int[] pane:new int[][]{{360,480},{412,612},{800,352}}) {
+                    RuntimeEnvironment.setFontScale(pane[0]==412?1.3f:1f);
+                    ThemeApplier.apply(f.requireView());
+                    measureEditingPane(f,pane);
+                    int[] ready=editingBounds(f);
+                    assertEquals(View.INVISIBLE,form(f).findViewById(R.id.emi_message).getVisibility());
+                    set(f,R.id.emi_tenure,"0");measureEditingPane(f,pane);
+                    assertArrayEquals(theme.id()+" pending",ready,editingBounds(f));
+                    drain(f);measureEditingPane(f,pane);
+                    assertEquals(f.getString(R.string.investment_check_short),((android.widget.TextView)form(f).findViewById(R.id.emi_message)).getText().toString());
+                    assertArrayEquals(theme.id()+" invalid",ready,editingBounds(f));
+                    set(f,R.id.emi_tenure,"10");drain(f);measureEditingPane(f,pane);
+                    assertArrayEquals(theme.id()+" recovered",ready,editingBounds(f));
+                    set(f,R.id.emi_principal,"");measureEditingPane(f,pane);
+                    assertArrayEquals(theme.id()+" incomplete",ready,editingBounds(f));
+                    set(f,R.id.emi_principal,"500");drain(f);measureEditingPane(f,pane);
+                }
+            }
+        } finally {RuntimeEnvironment.setFontScale(1f);controller.pause().stop().destroy();}
+    }
+    private void measureEditingPane(InvestmentCalculatorFragment f,int[] pane) {
+        for(int i=0;i<2;i++) {
+            form(f).forceLayout();form(f).measure(View.MeasureSpec.makeMeasureSpec(pane[0],View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(pane[1],View.MeasureSpec.EXACTLY));
+            form(f).layout(0,0,pane[0],pane[1]);
+        }
+        assertTrue(((EmiLayout)form(f).findViewById(R.id.emi_layout)).fitsViewport());
+    }
+    private int[] editingBounds(InvestmentCalculatorFragment f) {
+        int[] ids={R.id.emi_fields,R.id.emi_principal,R.id.emi_rate,R.id.emi_tenure,R.id.investment_step_value,R.id.emi_message,R.id.emi_keys,R.id.seven,R.id.equal};
+        int[] bounds=new int[ids.length*4];
+        for(int i=0;i<ids.length;i++) {
+            View view=form(f).findViewById(ids[i]);android.graphics.Rect rect=new android.graphics.Rect();
+            view.getDrawingRect(rect);((android.view.ViewGroup)form(f)).offsetDescendantRectToMyCoords(view,rect);
+            bounds[i*4]=rect.left;bounds[i*4+1]=rect.top;bounds[i*4+2]=rect.right;bounds[i*4+3]=rect.bottom;
+        }
+        return bounds;
+    }
     @Test public void sipScheduleUsesCompactRowsAndMeasuredPagination() throws Exception {
         RuntimeEnvironment.setFontScale(1f);
         var controller = Robolectric.buildActivity(Host.class).setup().visible();

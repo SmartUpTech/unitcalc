@@ -30,8 +30,13 @@ class ThemeContrastTest {
     @org.junit.After fun resetAccess() { ThemeManager.setProAccessProvider { false } }
     @Test fun catalogInkAndFilledControlContentHaveNormalTextContrast() {
         for (theme in CalculatorThemes.all()) {
-            // Raw palette roles must be usable without a renderer silently substituting black/white.
-            for (ink in listOf(theme.mainText(), theme.functions(), theme.equal(), theme.operatorContentColor())) {
+            // Tanned Wood keeps its requested decorative accent; text uses the shared resolver.
+            val accentInk = if (theme == CalculatorThemes.BURNT_ORANGE) {
+                assertEquals(Color.rgb(144, 109, 75), theme.background())
+                assertEquals(Color.rgb(202, 156, 104), theme.equal())
+                theme.accentContentColor()
+            } else theme.equal()
+            for (ink in listOf(theme.mainText(), theme.functions(), accentInk, theme.operatorContentColor())) {
                 assertTrue(theme.id(), ColorUtils.calculateContrast(ink, theme.background()) >= 4.5)
             }
             assertTrue(theme.id(), ColorUtils.calculateContrast(theme.onAccentColor(), theme.accentContentColor()) >= 4.5)

@@ -55,6 +55,8 @@ Result-card supporting text uses the shared `tool_result_detail_size` (14sp); re
 
 Workspace tabs use the shared 16sp role. The drawer uses 22dp icons and 4dp group-separator padding while retaining accessible item heights. Investment schedules reuse `ConverterModeToggleGroup` for complete selected-pill corners; both pager actions use the shared outlined-action treatment.
 
+Finance editing reserves a shared status slot for incomplete, calculating, invalid and overflow messages. Measure the tallest localized editing message with the current font and available width; retain the slot invisibly when inputs are valid. Validation visibility and wrapping must not change input, selector or keypad bounds while editing.
+
 ## EMI Calculator
 
 Finance (third drawer category)/Explore/Favorites → EMI Calculator. Keep Calculate/Schedule/Graphy workspace tabs and existing bottom navigation. All four finance calculators use the BMI interaction: input taps open the shared converter keypad and hide the result card and actions. Done or Back closes the keypad; the outlined result card appears only for valid complete inputs. Validation guidance remains outside the card. Closed-keypad actions use AgeDateButton: filled Details and text Share. Details retains Reset with confirmation; EMI also retains prepayments, comparison, reports, share formats and Insights. Secondary features use fixed pages and measured pagination, never a scrolling fallback. Shared ViewportContent/CalculationViewport report impossible configurations. All appearance preferences apply through existing owners; no separate EMI palette or keypad style. See EMI_CALCULATOR.md for calculation, persistence and report contracts.

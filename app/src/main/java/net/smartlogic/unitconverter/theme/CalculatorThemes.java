@@ -44,7 +44,7 @@ public final class CalculatorThemes {
             ThemePalette.PALETTE_9CAF88, ThemePalette.PALETTE_303A31, ThemePalette.PALETTE_303D2C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_293D2B);
     public static final CalculatorTheme BURNT_ORANGE = theme(
             "burnt_orange", R.string.theme_burnt_orange, 9,
-            ThemePalette.PALETTE_FE8254, ThemePalette.PALETTE_3F231B, ThemePalette.PALETTE_513326, ThemePalette.PALETTE_3F231B, ThemePalette.PALETTE_44251B);
+            ThemePalette.PALETTE_906D4B, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_CA9C68);
     public static final CalculatorTheme GOLDEN_POPPY = theme(
             "golden_poppy", R.string.theme_golden_poppy, 10,
             ThemePalette.PALETTE_FCC200, ThemePalette.PALETTE_39372F, ThemePalette.PALETTE_5C512C, ThemePalette.PALETTE_FFFFFF, ThemePalette.PALETTE_483B0A);
