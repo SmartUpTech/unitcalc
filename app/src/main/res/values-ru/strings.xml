@@ -1032,9 +1032,6 @@
     <string name="guntha">Гунтха (1/40 акра)</string>
     <string name="cent">Сент (1/100 акра)</string>
     <string name="marla">Марла (272.25 кв. фута)</string>
-    <string name="bigha_assam">Бигха (Ассам, 14400 кв. футов)</string>
-    <string name="bigha_rajasthan_pucca">Бигха (Раджастхан пакка, 27225 кв. футов)</string>
-    <string name="bigha_rajasthan_kaccha">Бигха (Раджастхан качча, 17424 кв. футов)</string>
     <string name="quintal">Метрический центнер</string>
     <string name="tola">Тола (180 гран)</string>
     <string name="microlitre">Микролитр</string>

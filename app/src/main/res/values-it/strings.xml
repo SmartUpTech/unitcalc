@@ -1032,9 +1032,6 @@
     <string name="guntha">Guntha (1/40 acro)</string>
     <string name="cent">Cent (1/100 acro)</string>
     <string name="marla">Marla (272.25 piedi²)</string>
-    <string name="bigha_assam">Bigha (Assam, 14400 piedi²)</string>
-    <string name="bigha_rajasthan_pucca">Bigha (Rajasthan pucca, 27225 piedi²)</string>
-    <string name="bigha_rajasthan_kaccha">Bigha (Rajasthan kaccha, 17424 piedi²)</string>
     <string name="quintal">Quintale (metrico)</string>
     <string name="tola">Tola (180 grani)</string>
     <string name="microlitre">Microlitro</string>

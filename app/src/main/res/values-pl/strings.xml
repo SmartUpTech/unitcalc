@@ -1034,9 +1034,6 @@
     <string name="guntha">Guntha (1/40 akra)</string>
     <string name="cent">Cent (1/100 akra)</string>
     <string name="marla">Marla (272.25 stóp²)</string>
-    <string name="bigha_assam">Bigha (Asam, 14400 stóp²)</string>
-    <string name="bigha_rajasthan_pucca">Bigha (Radżastan pucca, 27225 stóp²)</string>
-    <string name="bigha_rajasthan_kaccha">Bigha (Radżastan kaccha, 17424 stóp²)</string>
     <string name="quintal">Kwintal (metryczny)</string>
     <string name="tola">Tola (180 granów)</string>
     <string name="microlitre">Mikrolitr</string>

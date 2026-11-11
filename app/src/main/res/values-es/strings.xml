@@ -1034,9 +1034,6 @@
     <string name="guntha">Guntha (1/40 acre)</string>
     <string name="cent">Cent (1/100 acre)</string>
     <string name="marla">Marla (272.25 pies²)</string>
-    <string name="bigha_assam">Bigha (Assam, 14400 pies²)</string>
-    <string name="bigha_rajasthan_pucca">Bigha (Rajastán pucca, 27225 pies²)</string>
-    <string name="bigha_rajasthan_kaccha">Bigha (Rajastán kaccha, 17424 pies²)</string>
     <string name="quintal">Quintal (métrico)</string>
     <string name="tola">Tola (180 granos)</string>
     <string name="microlitre">Microlitro</string>

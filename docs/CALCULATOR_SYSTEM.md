@@ -139,10 +139,9 @@ the live [Frankfurter API](https://frankfurter.dev/).
   Storage's existing binary values now show IEC labels/symbols (KiB through EiB, Kibit through
   Eibit), and separate SI decimal choices (kB through EB, kbit through Ebit) are appended.
 - Land units explicitly identify their definitions. Guntha = 1/40 acre, cent = 1/100 acre;
-  Marla uses the 272.25 sq ft convention. Assam and Rajasthan Bigha variants were removed
-  from the selectable registry on 2026-10-22; their IDs remain reserved. Guntha, cent and
-  marla remain available for review, without in-app highlighting. See
-  `docs/reviews/regional-area-units-2026-10-22.md`.
+  Marla uses the 272.25 sq ft convention. Retired area IDs 15–17 remain reserved;
+  their unused labels and translations have been removed. Guntha, cent and marla
+  remain available without in-app highlighting.
   These are named conventions, not universal state-wide/legal survey assumptions. Exact square-foot
   definitions are converted using 1 ft² = 0.09290304 m², not rounded metric figures from source tables.
 - Mass adds metric quintal (100 kg), tola (180 grains) and troy ounce (480 grains).
@@ -165,8 +164,6 @@ the live [Frankfurter API](https://frankfurter.dev/).
   https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9
 - Named land conventions (use exact stated imperial definitions, not rounded metric equivalents):
   https://docs.apisetu.gov.in/document-central/mdds/Annexure.html
-- Assam bigha (14400 sq ft), Government of Assam PWD:
-  https://pwdroads.assam.gov.in/sites/default/files/swf_utility_folder/departments/pwd_lipl_in_oid_3/menu/document/rap17.pdf
 - Tola (180 grains), Maharashtra Gazetteer:
   https://www.gazetteers.maharashtra.gov.in/cultural.maharashtra.gov.in/english/gazetteer/KOLABA/bank_wt_measures.html
 - Australian metric cooking measures, manufacturer measurement table:

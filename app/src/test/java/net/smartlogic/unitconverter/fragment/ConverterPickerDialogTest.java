@@ -41,8 +41,8 @@ public class ConverterPickerDialogTest {
         try (ActivityController<AppCompatActivity> controller = activity()) {
             Preferences prefs = Preferences.getInstance(controller.get());
             prefs.setLastConversion(Conversion.AREA);
-            prefs.setLastFromConversion(14); // Retired Assam Bigha row.
-            prefs.setLastToConversion(16); // Retired Rajasthan kaccha row.
+            prefs.setLastFromConversion(14); // Retired area row.
+            prefs.setLastToConversion(16); // Retired area row.
             UnitConverterFragment fragment = new UnitConverterFragment();
             controller.get().getSupportFragmentManager().beginTransaction()
                     .add(android.R.id.content, fragment, "area").commitNow();

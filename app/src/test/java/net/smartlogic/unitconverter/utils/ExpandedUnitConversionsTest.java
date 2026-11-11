@@ -60,14 +60,13 @@ public class ExpandedUnitConversionsTest {
         exact(Conversion.MASS, Unit.TROY_OUNCE, Unit.TOLA, "3", "8");
     }
 
-    @Test public void regionalAreaDefinitionsNeverUseAGenericBigha() {
+    @Test public void regionalAreaDefinitionsPreserveSupportedConventions() {
         exact(Conversion.AREA, Unit.SQ_MILLIMETRE, Unit.SQ_CENTIMETRES, "100", "1");
         exact(Conversion.AREA, Unit.GUNTHA, Unit.SQ_FOOT, "1", "1089");
         exact(Conversion.AREA, Unit.CENT, Unit.SQ_FOOT, "1", "435.6");
         exact(Conversion.AREA, Unit.MARLA, Unit.SQ_FOOT, "1", "272.25");
         assertFalse(conversions.getById(Conversion.AREA).getUnits().stream().anyMatch(u ->
-                u.getId() == Unit.BIGHA_ASSAM || u.getId() == Unit.BIGHA_RAJASTHAN_PUCCA
-                        || u.getId() == Unit.BIGHA_RAJASTHAN_KACCHA));
+                u.getId() >= 15 && u.getId() <= 17)); // Retired IDs must not be reassigned.
         exact(Conversion.AREA, Unit.GUNTHA, Unit.ACRE, "40", "1");
         exact(Conversion.AREA, Unit.CENT, Unit.ACRE, "100", "1");
     }

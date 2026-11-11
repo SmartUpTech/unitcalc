@@ -1027,9 +1027,6 @@
     <string name="guntha">गुंठा (1/40 एकड़)</string>
     <string name="cent">सेंट (1/100 एकड़)</string>
     <string name="marla">मरला (272.25 वर्ग फ़ुट)</string>
-    <string name="bigha_assam">बीघा (असम, 14400 वर्ग फ़ुट)</string>
-    <string name="bigha_rajasthan_pucca">बीघा (राजस्थान पक्का, 27225 वर्ग फ़ुट)</string>
-    <string name="bigha_rajasthan_kaccha">बीघा (राजस्थान कच्चा, 17424 वर्ग फ़ुट)</string>
     <string name="quintal">क्विंटल (मीट्रिक)</string>
     <string name="tola">तोला (180 ग्रेन)</string>
     <string name="troy_ounce">ट्रॉय औंस</string>
